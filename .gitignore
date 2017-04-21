@@ -19,9 +19,6 @@ hs_err_pid*
 /forntend/tmp
 /forntend/out-tsc
 
-# dependencies
-/forntend/node_modules
-
 # IDEs and editors
 /.idea
 .project
@@ -54,3 +51,5 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+/frontend/node_modules/

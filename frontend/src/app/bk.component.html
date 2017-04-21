@@ -1,0 +1,281 @@
+<div class="container ng-scope" ng-controller="configController as configContr">
+  <!-- ngInclude: 'app/components/menu/menu.html' --><div ng-include="'app/components/menu/menu.html'" class="ng-scope"><nav class="navbar navbar-default ng-scope">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="javascript:void(0);">Финансовый менеджер</a>
+    </div>
+    <div id="navbar">
+      <ul class="nav navbar-nav">
+        <li class="divider-vertical"></li>
+        <li ng-class="{ active : configContr.isMenuItemActive('/budget')}" class=""><a href="#budget">Бюджет</a></li>
+        <li ng-class="{ active : configContr.isMenuItemActive('/history')}" class="active"><a href="#history">Учет</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li ng-class="{ active : configContr.isMenuItemActive('/profile')}"><a href="#profile">Профиль</a></li>
+        <li><a href="#">Выход</a></li>
+      </ul>
+    </div>
+  </div>
+</nav></div>
+
+  <div class="row">
+    <!-- ngInclude: 'app/components/summary/summary.html' --><div id="summary" class="col-lg-4 ng-scope" ng-include="'app/components/summary/summary.html'"><div class="panel panel-primary ng-scope" ng-controller="summaryController as summaryContr">
+    <div class="panel-heading">Финансовое состояние:</div>
+    <div class="panel-body">
+      <!--<accordion close-others="oneAtATime">-->
+        <div class="panel-group" ng-transclude="">
+        <!-- ngRepeat: summaryAccount in summaryContr.summary --><div class="panel panel-default ng-isolate-scope" ng-repeat="summaryAccount in summaryContr.summary" is-open="summaryAccount.accountExpand">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a href="javascript:void(0)" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" accordion-transclude="heading">
+              <div class="clearfix account-summary ng-scope">
+                <div class="col-lg-7"><strong><em class="ng-binding">Деньги</em></strong></div>
+                <div class="col-lg-5">
+                  <!-- ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting --><div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
+                  <div class="col-lg-9 ng-binding">12'365'000</div>
+                </div><!-- end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting --><div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
+                  <div class="col-lg-9 ng-binding">5'337.05</div>
+                </div><!-- end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting --><div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
+                  <div class="col-lg-9 ng-binding">44.18</div>
+                </div><!-- end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting -->
+                </div>
+              </div>
+            </a>
+          </h4>
+        </div>
+        <div class="panel-collapse in" collapse="!isOpen" style="height: auto;">
+          <div class="panel-body" ng-transclude="">
+            <!--<accordion-heading class="ng-scope"></accordion-heading>-->
+            <div class="account-details ng-scope">
+              <!-- ngRepeat: subAccount in summaryAccount.subAccounts --><div ng-repeat="subAccount in summaryAccount.subAccounts" class="ng-scope">
+              <div class="row">
+                <div class="col-lg-7"><strong><em class="ng-binding">Наличные</em></strong></div>
+                <div class="col-lg-5">
+                  <!-- ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
+                  <div class="col-lg-9 ng-binding">12'365'000</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
+                  <div class="col-lg-9 ng-binding">5'325.8</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
+                  <div class="col-lg-9 ng-binding">25.38</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting -->
+                </div>
+              </div>
+              <hr ng-hide="$last">
+            </div><!-- end ngRepeat: subAccount in summaryAccount.subAccounts --><div ng-repeat="subAccount in summaryAccount.subAccounts" class="ng-scope">
+              <div class="row">
+                <div class="col-lg-7"><strong><em class="ng-binding">Резерв</em></strong></div>
+                <div class="col-lg-5">
+                  <!-- ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
+                  <div class="col-lg-9 ng-binding">11.25</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
+                  <div class="col-lg-9 ng-binding">18.8</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting -->
+                </div>
+              </div>
+              <hr ng-hide="$last" class="ng-hide">
+            </div><!-- end ngRepeat: subAccount in summaryAccount.subAccounts -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: summaryAccount in summaryContr.summary --><div class="panel panel-default ng-isolate-scope" ng-repeat="summaryAccount in summaryContr.summary" is-open="summaryAccount.accountExpand">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a href="javascript:void(0)" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" accordion-transclude="heading">
+              <div class="clearfix account-summary ng-scope">
+                <div class="col-lg-7"><strong><em class="ng-binding">Сбережения</em></strong></div>
+                <div class="col-lg-5">
+                  <!-- ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting --><div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
+                  <div class="col-lg-9 ng-binding">125'968'000</div>
+                </div><!-- end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting --><div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
+                  <div class="col-lg-9 ng-binding">11</div>
+                </div><!-- end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting --><div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
+                  <div class="col-lg-9 ng-binding">12</div>
+                </div><!-- end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting -->
+                </div>
+              </div>
+            </a>
+          </h4>
+        </div>
+        <div class="panel-collapse in" collapse="!isOpen" style="height: auto;">
+          <div class="panel-body" ng-transclude="">
+            <!--<accordion-heading class="ng-scope"></accordion-heading>-->
+            <div class="account-details ng-scope">
+              <!-- ngRepeat: subAccount in summaryAccount.subAccounts --><div ng-repeat="subAccount in summaryAccount.subAccounts" class="ng-scope">
+              <div class="row">
+                <div class="col-lg-7"><strong><em class="ng-binding">Наличные</em></strong></div>
+                <div class="col-lg-5">
+                  <!-- ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
+                  <div class="col-lg-9 ng-binding">125'968'000</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
+                  <div class="col-lg-9 ng-binding">11</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting --><div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
+                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
+                  <div class="col-lg-9 ng-binding">12</div>
+                </div><!-- end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting -->
+                </div>
+              </div>
+              <hr ng-hide="$last" class="ng-hide">
+            </div><!-- end ngRepeat: subAccount in summaryAccount.subAccounts -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: summaryAccount in summaryContr.summary -->
+      </div>
+      <!--</accordion>-->
+    </div>
+    <div class="panel-footer">
+      <div class="row">
+        <div class="col-lg-7">Итого:</div>
+        <div class="col-lg-5">
+          <!-- ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting --><div class="row money-summary ng-scope" ng-repeat="userSum in summaryContr.userSums | orderBy:configContr.currencySorting">
+          <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
+          <div class="col-lg-9 ng-binding">138'333'000</div>
+        </div><!-- end ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting --><div class="row money-summary ng-scope" ng-repeat="userSum in summaryContr.userSums | orderBy:configContr.currencySorting">
+          <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
+          <div class="col-lg-9 ng-binding">5'348.05</div>
+        </div><!-- end ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting --><div class="row money-summary ng-scope" ng-repeat="userSum in summaryContr.userSums | orderBy:configContr.currencySorting">
+          <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
+          <div class="col-lg-9 ng-binding">56.18</div>
+        </div><!-- end ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting -->
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+    <div id="details" class="col-lg-8">
+      <!-- ngRepeat: alert in alerts -->
+      <div class="panel panel-default">
+        <!-- ngView:  --><div class="panel-body ng-scope" ng-view=""><div class="btn-group history-actions-top ng-scope" role="group">
+        <a class="btn btn-default">Добавить операцию</a>
+        <a class="btn btn-default" ng-click="historyContr.showMore()">Показать больше операций</a>
+      </div>
+
+        <div class="table ng-scope">
+          <div class="row header">
+            <div class="col-md-2">Дата</div>
+            <div class="col-md-2">Сумма</div>
+            <div class="col-md-2">Категория</div>
+            <div class="col-md-4">Комментарий</div>
+            <div class="col-md-2 text-right">Действия</div>
+          </div>
+
+          <!-- ngRepeat: (historyGroup, historyItems) in historyContr.history --><div ng-repeat="(historyGroup, historyItems) in historyContr.history" class="ng-scope">
+          <!-- ngRepeat: historyItem in historyItems --><div class="row ng-scope" ng-repeat="historyItem in historyItems">
+          <div class="col-md-2">
+                <span ng-hide="!$first" class="ng-binding">
+                    29.10.2010
+                    <div class="footnote ng-binding">
+                        пятница
+                    </div>
+                </span>
+          </div>
+          <div class="col-md-2">
+            <div ng-class="{income : configContr.isAmountPositive(historyItem.amount), expenditure : !configContr.isAmountPositive(historyItem.amount)}" class="ng-binding expenditure">
+              5'600
+              $
+            </div>
+            <div class="footnote ng-binding">Наличные</div>
+          </div>
+          <div class="col-md-2">
+            <img ng-src="assets/image/home.gif" src="assets/image/home.gif">
+            <span class="description ng-binding">Питание</span>
+            <div class="footnote ng-binding">Продукты питания</div>
+          </div>
+          <div class="col-md-4 description ng-binding">Детское питание с очень длинным названием</div>
+          <div class="col-md-2 text-center">
+            <a href="" popover="Редактировать" popover-trigger="mouseenter" ng-click="historyContr.openEditPopup(historyItem)">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="" popover="Удалить" popover-trigger="mouseenter" ng-click="historyContr.deleteHistoryItem(historyItem)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </div>
+        </div><!-- end ngRepeat: historyItem in historyItems --><div class="row ng-scope" ng-repeat="historyItem in historyItems">
+          <div class="col-md-2">
+                <span ng-hide="!$first" class="ng-binding ng-hide">
+                    29.10.2010
+                    <div class="footnote ng-binding">
+                        пятница
+                    </div>
+                </span>
+          </div>
+          <div class="col-md-2">
+            <div ng-class="{income : configContr.isAmountPositive(historyItem.amount), expenditure : !configContr.isAmountPositive(historyItem.amount)}" class="ng-binding income">
+              5'600
+              $
+            </div>
+            <div class="footnote ng-binding">Наличные</div>
+          </div>
+          <div class="col-md-2">
+            <img ng-src="assets/image/home.gif" src="assets/image/home.gif">
+            <span class="description ng-binding">Питание</span>
+            <div class="footnote ng-binding">Продукты питания</div>
+          </div>
+          <div class="col-md-4 description ng-binding">Детское питание</div>
+          <div class="col-md-2 text-center">
+            <a href="" popover="Редактировать" popover-trigger="mouseenter" ng-click="historyContr.openEditPopup(historyItem)">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="" popover="Удалить" popover-trigger="mouseenter" ng-click="historyContr.deleteHistoryItem(historyItem)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </div>
+        </div><!-- end ngRepeat: historyItem in historyItems -->
+          <hr ng-hide="$last">
+        </div><!-- end ngRepeat: (historyGroup, historyItems) in historyContr.history --><div ng-repeat="(historyGroup, historyItems) in historyContr.history" class="ng-scope">
+          <!-- ngRepeat: historyItem in historyItems --><div class="row ng-scope" ng-repeat="historyItem in historyItems">
+          <div class="col-md-2">
+                <span ng-hide="!$first" class="ng-binding">
+                    28.10.2010
+                    <div class="footnote ng-binding">
+                        четверг
+                    </div>
+                </span>
+          </div>
+          <div class="col-md-2">
+            <div ng-class="{income : configContr.isAmountPositive(historyItem.amount), expenditure : !configContr.isAmountPositive(historyItem.amount)}" class="ng-binding expenditure">
+              3'600
+              $
+            </div>
+            <div class="footnote ng-binding">Наличные</div>
+          </div>
+          <div class="col-md-2">
+            <img ng-src="assets/image/home.gif" src="assets/image/home.gif">
+            <span class="description ng-binding">Питание</span>
+            <div class="footnote ng-binding">Продукты питания</div>
+          </div>
+          <div class="col-md-4 description ng-binding">Детское питание</div>
+          <div class="col-md-2 text-center">
+            <a href="" popover="Редактировать" popover-trigger="mouseenter" ng-click="historyContr.openEditPopup(historyItem)">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="" popover="Удалить" popover-trigger="mouseenter" ng-click="historyContr.deleteHistoryItem(historyItem)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </div>
+        </div><!-- end ngRepeat: historyItem in historyItems -->
+          <hr ng-hide="$last" class="ng-hide">
+        </div><!-- end ngRepeat: (historyGroup, historyItems) in historyContr.history -->
+        </div>
+
+        <div class="btn-group ng-scope" role="group">
+          <a class="btn btn-default">Добавить операцию</a>
+          <a class="btn btn-default" ng-click="historyContr.showMore()">Показать больше операций</a>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</div>

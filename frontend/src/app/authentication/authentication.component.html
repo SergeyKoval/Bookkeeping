@@ -1,0 +1,16 @@
+<div class="form">
+  <h1>Бухгалтерия</h1>
+
+  <form [formGroup]="authenticationForm">
+    <bk-authentication-input [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
+    <bk-authentication-input [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
+
+    <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!loading; else loadingIndicator">Войти</button>
+  </form>
+
+  <h2 *ngIf="errorMessage">{{errorMessage}}</h2>
+</div>
+
+<ng-template #loadingIndicator>
+  <md-spinner [style.width.px]="40" [style.height.px]="40" [style.margin]="'auto'"></md-spinner>
+</ng-template>

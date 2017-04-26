@@ -1,0 +1,6 @@
+<div class="field-wrap">
+  <label [ngClass]="{'active highlight': isEditing()}">
+    <ng-content></ng-content><span class="req">*</span>
+  </label>
+  <input [type]="type || 'text'" [formControl]="input" [ngClass]="{'validation-failed': isInvalidValue()}"/>
+</div>

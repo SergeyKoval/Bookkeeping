@@ -10,7 +10,7 @@ import {BookkeepingRootComponent} from './bk.component';
 import {BOOKKEEPING_ROUTES} from './routes';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { InputComponent } from './authentication/input/input.component';
-import {AuthenticationService} from './authentication/authentication.service';
+import {AuthenticationService} from './common/service/authentication.service';
 import {LoadingService} from './common/service/loading.service';
 import {environment} from '../environments/environment';
 import {HOST} from './common/config/config';
@@ -19,6 +19,9 @@ import { HeaderComponent } from './bookkeeping/header/header.component';
 import { HistoryComponent } from './bookkeeping/history/history.component';
 import { BudgetComponent } from './bookkeeping/budget/budget.component';
 import { SettingsComponent } from './bookkeeping/settings/settings.component';
+import { SummaryComponent } from './bookkeeping/summary/summary.component';
+import { SpinnerComponent } from './common/components/spinner/spinner.component';
+import {CurrencyService} from './common/service/currency.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,9 @@ import { SettingsComponent } from './bookkeeping/settings/settings.component';
     HeaderComponent,
     HistoryComponent,
     BudgetComponent,
-    SettingsComponent
+    SettingsComponent,
+    SummaryComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
@@ -42,6 +47,7 @@ import { SettingsComponent } from './bookkeeping/settings/settings.component';
   providers: [
     AuthenticationService,
     LoadingService,
+    CurrencyService,
     {
       provide: HOST,
       useValue: environment.backendHost,

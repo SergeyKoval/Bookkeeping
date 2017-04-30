@@ -2,5 +2,11 @@
   "profiles": [
     {"id": 1, "email": "skoval@gmail.com", "password": "098f6bcd4621d373cade4e832627b4f6"},
     {"id": 2, "email": "test@gmail.com", "password": "test"}
+  ],
+  "currencies": [
+    {"ownerId": 1, "name": "BYN", "order": 1},
+    {"ownerId": 1, "name": "EUR", "order": 3},
+    {"ownerId": 1, "name": "USD", "order": 2},
+    {"ownerId": 2, "name": "USD", "order": 1}
   ]
 }

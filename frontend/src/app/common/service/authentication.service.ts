@@ -9,9 +9,10 @@ import {Md5} from 'ts-md5/dist/md5';
 import {isNullOrUndefined} from 'util';
 
 import {LoadingService} from 'app/common/service/loading.service';
-import {HOST} from '../common/config/config';
+import {HOST} from '../config/config';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/delay';
 
 @Injectable()
 export class AuthenticationService implements CanActivate {
@@ -25,7 +26,7 @@ export class AuthenticationService implements CanActivate {
     private _http: Http,
     @Inject(HOST) private _host: string
   ) {
-    this._authenticationLoading = _loadingService.authentication;
+    this._authenticationLoading = _loadingService.authentication$$;
   }
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
@@ -47,6 +48,7 @@ export class AuthenticationService implements CanActivate {
   public getProfileByEmail(email: string): Observable<Profile> {
     this._authenticationLoading.next(true);
     return this._http.get(`${this._host}/profiles?email=${email}`)
+      .delay(1500)
       .map((response: Response) => {
         this._authenticationLoading.next(false);
         return response.json()[0];
@@ -64,5 +66,9 @@ export class AuthenticationService implements CanActivate {
 
   public exit(): void {
     this._authenticatedProfile = null;
+  }
+
+  public get authenticatedProfile(): Profile {
+    return this._authenticatedProfile;
   }
 }

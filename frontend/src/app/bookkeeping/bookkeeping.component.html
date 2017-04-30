@@ -1,152 +1,28 @@
-<div class="container ng-scope">
+<div class="container ">
   <bk-header></bk-header>
-  <router-outlet></router-outlet>
-  <!--<div class="row">
-    &lt;!&ndash; ngInclude: 'app/components/summary/summary.html' &ndash;&gt;<div id="summary" class="col-lg-4 ng-scope" ng-include="'app/components/summary/summary.html'"><div class="panel panel-primary ng-scope" ng-controller="summaryController as summaryContr">
-    <div class="panel-heading">Финансовое состояние:</div>
-    <div class="panel-body">
-      &lt;!&ndash;<accordion close-others="oneAtATime">&ndash;&gt;
-        <div class="panel-group" ng-transclude="">
-        &lt;!&ndash; ngRepeat: summaryAccount in summaryContr.summary &ndash;&gt;<div class="panel panel-default ng-isolate-scope" ng-repeat="summaryAccount in summaryContr.summary" is-open="summaryAccount.accountExpand">
-        <div class="panel-heading">
-          <h4 class="panel-title">
-            <a href="javascript:void(0)" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" accordion-transclude="heading">
-              <div class="clearfix account-summary ng-scope">
-                <div class="col-lg-7"><strong><em class="ng-binding">Деньги</em></strong></div>
-                <div class="col-lg-5">
-                  &lt;!&ndash; ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
-                  <div class="col-lg-9 ng-binding">12'365'000</div>
-                </div>&lt;!&ndash; end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
-                  <div class="col-lg-9 ng-binding">5'337.05</div>
-                </div>&lt;!&ndash; end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
-                  <div class="col-lg-9 ng-binding">44.18</div>
-                </div>&lt;!&ndash; end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;
-                </div>
-              </div>
-            </a>
-          </h4>
-        </div>
-        <div class="panel-collapse in" collapse="!isOpen" style="height: auto;">
-          <div class="panel-body" ng-transclude="">
-            &lt;!&ndash;<accordion-heading class="ng-scope"></accordion-heading>&ndash;&gt;
-            <div class="account-details ng-scope">
-              &lt;!&ndash; ngRepeat: subAccount in summaryAccount.subAccounts &ndash;&gt;<div ng-repeat="subAccount in summaryAccount.subAccounts" class="ng-scope">
-              <div class="row">
-                <div class="col-lg-7"><strong><em class="ng-binding">Наличные</em></strong></div>
-                <div class="col-lg-5">
-                  &lt;!&ndash; ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
-                  <div class="col-lg-9 ng-binding">12'365'000</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
-                  <div class="col-lg-9 ng-binding">5'325.8</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
-                  <div class="col-lg-9 ng-binding">25.38</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;
-                </div>
-              </div>
-              <hr ng-hide="$last">
-            </div>&lt;!&ndash; end ngRepeat: subAccount in summaryAccount.subAccounts &ndash;&gt;<div ng-repeat="subAccount in summaryAccount.subAccounts" class="ng-scope">
-              <div class="row">
-                <div class="col-lg-7"><strong><em class="ng-binding">Резерв</em></strong></div>
-                <div class="col-lg-5">
-                  &lt;!&ndash; ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
-                  <div class="col-lg-9 ng-binding">11.25</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
-                  <div class="col-lg-9 ng-binding">18.8</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;
-                </div>
-              </div>
-              <hr ng-hide="$last" class="ng-hide">
-            </div>&lt;!&ndash; end ngRepeat: subAccount in summaryAccount.subAccounts &ndash;&gt;
-            </div>
-          </div>
-        </div>
-      </div>&lt;!&ndash; end ngRepeat: summaryAccount in summaryContr.summary &ndash;&gt;<div class="panel panel-default ng-isolate-scope" ng-repeat="summaryAccount in summaryContr.summary" is-open="summaryAccount.accountExpand">
-        <div class="panel-heading">
-          <h4 class="panel-title">
-            <a href="javascript:void(0)" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" accordion-transclude="heading">
-              <div class="clearfix account-summary ng-scope">
-                <div class="col-lg-7"><strong><em class="ng-binding">Сбережения</em></strong></div>
-                <div class="col-lg-5">
-                  &lt;!&ndash; ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
-                  <div class="col-lg-9 ng-binding">125'968'000</div>
-                </div>&lt;!&ndash; end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
-                  <div class="col-lg-9 ng-binding">11</div>
-                </div>&lt;!&ndash; end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-summary ng-scope" ng-repeat="accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
-                  <div class="col-lg-9 ng-binding">12</div>
-                </div>&lt;!&ndash; end ngRepeat: accountSum in summaryAccount.accountSums | orderBy:configContr.currencySorting &ndash;&gt;
-                </div>
-              </div>
-            </a>
-          </h4>
-        </div>
-        <div class="panel-collapse in" collapse="!isOpen" style="height: auto;">
-          <div class="panel-body" ng-transclude="">
-            &lt;!&ndash;<accordion-heading class="ng-scope"></accordion-heading>&ndash;&gt;
-            <div class="account-details ng-scope">
-              &lt;!&ndash; ngRepeat: subAccount in summaryAccount.subAccounts &ndash;&gt;<div ng-repeat="subAccount in summaryAccount.subAccounts" class="ng-scope">
-              <div class="row">
-                <div class="col-lg-7"><strong><em class="ng-binding">Наличные</em></strong></div>
-                <div class="col-lg-5">
-                  &lt;!&ndash; ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
-                  <div class="col-lg-9 ng-binding">125'968'000</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
-                  <div class="col-lg-9 ng-binding">11</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;<div class="row currency-details ng-scope" ng-repeat="subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting">
-                  <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
-                  <div class="col-lg-9 ng-binding">12</div>
-                </div>&lt;!&ndash; end ngRepeat: subAccountCurrencyDetail in subAccount.subAccountCurrencyDetails | orderBy:configContr.currencySorting &ndash;&gt;
-                </div>
-              </div>
-              <hr ng-hide="$last" class="ng-hide">
-            </div>&lt;!&ndash; end ngRepeat: subAccount in summaryAccount.subAccounts &ndash;&gt;
-            </div>
-          </div>
-        </div>
-      </div>&lt;!&ndash; end ngRepeat: summaryAccount in summaryContr.summary &ndash;&gt;
-      </div>
-      &lt;!&ndash;</accordion>&ndash;&gt;
-    </div>
-    <div class="panel-footer">
-      <div class="row">
-        <div class="col-lg-7">Итого:</div>
-        <div class="col-lg-5">
-          &lt;!&ndash; ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row money-summary ng-scope" ng-repeat="userSum in summaryContr.userSums | orderBy:configContr.currencySorting">
-          <div class="col-lg-3 text-right"><strong class="ng-binding">Br</strong></div>
-          <div class="col-lg-9 ng-binding">138'333'000</div>
-        </div>&lt;!&ndash; end ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row money-summary ng-scope" ng-repeat="userSum in summaryContr.userSums | orderBy:configContr.currencySorting">
-          <div class="col-lg-3 text-right"><strong class="ng-binding">$</strong></div>
-          <div class="col-lg-9 ng-binding">5'348.05</div>
-        </div>&lt;!&ndash; end ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting &ndash;&gt;<div class="row money-summary ng-scope" ng-repeat="userSum in summaryContr.userSums | orderBy:configContr.currencySorting">
-          <div class="col-lg-3 text-right"><strong class="ng-binding">€</strong></div>
-          <div class="col-lg-9 ng-binding">56.18</div>
-        </div>&lt;!&ndash; end ngRepeat: userSum in summaryContr.userSums | orderBy:configContr.currencySorting &ndash;&gt;
-        </div>
-      </div>
-    </div>
-  </div></div>
+  <div class="row">
+    <bk-summary [currencies]="currencies"></bk-summary>
 
     <div id="details" class="col-lg-8">
+      <div class="alert alert-success alert-dismissable fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> This alert box could indicate a successful or positive action.
+      </div>
+
+      <router-outlet></router-outlet>
+    </div>
+
+  </div>
+
+    <!--<div id="details" class="col-lg-8">
       &lt;!&ndash; ngRepeat: alert in alerts &ndash;&gt;
       <div class="panel panel-default">
-        &lt;!&ndash; ngView:  &ndash;&gt;<div class="panel-body ng-scope" ng-view=""><div class="btn-group history-actions-top ng-scope" role="group">
+        &lt;!&ndash; ngView:  &ndash;&gt;<div class="panel-body " ng-view=""><div class="btn-group history-actions-top " role="group">
         <a class="btn btn-default">Добавить операцию</a>
         <a class="btn btn-default" ng-click="historyContr.showMore()">Показать больше операций</a>
       </div>
 
-        <div class="table ng-scope">
+        <div class="table ">
           <div class="row header">
             <div class="col-md-2">Дата</div>
             <div class="col-md-2">Сумма</div>
@@ -155,8 +31,8 @@
             <div class="col-md-2 text-right">Действия</div>
           </div>
 
-          &lt;!&ndash; ngRepeat: (historyGroup, historyItems) in historyContr.history &ndash;&gt;<div ng-repeat="(historyGroup, historyItems) in historyContr.history" class="ng-scope">
-          &lt;!&ndash; ngRepeat: historyItem in historyItems &ndash;&gt;<div class="row ng-scope" ng-repeat="historyItem in historyItems">
+          &lt;!&ndash; ngRepeat: (historyGroup, historyItems) in historyContr.history &ndash;&gt;<div ng-repeat="(historyGroup, historyItems) in historyContr.history" class="">
+          &lt;!&ndash; ngRepeat: historyItem in historyItems &ndash;&gt;<div class="row " ng-repeat="historyItem in historyItems">
           <div class="col-md-2">
                 <span ng-hide="!$first" class="ng-binding">
                     29.10.2010
@@ -186,7 +62,7 @@
               <span class="glyphicon glyphicon-remove"></span>
             </a>
           </div>
-        </div>&lt;!&ndash; end ngRepeat: historyItem in historyItems &ndash;&gt;<div class="row ng-scope" ng-repeat="historyItem in historyItems">
+        </div>&lt;!&ndash; end ngRepeat: historyItem in historyItems &ndash;&gt;<div class="row " ng-repeat="historyItem in historyItems">
           <div class="col-md-2">
                 <span ng-hide="!$first" class="ng-binding ng-hide">
                     29.10.2010
@@ -218,8 +94,8 @@
           </div>
         </div>&lt;!&ndash; end ngRepeat: historyItem in historyItems &ndash;&gt;
           <hr ng-hide="$last">
-        </div>&lt;!&ndash; end ngRepeat: (historyGroup, historyItems) in historyContr.history &ndash;&gt;<div ng-repeat="(historyGroup, historyItems) in historyContr.history" class="ng-scope">
-          &lt;!&ndash; ngRepeat: historyItem in historyItems &ndash;&gt;<div class="row ng-scope" ng-repeat="historyItem in historyItems">
+        </div>&lt;!&ndash; end ngRepeat: (historyGroup, historyItems) in historyContr.history &ndash;&gt;<div ng-repeat="(historyGroup, historyItems) in historyContr.history" class="">
+          &lt;!&ndash; ngRepeat: historyItem in historyItems &ndash;&gt;<div class="row " ng-repeat="historyItem in historyItems">
           <div class="col-md-2">
                 <span ng-hide="!$first" class="ng-binding">
                     28.10.2010
@@ -254,12 +130,11 @@
         </div>&lt;!&ndash; end ngRepeat: (historyGroup, historyItems) in historyContr.history &ndash;&gt;
         </div>
 
-        <div class="btn-group ng-scope" role="group">
+        <div class="btn-group " role="group">
           <a class="btn btn-default">Добавить операцию</a>
           <a class="btn btn-default" ng-click="historyContr.showMore()">Показать больше операций</a>
         </div></div>
       </div>
-    </div>
-  </div>-->
+    </div>-->
 </div>
 

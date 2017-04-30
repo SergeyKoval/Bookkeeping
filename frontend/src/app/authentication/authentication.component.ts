@@ -4,7 +4,7 @@ import {Router} from '@angular/router';
 
 import {Subscription} from 'rxjs/Subscription';
 
-import {AuthenticationService} from './authentication.service';
+import {AuthenticationService} from '../common/service/authentication.service';
 import {LoadingService} from '../common/service/loading.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class AuthenticationComponent implements OnInit {
   public submitted: boolean = false;
   public errorMessage: string;
   public loading: boolean = false;
+  public applicationLoading: boolean = false;
 
   private _AUTHENTICATION_LOADING_SUBSCRIPTION: Subscription;
 
@@ -28,7 +29,7 @@ export class AuthenticationComponent implements OnInit {
 
   public ngOnInit(): void {
     this.authenticationForm = this._authenticationService.initAuthenticationForm();
-    this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._loadingService.authentication.subscribe((value: boolean) => this.loading = value);
+    this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._loadingService.authentication$$.subscribe((value: boolean) => this.loading = value);
   }
 
   public authenticate(): void {
@@ -52,6 +53,7 @@ export class AuthenticationComponent implements OnInit {
       }
 
       this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
+      this.applicationLoading = true;
       this._router.navigate(['bookkeeping']);
     });
   }

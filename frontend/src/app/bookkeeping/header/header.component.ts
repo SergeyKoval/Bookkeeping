@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {Router} from '@angular/router';
 
-import {AuthenticationService} from '../../authentication/authentication.service';
+import {AuthenticationService} from '../../common/service/authentication.service';
 
 @Component({
   selector: 'bk-header',

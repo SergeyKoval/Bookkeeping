@@ -6,7 +6,6 @@ import {BudgetComponent} from './bookkeeping/budget/budget.component';
 import {HistoryComponent} from './bookkeeping/history/history.component';
 import {SettingsComponent} from './bookkeeping/settings/settings.component';
 import {AuthenticationService} from './common/service/authentication.service';
-import {CurrencyService} from './common/service/currency.service';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -22,9 +21,6 @@ export const BOOKKEEPING_ROUTES: Route[] = [
     path: 'bookkeeping',
     component: BookkeepingComponent,
     canActivate: [AuthenticationService],
-    resolve: {
-      currencies: CurrencyService
-    },
     children: [
       {
         path: '',

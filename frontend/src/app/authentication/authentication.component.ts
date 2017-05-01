@@ -6,6 +6,7 @@ import {Subscription} from 'rxjs/Subscription';
 
 import {AuthenticationService} from '../common/service/authentication.service';
 import {LoadingService} from '../common/service/loading.service';
+import {CurrencyService} from '../common/service/currency.service';
 
 @Component({
   selector: 'bk-authentication',
@@ -24,6 +25,7 @@ export class AuthenticationComponent implements OnInit {
   public constructor(
     private _authenticationService: AuthenticationService,
     private _loadingService: LoadingService,
+    private _currencyService: CurrencyService,
     private _router: Router
   ) {}
 
@@ -55,6 +57,7 @@ export class AuthenticationComponent implements OnInit {
       this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
       this.applicationLoading = true;
       this._router.navigate(['bookkeeping']);
+      this._currencyService.loadCurrencies(profile.id);
     });
   }
 }

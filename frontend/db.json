@@ -4,9 +4,9 @@
     {"id": 2, "email": "test@gmail.com", "password": "test"}
   ],
   "currencies": [
-    {"ownerId": 1, "name": "BYN", "order": 1},
-    {"ownerId": 1, "name": "EUR", "order": 3},
-    {"ownerId": 1, "name": "USD", "order": 2},
-    {"ownerId": 2, "name": "USD", "order": 1}
+    {"ownerId": 1, "name": "BYN", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}},
+    {"ownerId": 1, "name": "EUR", "order": 3, "conversions": {"BYN": 2.25, "USD": 1.081}},
+    {"ownerId": 1, "name": "USD", "order": 2, "conversions": {"BYN": 1.8711, "EUR": 0.9132}},
+    {"ownerId": 2, "name": "USD", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}}
   ]
 }

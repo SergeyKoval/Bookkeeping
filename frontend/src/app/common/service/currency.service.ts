@@ -7,13 +7,16 @@ import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {Subscription} from 'rxjs/Subscription';
 
 import {HOST} from '../config/config';
+import {SummaryBalanceItem} from '../model/SummaryBalanceItem';
 
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
 
 @Injectable()
 export class CurrencyService {
-  private _currencies: Subject<Currency[]> = new ReplaySubject(1);
+  private _currencies: Map<string, Currency>;
+  private _currencies$$: Subject<Currency[]> = new ReplaySubject(1);
 
   public constructor(
     private _http: Http,
@@ -23,15 +26,38 @@ export class CurrencyService {
   public loadCurrencies(ownerId: number): void {
     const subscription: Subscription = this._http.get(`${this._host}/currencies?ownerId=${ownerId}`)
       .delay(1500)
-      .subscribe((response: Response) => {
-        const currencies: Currency[] = response.json();
+      .map((response: Response) => response.json())
+      .do((currencies: Currency[]) => {
+        this._currencies = new Map();
+        currencies.forEach((currency: Currency) => this._currencies.set(currency.name, currency));
+      })
+      .subscribe((currencies: Currency[]) => {
         currencies.sort((first: Currency, second: Currency) => first.order - second.order);
-        this._currencies.next(currencies);
+        this._currencies$$.next(currencies);
         subscription.unsubscribe();
       });
   }
 
-  public get currencies(): Observable<Currency[]> {
-    return this._currencies.asObservable();
+  public getCurrencySymbol(currencyName: string): string {
+    return this._currencies.get(currencyName).symbol;
+  }
+
+  public sortSummaryBalanceItems(items: SummaryBalanceItem[]): SummaryBalanceItem[] {
+    items.sort((firstItem: SummaryBalanceItem, secondItem: SummaryBalanceItem) => {
+      return this._currencies.get(firstItem.currency).order - this._currencies.get(secondItem.currency).order;
+    });
+    return items;
+  }
+
+  public get currencies$(): Observable<Currency[]> {
+    return this._currencies$$.asObservable();
+  }
+
+  public static convertToCurrency(value: number, currentCurrency: string, convertedCurrency: Currency): number {
+    if (convertedCurrency.name === currentCurrency) {
+      return value;
+    }
+
+    return convertedCurrency.conversions[currentCurrency] * value;
   }
 }

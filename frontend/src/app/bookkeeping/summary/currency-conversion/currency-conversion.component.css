@@ -1,0 +1,13 @@
+.summary-to-currency {
+  position: absolute;
+  top: 4px;
+  right: 18px;
+}
+
+.summary-to-currency .dropdown button {
+  background-color: #f5f5f5;
+}
+
+li a {
+  cursor: pointer;
+}

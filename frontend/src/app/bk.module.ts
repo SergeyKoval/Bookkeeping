@@ -22,6 +22,14 @@ import { SettingsComponent } from './bookkeeping/settings/settings.component';
 import { SummaryComponent } from './bookkeeping/summary/summary.component';
 import { SpinnerComponent } from './common/components/spinner/spinner.component';
 import {CurrencyService} from './common/service/currency.service';
+import { CurrencyConversionComponent } from './bookkeeping/summary/currency-conversion/currency-conversion.component';
+import {SummaryService} from './common/service/summary.service';
+import { SummaryBodyComponent } from './bookkeeping/summary/summary-body/summary-body.component';
+import { SummaryFooterComponent } from './bookkeeping/summary/summary-footer/summary-footer.component';
+import { SummaryFooterPipe } from './common/pipes/summary-footer.pipe';
+import { CurrencySymbolComponent } from './common/components/currency-symbol/currency-symbol.component';
+import { SummaryBalanceOrderingPipe } from './common/pipes/summary-balance-ordering.pipe';
+import { CurrencyValuePipe } from './common/pipes/currency-value.pipe';
 
 @NgModule({
   declarations: [
@@ -34,7 +42,14 @@ import {CurrencyService} from './common/service/currency.service';
     BudgetComponent,
     SettingsComponent,
     SummaryComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    CurrencyConversionComponent,
+    SummaryBodyComponent,
+    SummaryFooterComponent,
+    SummaryFooterPipe,
+    CurrencySymbolComponent,
+    SummaryBalanceOrderingPipe,
+    CurrencyValuePipe
   ],
   imports: [
     BrowserModule,
@@ -48,6 +63,7 @@ import {CurrencyService} from './common/service/currency.service';
     AuthenticationService,
     LoadingService,
     CurrencyService,
+    SummaryService,
     {
       provide: HOST,
       useValue: environment.backendHost,

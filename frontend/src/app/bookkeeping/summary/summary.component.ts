@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 
 import {LoadingService} from '../../common/service/loading.service';
-import {CurrencyService} from '../../common/service/currency.service';
+import {SummaryService} from '../../common/service/summary.service';
+import {AuthenticationService} from '../../common/service/authentication.service';
 
 @Component({
   selector: 'bk-summary',
@@ -9,21 +10,26 @@ import {CurrencyService} from '../../common/service/currency.service';
   styleUrls: ['./summary.component.css']
 })
 export class SummaryComponent implements OnInit {
-  public currencies: Currency[];
-
   public loading: boolean = true;
+  public conversionCurrency: Currency;
+  public summaries: Summary[];
 
   public constructor(
     private _loadingService: LoadingService,
-    private _currencyService: CurrencyService
+    private _summaryService: SummaryService,
+    private _authenticationService: AuthenticationService
   ) {}
 
   public ngOnInit(): void {
-    this._currencyService.currencies.subscribe((currencies: Currency[]) => {
-      this.currencies = currencies;
-    });
-
+    this._summaryService.loadSummaries(this._authenticationService.authenticatedProfile.id);
     this._loadingService.summary$$.subscribe((value: boolean) => this.loading = value);
+    this._summaryService.summaries$.subscribe((summaries: Summary[]) => {
+      this.summaries = summaries;
+      this.loading = false;
+    });
+  }
 
+  public setSummaryConversion(currency: Currency): void {
+    this.conversionCurrency = currency;
   }
 }

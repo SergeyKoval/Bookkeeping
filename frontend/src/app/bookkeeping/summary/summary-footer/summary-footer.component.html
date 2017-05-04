@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="col-lg-7 footer-balance-title"><strong>Итого:</strong></div>
+  <div class="col-lg-5">
+    <div class="row footer-balance-item" *ngFor="let summary of summaries | summaryFooter:conversionCurrency | summaryBalanceOrdering">
+      <div class="col-lg-3 text-right">
+        <strong>
+          <bk-currency-symbol [currencyName]="summary.currency"></bk-currency-symbol>
+        </strong>
+      </div>
+      <div class="col-lg-9">{{summary.value | currencyValue}}</div>
+    </div>
+  </div>
+</div>

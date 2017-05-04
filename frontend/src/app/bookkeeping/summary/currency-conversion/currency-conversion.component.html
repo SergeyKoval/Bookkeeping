@@ -3,7 +3,11 @@
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="true">к валюте: <strong>{{selectedCurrency?.name}}</strong></button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-      <li *ngFor="let currency of currencies"><a (click)="chooseCurrency(currency)">{{currency.name}}</a></li>
+      <li *ngFor="let currency of currencies">
+        <a (click)="chooseCurrency(currency)">
+          <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
+        </a>
+      </li>
       <li role="separator" class="divider"></li>
       <li><a (click)="chooseCurrency(null)">Без приведения</a></li>
     </ul>

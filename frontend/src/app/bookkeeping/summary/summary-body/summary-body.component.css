@@ -1,3 +1,19 @@
 .currency-details {
   line-height: 15px;
 }
+
+.panel-heading {
+  cursor: pointer;
+}
+
+.panel-body hr {
+  margin: 10px 0;
+}
+
+.panel-group {
+  margin-bottom: 0;
+}
+
+.summary-balance-item, .summary-balance-title {
+  line-height: 15px;
+}

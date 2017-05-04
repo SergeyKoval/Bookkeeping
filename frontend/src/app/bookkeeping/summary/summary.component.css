@@ -18,4 +18,9 @@
 .summary-footer {
   background-color: #cccccc;
   border-color: #adadad;
+  font-size: 15px;
+}
+
+.panel-body {
+  padding: 10px;
 }

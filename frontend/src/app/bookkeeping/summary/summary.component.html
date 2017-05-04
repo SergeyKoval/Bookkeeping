@@ -5,7 +5,10 @@
       <bk-currency-conversion (currencyConversion)="setSummaryConversion($event)"></bk-currency-conversion>
     </div>
     <div class="panel-body">
-      <bk-summary-body *ngIf="!loading; else loadingIndicator"></bk-summary-body>
+      <bk-summary-body *ngIf="!loading; else loadingIndicator"
+                       [summaries]="summaries"
+                       [conversionCurrency]="conversionCurrency">
+      </bk-summary-body>
     </div>
     <div *ngIf="!loading" class="panel-footer summary-footer">
       <bk-summary-footer [summaries]="summaries" [conversionCurrency]="conversionCurrency"></bk-summary-footer>

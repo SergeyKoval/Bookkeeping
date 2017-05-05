@@ -7,7 +7,7 @@ import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {Subscription} from 'rxjs/Subscription';
 
 import {HOST} from '../config/config';
-import {SummaryBalanceItem} from '../model/SummaryBalanceItem';
+import {BalanceItem} from '../model/summary/BalanceItem';
 
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
@@ -42,8 +42,8 @@ export class CurrencyService {
     return this._currencies.get(currencyName).symbol;
   }
 
-  public sortSummaryBalanceItems(items: SummaryBalanceItem[]): SummaryBalanceItem[] {
-    items.sort((firstItem: SummaryBalanceItem, secondItem: SummaryBalanceItem) => {
+  public sortSummaryBalanceItems(items: BalanceItem[]): BalanceItem[] {
+    items.sort((firstItem: BalanceItem, secondItem: BalanceItem) => {
       return this._currencies.get(firstItem.currency).order - this._currencies.get(secondItem.currency).order;
     });
     return items;

@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 
-import {SummaryCategory} from '../../../common/model/SummaryCategory';
+import {Category} from '../../../common/model/summary/Category';
 
 @Component({
   selector: 'bk-summary-footer',
@@ -9,7 +9,7 @@ import {SummaryCategory} from '../../../common/model/SummaryCategory';
 })
 export class SummaryFooterComponent {
   @Input()
-  public categories: SummaryCategory[];
+  public categories: Category[];
   @Input()
   public conversionCurrency: Currency;
 }

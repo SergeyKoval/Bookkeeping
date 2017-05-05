@@ -1,22 +1,22 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import {SummaryBalanceItem} from '../model/SummaryBalanceItem';
-import {CurrencyService} from '../service/currency.service';
-import {SummaryCategory} from '../model/SummaryCategory';
-import {SummarySubCategory} from '../model/SummarySubCategory';
+import {Category} from '../../model/summary/Category';
+import {BalanceItem} from '../../model/summary/BalanceItem';
+import {SubCategory} from '../../model/summary/SubCategory';
+import {CurrencyService} from '../../service/currency.service';
 
 @Pipe({
   name: 'summaryFooter'
 })
 export class SummaryFooterPipe implements PipeTransform {
 
-  public transform(categories: SummaryCategory[], currency: Currency): SummaryBalanceItem[] {
-    const footerSummaries: SummaryBalanceItem[] = [];
+  public transform(categories: Category[], currency: Currency): BalanceItem[] {
+    const footerSummaries: BalanceItem[] = [];
     const balanceMap: Map<string, number> = new Map();
 
-    categories.forEach((category: SummaryCategory) => {
-      category.subCategories.forEach((subCategory: SummarySubCategory) => {
-        subCategory.balance.forEach((balance: SummaryBalanceItem) => {
+    categories.forEach((category: Category) => {
+      category.subCategories.forEach((subCategory: SubCategory) => {
+        subCategory.balance.forEach((balance: BalanceItem) => {
           const balanceCurrency: string = balance.currency;
           if (!balanceMap.has(balanceCurrency)) {
             balanceMap.set(balanceCurrency, balance.value);
@@ -29,10 +29,10 @@ export class SummaryFooterPipe implements PipeTransform {
 
     balanceMap.forEach((value: number, key: string) => {
       if (!currency) {
-        footerSummaries.push(new SummaryBalanceItem(key, value));
+        footerSummaries.push(new BalanceItem(key, value));
       } else {
         if (footerSummaries.length === 0) {
-          footerSummaries.push(new SummaryBalanceItem(currency.name, 0));
+          footerSummaries.push(new BalanceItem(currency.name, 0));
         }
 
         footerSummaries[0].value += CurrencyService.convertToCurrency(value, key, currency);

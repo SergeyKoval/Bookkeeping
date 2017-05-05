@@ -26,10 +26,11 @@ import { CurrencyConversionComponent } from './bookkeeping/summary/currency-conv
 import {SummaryService} from './common/service/summary.service';
 import { SummaryBodyComponent } from './bookkeeping/summary/summary-body/summary-body.component';
 import { SummaryFooterComponent } from './bookkeeping/summary/summary-footer/summary-footer.component';
-import { SummaryFooterPipe } from './common/pipes/summary-footer.pipe';
+import { SummaryFooterPipe } from './common/pipes/summary/summary-footer.pipe';
 import { CurrencySymbolComponent } from './common/components/currency-symbol/currency-symbol.component';
-import { SummaryBalanceOrderingPipe } from './common/pipes/summary-balance-ordering.pipe';
+import { SummaryBalanceOrderingPipe } from './common/pipes/summary/summary-balance-ordering.pipe';
 import { CurrencyValuePipe } from './common/pipes/currency-value.pipe';
+import { SummaryBodyCategoryPipe } from './common/pipes/summary/summary-body-category.pipe';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { CurrencyValuePipe } from './common/pipes/currency-value.pipe';
     SummaryFooterPipe,
     CurrencySymbolComponent,
     SummaryBalanceOrderingPipe,
-    CurrencyValuePipe
+    CurrencyValuePipe,
+    SummaryBodyCategoryPipe
   ],
   imports: [
     BrowserModule,

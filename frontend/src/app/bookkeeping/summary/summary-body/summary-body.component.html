@@ -5,7 +5,7 @@
           <div class="clearfix">
             <div class="col-lg-7"><strong><em>{{category.name}}</em></strong></div>
             <div class="col-lg-5">
-              <div class="row" *ngFor="let subCategory of category.subCategories">
+              <div class="row" *ngFor="let balanceItem of category | summaryBodyCategory">
                 <div class="col-lg-3 text-right"><strong>Br</strong></div>
                 <div class="col-lg-9">12'365'000</div>
               </div>

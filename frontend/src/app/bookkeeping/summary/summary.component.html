@@ -6,12 +6,12 @@
     </div>
     <div class="panel-body">
       <bk-summary-body *ngIf="!loading; else loadingIndicator"
-                       [summaries]="summaries"
+                       [categories]="categories"
                        [conversionCurrency]="conversionCurrency">
       </bk-summary-body>
     </div>
     <div *ngIf="!loading" class="panel-footer summary-footer">
-      <bk-summary-footer [summaries]="summaries" [conversionCurrency]="conversionCurrency"></bk-summary-footer>
+      <bk-summary-footer [categories]="categories" [conversionCurrency]="conversionCurrency"></bk-summary-footer>
     </div>
   </div>
 </div>

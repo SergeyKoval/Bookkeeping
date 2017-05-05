@@ -13,6 +13,7 @@ type CurrencyConversion = {
 type Summary = {
   ownerId: number,
   category: string,
+  opened: true,
   subCategory: string,
   categoryOrder: number,
   subCategoryOrder: number,

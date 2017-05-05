@@ -1,11 +1,11 @@
 <div class="panel-group">
-  <div class="panel panel-default">
+  <div class="panel panel-default" *ngFor="let category of categories">
     <div class="panel-heading">
       <h4 class="panel-title">
           <div class="clearfix">
-            <div class="col-lg-7"><strong><em>Деньги</em></strong></div>
+            <div class="col-lg-7"><strong><em>{{category.name}}</em></strong></div>
             <div class="col-lg-5">
-              <div class="row">
+              <div class="row" *ngFor="let subCategory of category.subCategories">
                 <div class="col-lg-3 text-right"><strong>Br</strong></div>
                 <div class="col-lg-9">12'365'000</div>
               </div>
@@ -17,50 +17,34 @@
           </div>
       </h4>
     </div>
-    <div class="panel-body">
-      <div class="row summary-balance-item">
-        <div class="col-lg-7 summary-balance-title"><strong><em>Наличные</em></strong></div>
-        <div class="col-lg-5">
-          <div class="row">
-            <div class="col-lg-3 text-right"><strong>Br</strong></div>
-            <div class="col-lg-9">12'365'000</div>
-          </div>
-          <div class="row balance-item">
-            <div class="col-lg-3 text-right"><strong>Br</strong></div>
-            <div class="col-lg-9">12'365'000</div>
-          </div>
-        </div>
-      </div>
-      <hr>
-      <div class="row">
-        <div class="col-lg-7 summary-balance-title"><strong><em>Наличные</em></strong></div>
-        <div class="col-lg-5">
-          <div class="row summary-balance-item">
-            <div class="col-lg-3 text-right"><strong>Br</strong></div>
-            <div class="col-lg-9">12'365'000</div>
-          </div>
-          <div class="row balance-item">
-            <div class="col-lg-3 summary-text-right"><strong>Br</strong></div>
-            <div class="col-lg-9">12'365'000</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <div class="clearfix">
-          <div class="col-lg-7"><strong><em>Деньги</em></strong></div>
-          <div class="col-lg-5">
-            <div class="row">
-              <div class="col-lg-3 text-right"><strong>Br</strong></div>
-              <div class="col-lg-9">12'365'000</div>
-            </div>
-          </div>
-        </div>
-      </h4>
-    </div>
+    <!--<div class="panel-body">-->
+      <!--<div class="row summary-balance-item">-->
+        <!--<div class="col-lg-7 summary-balance-title"><strong><em>Наличные</em></strong></div>-->
+        <!--<div class="col-lg-5">-->
+          <!--<div class="row">-->
+            <!--<div class="col-lg-3 text-right"><strong>Br</strong></div>-->
+            <!--<div class="col-lg-9">12'365'000</div>-->
+          <!--</div>-->
+          <!--<div class="row balance-item">-->
+            <!--<div class="col-lg-3 text-right"><strong>Br</strong></div>-->
+            <!--<div class="col-lg-9">12'365'000</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<hr>-->
+      <!--<div class="row">-->
+        <!--<div class="col-lg-7 summary-balance-title"><strong><em>Наличные</em></strong></div>-->
+        <!--<div class="col-lg-5">-->
+          <!--<div class="row summary-balance-item">-->
+            <!--<div class="col-lg-3 text-right"><strong>Br</strong></div>-->
+            <!--<div class="col-lg-9">12'365'000</div>-->
+          <!--</div>-->
+          <!--<div class="row balance-item">-->
+            <!--<div class="col-lg-3 summary-text-right"><strong>Br</strong></div>-->
+            <!--<div class="col-lg-9">12'365'000</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
   </div>
 </div>

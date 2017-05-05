@@ -10,10 +10,10 @@
     {"ownerId": 2, "name": "USD", "symbol": "&#x24;", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}}
   ],
   "summaries": [
-    {"ownerId": 1, "category": "Карточки", "subCategory": "Авто", "categoryOrder":2, "subCategoryOrder": 3, "balance": [{"currency": "BYN", "value": 196.82}]},
-    {"ownerId": 1, "category": "Карточки", "subCategory": "Альфа", "categoryOrder":2, "subCategoryOrder": 1, "balance": [{"currency": "BYN", "value": 35.75}, {"currency": "USD", "value": 180}, {"currency": "EUR", "value": 7230}]},
-    {"ownerId": 1, "category": "Карточки", "subCategory": "PayOK", "categoryOrder":2, "subCategoryOrder": 2, "balance": [{"currency": "BYN", "value": 895.48}]},
-    {"ownerId": 1, "category": "Деньги", "subCategory": "Резерв", "categoryOrder":1, "subCategoryOrder": 2, "balance": [{"currency": "USD", "value": 1170}, {"currency": "EUR", "value": 820}]},
-    {"ownerId": 1, "category": "Деньги", "subCategory": "Наличные", "categoryOrder":1, "subCategoryOrder": 1, "balance": [{"currency": "BYN", "value": 75.12}]}
+    {"ownerId": 1, "category": "Карточки", "opened":true, "subCategory": "Авто", "categoryOrder":2, "subCategoryOrder": 3, "balance": [{"currency": "BYN", "value": 196.82}]},
+    {"ownerId": 1, "category": "Карточки", "opened":true, "subCategory": "Альфа", "categoryOrder":2, "subCategoryOrder": 1, "balance": [{"currency": "BYN", "value": 35.75}, {"currency": "USD", "value": 180}, {"currency": "EUR", "value": 7230}]},
+    {"ownerId": 1, "category": "Карточки", "opened":true, "subCategory": "PayOK", "categoryOrder":2, "subCategoryOrder": 2, "balance": [{"currency": "BYN", "value": 895.48}]},
+    {"ownerId": 1, "category": "Деньги", "opened":false, "subCategory": "Резерв", "categoryOrder":1, "subCategoryOrder": 2, "balance": [{"currency": "USD", "value": 1170}, {"currency": "EUR", "value": 820}]},
+    {"ownerId": 1, "category": "Деньги", "opened":false, "subCategory": "Наличные", "categoryOrder":1, "subCategoryOrder": 1, "balance": [{"currency": "BYN", "value": 75.12}]}
   ]
 }

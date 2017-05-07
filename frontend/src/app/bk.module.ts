@@ -6,6 +6,8 @@ import {RouterModule} from '@angular/router';
 import {MdProgressSpinnerModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
+import {PopoverModule} from 'ngx-popover';
+
 import {BookkeepingRootComponent} from './bk.component';
 import {BOOKKEEPING_ROUTES} from './routes';
 import { AuthenticationComponent } from './authentication/authentication.component';
@@ -61,6 +63,7 @@ import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-
     HttpModule,
     BrowserAnimationsModule,
     MdProgressSpinnerModule,
+    PopoverModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
   ],
   providers: [

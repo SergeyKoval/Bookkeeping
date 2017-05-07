@@ -1,3 +1,100 @@
-<p>
-  history works!
-</p>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="btn-group history-actions-top" role="group">
+      <a class="btn btn-default">Добавить операцию</a>
+      <a class="btn btn-default">Показать больше операций</a>
+    </div>
+
+    <div class="table">
+      <div class="row header">
+        <div class="col-md-2">Дата</div>
+        <div class="col-md-2">Сумма</div>
+        <div class="col-md-3">Категория</div>
+        <div class="col-md-3">Комментарий</div>
+        <div class="col-md-2 text-center">Действия</div>
+      </div>
+
+      <div>
+        <div class="row history-line">
+          <div class="col-md-2">29.10.2010<div class="footnote">пятница</div></div>
+          <div class="col-md-2">
+            <div class="expenditure">5'600 $</div>
+            <div class="footnote">Наличные</div>
+          </div>
+          <div class="col-md-3">
+            <img src="assets/image/home.gif">
+            <span class="description">Питание</span>
+            <div class="footnote">Продукты питания</div>
+          </div>
+          <div class="col-md-3 description">Детское питание с очень длинным названием</div>
+          <div class="col-md-2 text-center">
+            <span class="glyphicon glyphicon-pencil"
+                  popover="Редактировать" popoverPlacement="top"
+                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+            </span>
+            <span class="glyphicon glyphicon-remove"
+                  popover="Удалить" popoverPlacement="top"
+                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <div class="row history-line">
+            <div class="col-md-2"></div>
+            <div class="col-md-2">
+              <div class="income">5'600 $</div>
+              <div class="footnote">Наличные</div>
+            </div>
+            <div class="col-md-3">
+              <img src="assets/image/home.gif">
+              <span class="description">Питание</span>
+              <div class="footnote">Продукты питания</div>
+            </div>
+            <div class="col-md-3 description">Детское питание</div>
+            <div class="col-md-2 text-center">
+              <span class="glyphicon glyphicon-pencil"
+                    popover="Редактировать" popoverPlacement="top"
+                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+              </span>
+              <span class="glyphicon glyphicon-remove"
+                    popover="Удалить" popoverPlacement="top"
+                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+              </span>
+            </div>
+          </div>
+          <hr ng-hide="$last">
+
+          <div class="row history-line">
+            <div class="col-md-2">28.10.2010<div class="footnote">четверг</div></div>
+            <div class="col-md-2">
+              <div class="expenditure">5'600 $</div>
+              <div class="footnote">Наличные</div>
+            </div>
+            <div class="col-md-3">
+              <img src="assets/image/home.gif">
+              <span class="description">Питание</span>
+              <div class="footnote">Продукты питания</div>
+            </div>
+            <div class="col-md-3 description">Детское питание с очень длинным названием</div>
+            <div class="col-md-2 text-center">
+              <span class="glyphicon glyphicon-pencil"
+                    popover="Редактировать" popoverPlacement="top"
+                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+              </span>
+              <span class="glyphicon glyphicon-remove"
+                    popover="Удалить" popoverPlacement="top"
+                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group history-actions-bottom" role="group">
+        <a class="btn btn-default">Добавить операцию</a>
+        <a class="btn btn-default">Показать больше операций</a>
+      </div>
+    </div>
+  </div>
+</div>

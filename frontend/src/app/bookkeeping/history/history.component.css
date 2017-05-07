@@ -1,0 +1,56 @@
+.history-actions-top {
+  padding-bottom: 13px;
+}
+
+.history-actions-bottom {
+  padding-top: 13px;
+}
+
+.header {
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  font-weight: bolder;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.footnote {
+  color: #999;
+  font-size: 11px;
+  font-style: normal;
+}
+
+.expenditure {
+  color: #cc0000;
+}
+
+.income {
+  color: #009900;
+}
+
+.description {
+  font-size: 12px;
+}
+
+.history-line {
+  padding-bottom: 5px;
+}
+
+.table {
+  margin: 0;
+}
+
+.table div hr {
+  margin: 5px 0;
+}
+
+.glyphicon {
+  color: #999;
+  cursor: pointer;
+}
+
+.glyphicon:hover {
+  color: #5e5e5e;
+}

@@ -1,50 +1,39 @@
 <div class="panel-group">
   <div class="panel panel-default" *ngFor="let category of categories">
-    <div class="panel-heading">
+    <div class="panel-heading" (click)="changeOpenState(category)">
       <h4 class="panel-title">
           <div class="clearfix">
             <div class="col-lg-7"><strong><em>{{category.name}}</em></strong></div>
             <div class="col-lg-5">
-              <div class="row" *ngFor="let balanceItem of category | summaryBodyCategory">
-                <div class="col-lg-3 text-right"><strong>Br</strong></div>
-                <div class="col-lg-9">12'365'000</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-3 text-right"><strong>Br</strong></div>
-                <div class="col-lg-9">12'365'000</div>
+              <div class="row" *ngFor="let balanceItem of category | summaryBodyCategory:conversionCurrency | summaryBalanceOrdering">
+                <div class="col-lg-3 text-right">
+                  <strong>
+                    <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
+                  </strong>
+                </div>
+                <div class="col-lg-9 text-right balance">{{balanceItem.value | currencyValue}}</div>
               </div>
             </div>
           </div>
       </h4>
     </div>
-    <!--<div class="panel-body">-->
-      <!--<div class="row summary-balance-item">-->
-        <!--<div class="col-lg-7 summary-balance-title"><strong><em>Наличные</em></strong></div>-->
-        <!--<div class="col-lg-5">-->
-          <!--<div class="row">-->
-            <!--<div class="col-lg-3 text-right"><strong>Br</strong></div>-->
-            <!--<div class="col-lg-9">12'365'000</div>-->
-          <!--</div>-->
-          <!--<div class="row balance-item">-->
-            <!--<div class="col-lg-3 text-right"><strong>Br</strong></div>-->
-            <!--<div class="col-lg-9">12'365'000</div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<hr>-->
-      <!--<div class="row">-->
-        <!--<div class="col-lg-7 summary-balance-title"><strong><em>Наличные</em></strong></div>-->
-        <!--<div class="col-lg-5">-->
-          <!--<div class="row summary-balance-item">-->
-            <!--<div class="col-lg-3 text-right"><strong>Br</strong></div>-->
-            <!--<div class="col-lg-9">12'365'000</div>-->
-          <!--</div>-->
-          <!--<div class="row balance-item">-->
-            <!--<div class="col-lg-3 summary-text-right"><strong>Br</strong></div>-->
-            <!--<div class="col-lg-9">12'365'000</div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
+    <div class="panel-body" *ngIf="category.opened">
+      <div *ngFor="let subCategory of category.subCategories; last as last">
+        <div class="row summary-balance-item" >
+          <div class="col-lg-7 summary-balance-title"><strong><em>{{subCategory.name}}</em></strong></div>
+          <div class="col-lg-5">
+            <div class="row" *ngFor="let balanceItem of subCategory.balance | summaryBodySubcategory:conversionCurrency | summaryBalanceOrdering">
+              <div class="col-lg-3 text-right">
+                <strong>
+                  <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
+                </strong>
+              </div>
+              <div class="col-lg-9 text-right">{{balanceItem.value | currencyValue}}</div>
+            </div>
+          </div>
+        </div>
+        <hr *ngIf="!last">
+      </div>
+    </div>
   </div>
 </div>

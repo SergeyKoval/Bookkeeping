@@ -12,4 +12,8 @@ export class SummaryBodyComponent {
   public categories: Category[];
   @Input()
   public conversionCurrency: Currency;
+
+  public changeOpenState(category: Category): void {
+    category.opened = !category.opened;
+  }
 }

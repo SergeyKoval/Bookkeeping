@@ -17,3 +17,7 @@
 .summary-balance-item, .summary-balance-title {
   line-height: 15px;
 }
+
+.balance {
+  padding-right: 0;
+}

@@ -31,6 +31,7 @@ import { CurrencySymbolComponent } from './common/components/currency-symbol/cur
 import { SummaryBalanceOrderingPipe } from './common/pipes/summary/summary-balance-ordering.pipe';
 import { CurrencyValuePipe } from './common/pipes/currency-value.pipe';
 import { SummaryBodyCategoryPipe } from './common/pipes/summary/summary-body-category.pipe';
+import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-subcategory.pipe';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { SummaryBodyCategoryPipe } from './common/pipes/summary/summary-body-cat
     CurrencySymbolComponent,
     SummaryBalanceOrderingPipe,
     CurrencyValuePipe,
-    SummaryBodyCategoryPipe
+    SummaryBodyCategoryPipe,
+    SummaryBodySubcategoryPipe
   ],
   imports: [
     BrowserModule,

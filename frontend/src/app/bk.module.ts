@@ -34,6 +34,9 @@ import { SummaryBalanceOrderingPipe } from './common/pipes/summary/summary-balan
 import { CurrencyValuePipe } from './common/pipes/currency-value.pipe';
 import { SummaryBodyCategoryPipe } from './common/pipes/summary/summary-body-category.pipe';
 import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-subcategory.pipe';
+import {HistoryService} from './common/service/history.service';
+import { HistoryPageActionsComponent } from './bookkeeping/history/history-page-actions/history-page-actions.component';
+import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,9 @@ import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-
     SummaryBalanceOrderingPipe,
     CurrencyValuePipe,
     SummaryBodyCategoryPipe,
-    SummaryBodySubcategoryPipe
+    SummaryBodySubcategoryPipe,
+    HistoryPageActionsComponent,
+    HistoryGroupPipe
   ],
   imports: [
     BrowserModule,
@@ -71,6 +76,7 @@ import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-
     LoadingService,
     CurrencyService,
     SummaryService,
+    HistoryService,
     {
       provide: HOST,
       useValue: environment.backendHost,

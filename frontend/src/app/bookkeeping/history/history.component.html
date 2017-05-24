@@ -1,9 +1,6 @@
-<div class="panel panel-default">
+<div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
   <div class="panel-body">
-    <div class="btn-group history-actions-top" role="group">
-      <a class="btn btn-default">Добавить операцию</a>
-      <a class="btn btn-default">Показать больше операций</a>
-    </div>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
 
     <div class="table">
       <div class="row header">
@@ -14,19 +11,31 @@
         <div class="col-md-2 text-center">Действия</div>
       </div>
 
-      <div>
-        <div class="row history-line">
-          <div class="col-md-2">29.10.2010<div class="footnote">пятница</div></div>
-          <div class="col-md-2">
-            <div class="expense">5'600 $</div>
-            <div class="footnote">Наличные</div>
+      <div *ngFor="let historyGroup of historyItems | historyGroup; let lastGroup = last">
+        <div class="row history-line" *ngFor="let historyItem of historyGroup.historyItems; let firstItem = first">
+          <div class="col-md-4">
+            <div [ngClass]="{'no-left-right-padding': true, 'col-md-5': historyItem.goal, 'col-md-6': !historyItem.goal}">
+              <span *ngIf="firstItem">
+                {{historyGroup.dateString}}
+                <div class="footnote">{{historyGroup.dayOfWeek}}</div>
+              </span>
+            </div>
+            <div *ngIf="historyItem.goal" class="glyphicon glyphicon-screenshot goal-icon col-md-1 no-left-right-padding"
+                  popover="{{getGoalDescription(historyItem.goal)}}" popoverPlacement="top"
+                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+            </div>
+            <div class="col-md-6 no-right-padding">
+              <div [ngClass]="{'expense': historyItem.isExpense()}">
+                {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></div>
+              <div class="footnote">{{historyItem.balance.subCategory}}</div>
+            </div>
           </div>
           <div class="col-md-3">
-            <img src="assets/image/home.gif">
-            <span class="description">Питание</span>
-            <div class="footnote">Продукты питания</div>
+            <img [src]="historyItem.icon">
+            <span class="description">{{historyItem.category}}</span>
+            <div class="footnote">{{historyItem.subCategory}}</div>
           </div>
-          <div class="col-md-3 description">Детское питание с очень длинным названием</div>
+          <div class="col-md-3 description">{{historyItem.description}}</div>
           <div class="col-md-2 text-center">
             <span class="glyphicon glyphicon-pencil"
                   popover="Редактировать" popoverPlacement="top"
@@ -38,63 +47,13 @@
             </span>
           </div>
         </div>
-
-        <div>
-          <div class="row history-line">
-            <div class="col-md-2"></div>
-            <div class="col-md-2">
-              <div class="income">5'600 $</div>
-              <div class="footnote">Наличные</div>
-            </div>
-            <div class="col-md-3">
-              <img src="assets/image/home.gif">
-              <span class="description">Питание</span>
-              <div class="footnote">Продукты питания</div>
-            </div>
-            <div class="col-md-3 description">Детское питание</div>
-            <div class="col-md-2 text-center">
-              <span class="glyphicon glyphicon-pencil"
-                    popover="Редактировать" popoverPlacement="top"
-                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-              </span>
-              <span class="glyphicon glyphicon-remove"
-                    popover="Удалить" popoverPlacement="top"
-                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-              </span>
-            </div>
-          </div>
-          <hr ng-hide="$last">
-
-          <div class="row history-line">
-            <div class="col-md-2">28.10.2010<div class="footnote">четверг</div></div>
-            <div class="col-md-2">
-              <div class="expense">5'600 $</div>
-              <div class="footnote">Наличные</div>
-            </div>
-            <div class="col-md-3">
-              <img src="assets/image/home.gif">
-              <span class="description">Питание</span>
-              <div class="footnote">Продукты питания</div>
-            </div>
-            <div class="col-md-3 description">Детское питание с очень длинным названием</div>
-            <div class="col-md-2 text-center">
-              <span class="glyphicon glyphicon-pencil"
-                    popover="Редактировать" popoverPlacement="top"
-                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-              </span>
-              <span class="glyphicon glyphicon-remove"
-                    popover="Удалить" popoverPlacement="top"
-                    [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="btn-group history-actions-bottom" role="group">
-        <a class="btn btn-default">Добавить операцию</a>
-        <a class="btn btn-default">Показать больше операций</a>
+        <hr *ngIf="!lastGroup">
       </div>
     </div>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
   </div>
 </div>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="100"></bk-spinner>
+</ng-template>

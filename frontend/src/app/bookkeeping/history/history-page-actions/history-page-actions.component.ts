@@ -23,7 +23,9 @@ export class HistoryPageActionsComponent implements OnInit {
   }
 
   public showMoreHistoryItems(): void {
-    this.loadMore.emit();
+    if (!this.disableMoreButton) {
+      this.loadMore.emit();
+    }
   }
 
   public moreButtonDisabledValue(): string {

@@ -1,6 +1,7 @@
 <div class="btn-group" role="group">
   <a class="btn btn-default" (click)="addHistoryItem()">Добавить операцию</a>
-  <a *ngIf="!loading; else loadingIndicator" class="btn btn-default" (click)="showMoreHistoryItems()">Показать больше операций</a>
+  <a *ngIf="!loading; else loadingIndicator" class="btn btn-default"
+     (click)="showMoreHistoryItems()" [attr.disabled]="moreButtonDisabledValue()">Показать больше операций</a>
 </div>
 
 <ng-template #loadingIndicator>

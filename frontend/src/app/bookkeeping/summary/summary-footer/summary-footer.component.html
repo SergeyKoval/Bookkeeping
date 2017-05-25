@@ -7,7 +7,7 @@
           <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
         </strong>
       </div>
-      <div class="col-lg-9 text-right balance">{{balanceItem.value | currencyValue}}</div>
+      <div class="col-lg-9 text-right balance">{{balanceItem.value | currencyValue:true}}</div>
     </div>
   </div>
 </div>

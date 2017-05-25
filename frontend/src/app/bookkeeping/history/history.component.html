@@ -1,6 +1,6 @@
 <div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
   <div class="panel-body">
-    <bk-history-page-actions [loading]="loadingMoreIndicator" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
 
     <div class="table">
       <div class="row header">
@@ -25,8 +25,8 @@
                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
             </div>
             <div class="col-md-6 no-right-padding">
-              <div [ngClass]="{'expense': historyItem.isExpense()}">
-                {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></div>
+              <div [ngClass]="{'expense': historyItem.isExpense(), 'income': !historyItem.isExpense()}">
+                {{historyItem.balance.value | currencyValue:false}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></div>
               <div class="footnote">{{historyItem.balance.subCategory}}</div>
             </div>
           </div>
@@ -50,7 +50,7 @@
         <hr *ngIf="!lastGroup">
       </div>
     </div>
-    <bk-history-page-actions [loading]="loadingMoreIndicator" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
   </div>
 </div>
 

@@ -5,7 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CurrencyValuePipe implements PipeTransform {
 
-  public transform(value: number): string {
-    return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '\'');
+  public transform(value: number, fixedSize: boolean): string {
+    const stringValue: string = fixedSize ? value.toFixed(2) : value.toString();
+    return stringValue.replace(/\B(?=(\d{3})+(?!\d))/g, '\'');
   }
 }

@@ -24,7 +24,10 @@ export class HistoryGroupPipe implements PipeTransform {
       historyGroup.historyItems.push(new HistoryItem(item.order, item.type, item.category, item.subCategory, item.icon, item.description, item.goal, item.balance));
     });
 
-    historyGroupsMap.forEach((historyGroup: HistoryGroup) => historyGroups.push(historyGroup));
+    historyGroupsMap.forEach((historyGroup: HistoryGroup) => {
+      historyGroups.push(historyGroup);
+      historyGroup.historyItems.sort((firstItem: HistoryItem, secondItem: HistoryItem) => secondItem.order - firstItem.order);
+    });
     historyGroups.sort((firstGroup: HistoryGroup, secondGroup: HistoryGroup) => secondGroup.date - firstGroup.date);
     return historyGroups;
   }

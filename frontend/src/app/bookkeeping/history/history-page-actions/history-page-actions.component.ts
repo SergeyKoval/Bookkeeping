@@ -8,6 +8,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class HistoryPageActionsComponent implements OnInit {
   @Input()
   public loading: boolean;
+  @Input()
+  public disableMoreButton: boolean;
   @Output()
   public loadMore: EventEmitter<null> = new EventEmitter();
 
@@ -22,5 +24,9 @@ export class HistoryPageActionsComponent implements OnInit {
 
   public showMoreHistoryItems(): void {
     this.loadMore.emit();
+  }
+
+  public moreButtonDisabledValue(): string {
+    return this.disableMoreButton ? 'true' : null;
   }
 }

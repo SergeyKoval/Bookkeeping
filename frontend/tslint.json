@@ -176,7 +176,7 @@
     ],
     "max-line-length": [
       true,
-      170
+      200
     ],
     "no-consecutive-blank-lines": [
       true,

@@ -20,4 +20,8 @@ export class HistoryService {
       .delay(1500)
       .map((response: Response) => response.json());
   }
+
+  public deleteHistoryItem(historyItem: HistoryType): Observable<Response> {
+    return this._http.delete(`${this._host}/history/${historyItem.id}`).delay(1500);
+  }
 }

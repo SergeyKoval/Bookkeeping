@@ -21,7 +21,7 @@ export class HistoryGroupPipe implements PipeTransform {
       }
 
       const historyGroup: HistoryGroup = historyGroupsMap.get(itemDateString);
-      historyGroup.historyItems.push(new HistoryItem(item.order, item.type, item.category, item.subCategory, item.icon, item.description, item.goal, item.balance));
+      historyGroup.historyItems.push(new HistoryItem(item.id, item.order, item.type, item.category, item.subCategory, item.icon, item.description, item.goal, item.balance));
     });
 
     historyGroupsMap.forEach((historyGroup: HistoryGroup) => {

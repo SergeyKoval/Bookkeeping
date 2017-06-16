@@ -1,9 +1,17 @@
 import {Component, OnInit} from '@angular/core';
+import {Response} from '@angular/http';
 
 import {Subscription} from 'rxjs/Subscription';
 
 import {HistoryService} from '../../common/service/history.service';
 import {AuthenticationService} from '../../common/service/authentication.service';
+import {ConfirmPopupService} from '../../common/components/confirm-popup/confirm-popup.service';
+import {HistoryItem} from '../../common/model/history/HistoryItem';
+
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/first';
 
 @Component({
   selector: 'bk-history',
@@ -24,13 +32,17 @@ export class HistoryComponent implements OnInit {
 
   public constructor(
     private _historyService: HistoryService,
-    private _authenticationService: AuthenticationService
+    private _authenticationService: AuthenticationService,
+    private _confirmPopupService: ConfirmPopupService
   ) {}
 
   public ngOnInit(): void {
     this.authenticatedProfileId = this._authenticationService.authenticatedProfile.id;
     const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, HistoryComponent._PAGE_LIMIT)
       .subscribe((historyItems: HistoryType[]) => {
+        if (historyItems.length < HistoryComponent._PAGE_LIMIT) {
+          this.disableMoreButton = true;
+        }
         this.historyItems = historyItems;
         subscription.unsubscribe();
         this.loading = false;
@@ -43,7 +55,7 @@ export class HistoryComponent implements OnInit {
 
   public showMoreHistoryItems(): void {
     this.loadingMoreIndicator = true;
-    const pageNumber: number = this.historyItems.length / HistoryComponent._PAGE_LIMIT + 1;
+    const pageNumber: number = Math.ceil(this.historyItems.length / HistoryComponent._PAGE_LIMIT) + 1;
 
     const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, pageNumber, HistoryComponent._PAGE_LIMIT)
       .subscribe((historyItems: HistoryType[]) => {
@@ -53,6 +65,35 @@ export class HistoryComponent implements OnInit {
         this.historyItems = this.historyItems.concat(historyItems);
         subscription.unsubscribe();
         this.loadingMoreIndicator = false;
+      });
+  }
+
+  public deleteHistoryItem(historyItem: HistoryItem): void {
+    const itemsLimit: number = this.historyItems.length;
+    const subscription: Subscription = this._confirmPopupService.openConfirmPopup('Подтверждение', 'Точно удалить?')
+      .afterClosed()
+      .filter((result: boolean) => result === true)
+      .do(() => this.loading = true)
+      .switchMap(() => this.historyItems)
+      .filter((historyType: HistoryType) => historyType.id === historyItem.id)
+      .switchMap((historyType: HistoryType) => this._historyService.deleteHistoryItem(historyType))
+      .do((response: Response) => {
+        if (!response.ok) {
+          // TODO: show error notification
+          this.loading = false;
+        }
+      })
+      .filter((response: Response) => response.ok)
+      .switchMap(() => this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, itemsLimit))
+      .subscribe((historyItems: HistoryType[]) => {
+        if (historyItems.length < itemsLimit) {
+          this.disableMoreButton = true;
+        }
+
+        this.historyItems = historyItems;
+        this.loading = false;
+        // TODO: show success notification
+        subscription.unsubscribe();
       });
   }
 

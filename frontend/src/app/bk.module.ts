@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule} from '@angular/router';
-import {MdProgressSpinnerModule} from '@angular/material';
+import {MdDialogModule, MdProgressSpinnerModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {PopoverModule} from 'ngx-popover';
@@ -37,6 +37,9 @@ import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-
 import {HistoryService} from './common/service/history.service';
 import { HistoryPageActionsComponent } from './bookkeeping/history/history-page-actions/history-page-actions.component';
 import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
+import { HistoryEditPopupComponent } from './bookkeeping/history/history-edit-popup/history-edit-popup.component';
+import { ConfirmPopupComponent } from './common/components/confirm-popup/confirm-popup.component';
+import {ConfirmPopupService} from './common/components/confirm-popup/confirm-popup.service';
 
 @NgModule({
   declarations: [
@@ -60,7 +63,9 @@ import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
     SummaryBodyCategoryPipe,
     SummaryBodySubcategoryPipe,
     HistoryPageActionsComponent,
-    HistoryGroupPipe
+    HistoryGroupPipe,
+    HistoryEditPopupComponent,
+    ConfirmPopupComponent
   ],
   imports: [
     BrowserModule,
@@ -68,8 +73,13 @@ import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
     HttpModule,
     BrowserAnimationsModule,
     MdProgressSpinnerModule,
+    MdDialogModule,
     PopoverModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
+  ],
+  entryComponents: [
+    ConfirmPopupComponent,
+    HistoryEditPopupComponent
   ],
   providers: [
     AuthenticationService,
@@ -77,6 +87,7 @@ import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
     CurrencyService,
     SummaryService,
     HistoryService,
+    ConfirmPopupService,
     {
       provide: HOST,
       useValue: environment.backendHost,

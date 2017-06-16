@@ -1,5 +1,6 @@
 export class HistoryItem {
   public constructor(
+    public id: number,
     public order: number,
     public type: string,
     public category: string,

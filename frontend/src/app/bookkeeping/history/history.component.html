@@ -41,7 +41,7 @@
                   popover="Редактировать" popoverPlacement="top"
                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
             </span>
-            <span class="glyphicon glyphicon-remove"
+            <span class="glyphicon glyphicon-remove" (click)="deleteHistoryItem(historyItem)"
                   popover="Удалить" popoverPlacement="top"
                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
             </span>

@@ -1,4 +1,5 @@
 type HistoryType = {
+  id: number,
   ownerId: number,
   date: number,
   order: number,

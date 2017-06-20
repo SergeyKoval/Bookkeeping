@@ -40,6 +40,7 @@ import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
 import { HistoryEditPopupComponent } from './bookkeeping/history/history-edit-popup/history-edit-popup.component';
 import { ConfirmPopupComponent } from './common/components/confirm-popup/confirm-popup.component';
 import {ConfirmPopupService} from './common/components/confirm-popup/confirm-popup.service';
+import {AlertService} from './common/service/alert.service';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import {ConfirmPopupService} from './common/components/confirm-popup/confirm-pop
     SummaryService,
     HistoryService,
     ConfirmPopupService,
+    AlertService,
     {
       provide: HOST,
       useValue: environment.backendHost,

@@ -7,6 +7,8 @@ import {HistoryService} from '../../common/service/history.service';
 import {AuthenticationService} from '../../common/service/authentication.service';
 import {ConfirmPopupService} from '../../common/components/confirm-popup/confirm-popup.service';
 import {HistoryItem} from '../../common/model/history/HistoryItem';
+import {AlertService} from '../../common/service/alert.service';
+import {AlertType} from '../../common/model/alert/AlertType';
 
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
@@ -33,7 +35,8 @@ export class HistoryComponent implements OnInit {
   public constructor(
     private _historyService: HistoryService,
     private _authenticationService: AuthenticationService,
-    private _confirmPopupService: ConfirmPopupService
+    private _confirmPopupService: ConfirmPopupService,
+    private _alertService: AlertService
   ) {}
 
   public ngOnInit(): void {
@@ -79,8 +82,10 @@ export class HistoryComponent implements OnInit {
       .switchMap((historyType: HistoryType) => this._historyService.deleteHistoryItem(historyType))
       .do((response: Response) => {
         if (!response.ok) {
-          // TODO: show error notification
+          this._alertService.addAlert(AlertType.WARNING, 'Возникла ошибка при удалении записи.');
           this.loading = false;
+        } else {
+          this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена.');
         }
       })
       .filter((response: Response) => response.ok)
@@ -92,7 +97,6 @@ export class HistoryComponent implements OnInit {
 
         this.historyItems = historyItems;
         this.loading = false;
-        // TODO: show success notification
         subscription.unsubscribe();
       });
   }

@@ -7,10 +7,10 @@ import {ConfirmPopupComponent} from './confirm-popup.component';
 @Injectable()
 export class ConfirmPopupService {
 
-  public constructor(private dialog: MdDialog) { }
+  public constructor(private _dialog: MdDialog) { }
 
   public openConfirmPopup(title: string, body: string): MdDialogRef<ConfirmPopupComponent> {
-    return this.dialog.open(ConfirmPopupComponent, {
+    return this._dialog.open(ConfirmPopupComponent, {
       data: {
         'title': title,
         'body': body

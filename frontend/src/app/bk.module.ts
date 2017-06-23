@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule} from '@angular/router';
-import {MdDialogModule, MdProgressSpinnerModule} from '@angular/material';
+import {MdDialogModule, MdProgressSpinnerModule, MdTabsModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {PopoverModule} from 'ngx-popover';
@@ -41,6 +41,10 @@ import { HistoryEditPopupComponent } from './bookkeeping/history/history-edit-po
 import { ConfirmPopupComponent } from './common/components/confirm-popup/confirm-popup.component';
 import {ConfirmPopupService} from './common/components/confirm-popup/confirm-popup.service';
 import {AlertService} from './common/service/alert.service';
+import {MyDatePickerModule} from 'mydatepicker';
+import { GoalsContainerComponent } from './bookkeeping/history/history-edit-popup/goals-container/goals-container.component';
+import { CurrencyValueDirective } from './common/directives/currency-value.directive';
+import { SelectComponent } from './common/components/select/select.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +70,10 @@ import {AlertService} from './common/service/alert.service';
     HistoryPageActionsComponent,
     HistoryGroupPipe,
     HistoryEditPopupComponent,
-    ConfirmPopupComponent
+    ConfirmPopupComponent,
+    GoalsContainerComponent,
+    CurrencyValueDirective,
+    SelectComponent
   ],
   imports: [
     BrowserModule,
@@ -76,6 +83,8 @@ import {AlertService} from './common/service/alert.service';
     MdProgressSpinnerModule,
     MdDialogModule,
     PopoverModule,
+    MyDatePickerModule,
+    MdTabsModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
   ],
   entryComponents: [
@@ -83,6 +92,7 @@ import {AlertService} from './common/service/alert.service';
     HistoryEditPopupComponent
   ],
   providers: [
+    CurrencyValuePipe,
     AuthenticationService,
     LoadingService,
     CurrencyService,

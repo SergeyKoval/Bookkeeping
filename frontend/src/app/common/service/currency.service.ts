@@ -53,6 +53,18 @@ export class CurrencyService {
     return this._currencies$$.asObservable();
   }
 
+  public get defaultCurrency(): Currency {
+    let defaultCurrency: Currency = null;
+    this._currencies.forEach((currency: Currency) => {
+      if (currency.default) {
+        defaultCurrency = currency;
+        return;
+      }
+    });
+
+    return defaultCurrency || this._currencies.values().next().value;
+  }
+
   public static convertToCurrency(value: number, currentCurrency: string, convertedCurrency: Currency): number {
     if (convertedCurrency.name === currentCurrency) {
       return value;

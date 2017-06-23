@@ -1,9 +1,63 @@
-<h2 md-dialog-title>Delete all</h2>
-<md-dialog-content>Are you sure?</md-dialog-content>
+<h2 md-dialog-title align="center">{{data.title}}</h2>
+<md-dialog-content>
+  <div class="row">
+    <form [formGroup]="historyForm">
+      <div class="col-md-4 left-column">
+        <my-date-picker [selDate]="selectedDate" [options]="datePickerOptions" (dateChanged)="onDateChanged($event)" locale="ru"></my-date-picker>
+      </div>
+      <div class="col-md-8 right-column">
+        <md-tab-group [selectedIndex]="getSelectedTypeIndex()" (selectChange)="onChangeSelectedType($event)">
+          <md-tab label="Расход">
+            <div class="input-group form-row">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <bk-currency-symbol [currencyName]="historyForm.get('balance').get('currency').value"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li *ngFor="let currency of currencies">
+                    <a (click)="chooseCurrency(currency)">
+                      <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Сумма" bkCurrencyValue>
+              <span class="input-group-btn">
+                <span class="btn btn-default" type="button" (click)="openCurrenciesPopup()">Валюты</span>
+              </span>
+            </div>
+            <div class="form-row">
+              <input type="text" class="form-control" placeholder="Счет">
+            </div>
+            <div class="form-row">
+              <input type="text" class="form-control" placeholder="Категория">
+            </div>
+            <div class="form-row">
+              <input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">
+            </div>
+          </md-tab>
+          <md-tab label="Доход">
+            <h1>Some more tab content</h1>
+            <p>...</p>
+          </md-tab>
+          <md-tab label="Перевод">
+            <h1>Some more tab content</h1>
+            <p>...</p>
+          </md-tab>
+          <md-tab label="Обмен">
+            <h1>Some more tab content</h1>
+            <p>...</p>
+          </md-tab>
+        </md-tab-group>
+      </div>
+    </form>
+  </div>
+  <bk-goals-container *ngIf="showGoalSection"></bk-goals-container>
+</md-dialog-content>
 <md-dialog-actions>
-  <!--<a class="btn btn-default" md-dialog-close="true">Yes</a>-->
-  <!--<a class="btn btn-default" md-dialog-close="false">No</a>-->
-  <button md-dialog-close="value 1">No</button>
-  <!-- Can optionally provide a result for the closing dialog. -->
-  <button md-dialog-close="value 2">Yes</button>
+  <span style="width: 100%">
+    <a class="btn btn-default" style="float: right" (click)="close()">Закрыть</a>
+    <span style="float: right">&nbsp;</span>
+    <a class="btn btn-default" style="float: right" (click)="save()">Сохранить</a>
+  </span>
 </md-dialog-actions>

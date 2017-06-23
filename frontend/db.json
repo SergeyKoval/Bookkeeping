@@ -4,10 +4,10 @@
     {"id": 2, "email": "test@gmail.com", "password": "test"}
   ],
   "currencies": [
-    {"ownerId": 1, "name": "BYN", "symbol": "Byn", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}},
-    {"ownerId": 1, "name": "EUR", "symbol": "&euro;", "order": 3, "conversions": {"BYN": 2.25, "USD": 1.081}},
-    {"ownerId": 1, "name": "USD", "symbol": "&#x24;", "order": 2, "conversions": {"BYN": 1.8711, "EUR": 0.9132}},
-    {"ownerId": 2, "name": "USD", "symbol": "&#x24;", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}}
+    {"ownerId": 1, "name": "BYN", "default": false, "symbol": "Byn", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}},
+    {"ownerId": 1, "name": "EUR", "default": true, "symbol": "&euro;", "order": 3, "conversions": {"BYN": 2.25, "USD": 1.081}},
+    {"ownerId": 1, "name": "USD", "default": false, "symbol": "&#x24;", "order": 2, "conversions": {"BYN": 1.8711, "EUR": 0.9132}},
+    {"ownerId": 2, "name": "USD", "default": true, "symbol": "&#x24;", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}}
   ],
   "summaries": [
     {"ownerId": 1, "category": "Карточки", "opened":true, "subCategory": "Авто", "categoryOrder":2, "subCategoryOrder": 3, "balance": [{"currency": "BYN", "value": 196.82}]},

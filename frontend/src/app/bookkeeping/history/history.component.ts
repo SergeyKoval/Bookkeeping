@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Response} from '@angular/http';
 
 import {Subscription} from 'rxjs/Subscription';
+import {MdDialog} from '@angular/material';
 
 import {HistoryService} from '../../common/service/history.service';
 import {AuthenticationService} from '../../common/service/authentication.service';
@@ -9,6 +10,7 @@ import {ConfirmPopupService} from '../../common/components/confirm-popup/confirm
 import {HistoryItem} from '../../common/model/history/HistoryItem';
 import {AlertService} from '../../common/service/alert.service';
 import {AlertType} from '../../common/model/alert/AlertType';
+import {HistoryEditPopupComponent} from './history-edit-popup/history-edit-popup.component';
 
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
@@ -36,7 +38,8 @@ export class HistoryComponent implements OnInit {
     private _historyService: HistoryService,
     private _authenticationService: AuthenticationService,
     private _confirmPopupService: ConfirmPopupService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _dialog: MdDialog
   ) {}
 
   public ngOnInit(): void {
@@ -54,6 +57,17 @@ export class HistoryComponent implements OnInit {
 
   public addHistoryItem(): void {
 
+  }
+
+  public editHistoryItem(historyItem: HistoryItem): void {
+    this._dialog.open(HistoryEditPopupComponent, {
+      width: '1000px',
+      position: {top: 'top'},
+      data: {
+        'title': 'Редактирование операции',
+        'historyItem': historyItem.originalItem
+      },
+    });
   }
 
   public showMoreHistoryItems(): void {

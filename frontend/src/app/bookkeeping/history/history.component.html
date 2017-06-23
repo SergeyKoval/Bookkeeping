@@ -37,7 +37,7 @@
           </div>
           <div class="col-md-3 description">{{historyItem.description}}</div>
           <div class="col-md-2 text-center">
-            <span class="glyphicon glyphicon-pencil"
+            <span class="glyphicon glyphicon-pencil" (click)="editHistoryItem(historyItem)"
                   popover="Редактировать" popoverPlacement="top"
                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
             </span>

@@ -1,5 +1,6 @@
 type Currency = {
   ownerId: number,
+  default: boolean,
   name: string,
   order: number,
   symbol: string,

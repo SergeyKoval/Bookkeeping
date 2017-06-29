@@ -1,0 +1,56 @@
+.btn {
+  text-align: right;
+  width: 100%;
+}
+
+.caret {
+  margin-left: 5px;
+}
+
+.selected-title {
+  float: left;
+}
+
+.text-muted {
+  color: #777;
+}
+
+.dropdown-menu {
+  width: 100%;
+  min-width: 50px;
+}
+
+.show-child-group {
+  float: right;
+  padding: 3px 8px !important;
+  font-size: 8px !important;
+  width: 23px;
+}
+
+.crumbs {
+  padding: 5px 10px;
+}
+
+.crumb-delimiter {
+  color: #8c8c8c;
+  font-weight: bold;
+  padding: 0 3px;
+}
+
+.title-delimiter {
+  font-weight: bold;
+  padding-right: 5px;
+  padding-left: 2px;
+}
+
+.crumb-item {
+  font-weight: bold;
+}
+
+.crumb-item.clickable:hover {
+  color: #8c8c8c;
+}
+
+.clickable {
+  cursor: pointer;
+}

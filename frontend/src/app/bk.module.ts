@@ -45,6 +45,8 @@ import {MyDatePickerModule} from 'mydatepicker';
 import { GoalsContainerComponent } from './bookkeeping/history/history-edit-popup/goals-container/goals-container.component';
 import { CurrencyValueDirective } from './common/directives/currency-value.directive';
 import { SelectComponent } from './common/components/select/select.component';
+import { FocusDirective } from './common/directives/focus.directive';
+import { ClickOutsideDirective } from './common/directives/click-outside.directive';
 
 @NgModule({
   declarations: [
@@ -73,7 +75,9 @@ import { SelectComponent } from './common/components/select/select.component';
     ConfirmPopupComponent,
     GoalsContainerComponent,
     CurrencyValueDirective,
-    SelectComponent
+    SelectComponent,
+    FocusDirective,
+    ClickOutsideDirective
   ],
   imports: [
     BrowserModule,

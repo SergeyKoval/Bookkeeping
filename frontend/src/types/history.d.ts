@@ -14,8 +14,8 @@ type HistoryType = {
 
 type HistoryBalanceType = {
   value: number,
-  category: string,
-  subCategory: string,
+  account: string,
+  subAccount: string,
   currency: string,
   alternativeCurrency: {[key: string]: number}
 };

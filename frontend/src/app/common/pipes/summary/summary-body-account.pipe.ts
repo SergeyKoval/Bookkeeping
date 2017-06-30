@@ -4,18 +4,15 @@ import {Account} from '../../model/summary/Account';
 import {BalanceItem} from '../../model/summary/BalanceItem';
 import {BaseSummaryPipe} from './baseSummaryPipe';
 
+
 @Pipe({
-  name: 'summaryFooter'
+  name: 'summaryBodyAccount'
 })
-export class SummaryFooterPipe extends BaseSummaryPipe implements PipeTransform {
+export class SummaryBodyAccountPipe extends BaseSummaryPipe implements PipeTransform {
 
-  public transform(accounts: Account[], currency: Currency): BalanceItem[] {
+  public transform(account: Account, currency: Currency): BalanceItem[] {
     const balanceMap: Map<string, number> = new Map();
-
-    accounts.forEach((account: Account) => {
-      this.populateBalanceMap(account, balanceMap);
-    });
-
+    this.populateBalanceMap(account, balanceMap);
     return this.calculateBalance(balanceMap, currency);
   }
 }

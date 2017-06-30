@@ -1,10 +1,10 @@
-import {SubCategory} from './SubCategory';
+import {SubAccount} from './SubAccount';
 
-export class Category {
+export class Account {
   public constructor(
     public name: string,
     public order: number,
     public opened: boolean,
-    public subCategories: SubCategory[]
+    public subAccounts: SubAccount[]
   ) {}
 }

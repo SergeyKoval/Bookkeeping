@@ -32,8 +32,8 @@ import { SummaryFooterPipe } from './common/pipes/summary/summary-footer.pipe';
 import { CurrencySymbolComponent } from './common/components/currency-symbol/currency-symbol.component';
 import { SummaryBalanceOrderingPipe } from './common/pipes/summary/summary-balance-ordering.pipe';
 import { CurrencyValuePipe } from './common/pipes/currency-value.pipe';
-import { SummaryBodyCategoryPipe } from './common/pipes/summary/summary-body-category.pipe';
-import { SummaryBodySubcategoryPipe } from './common/pipes/summary/summary-body-subcategory.pipe';
+import { SummaryBodyAccountPipe } from './common/pipes/summary/summary-body-account.pipe';
+import { SummaryBodySubAccountPipe } from './common/pipes/summary/summary-body-subaccount.pipe';
 import {HistoryService} from './common/service/history.service';
 import { HistoryPageActionsComponent } from './bookkeeping/history/history-page-actions/history-page-actions.component';
 import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
@@ -47,6 +47,7 @@ import { CurrencyValueDirective } from './common/directives/currency-value.direc
 import { SelectComponent } from './common/components/select/select.component';
 import { FocusDirective } from './common/directives/focus.directive';
 import { ClickOutsideDirective } from './common/directives/click-outside.directive';
+import {SettingsService} from './common/service/settings.service';
 
 @NgModule({
   declarations: [
@@ -67,8 +68,8 @@ import { ClickOutsideDirective } from './common/directives/click-outside.directi
     CurrencySymbolComponent,
     SummaryBalanceOrderingPipe,
     CurrencyValuePipe,
-    SummaryBodyCategoryPipe,
-    SummaryBodySubcategoryPipe,
+    SummaryBodyAccountPipe,
+    SummaryBodySubAccountPipe,
     HistoryPageActionsComponent,
     HistoryGroupPipe,
     HistoryEditPopupComponent,
@@ -96,6 +97,7 @@ import { ClickOutsideDirective } from './common/directives/click-outside.directi
     HistoryEditPopupComponent
   ],
   providers: [
+    SettingsService,
     CurrencyValuePipe,
     AuthenticationService,
     LoadingService,

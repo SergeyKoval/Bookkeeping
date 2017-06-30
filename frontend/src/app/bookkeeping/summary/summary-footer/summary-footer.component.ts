@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 
-import {Category} from '../../../common/model/summary/Category';
+import {Account} from '../../../common/model/summary/Account';
 
 @Component({
   selector: 'bk-summary-footer',
@@ -9,7 +9,7 @@ import {Category} from '../../../common/model/summary/Category';
 })
 export class SummaryFooterComponent {
   @Input()
-  public categories: Category[];
+  public accounts: Account[];
   @Input()
   public conversionCurrency: Currency;
 }

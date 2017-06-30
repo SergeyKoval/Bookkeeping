@@ -1,12 +1,12 @@
-import {SubCategory} from '../../model/summary/SubCategory';
+import {SubAccount} from '../../model/summary/SubAccount';
 import {BalanceItem} from '../../model/summary/BalanceItem';
 import {CurrencyService} from '../../service/currency.service';
-import {Category} from '../../model/summary/Category';
+import {Account} from '../../model/summary/Account';
 
 export abstract class BaseSummaryPipe {
-  protected populateBalanceMap(category: Category, balanceMap: Map<string, number>): void {
-    category.subCategories.forEach((subCategory: SubCategory) => {
-      subCategory.balance.forEach((balance: BalanceItem) => {
+  protected populateBalanceMap(account: Account, balanceMap: Map<string, number>): void {
+    account.subAccounts.forEach((subAccount: SubAccount) => {
+      subAccount.balance.forEach((balance: BalanceItem) => {
         const balanceCurrency: string = balance.currency;
         if (!balanceMap.has(balanceCurrency)) {
           balanceMap.set(balanceCurrency, balance.value);

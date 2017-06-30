@@ -4,9 +4,9 @@ import {BalanceItem} from '../../model/summary/BalanceItem';
 import {CurrencyService} from '../../service/currency.service';
 
 @Pipe({
-  name: 'summaryBodySubcategory'
+  name: 'summaryBodySubAccount'
 })
-export class SummaryBodySubcategoryPipe implements PipeTransform {
+export class SummaryBodySubAccountPipe implements PipeTransform {
 
   public transform(items: BalanceItem[], currency: Currency): BalanceItem[] {
     if (!currency) {

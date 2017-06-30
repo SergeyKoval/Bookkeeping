@@ -13,11 +13,11 @@ type CurrencyConversion = {
 
 type Summary = {
   ownerId: number,
-  category: string,
+  account: string,
   opened: true,
-  subCategory: string,
-  categoryOrder: number,
-  subCategoryOrder: number,
+  subAccount: string,
+  accountOrder: number,
+  subAccountOrder: number,
   balance: SummaryBalance[]
 };
 

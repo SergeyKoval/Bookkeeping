@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-7 footer-balance-title"><strong>Итого:</strong></div>
   <div class="col-lg-5">
-    <div class="row footer-balance-item" *ngFor="let balanceItem of categories | summaryFooter:conversionCurrency | summaryBalanceOrdering">
+    <div class="row footer-balance-item" *ngFor="let balanceItem of accounts | summaryFooter:conversionCurrency | summaryBalanceOrdering">
       <div class="col-lg-3 text-right">
         <strong>
           <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>

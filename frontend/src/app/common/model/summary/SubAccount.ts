@@ -1,6 +1,6 @@
 import {BalanceItem} from './BalanceItem';
 
-export class SubCategory {
+export class SubAccount {
   public constructor(
     public name: string,
     public order: number,

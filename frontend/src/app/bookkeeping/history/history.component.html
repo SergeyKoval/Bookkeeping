@@ -27,7 +27,7 @@
             <div class="col-md-6 no-right-padding">
               <div [ngClass]="{'expense': historyItem.isExpense(), 'income': !historyItem.isExpense()}">
                 {{historyItem.balance.value | currencyValue:false}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></div>
-              <div class="footnote">{{historyItem.balance.subCategory}}</div>
+              <div class="footnote">{{historyItem.balance.subAccount}}</div>
             </div>
           </div>
           <div class="col-md-3">

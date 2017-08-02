@@ -15,40 +15,40 @@ export class SelectComponent implements OnInit {
   @Input()
   public items: SelectItem[];
   @Input()
-  public selectedItem: string[] = [];
+  public selectedItems: SelectItem[] = [];
   @Output()
-  public changeValue: EventEmitter<string[]> = new EventEmitter();
+  public changeValue: EventEmitter<SelectItem[]> = new EventEmitter();
 
   public searchValue: string = '';
   public opened: boolean = false;
   public displayItems: SelectItem[];
-  private originalItem: string[];
+  private originalItem: SelectItem[];
   @ViewChild(FocusDirective)
   private searchInput: FocusDirective;
 
   public ngOnInit(): void {
-    if (!this.selectedItem || this.selectedItem.length === 0) {
+    if (!this.selectedItems || this.selectedItems.length === 0) {
       this.switchToRootLevel();
     } else {
-      this.originalItem = this.selectedItem;
-      this.displayItems = this.items.filter((item: SelectItem) => item.title === this.selectedItem[0])[0].children;
+      this.originalItem = this.selectedItems;
+      this.displayItems = this.items.filter((item: SelectItem) => item.title === this.selectedItems[0].title)[0].children;
     }
   }
 
   public chooseItem(item: SelectItem): void {
     if (item.children) {
-      this.selectedItem = [item.title];
+      this.selectedItems = [item];
       this.displayItems = item.children;
       this.searchValue = '';
       return;
     }
 
     if (item.parent) {
-      this.selectedItem = [item.parent.title, item.title];
+      this.selectedItems = [item.parent, item];
     }  else {
-      this.selectedItem[1] = item.title;
+      this.selectedItems[1] = item;
     }
-    this.changeValue.emit(this.selectedItem);
+    this.changeValue.emit(this.selectedItems);
     this.closeSelect();
     this.ngOnInit();
   }
@@ -59,20 +59,20 @@ export class SelectComponent implements OnInit {
   }
 
   public closeSelect(): void {
-    if (!this.selectedItem || this.selectedItem.length < 2) {
-      this.selectedItem = this.originalItem;
+    if (!this.selectedItems || this.selectedItems.length < 2) {
+      this.selectedItems = this.originalItem;
     }
     this.opened = false;
     this.ngOnInit();
   }
 
   public isItemSelected(): boolean {
-    return this.selectedItem && this.selectedItem.length > 0;
+    return this.selectedItems && this.selectedItems.length > 0;
   }
 
   public switchToRootLevel(): void {
     this.displayItems = this.items;
-    this.selectedItem = [];
+    this.selectedItems = [];
     this.searchValue = '';
   }
 
@@ -80,6 +80,14 @@ export class SelectComponent implements OnInit {
     if (this.searchInput) {
       this.searchInput.ngOnInit();
     }
+  }
+
+  public selectedItemIcon(): string {
+    if (this.selectedItems.length === 0) {
+      return null;
+    }
+
+    return (this.selectedItems.length === 2 && this.selectedItems[1].icon) ? this.selectedItems[1].icon : this.selectedItems[0].icon;
   }
 
   public search(inputValue: string): void {
@@ -90,8 +98,8 @@ export class SelectComponent implements OnInit {
       return;
     }
 
-    if (this.selectedItem && this.selectedItem.length > 0) {
-      const parentTitle: string = this.selectedItem[0];
+    if (this.selectedItems && this.selectedItems.length > 0) {
+      const parentTitle: string = this.selectedItems[0].title;
       this.displayItems = this.items
         .filter((item: SelectItem) => item.title === parentTitle)[0]
         .children.filter((item: SelectItem) => item.title.toLowerCase().startsWith(value));

@@ -51,6 +51,15 @@
   color: #8c8c8c;
 }
 
+.dropdown-menu>li>a {
+  padding: 3px 10px;
+}
+
 .clickable {
   cursor: pointer;
+}
+
+.icon {
+  padding-bottom: 2px;
+  padding-right: 3px;
 }

@@ -9,13 +9,9 @@ export class ClickOutsideDirective {
 
   public constructor(private _elementRef: ElementRef) {}
 
-  @HostListener('document:click', ['$event', '$event.target', '$event.currentTarget'])
-  public onClick(event: MouseEvent, targetElement: HTMLElement, currentTarget: HTMLElement): void {
-    if (!targetElement || !currentTarget.contains(targetElement)) {
-      return;
-    }
-
-    if (!this._elementRef.nativeElement.contains(targetElement)) {
+  @HostListener('document:click', ['$event', '$event.path'])
+  public onClick(event: MouseEvent, path: HTMLElement[]): void {
+    if (!path.includes(this._elementRef.nativeElement)) {
       this.clickOutside.emit(event);
     }
   }

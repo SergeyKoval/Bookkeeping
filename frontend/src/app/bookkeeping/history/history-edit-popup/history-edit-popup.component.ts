@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MD_DIALOG_DATA, MdDialogRef, MdTabChangeEvent} from '@angular/material';
 
@@ -20,6 +20,9 @@ export class HistoryEditPopupComponent implements OnInit {
     dateFormat: 'dd.mm.yyyy',
     inline: true,
   };
+
+  @ViewChild('title')
+  private _titleElement: ElementRef;
 
   public constructor(
     public dialogRef: MdDialogRef<HistoryEditPopupComponent>,
@@ -43,6 +46,7 @@ export class HistoryEditPopupComponent implements OnInit {
   }
 
   public onDateChanged(event: IMyDateModel): void {
+    this._titleElement.nativeElement.click();
     console.log(event.date);
     // Update value of selDate variable
     this.selectedDate = event.date;

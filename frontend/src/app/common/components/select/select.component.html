@@ -3,7 +3,8 @@
   <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" (click)="openSelect()" *ngIf="!opened">
     <span class="selected-title text-muted" *ngIf="!isItemSelected()">{{placeholder}}</span>
     <span class="selected-title" *ngIf="isItemSelected()">
-      <span *ngFor="let selectItem of selectedItem; let lastItem = last">{{selectItem}} <span class="title-delimiter" *ngIf="!lastItem">>></span></span>
+      <img class="icon" *ngIf="selectedItemIcon()" [src]="selectedItemIcon()">
+      <span *ngFor="let selectedItem of selectedItems; let lastItem = last">{{selectedItem.title}} <span class="title-delimiter" *ngIf="!lastItem">>></span></span>
     </span>
     <span class="caret"></span>
   </button>
@@ -11,11 +12,13 @@
     <li class="crumbs" *ngIf="isItemSelected()">
       <span class="crumb-item clickable" (click)="switchToRootLevel()">Все</span>
       <span class="crumb-delimiter"> > </span>
-      <span class="crumb-item">{{selectedItem[0]}}</span>
+      <img class="icon" *ngIf="selectedItems[0].icon" [src]="selectedItems[0].icon">
+      <span class="crumb-item">{{selectedItems[0].title}}</span>
     </li>
     <li role="separator" class="divider" *ngIf="isItemSelected()"></li>
     <li *ngFor="let displayItem of displayItems" (click)="chooseItem(displayItem, searchInput)">
       <a class="clickable">
+        <img class="icon" *ngIf="displayItem.icon" [src]="displayItem.icon">
         <span>{{displayItem.title}}</span>
         <span *ngIf="displayItem.parent">({{displayItem.parent.title}})</span>
         <button *ngIf="displayItem.children" class="btn btn-default show-child-group">&gt;</button>

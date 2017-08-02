@@ -1,7 +1,5 @@
 import {Component, Input} from '@angular/core';
 
-import {Account} from '../../../common/model/summary/Account';
-
 @Component({
   selector: 'bk-summary-body',
   templateUrl: './summary-body.component.html',
@@ -9,11 +7,11 @@ import {Account} from '../../../common/model/summary/Account';
 })
 export class SummaryBodyComponent {
   @Input()
-  public accounts: Account[];
+  public accounts: FinAccount[];
   @Input()
   public conversionCurrency: Currency;
 
-  public changeOpenState(account: Account): void {
+  public changeOpenState(account: FinAccount): void {
     account.opened = !account.opened;
   }
 }

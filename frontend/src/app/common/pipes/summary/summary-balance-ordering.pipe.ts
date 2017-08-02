@@ -1,7 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import {CurrencyService} from '../../service/currency.service';
-import {BalanceItem} from '../../model/summary/BalanceItem';
 
 @Pipe({
   name: 'summaryBalanceOrdering'

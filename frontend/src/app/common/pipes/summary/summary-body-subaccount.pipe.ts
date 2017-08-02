@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import {BalanceItem} from '../../model/summary/BalanceItem';
 import {CurrencyService} from '../../service/currency.service';
 
 @Pipe({
@@ -13,7 +12,7 @@ export class SummaryBodySubAccountPipe implements PipeTransform {
       return items;
     }
 
-    const balanceItem: BalanceItem = new BalanceItem(currency.name, 0);
+    const balanceItem: BalanceItem = {currency: currency.name, value: 0};
     items.forEach((item: BalanceItem) => {
       balanceItem.value += CurrencyService.convertToCurrency(item.value, item.currency, currency);
     });

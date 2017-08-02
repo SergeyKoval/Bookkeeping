@@ -7,7 +7,6 @@ import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {Subscription} from 'rxjs/Subscription';
 
 import {HOST} from '../config/config';
-import {BalanceItem} from '../model/summary/BalanceItem';
 
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';

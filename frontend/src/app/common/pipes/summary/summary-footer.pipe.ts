@@ -1,7 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import {Account} from '../../model/summary/Account';
-import {BalanceItem} from '../../model/summary/BalanceItem';
 import {BaseSummaryPipe} from './baseSummaryPipe';
 
 @Pipe({
@@ -9,10 +7,10 @@ import {BaseSummaryPipe} from './baseSummaryPipe';
 })
 export class SummaryFooterPipe extends BaseSummaryPipe implements PipeTransform {
 
-  public transform(accounts: Account[], currency: Currency): BalanceItem[] {
+  public transform(accounts: FinAccount[], currency: Currency): BalanceItem[] {
     const balanceMap: Map<string, number> = new Map();
 
-    accounts.forEach((account: Account) => {
+    accounts.forEach((account: FinAccount) => {
       this.populateBalanceMap(account, balanceMap);
     });
 

@@ -1,10 +1,7 @@
-import {SubAccount} from '../../model/summary/SubAccount';
-import {BalanceItem} from '../../model/summary/BalanceItem';
 import {CurrencyService} from '../../service/currency.service';
-import {Account} from '../../model/summary/Account';
 
 export abstract class BaseSummaryPipe {
-  protected populateBalanceMap(account: Account, balanceMap: Map<string, number>): void {
+  protected populateBalanceMap(account: FinAccount, balanceMap: Map<string, number>): void {
     account.subAccounts.forEach((subAccount: SubAccount) => {
       subAccount.balance.forEach((balance: BalanceItem) => {
         const balanceCurrency: string = balance.currency;
@@ -19,15 +16,15 @@ export abstract class BaseSummaryPipe {
 
   protected calculateBalance(balanceMap: Map<string, number>, currency: Currency): BalanceItem[] {
     const balanceItems: BalanceItem[] = [];
-    balanceMap.forEach((value: number, key: string) => {
+    balanceMap.forEach((balanceValue: number, key: string) => {
       if (!currency) {
-        balanceItems.push(new BalanceItem(key, value));
+        balanceItems.push({currency: key, value: balanceValue});
       } else {
         if (balanceItems.length === 0) {
-          balanceItems.push(new BalanceItem(currency.name, 0));
+          balanceItems.push({currency: currency.name, value: 0});
         }
 
-        balanceItems[0].value += CurrencyService.convertToCurrency(value, key, currency);
+        balanceItems[0].value += CurrencyService.convertToCurrency(balanceValue, key, currency);
       }
     });
 

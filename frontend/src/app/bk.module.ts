@@ -25,7 +25,6 @@ import { SummaryComponent } from './bookkeeping/summary/summary.component';
 import { SpinnerComponent } from './common/components/spinner/spinner.component';
 import {CurrencyService} from './common/service/currency.service';
 import { CurrencyConversionComponent } from './bookkeeping/summary/currency-conversion/currency-conversion.component';
-import {SummaryService} from './common/service/summary.service';
 import { SummaryBodyComponent } from './bookkeeping/summary/summary-body/summary-body.component';
 import { SummaryFooterComponent } from './bookkeeping/summary/summary-footer/summary-footer.component';
 import { SummaryFooterPipe } from './common/pipes/summary/summary-footer.pipe';
@@ -48,6 +47,7 @@ import { SelectComponent } from './common/components/select/select.component';
 import { FocusDirective } from './common/directives/focus.directive';
 import { ClickOutsideDirective } from './common/directives/click-outside.directive';
 import {SettingsService} from './common/service/settings.service';
+import { AssetImagePipe } from './common/pipes/asset-image.pipe';
 
 @NgModule({
   declarations: [
@@ -78,7 +78,8 @@ import {SettingsService} from './common/service/settings.service';
     CurrencyValueDirective,
     SelectComponent,
     FocusDirective,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    AssetImagePipe
   ],
   imports: [
     BrowserModule,
@@ -102,7 +103,6 @@ import {SettingsService} from './common/service/settings.service';
     AuthenticationService,
     LoadingService,
     CurrencyService,
-    SummaryService,
     HistoryService,
     ConfirmPopupService,
     AlertService,

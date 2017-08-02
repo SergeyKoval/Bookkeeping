@@ -11,17 +11,23 @@ type CurrencyConversion = {
   [key: string]: number
 };
 
-type Summary = {
+type FinAccount = {
+  id: number,
   ownerId: number,
-  account: string,
-  opened: true,
-  subAccount: string,
-  accountOrder: number,
-  subAccountOrder: number,
-  balance: SummaryBalance[]
+  title: string,
+  order: number,
+  opened: boolean,
+  subAccounts: SubAccount[]
 };
 
-type SummaryBalance = {
+type SubAccount = {
+  title: string,
+  order: number,
+  icon: string,
+  balance: BalanceItem[]
+};
+
+type BalanceItem = {
   currency: string,
   value: number
 };

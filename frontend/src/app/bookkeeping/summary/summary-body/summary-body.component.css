@@ -25,3 +25,8 @@
 .panel-title {
   font-size: 15px;
 }
+
+.icon {
+  padding-bottom: 2px;
+  padding-right: 3px;
+}

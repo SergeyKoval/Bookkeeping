@@ -17,7 +17,7 @@ export class SelectComponent implements OnInit {
   @Input()
   public selectedItems: SelectItem[] = [];
   @Output()
-  public changeValue: EventEmitter<SelectItem[]> = new EventEmitter();
+  public selectedItemsChange: EventEmitter<SelectItem[]> = new EventEmitter();
 
   public searchValue: string = '';
   public opened: boolean = false;
@@ -48,7 +48,7 @@ export class SelectComponent implements OnInit {
     }  else {
       this.selectedItems[1] = item;
     }
-    this.changeValue.emit(this.selectedItems);
+    this.selectedItemsChange.emit(this.selectedItems);
     this.closeSelect();
     this.ngOnInit();
   }

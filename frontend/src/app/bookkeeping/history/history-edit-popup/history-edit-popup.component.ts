@@ -84,16 +84,4 @@ export class HistoryEditPopupComponent implements OnInit {
   public isTypeSelected(type: string): boolean {
     return this.historyForm.get('type').value === type;
   }
-
-  public changeSelectedAccount(selectedAccount: SelectItem[]): void {
-    this.selectedAccount = selectedAccount;
-  }
-
-  public changeSelectedCategory(selectedCategory: SelectItem[]): void {
-    this.selectedCategory = selectedCategory;
-  }
-
-  public changeSelectedToAccount(selectedAccount: SelectItem[]): void {
-    this.selectedToAccount = selectedAccount;
-  }
 }

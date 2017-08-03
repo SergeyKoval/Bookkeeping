@@ -33,10 +33,10 @@
             </span>
           </div>
           <div class="form-row">
-            <bk-select placeholder="Счет" [items]="accounts" [selectedItems]="selectedAccount" (changeValue)="changeSelectedAccount($event)"></bk-select>
+            <bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
           </div>
           <div class="form-row">
-            <bk-select placeholder="Категория" [items]="categories" [selectedItems]="selectedCategory" (changeValue)="changeSelectedCategory($event)"></bk-select>
+            <bk-select placeholder="Категория" [items]="categories" [(selectedItems)]="selectedCategory"></bk-select>
           </div>
           <div class="form-row">
             <input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">
@@ -60,10 +60,10 @@
             <input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Сумма" bkCurrencyValue>
           </div>
           <div class="form-row">
-            <bk-select placeholder="Со счета" [items]="accounts" [selectedItems]="selectedAccount" (changeValue)="changeSelectedAccount($event)"></bk-select>
+            <bk-select placeholder="Со счета" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
           </div>
           <div class="form-row">
-            <bk-select placeholder="На счет" [items]="accounts" [selectedItems]="selectedToAccount" (changeValue)="changeSelectedToAccount($event)"></bk-select>
+            <bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>
           </div>
           <div class="form-row">
             <input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">
@@ -102,7 +102,7 @@
             <input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Стало" bkCurrencyValue>
           </div>
           <div class="form-row">
-            <bk-select placeholder="Счет" [items]="accounts" [selectedItems]="selectedAccount" (changeValue)="changeSelectedAccount($event)"></bk-select>
+            <bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
           </div>
           <div class="form-row">
             <input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">

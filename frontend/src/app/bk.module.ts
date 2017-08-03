@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule} from '@angular/router';
-import {MdDialogModule, MdProgressSpinnerModule, MdTabsModule} from '@angular/material';
+import {MdDialogModule, MdProgressSpinnerModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {PopoverModule} from 'ngx-popover';
@@ -90,7 +90,6 @@ import { AssetImagePipe } from './common/pipes/asset-image.pipe';
     MdDialogModule,
     PopoverModule,
     MyDatePickerModule,
-    MdTabsModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
   ],
   entryComponents: [
@@ -100,6 +99,7 @@ import { AssetImagePipe } from './common/pipes/asset-image.pipe';
   providers: [
     SettingsService,
     CurrencyValuePipe,
+    AssetImagePipe,
     AuthenticationService,
     LoadingService,
     CurrencyService,

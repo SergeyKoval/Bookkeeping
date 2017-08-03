@@ -24,7 +24,7 @@ export class HistoryPageActionsComponent implements OnInit {
 
   public addHistoryItem(): void {
     this._dialog.open(HistoryEditPopupComponent, {
-      width: '1000px',
+      width: '850px',
       position: {top: 'top'},
       data: {
         'title': 'Новая операция',

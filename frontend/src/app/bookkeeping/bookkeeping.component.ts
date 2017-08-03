@@ -23,7 +23,10 @@ export class BookkeepingComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this._settingsService.loadAccounts(this._authenticationService.authenticatedProfile.id);
+    const ownerId: number = this._authenticationService.authenticatedProfile.id;
+    this._settingsService.loadAccounts(ownerId);
+    this._settingsService.loadCategories(ownerId);
+
     this.subscription = this._alertService.alerts.subscribe((alert: Alert) => {
       alert.initAutoClose(this.close.bind(this));
       this.alerts.push(alert);

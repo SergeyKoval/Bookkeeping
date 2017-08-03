@@ -31,3 +31,17 @@ type BalanceItem = {
   currency: string,
   value: number
 };
+
+type Category = {
+  id: number,
+  ownerId: number,
+  order: number,
+  icon: string,
+  title: string,
+  subCategories: SubCategory[]
+};
+
+type SubCategory = {
+  order: number,
+  title: string,
+};

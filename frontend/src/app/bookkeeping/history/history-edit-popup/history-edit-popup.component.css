@@ -1,14 +1,14 @@
 .left-column {
   padding-right: 0;
-  padding-top: 15px;
+  padding-top: 1px;
 }
 
 .right-column {
-  padding-left: 0;
+  padding-left: 5px;
 }
 
 .form-row {
-  margin-top: 15px;
+  margin-top: 13px;
 }
 
 .dropdown-menu {
@@ -17,4 +17,8 @@
 
 .currency-button {
   width: 65px;
+}
+
+ul.nav-tabs li {
+  cursor: pointer;
 }

@@ -1,10 +1,11 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import {MD_DIALOG_DATA, MdDialogRef, MdTabChangeEvent} from '@angular/material';
+import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
 
 import {IMyDate, IMyDateModel, IMyDpOptions} from 'mydatepicker';
 import {HistoryService} from '../../../common/service/history.service';
 import {CurrencyService} from '../../../common/service/currency.service';
+import {SettingsService} from '../../../common/service/settings.service';
 
 @Component({
   selector: 'bk-history-edit-popup',
@@ -13,12 +14,16 @@ import {CurrencyService} from '../../../common/service/currency.service';
 })
 export class HistoryEditPopupComponent implements OnInit {
   public currencies: Currency[];
-  public showGoalSection: boolean;
   public selectedDate: IMyDate;
   public historyForm: FormGroup;
+  public accounts: SelectItem[];
+  public categories: SelectItem[];
+  public selectedAccount: SelectItem[];
+  public selectedToAccount: SelectItem[];
+  public selectedCategory: SelectItem[];
   public datePickerOptions: IMyDpOptions = {
     dateFormat: 'dd.mm.yyyy',
-    inline: true,
+    inline: true
   };
 
   @ViewChild('title')
@@ -29,20 +34,20 @@ export class HistoryEditPopupComponent implements OnInit {
     @Inject(MD_DIALOG_DATA) public data: {title: string, historyItem: HistoryType},
     private _dialogRef: MdDialogRef<HistoryEditPopupComponent>,
     private _historyService: HistoryService,
-    private _currencyService: CurrencyService
+    private _currencyService: CurrencyService,
+    private _settingsService: SettingsService
   ) {}
 
   public ngOnInit(): void {
-    this._currencyService.currencies$.subscribe((currencies: Currency[]) => {
-      this.currencies = currencies;
-    });
+    this._currencyService.currencies$.subscribe((currencies: Currency[]) => this.currencies = currencies);
+    this._settingsService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._settingsService.transformAccounts(accounts));
+    this._settingsService.categories$.subscribe((catefories: Category[]) => this.categories = this._settingsService.transformCategories(catefories));
 
     const date: Date = new Date();
     const historyType: string = this.data.historyItem.type;
     date.setTime(this.data.historyItem.date);
     this.selectedDate = {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()};
     this.historyForm = this._historyService.initHistoryForm(this.data.historyItem);
-    this.showGoalSection = !historyType || historyType === 'expense' || historyType === 'income';
   }
 
   public onDateChanged(event: IMyDateModel): void {
@@ -52,28 +57,9 @@ export class HistoryEditPopupComponent implements OnInit {
     this.selectedDate = event.date;
   }
 
-  public getSelectedTypeIndex(): number {
-    switch (this.historyForm.get('type').value) {
-      case 'income': return 1;
-      case 'transfer': return 2;
-      case 'exchange': return 3;
-      case 'expense':
-      default: return 0;
-    }
-  }
-
-  public onChangeSelectedType(event: MdTabChangeEvent): void {
-    switch (event.index) {
-      case 0:
-      case 1: {
-        this.showGoalSection = true;
-        break;
-      }
-      case 2:
-      case 3: {
-        this.showGoalSection = false;
-        break;
-      }
+  public onChangeSelectedType(type: string): void {
+    if (!this.isTypeSelected(type)) {
+      this.historyForm.get('type').setValue(type);
     }
   }
 
@@ -93,5 +79,21 @@ export class HistoryEditPopupComponent implements OnInit {
 
   public close(): void {
     this._dialogRef.close();
+  }
+
+  public isTypeSelected(type: string): boolean {
+    return this.historyForm.get('type').value === type;
+  }
+
+  public changeSelectedAccount(selectedAccount: SelectItem[]): void {
+    this.selectedAccount = selectedAccount;
+  }
+
+  public changeSelectedCategory(selectedCategory: SelectItem[]): void {
+    this.selectedCategory = selectedCategory;
+  }
+
+  public changeSelectedToAccount(selectedAccount: SelectItem[]): void {
+    this.selectedToAccount = selectedAccount;
   }
 }

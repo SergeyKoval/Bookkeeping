@@ -112,7 +112,8 @@ export class SelectComponent implements OnInit {
         if (item.children) {
           item.children.forEach((childItem: SelectItem) => {
             if (childItem.title.toLowerCase().startsWith(value)) {
-              searchItems.push({title: childItem.title, parent: item});
+              const iconPath: string = childItem.icon ? childItem.icon : item.icon;
+              searchItems.push({title: childItem.title, parent: item, icon: iconPath});
             }
           });
         }

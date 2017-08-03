@@ -31,7 +31,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <img [src]="historyItem.icon">
+            <img [src]="historyItem.icon | assetImage:'category'">
             <span class="description">{{historyItem.category}}</span>
             <div class="footnote">{{historyItem.subCategory}}</div>
           </div>

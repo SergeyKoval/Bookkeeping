@@ -3,6 +3,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MdDialog} from '@angular/material';
 
 import {HistoryEditPopupComponent} from '../history-edit-popup/history-edit-popup.component';
+import {HistoryComponent} from '../history.component';
 
 @Component({
   selector: 'bk-history-page-actions',
@@ -15,7 +16,7 @@ export class HistoryPageActionsComponent implements OnInit {
   @Input()
   public disableMoreButton: boolean;
   @Output()
-  public loadMore: EventEmitter<null> = new EventEmitter();
+  public loadMore: EventEmitter<number> = new EventEmitter();
 
   public constructor(private _dialog: MdDialog) { }
 
@@ -28,14 +29,16 @@ export class HistoryPageActionsComponent implements OnInit {
       position: {top: 'top'},
       data: {
         'title': 'Новая операция',
-        'historyItem': {date: Date.now()}
+        'historyItem': null
       },
-    });
+    }).afterClosed()
+      .filter((result: boolean) => result === true)
+      .subscribe(() => this.loadMore.emit(1));
   }
 
   public showMoreHistoryItems(): void {
     if (!this.disableMoreButton) {
-      this.loadMore.emit();
+      this.loadMore.emit(HistoryComponent.PAGE_LIMIT);
     }
   }
 

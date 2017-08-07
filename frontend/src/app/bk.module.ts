@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule} from '@angular/router';
 import {MdDialogModule, MdProgressSpinnerModule} from '@angular/material';
@@ -48,6 +48,7 @@ import { FocusDirective } from './common/directives/focus.directive';
 import { ClickOutsideDirective } from './common/directives/click-outside.directive';
 import {SettingsService} from './common/service/settings.service';
 import { AssetImagePipe } from './common/pipes/asset-image.pipe';
+import { LoadingDialogComponent } from './common/components/loading-dialog/loading-dialog.component';
 
 @NgModule({
   declarations: [
@@ -79,10 +80,12 @@ import { AssetImagePipe } from './common/pipes/asset-image.pipe';
     SelectComponent,
     FocusDirective,
     ClickOutsideDirective,
-    AssetImagePipe
+    AssetImagePipe,
+    LoadingDialogComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     ReactiveFormsModule,
     HttpModule,
     BrowserAnimationsModule,
@@ -94,7 +97,8 @@ import { AssetImagePipe } from './common/pipes/asset-image.pipe';
   ],
   entryComponents: [
     ConfirmPopupComponent,
-    HistoryEditPopupComponent
+    HistoryEditPopupComponent,
+    LoadingDialogComponent
   ],
   providers: [
     SettingsService,

@@ -15,6 +15,7 @@ import 'rxjs/add/operator/do';
 export class SettingsService {
   private _accounts$$: Subject<FinAccount[]> = new ReplaySubject(1);
   private _categories$$: Subject<Category[]> = new ReplaySubject(1);
+  private _categoryIcon: Map<string, string> = new Map();
 
   public constructor(
     private _http: Http,
@@ -36,7 +37,12 @@ export class SettingsService {
     this._http.get(`${this._host}/categories?ownerId=${ownerId}`)
       .delay(1500)
       .do(() => this._loadingService.categories$$.next(false))
-      .subscribe((response: Response) => this._categories$$.next(response.json()));
+      .subscribe((response: Response) => {
+        const categories: Category[] = response.json();
+        this._categoryIcon.clear();
+        categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+        this._categories$$.next(categories);
+      });
   }
 
   public transformAccounts(accounts: FinAccount[]): SelectItem[] {
@@ -65,6 +71,10 @@ export class SettingsService {
     });
 
     return result;
+  }
+
+  public getCategoryIcon(categoryTitle: string): string {
+    return this._categoryIcon.get(categoryTitle);
   }
 
   public get accounts$(): Observable<FinAccount[]> {

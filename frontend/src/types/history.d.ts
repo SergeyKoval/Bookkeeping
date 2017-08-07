@@ -1,12 +1,11 @@
 type HistoryType = {
-  id: number,
+  id?: number,
   ownerId: number,
   date: number,
-  order: number,
+  order?: number,
   type: string,
-  category: string,
-  subCategory: string,
-  icon: string,
+  category?: string,
+  subCategory?: string,
   balance: HistoryBalanceType,
   goal?: HistoryGoal,
   description?: string
@@ -14,8 +13,8 @@ type HistoryType = {
 
 type HistoryBalanceType = {
   value: number,
-  account: string,
-  subAccount: string,
+  account?: string,
+  subAccount?: string,
   currency: string,
   alternativeCurrency: {[key: string]: number}
 };

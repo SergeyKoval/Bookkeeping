@@ -11,6 +11,7 @@ import {HistoryItem} from '../../common/model/history/HistoryItem';
 import {AlertService} from '../../common/service/alert.service';
 import {AlertType} from '../../common/model/alert/AlertType';
 import {HistoryEditPopupComponent} from './history-edit-popup/history-edit-popup.component';
+import {SettingsService} from '../../common/service/settings.service';
 
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
@@ -23,7 +24,7 @@ import 'rxjs/add/operator/first';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  private static readonly _PAGE_LIMIT: number = 3;
+  public static readonly PAGE_LIMIT: number = 3;
 
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;
@@ -39,14 +40,15 @@ export class HistoryComponent implements OnInit {
     private _authenticationService: AuthenticationService,
     private _confirmPopupService: ConfirmPopupService,
     private _alertService: AlertService,
-    private _dialog: MdDialog
+    private _dialog: MdDialog,
+    private _settingsService: SettingsService
   ) {}
 
   public ngOnInit(): void {
     this.authenticatedProfileId = this._authenticationService.authenticatedProfile.id;
-    const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, HistoryComponent._PAGE_LIMIT)
+    const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, HistoryComponent.PAGE_LIMIT)
       .subscribe((historyItems: HistoryType[]) => {
-        if (historyItems.length < HistoryComponent._PAGE_LIMIT) {
+        if (historyItems.length < HistoryComponent.PAGE_LIMIT) {
           this.disableMoreButton = true;
         }
         this.historyItems = historyItems;
@@ -70,19 +72,12 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  public showMoreHistoryItems(): void {
-    this.loadingMoreIndicator = true;
-    const pageNumber: number = Math.ceil(this.historyItems.length / HistoryComponent._PAGE_LIMIT) + 1;
-
-    const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, pageNumber, HistoryComponent._PAGE_LIMIT)
-      .subscribe((historyItems: HistoryType[]) => {
-        if (historyItems.length < HistoryComponent._PAGE_LIMIT) {
-          this.disableMoreButton = true;
-        }
-        this.historyItems = this.historyItems.concat(historyItems);
-        subscription.unsubscribe();
-        this.loadingMoreIndicator = false;
-      });
+  public loadMoreItems(numberOfNewItems: number): void {
+    if (numberOfNewItems === HistoryComponent.PAGE_LIMIT) {
+      this.showMoreHistoryItems();
+    } else {
+      this.reloadItems(numberOfNewItems);
+    }
   }
 
   public deleteHistoryItem(historyItem: HistoryItem): void {
@@ -103,6 +98,7 @@ export class HistoryComponent implements OnInit {
         }
       })
       .filter((response: Response) => response.ok)
+      .do(() => this._settingsService.loadAccounts(this.authenticatedProfileId))
       .switchMap(() => this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, itemsLimit))
       .subscribe((historyItems: HistoryType[]) => {
         if (historyItems.length < itemsLimit) {
@@ -117,5 +113,34 @@ export class HistoryComponent implements OnInit {
 
   public getGoalDescription(goal: HistoryGoal): string {
     return goal.category ? `${goal.category} >> ${goal.name}` : goal.name;
+  }
+
+  private showMoreHistoryItems(): void {
+    this.loadingMoreIndicator = true;
+    const pageNumber: number = Math.ceil(this.historyItems.length / HistoryComponent.PAGE_LIMIT) + 1;
+
+    const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, pageNumber, HistoryComponent.PAGE_LIMIT)
+      .subscribe((historyItems: HistoryType[]) => {
+        if (historyItems.length < HistoryComponent.PAGE_LIMIT) {
+          this.disableMoreButton = true;
+        }
+        this.historyItems = this.historyItems.concat(historyItems);
+        subscription.unsubscribe();
+        this.loadingMoreIndicator = false;
+      });
+  }
+
+  private reloadItems(numberOfNewItems: number): void {
+    this.loading = true;
+    const limit: number = this.historyItems.length + numberOfNewItems;
+    const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, limit)
+      .subscribe((historyItems: HistoryType[]) => {
+        if (historyItems.length < limit) {
+          this.disableMoreButton = true;
+        }
+        this.historyItems = historyItems;
+        subscription.unsubscribe();
+        this.loading = false;
+      });
   }
 }

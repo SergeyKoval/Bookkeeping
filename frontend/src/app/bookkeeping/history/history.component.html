@@ -1,6 +1,6 @@
 <div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
   <div class="panel-body">
-    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="loadMoreItems($event)"></bk-history-page-actions>
 
     <div class="table">
       <div class="row header">
@@ -50,7 +50,7 @@
         <hr *ngIf="!lastGroup">
       </div>
     </div>
-    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="showMoreHistoryItems()"></bk-history-page-actions>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="loadMoreItems($event)"></bk-history-page-actions>
   </div>
 </div>
 

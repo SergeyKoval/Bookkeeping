@@ -16,6 +16,10 @@ export class AlertService {
   }
 
   public addAlert(type: AlertType, message: string, title?: string, timeoutSeconds?: number): void {
-    this._alerts.next(new Alert(type, title, message, timeoutSeconds));
+    this.addAlertObject(new Alert(type, title, message, timeoutSeconds));
+  }
+
+  public addAlertObject(alert: Alert): void {
+    this._alerts.next(alert);
   }
 }

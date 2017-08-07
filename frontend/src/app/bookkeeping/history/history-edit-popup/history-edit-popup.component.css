@@ -22,3 +22,7 @@
 ul.nav-tabs li {
   cursor: pointer;
 }
+
+.error {
+  margin-bottom: 10px;
+}

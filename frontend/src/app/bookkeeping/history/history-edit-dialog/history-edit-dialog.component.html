@@ -1,0 +1,126 @@
+<h2 md-dialog-title align="center" #title>{{data.title}}</h2>
+<md-dialog-content>
+  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errors}}</strong>
+  </div>
+  <div class="row">
+    <!--<form [formGroup]="historyForm">-->
+    <div class="col-md-4 left-column">
+      <my-date-picker [selDate]="selectedDate" [options]="datePickerOptions" (dateChanged)="onDateChanged($event)" locale="ru"></my-date-picker>
+    </div>
+    <div class="col-md-8 right-column">
+      <ul class="nav nav-tabs nav-justified">
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('expense')}" (click)="onChangeSelectedType('expense')"><a>Расход</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('income')}" (click)="onChangeSelectedType('income')"><a>Доход</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('transfer')}" (click)="onChangeSelectedType('transfer')"><a>Перевод</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('exchange')}" (click)="onChangeSelectedType('exchange')"><a>Обмен</a></li>
+      </ul>
+
+      <div *ngIf="isTypeSelected('expense') || isTypeSelected('income')">
+        <div class="input-group form-row">
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li *ngFor="let currency of currencies">
+                <a (click)="chooseCurrency(currency)">
+                  <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <input [type]="number" [attr.type]="text" [(ngModel)]="historyItem.balance.value" class="form-control" placeholder="Сумма" bkCurrencyValue>
+          <span class="input-group-btn">
+              <span class="btn btn-default" type="button" (click)="openCurrenciesPopup()">Валюты</span>
+            </span>
+        </div>
+        <div class="form-row">
+          <bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
+        </div>
+        <div class="form-row">
+          <bk-select placeholder="Категория" [items]="categories" [(selectedItems)]="selectedCategory"></bk-select>
+        </div>
+        <div class="form-row">
+          <input type="text" [(ngModel)]="historyItem.description" class="form-control" placeholder="Комментарий">
+        </div>
+      </div>
+
+      <!--<div *ngIf="isTypeSelected('transfer')">-->
+      <!--<div class="input-group form-row">-->
+      <!--<div class="input-group-btn">-->
+      <!--<button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+      <!--<bk-currency-symbol [currencyName]="historyForm.get('balance').get('currency').value"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>-->
+      <!--</button>-->
+      <!--<ul class="dropdown-menu">-->
+      <!--<li *ngFor="let currency of currencies">-->
+      <!--<a (click)="chooseCurrency(currency)">-->
+      <!--<bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>-->
+      <!--</a>-->
+      <!--</li>-->
+      <!--</ul>-->
+      <!--</div>-->
+      <!--<input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Сумма" bkCurrencyValue>-->
+      <!--</div>-->
+      <!--<div class="form-row">-->
+      <!--<bk-select placeholder="Со счета" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>-->
+      <!--</div>-->
+      <!--<div class="form-row">-->
+      <!--<bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>-->
+      <!--</div>-->
+      <!--<div class="form-row">-->
+      <!--<input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">-->
+      <!--</div>-->
+      <!--</div>-->
+
+      <!--<div *ngIf="isTypeSelected('exchange')">-->
+      <!--<div class="input-group form-row">-->
+      <!--<div class="input-group-btn">-->
+      <!--<button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+      <!--<bk-currency-symbol [currencyName]="historyForm.get('balance').get('currency').value"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>-->
+      <!--</button>-->
+      <!--<ul class="dropdown-menu">-->
+      <!--<li *ngFor="let currency of currencies">-->
+      <!--<a (click)="chooseCurrency(currency)">-->
+      <!--<bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>-->
+      <!--</a>-->
+      <!--</li>-->
+      <!--</ul>-->
+      <!--</div>-->
+      <!--<input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Было" bkCurrencyValue>-->
+      <!--</div>-->
+      <!--<div class="input-group form-row">-->
+      <!--<div class="input-group-btn">-->
+      <!--<button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+      <!--<bk-currency-symbol [currencyName]="historyForm.get('balance').get('currency').value"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>-->
+      <!--</button>-->
+      <!--<ul class="dropdown-menu">-->
+      <!--<li *ngFor="let currency of currencies">-->
+      <!--<a (click)="chooseCurrency(currency)">-->
+      <!--<bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>-->
+      <!--</a>-->
+      <!--</li>-->
+      <!--</ul>-->
+      <!--</div>-->
+      <!--<input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Стало" bkCurrencyValue>-->
+      <!--</div>-->
+      <!--<div class="form-row">-->
+      <!--<bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>-->
+      <!--</div>-->
+      <!--<div class="form-row">-->
+      <!--<input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">-->
+      <!--</div>-->
+      <!--</div>-->
+      <!--</div>-->
+      <!--</form>-->
+    </div>
+  </div>
+  <bk-goals-container *ngIf="isTypeSelected('expense') || isTypeSelected('income')"></bk-goals-container>
+</md-dialog-content>
+<md-dialog-actions>
+  <span style="width: 100%">
+    <a class="btn btn-default" style="float: right" (click)="close()">Закрыть</a>
+    <span style="float: right">&nbsp;</span>
+    <a class="btn btn-default" style="float: right" (click)="save()">Сохранить</a>
+  </span>
+</md-dialog-actions>

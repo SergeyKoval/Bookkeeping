@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 
 import {MdDialog, MdDialogRef} from '@angular/material';
 
-import {ConfirmPopupComponent} from './confirm-popup.component';
+import {ConfirmDialogComponent} from './confirm-dialog.component';
 
 @Injectable()
-export class ConfirmPopupService {
+export class ConfirmDialogService {
 
   public constructor(private _dialog: MdDialog) { }
 
-  public openConfirmPopup(title: string, body: string): MdDialogRef<ConfirmPopupComponent> {
-    return this._dialog.open(ConfirmPopupComponent, {
+  public openConfirmDialog(title: string, body: string): MdDialogRef<ConfirmDialogComponent> {
+    return this._dialog.open(ConfirmDialogComponent, {
       data: {
         'title': title,
         'body': body

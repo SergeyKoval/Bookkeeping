@@ -36,12 +36,12 @@ import { SummaryBodySubAccountPipe } from './common/pipes/summary/summary-body-s
 import {HistoryService} from './common/service/history.service';
 import { HistoryPageActionsComponent } from './bookkeeping/history/history-page-actions/history-page-actions.component';
 import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
-import { HistoryEditPopupComponent } from './bookkeeping/history/history-edit-popup/history-edit-popup.component';
-import { ConfirmPopupComponent } from './common/components/confirm-popup/confirm-popup.component';
-import {ConfirmPopupService} from './common/components/confirm-popup/confirm-popup.service';
+import { HistoryEditDialogComponent } from './bookkeeping/history/history-edit-dialog/history-edit-dialog.component';
+import { ConfirmDialogComponent } from './common/components/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogService} from './common/components/confirm-dialog/confirm-dialog.service';
 import {AlertService} from './common/service/alert.service';
 import {MyDatePickerModule} from 'mydatepicker';
-import { GoalsContainerComponent } from './bookkeeping/history/history-edit-popup/goals-container/goals-container.component';
+import { GoalsContainerComponent } from './bookkeeping/history/history-edit-dialog/goals-container/goals-container.component';
 import { CurrencyValueDirective } from './common/directives/currency-value.directive';
 import { SelectComponent } from './common/components/select/select.component';
 import { FocusDirective } from './common/directives/focus.directive';
@@ -73,8 +73,8 @@ import { LoadingDialogComponent } from './common/components/loading-dialog/loadi
     SummaryBodySubAccountPipe,
     HistoryPageActionsComponent,
     HistoryGroupPipe,
-    HistoryEditPopupComponent,
-    ConfirmPopupComponent,
+    HistoryEditDialogComponent,
+    ConfirmDialogComponent,
     GoalsContainerComponent,
     CurrencyValueDirective,
     SelectComponent,
@@ -96,8 +96,8 @@ import { LoadingDialogComponent } from './common/components/loading-dialog/loadi
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
   ],
   entryComponents: [
-    ConfirmPopupComponent,
-    HistoryEditPopupComponent,
+    ConfirmDialogComponent,
+    HistoryEditDialogComponent,
     LoadingDialogComponent
   ],
   providers: [
@@ -108,7 +108,7 @@ import { LoadingDialogComponent } from './common/components/loading-dialog/loadi
     LoadingService,
     CurrencyService,
     HistoryService,
-    ConfirmPopupService,
+    ConfirmDialogService,
     AlertService,
     {
       provide: HOST,

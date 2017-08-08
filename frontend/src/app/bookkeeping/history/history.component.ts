@@ -6,11 +6,11 @@ import {MdDialog} from '@angular/material';
 
 import {HistoryService} from '../../common/service/history.service';
 import {AuthenticationService} from '../../common/service/authentication.service';
-import {ConfirmPopupService} from '../../common/components/confirm-popup/confirm-popup.service';
+import {ConfirmDialogService} from '../../common/components/confirm-dialog/confirm-dialog.service';
 import {HistoryItem} from '../../common/model/history/HistoryItem';
 import {AlertService} from '../../common/service/alert.service';
 import {AlertType} from '../../common/model/alert/AlertType';
-import {HistoryEditPopupComponent} from './history-edit-popup/history-edit-popup.component';
+import {HistoryEditDialogComponent} from './history-edit-dialog/history-edit-dialog.component';
 import {SettingsService} from '../../common/service/settings.service';
 
 import 'rxjs/add/operator/switchMap';
@@ -38,7 +38,7 @@ export class HistoryComponent implements OnInit {
   public constructor(
     private _historyService: HistoryService,
     private _authenticationService: AuthenticationService,
-    private _confirmPopupService: ConfirmPopupService,
+    private _confirmDialogService: ConfirmDialogService,
     private _alertService: AlertService,
     private _dialog: MdDialog,
     private _settingsService: SettingsService
@@ -62,7 +62,7 @@ export class HistoryComponent implements OnInit {
   }
 
   public editHistoryItem(historyItem: HistoryItem): void {
-    this._dialog.open(HistoryEditPopupComponent, {
+    this._dialog.open(HistoryEditDialogComponent, {
       width: '1000px',
       position: {top: 'top'},
       data: {
@@ -82,7 +82,7 @@ export class HistoryComponent implements OnInit {
 
   public deleteHistoryItem(historyItem: HistoryItem): void {
     const itemsLimit: number = this.historyItems.length;
-    const subscription: Subscription = this._confirmPopupService.openConfirmPopup('Подтверждение', 'Точно удалить?')
+    const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'Точно удалить?')
       .afterClosed()
       .filter((result: boolean) => result === true)
       .do(() => this.loading = true)

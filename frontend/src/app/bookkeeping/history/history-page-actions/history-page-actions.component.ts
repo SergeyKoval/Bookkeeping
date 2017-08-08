@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {MdDialog} from '@angular/material';
 
-import {HistoryEditPopupComponent} from '../history-edit-popup/history-edit-popup.component';
+import {HistoryEditDialogComponent} from '../history-edit-dialog/history-edit-dialog.component';
 import {HistoryComponent} from '../history.component';
 
 @Component({
@@ -24,7 +24,7 @@ export class HistoryPageActionsComponent implements OnInit {
   }
 
   public addHistoryItem(): void {
-    this._dialog.open(HistoryEditPopupComponent, {
+    this._dialog.open(HistoryEditDialogComponent, {
       width: '850px',
       position: {top: 'top'},
       data: {

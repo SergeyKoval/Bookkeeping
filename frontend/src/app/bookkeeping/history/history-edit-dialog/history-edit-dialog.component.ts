@@ -15,11 +15,11 @@ import {AlertType} from '../../../common/model/alert/AlertType';
 import {Alert} from '../../../common/model/alert/Alert';
 
 @Component({
-  selector: 'bk-history-edit-popup',
-  templateUrl: './history-edit-popup.component.html',
-  styleUrls: ['./history-edit-popup.component.css']
+  selector: 'bk-history-edit-dialog',
+  templateUrl: './history-edit-dialog.component.html',
+  styleUrls: ['./history-edit-dialog.component.css']
 })
-export class HistoryEditPopupComponent implements OnInit {
+export class HistoryEditDialogComponent implements OnInit {
   public datePickerOptions: IMyDpOptions = {dateFormat: 'dd.mm.yyyy', inline: true};
 
   public errors: string;
@@ -36,9 +36,9 @@ export class HistoryEditPopupComponent implements OnInit {
   private _titleElement: ElementRef;
 
   public constructor(
-    public dialogRef: MdDialogRef<HistoryEditPopupComponent>,
+    public dialogRef: MdDialogRef<HistoryEditDialogComponent>,
     @Inject(MD_DIALOG_DATA) public data: {title: string, historyItem: HistoryType},
-    private _dialogRef: MdDialogRef<HistoryEditPopupComponent>,
+    private _dialogRef: MdDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
     private _settingsService: SettingsService,

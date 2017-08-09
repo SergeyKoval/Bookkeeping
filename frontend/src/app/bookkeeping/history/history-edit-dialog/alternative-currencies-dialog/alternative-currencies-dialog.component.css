@@ -1,0 +1,15 @@
+.input-group-addon {
+  width: 55px !important;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+.row.form-inline {
+  padding-top: 10px;
+}
+
+.table {
+  margin-bottom: 10px;
+}

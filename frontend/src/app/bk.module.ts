@@ -49,6 +49,8 @@ import { ClickOutsideDirective } from './common/directives/click-outside.directi
 import {SettingsService} from './common/service/settings.service';
 import { AssetImagePipe } from './common/pipes/asset-image.pipe';
 import { LoadingDialogComponent } from './common/components/loading-dialog/loading-dialog.component';
+import { AlternativeCurrenciesDialogComponent } from './bookkeeping/history/history-edit-dialog/alternative-currencies-dialog/alternative-currencies-dialog.component';
+import { MapKeysPipe } from './common/pipes/map-keys.pipe';
 
 @NgModule({
   declarations: [
@@ -81,7 +83,9 @@ import { LoadingDialogComponent } from './common/components/loading-dialog/loadi
     FocusDirective,
     ClickOutsideDirective,
     AssetImagePipe,
-    LoadingDialogComponent
+    LoadingDialogComponent,
+    AlternativeCurrenciesDialogComponent,
+    MapKeysPipe
   ],
   imports: [
     BrowserModule,
@@ -98,7 +102,8 @@ import { LoadingDialogComponent } from './common/components/loading-dialog/loadi
   entryComponents: [
     ConfirmDialogComponent,
     HistoryEditDialogComponent,
-    LoadingDialogComponent
+    LoadingDialogComponent,
+    AlternativeCurrenciesDialogComponent
   ],
   providers: [
     SettingsService,

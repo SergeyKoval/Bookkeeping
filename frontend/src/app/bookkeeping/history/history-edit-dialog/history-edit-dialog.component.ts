@@ -13,6 +13,7 @@ import {LoadingService} from '../../../common/service/loading.service';
 import {AlertService} from '../../../common/service/alert.service';
 import {AlertType} from '../../../common/model/alert/AlertType';
 import {Alert} from '../../../common/model/alert/Alert';
+import {AlternativeCurrenciesDialogComponent} from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -44,7 +45,8 @@ export class HistoryEditDialogComponent implements OnInit {
     private _settingsService: SettingsService,
     private _authenticationService: AuthenticationService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _dialog: MdDialog
   ) {}
 
   public ngOnInit(): void {
@@ -70,7 +72,13 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public openCurrenciesPopup(): void {
-
+    this._dialog.open(AlternativeCurrenciesDialogComponent, {
+      disableClose: true,
+      width: '470px',
+      data: {
+        balance: this.historyItem.balance
+      }
+    });
   }
 
   public chooseCurrency(currency: Currency): void {

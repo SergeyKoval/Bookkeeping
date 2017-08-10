@@ -35,6 +35,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   @ViewChild('title')
   private _titleElement: ElementRef;
+  private _allCategories: Category[];
 
   public constructor(
     public dialogRef: MdDialogRef<HistoryEditDialogComponent>,
@@ -50,12 +51,15 @@ export class HistoryEditDialogComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
+    this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtilsService.getUTCDate());
+    this.selectedDate = DateUtilsService.getDateFromUTC(this.historyItem.date);
+
     this._currencyService.currencies$.subscribe((currencies: Currency[]) => this.currencies = currencies);
     this._settingsService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._settingsService.transformAccounts(accounts));
-    this._settingsService.categories$.subscribe((catefories: Category[]) => this.categories = this._settingsService.transformCategories(catefories));
-
-    this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtilsService.getUTCDate(), null);
-    this.selectedDate = DateUtilsService.getDateFromUTC(this.historyItem.date);
+    this._settingsService.categories$.subscribe((categories: Category[]) => {
+      this._allCategories = categories;
+      this.categories = this._settingsService.transformCategories(categories, this.historyItem.type);
+    });
   }
 
   public onDateChanged(event: IMyDateModel): void {
@@ -67,7 +71,12 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public onChangeSelectedType(type: string): void {
     if (!this.isTypeSelected(type)) {
-      this.historyItem.type = type;
+      if (this.selectedCategory) {
+        this.selectedCategory.length = 0;
+      }
+
+      this.historyItem = this.initNewHistoryItemFromExisting(type, this.historyItem);
+      this.categories = this._settingsService.transformCategories(this._allCategories, this.historyItem.type);
     }
   }
 
@@ -91,7 +100,8 @@ export class HistoryEditDialogComponent implements OnInit {
     let saveResult: boolean;
     switch (this.historyItem.type) {
       case 'expense':
-        saveResult = this.saveExpense();
+      case 'income':
+        saveResult = this.saveExpenseOrIncome();
         break;
     }
 
@@ -118,20 +128,29 @@ export class HistoryEditDialogComponent implements OnInit {
     return this.historyItem.type === type;
   }
 
-  private initNewHistoryItem(historyType: string, historyDate: number, balanceValue: number): HistoryType {
+  private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
+    const balance: HistoryBalanceType = originalItem.balance;
+    return this.initNewHistoryItem(historyType, originalItem.date, balance.value, balance.currency, balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
+  }
+
+  private initNewHistoryItem(historyType: string, historyDate: number, balanceValue?: number, balanceCurrency?: string,
+                             balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
     return {
       ownerId: this._authenticationService.authenticatedProfile.id,
       type: historyType,
       date: historyDate,
+      description: historyDescription,
       balance: {
         value: balanceValue,
-        currency: this._currencyService.defaultCurrency.name,
-        alternativeCurrency: this._currencyService.defaultCurrency.conversions
+        account: balanceAccount,
+        subAccount: balanceSubAccount,
+        currency: balanceCurrency || this._currencyService.defaultCurrency.name,
+        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.defaultCurrency.conversions
       }
     };
   }
 
-  private saveExpense(): boolean {
+  private saveExpenseOrIncome(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;
     if (!balance.value || balance.value < 0.01) {
       this.errors = 'Сумма указана неверно';

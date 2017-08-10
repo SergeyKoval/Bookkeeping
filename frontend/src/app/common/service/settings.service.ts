@@ -59,15 +59,19 @@ export class SettingsService {
     return result;
   }
 
-  public transformCategories(categories: Category[]): SelectItem[] {
+  public transformCategories(categories: Category[], type: string): SelectItem[] {
     const result: SelectItem[] = [];
     categories.forEach((category: Category) => {
       const subSelectItems: SelectItem[] = [];
       category.subCategories.forEach((subCategory: SubCategory) => {
-        subSelectItems.push({title: subCategory.title});
+        if (!type || type === subCategory.type) {
+          subSelectItems.push({title: subCategory.title});
+        }
       });
-      const iconPath: string = category.icon ? this._assetImagePipe.transform(category.icon, 'category') : null;
-      result.push({title: category.title, children: subSelectItems, icon: iconPath});
+      if (subSelectItems.length > 0) {
+        const iconPath: string = category.icon ? this._assetImagePipe.transform(category.icon, 'category') : null;
+        result.push({title: category.title, children: subSelectItems, icon: iconPath});
+      }
     });
 
     return result;

@@ -44,4 +44,5 @@ type Category = {
 type SubCategory = {
   order: number,
   title: string,
+  type: string
 };

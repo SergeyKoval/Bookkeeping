@@ -32,26 +32,31 @@
   ],
   "categories": [
     {"id": 1, "ownerId": 1, "order": 0, "icon": "avto.gif", "title": "Автомобиль", "subCategories": [
-      {"title": "Бензин", "order": 0},
-      {"title": "Страхование", "order": 1},
-      {"title": "Мойка", "order": 2},
-      {"title": "Платная стоянка", "order": 3},
-      {"title": "Штраф", "order": 4},
-      {"title": "ТО", "order": 5}
+      {"title": "Бензин", "order": 0, "type": "expense"},
+      {"title": "Страхование", "order": 1, "type": "expense"},
+      {"title": "Мойка", "order": 2, "type": "expense"},
+      {"title": "Платная стоянка", "order": 3, "type": "expense"},
+      {"title": "Штраф", "order": 4, "type": "expense"},
+      {"title": "ТО", "order": 5, "type": "expense"}
     ]},
     {"id": 2, "ownerId": 1, "order": 1, "icon": "home.gif", "title": "Комунальные платежи", "subCategories": [
-      {"title": "Квартплата", "order": 0},
-      {"title": "Вода", "order": 1},
-      {"title": "Электроэнергия", "order": 2},
-      {"title": "Телефон", "order": 3},
-      {"title": "Мобильный", "order": 4},
-      {"title": "Интернет", "order": 5}
+      {"title": "Квартплата", "order": 0, "type": "expense"},
+      {"title": "Вода", "order": 1, "type": "expense"},
+      {"title": "Электроэнергия", "order": 2, "type": "expense"},
+      {"title": "Телефон", "order": 3, "type": "expense"},
+      {"title": "Мобильный", "order": 4, "type": "expense"},
+      {"title": "Интернет", "order": 5, "type": "expense"}
     ]},
     {"id": 3, "ownerId": 1, "order": 2, "icon": "deti.gif", "title": "Дети", "subCategories": [
-      {"title": "Одежда", "order": 0},
-      {"title": "Воспитание", "order": 1},
-      {"title": "Игрушки", "order": 2},
-      {"title": "Подарки", "order": 3}
+      {"title": "Одежда", "order": 0, "type": "expense"},
+      {"title": "Воспитание", "order": 1, "type": "expense"},
+      {"title": "Подарки", "order": 0, "type": "income"},
+      {"title": "Игрушки", "order": 2, "type": "expense"},
+      {"title": "Подарки", "order": 3, "type": "expense"}
+    ]},
+    {"id": 4, "ownerId": 1, "order": 3, "icon": "home.gif", "title": "Инвестиции", "subCategories": [
+      {"title": "Аренда", "order": 0, "type": "income"},
+      {"title": "Проценты", "order": 1, "type": "income"}
     ]}
   ]
 }

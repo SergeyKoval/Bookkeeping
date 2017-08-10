@@ -13,6 +13,7 @@ export class BudgetComponent implements OnInit {
   public selectedItem2: SelectItem[];
 
   public ngOnInit(): void {
+
     this.items = [
       {title: 'Деньги', icon: 'assets/image/other_exp.gif', children: [{title: 'Наличные'}, {title: 'Резерв'}]},
       {title: 'Сбережения', icon: 'assets/image/other_exp.gif', children: [{title: 'Белинвест', icon: 'assets/image/home.gif'}, {title: 'Альфа', icon: 'assets/image/home.gif'}]},

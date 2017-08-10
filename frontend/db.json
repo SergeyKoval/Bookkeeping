@@ -1,62 +1,437 @@
 {
   "profiles": [
-    {"id": 1, "email": "skoval@gmail.com", "password": "098f6bcd4621d373cade4e832627b4f6"},
-    {"id": 2, "email": "test@gmail.com", "password": "test"}
+    {
+      "id": 1,
+      "email": "skoval@gmail.com",
+      "password": "098f6bcd4621d373cade4e832627b4f6"
+    },
+    {
+      "id": 2,
+      "email": "test@gmail.com",
+      "password": "test"
+    }
   ],
   "currencies": [
-    {"ownerId": 1, "name": "BYN", "default": false, "symbol": "Byn", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}},
-    {"ownerId": 1, "name": "EUR", "default": true, "symbol": "&euro;", "order": 3, "conversions": {"BYN": 2.25, "USD": 1.081}},
-    {"ownerId": 1, "name": "USD", "default": false, "symbol": "&#x24;", "order": 2, "conversions": {"BYN": 1.8711, "EUR": 0.9132}},
-    {"ownerId": 2, "name": "USD", "default": true, "symbol": "&#x24;", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}}
+    {
+      "ownerId": 1,
+      "name": "BYN",
+      "default": false,
+      "symbol": "Byn",
+      "order": 1,
+      "conversions": {
+        "EUR": 2.25,
+        "USD": 1.8711
+      }
+    },
+    {
+      "ownerId": 1,
+      "name": "EUR",
+      "default": true,
+      "symbol": "&euro;",
+      "order": 3,
+      "conversions": {
+        "BYN": 2.25,
+        "USD": 1.081
+      }
+    },
+    {
+      "ownerId": 1,
+      "name": "USD",
+      "default": false,
+      "symbol": "&#x24;",
+      "order": 2,
+      "conversions": {
+        "BYN": 1.8711,
+        "EUR": 0.9132
+      }
+    },
+    {
+      "ownerId": 2,
+      "name": "USD",
+      "default": true,
+      "symbol": "&#x24;",
+      "order": 1,
+      "conversions": {
+        "EUR": 2.25,
+        "USD": 1.8711
+      }
+    }
   ],
   "history": [
-    {"id": 1, "ownerId": 1, "date":1494180127641, "order": 1, "type":"expense", "balance": {"value":5.6, "account": "Карточки", "subAccount": "Альфа", "currency": "BYN", "alternativeCurrency": {"USD": 2.97, "EUR": 2.6}}, "category": "Питание", "subCategory": "Продукты питания", "description": "Детское питание с очень длинным названием"},
-    {"id": 2, "ownerId": 1, "date":1494180127641, "order": 0, "type":"expense", "balance": {"value":9600, "account": "Карточки", "subAccount": "Авто", "currency": "BYN", "alternativeCurrency": {"USD": 5106.38, "EUR": 4752.48}}, "category": "Автомобиль", "subCategory": "Запчасти", "goal": {"category": "Автомобиль", "name":"Tiguan"}},
-    {"id": 3, "ownerId": 1, "date":1499353200000, "order": 0, "type":"expense", "balance": {"value":38.12, "account": "Карточки", "subAccount": "Альфа", "currency": "BYN", "alternativeCurrency": {"USD": 20.28, "EUR": 18.87}}, "category": "Питание", "subCategory": "Продукты питания", "description": "Детское питание"},
-    {"id": 4, "ownerId": 2, "date":1499353200000, "order": 0, "type":"expense", "balance": {"value":38.12, "account": "Карточки", "subAccount": "Альфа", "currency": "BYN", "alternativeCurrency": {"USD": 20.28, "EUR": 18.87}}, "category": "Питание", "subCategory": "Продукты питания", "description": "Детское питание"},
-    {"id": 5, "ownerId": 1, "date":1499353200000, "order": 1, "type":"income", "balance": {"value":2000, "account": "Деньги", "subAccount": "Наличные", "currency": "BYN", "alternativeCurrency": {"USD": 1063.83, "EUR": 990.10}}, "category": "Инвестиции", "subCategory": "Проценты", "goal": {"category": "Инвестиции", "name":"Депозит"}}
+    {
+      "id": 1,
+      "ownerId": 1,
+      "date": 1494180127641,
+      "order": 1,
+      "type": "expense",
+      "balance": {
+        "value": 5.6,
+        "account": "Карточки",
+        "subAccount": "Альфа",
+        "currency": "BYN",
+        "alternativeCurrency": {
+          "USD": 2.97,
+          "EUR": 2.6
+        }
+      },
+      "category": "Питание",
+      "subCategory": "Продукты питания",
+      "description": "Детское питание с очень длинным названием"
+    },
+    {
+      "id": 2,
+      "ownerId": 1,
+      "date": 1494180127641,
+      "order": 0,
+      "type": "expense",
+      "balance": {
+        "value": 9600,
+        "account": "Карточки",
+        "subAccount": "Авто",
+        "currency": "BYN",
+        "alternativeCurrency": {
+          "USD": 5106.38,
+          "EUR": 4752.48
+        }
+      },
+      "category": "Автомобиль",
+      "subCategory": "Запчасти",
+      "goal": {
+        "category": "Автомобиль",
+        "name": "Tiguan"
+      }
+    },
+    {
+      "id": 3,
+      "ownerId": 1,
+      "date": 1499353200000,
+      "order": 0,
+      "type": "expense",
+      "balance": {
+        "value": 38.12,
+        "account": "Карточки",
+        "subAccount": "Альфа",
+        "currency": "BYN",
+        "alternativeCurrency": {
+          "USD": 20.28,
+          "EUR": 18.87
+        }
+      },
+      "category": "Питание",
+      "subCategory": "Продукты питания",
+      "description": "Детское питание"
+    },
+    {
+      "id": 4,
+      "ownerId": 2,
+      "date": 1499353200000,
+      "order": 0,
+      "type": "expense",
+      "balance": {
+        "value": 38.12,
+        "account": "Карточки",
+        "subAccount": "Альфа",
+        "currency": "BYN",
+        "alternativeCurrency": {
+          "USD": 20.28,
+          "EUR": 18.87
+        }
+      },
+      "category": "Питание",
+      "subCategory": "Продукты питания",
+      "description": "Детское питание"
+    },
+    {
+      "id": 5,
+      "ownerId": 1,
+      "date": 1499353200000,
+      "order": 1,
+      "type": "income",
+      "balance": {
+        "value": 2000,
+        "account": "Деньги",
+        "subAccount": "Наличные",
+        "currency": "BYN",
+        "alternativeCurrency": {
+          "USD": 1063.83,
+          "EUR": 990.1
+        }
+      },
+      "category": "Инвестиции",
+      "subCategory": "Проценты",
+      "goal": {
+        "category": "Инвестиции",
+        "name": "Депозит"
+      }
+    },
+    {
+      "ownerId": 1,
+      "type": "transfer",
+      "date": 1502366400000,
+      "description": "test",
+      "balance": {
+        "value": 50,
+        "account": "Деньги",
+        "subAccount": "Наличные",
+        "currency": "EUR",
+        "alternativeCurrency": {
+          "BYN": 2.25,
+          "USD": 1.081
+        },
+        "accountTo": "Сбережения",
+        "subAccountTo": "Белагро"
+      },
+      "order": 0,
+      "id": 6
+    }
   ],
   "accounts": [
-    {"id": 1, "ownerId": 1, "order": 0, "opened":true, "title": "Деньги", "subAccounts": [
-      {"title": "Наличные", "order": 0, "icon": "home.gif", "balance": [{"currency": "BYN", "value": 196.82}]},
-      {"title": "Резерв", "order": 1, "icon": "other_exp.gif", "balance": [{"currency": "BYN", "value": 35.75}, {"currency": "USD", "value": 180}, {"currency": "EUR", "value": 7230}]},
-      {"title": "Альфа", "order": 2, "icon": "home.gif", "balance": [{"currency": "BYN", "value": 895.48}]},
-      {"title": "PayOK", "order": 3, "icon": "home.gif", "balance": [{"currency": "BYN", "value": 1385.13}]},
-      {"title": "Автокарта", "order": 4, "icon": "", "balance": [{"currency": "BYN", "value": 196.20}]}
-    ]},
-    {"id": 2, "ownerId": 1, "order": 1, "opened":false, "title": "Сбережения", "subAccounts": [
-      {"title": "Белинвестбанк", "order": 0, "icon": "", "balance": [{"currency": "USD", "value": 10300}]},
-      {"title": "Белагро", "order": 1, "icon": "", "balance": [{"currency": "USD", "value": 15700}]},
-      {"title": "МТБанк", "order": 2, "icon": "", "balance": [{"currency": "BYN", "value": 385.13}]}
-    ]}
+    {
+      "id": 1,
+      "ownerId": 1,
+      "order": 0,
+      "opened": true,
+      "title": "Деньги",
+      "subAccounts": [
+        {
+          "title": "Наличные",
+          "order": 0,
+          "icon": "home.gif",
+          "balance": [
+            {
+              "currency": "BYN",
+              "value": 196.82
+            }
+          ]
+        },
+        {
+          "title": "Резерв",
+          "order": 1,
+          "icon": "other_exp.gif",
+          "balance": [
+            {
+              "currency": "BYN",
+              "value": 35.75
+            },
+            {
+              "currency": "USD",
+              "value": 180
+            },
+            {
+              "currency": "EUR",
+              "value": 7230
+            }
+          ]
+        },
+        {
+          "title": "Альфа",
+          "order": 2,
+          "icon": "home.gif",
+          "balance": [
+            {
+              "currency": "BYN",
+              "value": 895.48
+            }
+          ]
+        },
+        {
+          "title": "PayOK",
+          "order": 3,
+          "icon": "home.gif",
+          "balance": [
+            {
+              "currency": "BYN",
+              "value": 1385.13
+            }
+          ]
+        },
+        {
+          "title": "Автокарта",
+          "order": 4,
+          "icon": "",
+          "balance": [
+            {
+              "currency": "BYN",
+              "value": 196.2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "ownerId": 1,
+      "order": 1,
+      "opened": false,
+      "title": "Сбережения",
+      "subAccounts": [
+        {
+          "title": "Белинвестбанк",
+          "order": 0,
+          "icon": "",
+          "balance": [
+            {
+              "currency": "USD",
+              "value": 10300
+            }
+          ]
+        },
+        {
+          "title": "Белагро",
+          "order": 1,
+          "icon": "",
+          "balance": [
+            {
+              "currency": "USD",
+              "value": 15700
+            }
+          ]
+        },
+        {
+          "title": "МТБанк",
+          "order": 2,
+          "icon": "",
+          "balance": [
+            {
+              "currency": "BYN",
+              "value": 385.13
+            }
+          ]
+        }
+      ]
+    }
   ],
   "categories": [
-    {"id": 1, "ownerId": 1, "order": 0, "icon": "avto.gif", "title": "Автомобиль", "subCategories": [
-      {"title": "Бензин", "order": 0, "type": "expense"},
-      {"title": "Страхование", "order": 1, "type": "expense"},
-      {"title": "Мойка", "order": 2, "type": "expense"},
-      {"title": "Платная стоянка", "order": 3, "type": "expense"},
-      {"title": "Штраф", "order": 4, "type": "expense"},
-      {"title": "ТО", "order": 5, "type": "expense"}
-    ]},
-    {"id": 2, "ownerId": 1, "order": 1, "icon": "home.gif", "title": "Комунальные платежи", "subCategories": [
-      {"title": "Квартплата", "order": 0, "type": "expense"},
-      {"title": "Вода", "order": 1, "type": "expense"},
-      {"title": "Электроэнергия", "order": 2, "type": "expense"},
-      {"title": "Телефон", "order": 3, "type": "expense"},
-      {"title": "Мобильный", "order": 4, "type": "expense"},
-      {"title": "Интернет", "order": 5, "type": "expense"}
-    ]},
-    {"id": 3, "ownerId": 1, "order": 2, "icon": "deti.gif", "title": "Дети", "subCategories": [
-      {"title": "Одежда", "order": 0, "type": "expense"},
-      {"title": "Воспитание", "order": 1, "type": "expense"},
-      {"title": "Подарки", "order": 0, "type": "income"},
-      {"title": "Игрушки", "order": 2, "type": "expense"},
-      {"title": "Подарки", "order": 3, "type": "expense"}
-    ]},
-    {"id": 4, "ownerId": 1, "order": 3, "icon": "home.gif", "title": "Инвестиции", "subCategories": [
-      {"title": "Аренда", "order": 0, "type": "income"},
-      {"title": "Проценты", "order": 1, "type": "income"}
-    ]}
+    {
+      "id": 1,
+      "ownerId": 1,
+      "order": 0,
+      "icon": "avto.gif",
+      "title": "Автомобиль",
+      "subCategories": [
+        {
+          "title": "Бензин",
+          "order": 0,
+          "type": "expense"
+        },
+        {
+          "title": "Страхование",
+          "order": 1,
+          "type": "expense"
+        },
+        {
+          "title": "Мойка",
+          "order": 2,
+          "type": "expense"
+        },
+        {
+          "title": "Платная стоянка",
+          "order": 3,
+          "type": "expense"
+        },
+        {
+          "title": "Штраф",
+          "order": 4,
+          "type": "expense"
+        },
+        {
+          "title": "ТО",
+          "order": 5,
+          "type": "expense"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "ownerId": 1,
+      "order": 1,
+      "icon": "home.gif",
+      "title": "Комунальные платежи",
+      "subCategories": [
+        {
+          "title": "Квартплата",
+          "order": 0,
+          "type": "expense"
+        },
+        {
+          "title": "Вода",
+          "order": 1,
+          "type": "expense"
+        },
+        {
+          "title": "Электроэнергия",
+          "order": 2,
+          "type": "expense"
+        },
+        {
+          "title": "Телефон",
+          "order": 3,
+          "type": "expense"
+        },
+        {
+          "title": "Мобильный",
+          "order": 4,
+          "type": "expense"
+        },
+        {
+          "title": "Интернет",
+          "order": 5,
+          "type": "expense"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "ownerId": 1,
+      "order": 2,
+      "icon": "deti.gif",
+      "title": "Дети",
+      "subCategories": [
+        {
+          "title": "Одежда",
+          "order": 0,
+          "type": "expense"
+        },
+        {
+          "title": "Воспитание",
+          "order": 1,
+          "type": "expense"
+        },
+        {
+          "title": "Подарки",
+          "order": 0,
+          "type": "income"
+        },
+        {
+          "title": "Игрушки",
+          "order": 2,
+          "type": "expense"
+        },
+        {
+          "title": "Подарки",
+          "order": 3,
+          "type": "expense"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "ownerId": 1,
+      "order": 3,
+      "icon": "home.gif",
+      "title": "Инвестиции",
+      "subCategories": [
+        {
+          "title": "Аренда",
+          "order": 0,
+          "type": "income"
+        },
+        {
+          "title": "Проценты",
+          "order": 1,
+          "type": "income"
+        }
+      ]
+    }
   ]
 }

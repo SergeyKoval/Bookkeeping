@@ -26,3 +26,7 @@ ul.nav-tabs li {
 .error {
   margin-bottom: 10px;
 }
+
+#history-add-edit-dialog {
+  overflow: visible !important;
+}

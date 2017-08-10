@@ -74,6 +74,9 @@ export class HistoryEditDialogComponent implements OnInit {
       if (this.selectedCategory) {
         this.selectedCategory.length = 0;
       }
+      if (this.selectedToAccount) {
+        this.selectedCategory.length = 0;
+      }
 
       this.historyItem = this.initNewHistoryItemFromExisting(type, this.historyItem);
       this.categories = this._settingsService.transformCategories(this._allCategories, this.historyItem.type);
@@ -97,15 +100,18 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public save(): void {
-    let saveResult: boolean;
+    let validationResult: boolean;
     switch (this.historyItem.type) {
       case 'expense':
       case 'income':
-        saveResult = this.saveExpenseOrIncome();
+        validationResult = this.validateExpenseOrIncome();
+        break;
+      case 'transfer':
+        validationResult = this.validateTransfer();
         break;
     }
 
-    if (saveResult) {
+    if (validationResult) {
       const mdDialogRef: MdDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
       this._historyService.addHistoryItem(this.historyItem).subscribe((response: Response) => {
         const alert: Alert = response.ok ? new Alert(AlertType.SUCCESS, 'Операция успешно добавлена') : new Alert(AlertType.WARNING, 'При добавлении возникла ошибка', null, 10);
@@ -150,7 +156,7 @@ export class HistoryEditDialogComponent implements OnInit {
     };
   }
 
-  private saveExpenseOrIncome(): boolean {
+  private validateExpenseOrIncome(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;
     if (!balance.value || balance.value < 0.01) {
       this.errors = 'Сумма указана неверно';
@@ -170,6 +176,37 @@ export class HistoryEditDialogComponent implements OnInit {
     }
     this.historyItem.category = this.selectedCategory[0].title;
     this.historyItem.subCategory = this.selectedCategory[1].title;
+
+    return true;
+  }
+
+  private validateTransfer(): boolean {
+    const balance: HistoryBalanceType = this.historyItem.balance;
+    if (!balance.value || balance.value < 0.01) {
+      this.errors = 'Сумма указана неверно';
+      return false;
+    }
+
+    if (!this.selectedAccount || this.selectedAccount.length < 2) {
+      this.errors = 'Счет не выбран';
+      return false;
+    }
+    balance.account = this.selectedAccount[0].title;
+    balance.subAccount = this.selectedAccount[1].title;
+
+    if (!this.selectedToAccount || this.selectedToAccount.length < 2) {
+      this.errors = 'Счет не выбран';
+      return false;
+    }
+    const accountTo: string = this.selectedToAccount[0].title;
+    const subAccountTo: string = this.selectedToAccount[1].title;
+    if (balance.account === accountTo && balance.subAccount === subAccountTo) {
+      this.selectedToAccount.length = 0;
+      this.errors = 'Неверный счет получателя';
+      return false;
+    }
+    balance.accountTo = accountTo;
+    balance.subAccountTo = subAccountTo;
 
     return true;
   }

@@ -1,5 +1,5 @@
 <h2 md-dialog-title align="center" #title>{{data.title}}</h2>
-<md-dialog-content>
+<md-dialog-content id="history-add-edit-dialog">
   <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
     <strong>{{errors}}</strong>
   </div>
@@ -30,7 +30,7 @@
               </li>
             </ul>
           </div>
-          <input [type]="number" [attr.type]="text" [(ngModel)]="historyItem.balance.value" class="form-control" placeholder="Сумма" bkCurrencyValue>
+          <input type="text" [(ngModel)]="historyItem.balance.value" class="form-control" placeholder="Сумма" bkCurrencyValue>
           <span class="input-group-btn">
               <span class="btn btn-default" type="button" (click)="openCurrenciesPopup()">Валюты</span>
             </span>
@@ -46,32 +46,32 @@
         </div>
       </div>
 
-      <!--<div *ngIf="isTypeSelected('transfer')">-->
-      <!--<div class="input-group form-row">-->
-      <!--<div class="input-group-btn">-->
-      <!--<button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-      <!--<bk-currency-symbol [currencyName]="historyForm.get('balance').get('currency').value"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>-->
-      <!--</button>-->
-      <!--<ul class="dropdown-menu">-->
-      <!--<li *ngFor="let currency of currencies">-->
-      <!--<a (click)="chooseCurrency(currency)">-->
-      <!--<bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>-->
-      <!--</a>-->
-      <!--</li>-->
-      <!--</ul>-->
-      <!--</div>-->
-      <!--<input [type]="number" [attr.type]="text" [formControl]="historyForm.get('balance').get('value')" class="form-control" placeholder="Сумма" bkCurrencyValue>-->
-      <!--</div>-->
-      <!--<div class="form-row">-->
-      <!--<bk-select placeholder="Со счета" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>-->
-      <!--</div>-->
-      <!--<div class="form-row">-->
-      <!--<bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>-->
-      <!--</div>-->
-      <!--<div class="form-row">-->
-      <!--<input type="text" [formControl]="historyForm.get('description')" class="form-control" placeholder="Комментарий">-->
-      <!--</div>-->
-      <!--</div>-->
+      <div *ngIf="isTypeSelected('transfer')">
+        <div class="input-group form-row">
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li *ngFor="let currency of currencies">
+                <a (click)="chooseCurrency(currency)">
+                  <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <input type="text" [(ngModel)]="historyItem.balance.value" class="form-control" placeholder="Сумма" bkCurrencyValue>
+        </div>
+        <div class="form-row">
+          <bk-select placeholder="Со счета" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
+        </div>
+        <div class="form-row">
+          <bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>
+        </div>
+        <div class="form-row">
+          <input type="text" [(ngModel)]="historyItem.description" class="form-control" placeholder="Комментарий">
+        </div>
+      </div>
 
       <!--<div *ngIf="isTypeSelected('exchange')">-->
       <!--<div class="input-group form-row">-->

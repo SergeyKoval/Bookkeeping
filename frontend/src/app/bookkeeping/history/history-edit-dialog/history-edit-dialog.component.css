@@ -30,3 +30,11 @@ ul.nav-tabs li {
 #history-add-edit-dialog {
   overflow: visible !important;
 }
+
+.history-actions {
+  width: 100%;
+}
+
+.history-action-item {
+  float: right;
+}

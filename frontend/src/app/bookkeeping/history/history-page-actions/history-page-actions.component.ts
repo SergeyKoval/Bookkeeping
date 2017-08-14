@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import {MdDialog} from '@angular/material';
+import { MdDialog, MdDialogConfig } from '@angular/material';
 
-import {HistoryEditDialogComponent} from '../history-edit-dialog/history-edit-dialog.component';
-import {HistoryComponent} from '../history.component';
+import { HistoryEditDialogComponent } from '../history-edit-dialog/history-edit-dialog.component';
+import { HistoryComponent } from '../history.component';
 
 @Component({
   selector: 'bk-history-page-actions',
@@ -24,9 +24,12 @@ export class HistoryPageActionsComponent implements OnInit {
   }
 
   public addHistoryItem(): void {
+    const mdDialogConfig: MdDialogConfig = new MdDialogConfig();
+
     this._dialog.open(HistoryEditDialogComponent, {
       width: '850px',
       position: {top: 'top'},
+      panelClass: 'history-add-edit-dialog',
       data: {
         'title': 'Новая операция',
         'historyItem': null

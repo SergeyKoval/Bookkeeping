@@ -1,19 +1,21 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {Response} from '@angular/http';
-import {MD_DIALOG_DATA, MdDialog, MdDialogRef} from '@angular/material';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Response } from '@angular/http';
+import { MD_DIALOG_DATA, MdDialog, MdDialogRef } from '@angular/material';
 
-import {IMyDate, IMyDateModel, IMyDpOptions} from 'mydatepicker';
-import {HistoryService} from '../../../common/service/history.service';
-import {CurrencyService} from '../../../common/service/currency.service';
-import {SettingsService} from '../../../common/service/settings.service';
-import {DateUtilsService} from '../../../common/utils/date-utils.service';
-import {AuthenticationService} from '../../../common/service/authentication.service';
-import {LoadingDialogComponent} from '../../../common/components/loading-dialog/loading-dialog.component';
-import {LoadingService} from '../../../common/service/loading.service';
-import {AlertService} from '../../../common/service/alert.service';
-import {AlertType} from '../../../common/model/alert/AlertType';
-import {Alert} from '../../../common/model/alert/Alert';
-import {AlternativeCurrenciesDialogComponent} from './alternative-currencies-dialog/alternative-currencies-dialog.component';
+import { isNumeric } from 'rxjs/util/isNumeric';
+
+import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
+import { HistoryService } from '../../../common/service/history.service';
+import { CurrencyService } from '../../../common/service/currency.service';
+import { SettingsService } from '../../../common/service/settings.service';
+import { DateUtilsService } from '../../../common/utils/date-utils.service';
+import { AuthenticationService } from '../../../common/service/authentication.service';
+import { LoadingDialogComponent } from '../../../common/components/loading-dialog/loading-dialog.component';
+import { LoadingService } from '../../../common/service/loading.service';
+import { AlertService } from '../../../common/service/alert.service';
+import { AlertType } from '../../../common/model/alert/AlertType';
+import { Alert } from '../../../common/model/alert/Alert';
+import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -75,7 +77,7 @@ export class HistoryEditDialogComponent implements OnInit {
         this.selectedCategory.length = 0;
       }
       if (this.selectedToAccount) {
-        this.selectedCategory.length = 0;
+        this.selectedToAccount.length = 0;
       }
 
       this.historyItem = this.initNewHistoryItemFromExisting(type, this.historyItem);
@@ -83,20 +85,28 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
-  public openCurrenciesPopup(): void {
-    this._dialog.open(AlternativeCurrenciesDialogComponent, {
-      disableClose: true,
-      width: '470px',
-      data: {
-        balance: this.historyItem.balance
-      }
-    });
+  public openCurrenciesPopup(balanceValue: string): void {
+    if (isNumeric(balanceValue)) {
+      this._dialog.open(AlternativeCurrenciesDialogComponent, {
+        disableClose: true,
+        width: '470px',
+        data: {
+          balance: this.historyItem.balance
+        }
+      });
+    }
   }
 
   public chooseCurrency(currency: Currency): void {
     // TODO: update goal
     this.historyItem.balance.currency = currency.name;
-    this.historyItem.balance.alternativeCurrency = currency.conversions;
+    if (this.isTypeSelected('expense') || this.isTypeSelected('income')) {
+      this.historyItem.balance.alternativeCurrency = currency.conversions;
+    }
+  }
+
+  public chooseNewCurrency(currency: Currency): void {
+    this.historyItem.balance.newCurrency = currency.name;
   }
 
   public save(): void {
@@ -108,6 +118,9 @@ export class HistoryEditDialogComponent implements OnInit {
         break;
       case 'transfer':
         validationResult = this.validateTransfer();
+        break;
+      case 'exchange':
+        validationResult = this.validateExchange();
         break;
     }
 
@@ -134,14 +147,35 @@ export class HistoryEditDialogComponent implements OnInit {
     return this.historyItem.type === type;
   }
 
-  private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
-    const balance: HistoryBalanceType = originalItem.balance;
-    return this.initNewHistoryItem(historyType, originalItem.date, balance.value, balance.currency, balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
+  public getValuePlaceholder(): string {
+    if (this.isTypeSelected('exchange')) {
+      return 'Было';
+    }
+
+    return 'Сумма';
   }
 
-  private initNewHistoryItem(historyType: string, historyDate: number, balanceValue?: number, balanceCurrency?: string,
+  public getAccountPlaceholder(): string {
+    if (this.isTypeSelected('transfer')) {
+      return 'Со счета';
+    }
+
+    return 'Счет';
+  }
+
+  public disableAlternativeCurrencies(balanceValue: string): boolean {
+    return !isNumeric(balanceValue) ? true : null;
+  }
+
+  private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
+    const balance: HistoryBalanceType = originalItem.balance;
+    return this.initNewHistoryItem(historyType, originalItem.date, balance.value, balance.currency, balance.newCurrency,
+      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
+  }
+
+  private initNewHistoryItem(historyType: string, historyDate: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
-    return {
+    const result: HistoryType = {
       ownerId: this._authenticationService.authenticatedProfile.id,
       type: historyType,
       date: historyDate,
@@ -150,14 +184,21 @@ export class HistoryEditDialogComponent implements OnInit {
         value: balanceValue,
         account: balanceAccount,
         subAccount: balanceSubAccount,
-        currency: balanceCurrency || this._currencyService.defaultCurrency.name,
-        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.defaultCurrency.conversions
+        currency: balanceCurrency || this._currencyService.defaultCurrency.name
       }
     };
+
+    if (historyType === 'expense' || historyType === 'income') {
+      result.balance.alternativeCurrency = balanceAlternativeCurrency || this._currencyService.defaultCurrency.conversions;
+    }
+    if (historyType === 'exchange') {
+      result.balance.newCurrency = balanceNewCurrency || this._currencyService.defaultCurrency.name;
+    }
+
+    return result;
   }
 
-  private validateExpenseOrIncome(): boolean {
-    const balance: HistoryBalanceType = this.historyItem.balance;
+  private commonValidation(balance: HistoryBalanceType): boolean {
     if (!balance.value || balance.value < 0.01) {
       this.errors = 'Сумма указана неверно';
       return false;
@@ -169,6 +210,15 @@ export class HistoryEditDialogComponent implements OnInit {
     }
     balance.account = this.selectedAccount[0].title;
     balance.subAccount = this.selectedAccount[1].title;
+
+    return true;
+  }
+
+  private validateExpenseOrIncome(): boolean {
+    const balance: HistoryBalanceType = this.historyItem.balance;
+    if (!this.commonValidation(balance)) {
+      return false;
+    }
 
     if (!this.selectedCategory || this.selectedCategory.length < 2) {
       this.errors = 'Категория не выбрана';
@@ -182,17 +232,9 @@ export class HistoryEditDialogComponent implements OnInit {
 
   private validateTransfer(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;
-    if (!balance.value || balance.value < 0.01) {
-      this.errors = 'Сумма указана неверно';
+    if (!this.commonValidation(balance)) {
       return false;
     }
-
-    if (!this.selectedAccount || this.selectedAccount.length < 2) {
-      this.errors = 'Счет не выбран';
-      return false;
-    }
-    balance.account = this.selectedAccount[0].title;
-    balance.subAccount = this.selectedAccount[1].title;
 
     if (!this.selectedToAccount || this.selectedToAccount.length < 2) {
       this.errors = 'Счет не выбран';
@@ -207,6 +249,25 @@ export class HistoryEditDialogComponent implements OnInit {
     }
     balance.accountTo = accountTo;
     balance.subAccountTo = subAccountTo;
+
+    return true;
+  }
+
+  private validateExchange(): boolean {
+    const balance: HistoryBalanceType = this.historyItem.balance;
+    if (!this.commonValidation(balance)) {
+      return false;
+    }
+
+    if (!balance.newValue || balance.newValue < 0.01) {
+      this.errors = 'Сумма указана неверно';
+      return false;
+    }
+
+    if (balance.currency === balance.newCurrency) {
+      this.errors = 'Валюты не могут совпадать';
+      return false;
+    }
 
     return true;
   }

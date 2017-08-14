@@ -183,6 +183,159 @@
       },
       "order": 0,
       "id": 6
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1502712000000,
+      "description": "test2",
+      "balance": {
+        "value": 5,
+        "account": "Деньги",
+        "subAccount": "Наличные",
+        "currency": "EUR",
+        "newCurrency": "BYN",
+        "newValue": 10
+      },
+      "order": 0,
+      "id": 7
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1502712000000,
+      "balance": {
+        "value": 23,
+        "account": "Сбережения",
+        "subAccount": "Белагро",
+        "currency": "EUR",
+        "newCurrency": "BYN",
+        "newValue": 123
+      },
+      "order": 1,
+      "id": 8
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1502712000000,
+      "balance": {
+        "value": 44,
+        "account": "Деньги",
+        "subAccount": "Альфа",
+        "currency": "EUR",
+        "newCurrency": "BYN",
+        "newValue": 11
+      },
+      "order": 2,
+      "id": 9
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1502712000000,
+      "balance": {
+        "value": 15,
+        "account": "Сбережения",
+        "subAccount": "МТБанк",
+        "currency": "EUR",
+        "newCurrency": "USD",
+        "newValue": 16
+      },
+      "order": 3,
+      "id": 10
+    },
+    {
+      "ownerId": 1,
+      "type": "expense",
+      "date": 1502712000000,
+      "description": "111",
+      "balance": {
+        "value": 22,
+        "account": "Сбережения",
+        "subAccount": "Белагро",
+        "currency": "USD",
+        "alternativeCurrency": {
+          "BYN": 1.8711,
+          "EUR": 0.9132
+        }
+      },
+      "category": "Автомобиль",
+      "subCategory": "Страхование",
+      "order": 4,
+      "id": 11
+    },
+    {
+      "ownerId": 1,
+      "type": "expense",
+      "date": 1502798400000,
+      "description": "111",
+      "balance": {
+        "value": 432,
+        "account": "Сбережения",
+        "subAccount": "Белагро",
+        "currency": "USD",
+        "alternativeCurrency": {
+          "BYN": 1.8711,
+          "EUR": 0.9132
+        }
+      },
+      "category": "Комунальные платежи",
+      "subCategory": "Вода",
+      "order": 0,
+      "id": 12
+    },
+    {
+      "ownerId": 1,
+      "type": "income",
+      "date": 1502712000000,
+      "description": "222",
+      "balance": {
+        "value": 12,
+        "account": "Деньги",
+        "subAccount": "Резерв",
+        "currency": "BYN",
+        "alternativeCurrency": {
+          "EUR": 22.5833,
+          "USD": 1.8711
+        }
+      },
+      "category": "Инвестиции",
+      "subCategory": "Аренда",
+      "order": 5,
+      "id": 13
+    },
+    {
+      "ownerId": 1,
+      "type": "transfer",
+      "date": 1502798400000,
+      "description": "333",
+      "balance": {
+        "value": 234,
+        "account": "Деньги",
+        "subAccount": "Резерв",
+        "currency": "EUR",
+        "accountTo": "Деньги",
+        "subAccountTo": "PayOK"
+      },
+      "order": 1,
+      "id": 14
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1502798400000,
+      "description": "4444",
+      "balance": {
+        "value": 342,
+        "account": "Деньги",
+        "subAccount": "Альфа",
+        "currency": "EUR",
+        "newCurrency": "USD",
+        "newValue": 654
+      },
+      "order": 2,
+      "id": 15
     }
   ],
   "accounts": [

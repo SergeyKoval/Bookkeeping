@@ -13,12 +13,14 @@ type HistoryType = {
 
 type HistoryBalanceType = {
   value: number,
+  newValue?: number,
   account?: string,
   accountTo?: string,
   subAccount?: string,
   subAccountTo?: string,
   currency: string,
-  alternativeCurrency: {[key: string]: number}
+  newCurrency?: string,
+  alternativeCurrency?: {[key: string]: number}
 };
 
 type HistoryGoal = {

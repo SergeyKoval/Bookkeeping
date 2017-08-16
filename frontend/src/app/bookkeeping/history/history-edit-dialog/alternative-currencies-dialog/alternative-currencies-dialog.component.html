@@ -22,9 +22,9 @@
   <p class="text-center">Такущая валюта: <strong><bk-currency-symbol [currencyName]="data.balance.currency"></bk-currency-symbol></strong></p>
 </md-dialog-content>
 <md-dialog-actions>
-  <span style="width: 100%">
-    <a class="btn btn-default" style="float: right" (click)="close()">Закрыть</a>
-    <span style="float: right">&nbsp;</span>
-    <a class="btn btn-default" style="float: right" (click)="save()">Сохранить</a>
+  <span class="history-actions">
+    <a class="btn btn-default history-action-item" (click)="close()">Закрыть</a>
+    <span class="history-action-item">&nbsp;</span>
+    <a class="btn btn-default history-action-item" (click)="save()">Сохранить</a>
   </span>
 </md-dialog-actions>

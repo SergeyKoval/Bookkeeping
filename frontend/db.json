@@ -336,6 +336,22 @@
       },
       "order": 2,
       "id": 15
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1502884800000,
+      "description": "new test",
+      "balance": {
+        "value": 15200.1,
+        "account": "Деньги",
+        "subAccount": "Резерв",
+        "currency": "EUR",
+        "newCurrency": "BYN",
+        "newValue": 380000.15
+      },
+      "order": 0,
+      "id": 16
     }
   ],
   "accounts": [

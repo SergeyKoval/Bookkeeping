@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import {HistoryGroup} from '../model/history/HistoryGroup';
-import {DateUtilsService} from '../utils/date-utils.service';
-import {HistoryItem} from '../model/history/HistoryItem';
-import {SettingsService} from '../service/settings.service';
+import { HistoryGroup } from '../model/history/HistoryGroup';
+import { DateUtilsService } from '../utils/date-utils.service';
+import { HistoryItem } from '../model/history/HistoryItem';
+import { SettingsService } from '../service/settings.service';
 
 @Pipe({
   name: 'historyGroup'
@@ -23,10 +23,22 @@ export class HistoryGroupPipe implements PipeTransform {
       if (!historyGroupsMap.has(itemDateString)) {
         historyGroupsMap.set(itemDateString, new HistoryGroup(item.date, itemDateString, DateUtilsService.getDayOfWeek(itemDate), []));
       }
-
       const historyGroup: HistoryGroup = historyGroupsMap.get(itemDateString);
-      const iconPath: string = this._settingsService.getCategoryIcon(item.category);
-      historyGroup.historyItems.push(new HistoryItem(item, item.id, item.order, item.type, item.category, item.subCategory, iconPath, item.description, item.goal, item.balance));
+      const historyItem: HistoryItem = new HistoryItem(item, item.id, item.order, item.type, item.category, item.subCategory, item.description, item.goal, item.balance);
+
+      switch (item.type) {
+        case 'expense':
+        case 'income':
+          historyItem.icon = this._settingsService.getCategoryIcon(item.category);
+          break;
+        case 'transfer':
+          historyItem.additionalIcon = this._settingsService.getAccountIcon(item.balance.accountTo, item.balance.subAccountTo);
+        case  'exchange':
+          historyItem.icon = this._settingsService.getAccountIcon(item.balance.account, item.balance.subAccount);
+          break;
+      }
+
+      historyGroup.historyItems.push(historyItem);
     });
 
     historyGroupsMap.forEach((historyGroup: HistoryGroup) => {

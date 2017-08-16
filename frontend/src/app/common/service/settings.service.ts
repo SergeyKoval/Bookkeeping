@@ -1,13 +1,13 @@
-import {Inject, Injectable} from '@angular/core';
-import {Http, Response} from '@angular/http';
+import { Inject, Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
 
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-import {HOST} from '../config/config';
-import {LoadingService} from './loading.service';
-import {AssetImagePipe} from '../pipes/asset-image.pipe';
+import { HOST } from '../config/config';
+import { LoadingService } from './loading.service';
+import { AssetImagePipe } from '../pipes/asset-image.pipe';
 
 import 'rxjs/add/operator/do';
 
@@ -16,6 +16,7 @@ export class SettingsService {
   private _accounts$$: Subject<FinAccount[]> = new ReplaySubject(1);
   private _categories$$: Subject<Category[]> = new ReplaySubject(1);
   private _categoryIcon: Map<string, string> = new Map();
+  private _accountIcon: Map<string, string> = new Map();
 
   public constructor(
     private _http: Http,
@@ -29,7 +30,14 @@ export class SettingsService {
     this._http.get(`${this._host}/accounts?ownerId=${ownerId}`)
       .delay(1500)
       .do(() => this._loadingService.accounts$$.next(false))
-      .subscribe((response: Response) => this._accounts$$.next(response.json()));
+      .subscribe((response: Response) => {
+        const accounts: FinAccount[] = response.json();
+        this._accountIcon.clear();
+        accounts.forEach((account: FinAccount) => {
+          account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
+        });
+        this._accounts$$.next(accounts);
+      });
   }
 
   public loadCategories(ownerId: number): void {
@@ -79,6 +87,10 @@ export class SettingsService {
 
   public getCategoryIcon(categoryTitle: string): string {
     return this._categoryIcon.get(categoryTitle);
+  }
+
+  public getAccountIcon(account: string, subAccount: string): string {
+    return this._accountIcon.get(`${account}-${subAccount}`);
   }
 
   public get accounts$(): Observable<FinAccount[]> {

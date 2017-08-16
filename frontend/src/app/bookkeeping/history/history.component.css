@@ -22,6 +22,10 @@
   color: #009900;
 }
 
+.transfer {
+  color: #0099ff;
+}
+
 .description {
   font-size: 12px;
 }
@@ -50,7 +54,13 @@
 }
 
 .goal-icon {
-  padding-top: 2px;
+  padding-top: 9px;
+}
+
+.transfer-exchange-icon {
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .no-right-padding {
@@ -60,4 +70,21 @@
 .no-left-right-padding {
   padding-left: 0;
   padding-right: 0;
+}
+
+.transfer-exchange-icon {
+  color: #82a9c3;
+  cursor: auto;
+}
+
+.transfer-exchange-icon:hover {
+  color: #82a9c3;
+}
+
+.float-left {
+  float: left;
+}
+
+.transfer-exchange-row {
+  display: flex;
 }

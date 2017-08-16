@@ -13,3 +13,11 @@
 .table {
   margin-bottom: 10px;
 }
+
+.history-actions {
+  width: 100%;
+}
+
+.history-action-item {
+  float: right;
+}

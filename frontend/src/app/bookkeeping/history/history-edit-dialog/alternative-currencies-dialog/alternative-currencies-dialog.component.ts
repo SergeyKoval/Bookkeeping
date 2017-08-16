@@ -1,8 +1,8 @@
-import {Component, Inject} from '@angular/core';
-import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
 
-import {CurrencyValuePipe} from '../../../../common/pipes/currency-value.pipe';
-import {isNumeric} from 'rxjs/util/isNumeric';
+import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
+import { isNumeric } from 'rxjs/util/isNumeric';
 
 
 @Component({

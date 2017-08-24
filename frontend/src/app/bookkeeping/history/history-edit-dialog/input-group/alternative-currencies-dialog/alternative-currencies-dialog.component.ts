@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
 
-import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
 import { isNumeric } from 'rxjs/util/isNumeric';
 
+import { CurrencyValuePipe } from '../../../../../common/pipes/currency-value.pipe';
 
 @Component({
   selector: 'bk-alternative-currencies-dialog',
@@ -21,16 +21,16 @@ export class AlternativeCurrenciesDialogComponent {
     this._originalAlternativeCurrencies = Object.assign({}, this.data.balance.alternativeCurrency);
   }
 
-  public getAmountValue(currency: string): number {
+  public getAmountValue(currency: string): string {
     const amount: number = this.data.balance.alternativeCurrency[currency] * this.data.balance.value;
-    return Number(this._currencyValuePipe.transform(amount, true));
+    return this._currencyValuePipe.transform(amount, 2, true);
   }
 
   public calculateCurrencyValue(currency: string, amountInput: HTMLInputElement): void {
     if (isNumeric(amountInput.value)) {
       this.data.balance.alternativeCurrency[currency] = Number((amountInput.value / this.data.balance.value).toFixed(4));
     } else {
-      amountInput.value = this.getAmountValue(currency).toString();
+      amountInput.value = this.getAmountValue(currency);
     }
   }
 

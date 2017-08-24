@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import {IMyDate} from 'mydatepicker';
+import { IMyDate } from 'mydatepicker';
 
 @Injectable()
-export class DateUtilsService {
+export class DateUtils {
   private static DAYS_OF_WEEK: string[] = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
   public static convertDateToString(date: Date): string {
@@ -13,15 +13,15 @@ export class DateUtilsService {
   }
 
   public static getDayOfWeek(date: Date): string {
-    return DateUtilsService.DAYS_OF_WEEK[date.getDay()];
+    return DateUtils.DAYS_OF_WEEK[date.getDay()];
   }
 
   public static getUTCDate(date: Date = new Date(Date.now())): number {
-    return DateUtilsService.initUTCDate(date.getFullYear(), date.getMonth(), date.getDate());
+    return DateUtils.initUTCDate(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
   public static getUTCDateByDay(date: IMyDate): number {
-    return DateUtilsService.initUTCDate(date.year, date.month - 1, date.day);
+    return DateUtils.initUTCDate(date.year, date.month - 1, date.day);
   }
 
   public static getDateFromUTC(timestamp: number): IMyDate {

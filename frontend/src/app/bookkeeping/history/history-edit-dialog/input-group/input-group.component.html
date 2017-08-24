@@ -1,0 +1,21 @@
+<div class="input-group form-row">
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <bk-currency-symbol [currencyName]="selectedCurrency"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li *ngFor="let currency of currencies">
+        <a (click)="changeCurrency(currency)">
+          <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <input type="text" [ngClass]="['form-control', checkValueValidation(balanceValue.value)]" [placeholder]="getValuePlaceholder()"
+         [ngModelOptions]="{standalone: true}" [(ngModel)]="inputValue" (blur)="blurInput()" bkCurrencyValue="2" [skipDecimalZeros]="true" #balanceValue>
+  <span class="input-group-addon" *ngIf="showCalculation(balanceValue.value)">= {{calculateValue(balanceValue.value) | currencyValue:2:true}}</span>
+  <span class="input-group-btn" *ngIf="historyItem.balance.alternativeCurrency">
+    <span class="btn btn-default" type="button" [attr.disabled]="disableAlternativeCurrencies(balanceValue.value)" (click)="openCurrenciesPopup(balanceValue.value)">Валюты</span>
+  </span>
+</div>

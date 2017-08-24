@@ -13,7 +13,7 @@
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
-          <input type="text" [(ngModel)]="data.balance.alternativeCurrency[currency]" class="form-control" bkCurrencyValue>
+          <input type="text" [(ngModel)]="data.balance.alternativeCurrency[currency]" class="form-control" bkCurrencyValue="4" [skipDecimalZeros]="true">
         </div>
         <input type="text" [value]="getAmountValue(currency)" (blur)="calculateCurrencyValue(currency, amount)" class="form-control" #amount>
       </div>

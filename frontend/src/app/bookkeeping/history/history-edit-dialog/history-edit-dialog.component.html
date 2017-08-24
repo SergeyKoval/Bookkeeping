@@ -15,42 +15,21 @@
         <li role="presentation" [ngClass]="{'active': isTypeSelected('exchange')}" (click)="onChangeSelectedType('exchange')"><a>Обмен</a></li>
       </ul>
 
-      <div class="input-group form-row">
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li *ngFor="let currency of currencies">
-              <a (click)="chooseCurrency(currency)">
-                <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <input type="text" [(ngModel)]="historyItem.balance.value" class="form-control" [placeholder]="getValuePlaceholder()" bkCurrencyValue #balanceValue>
-        <span class="input-group-btn" *ngIf="isTypeSelected('expense') || isTypeSelected('income')">
-          <span class="btn btn-default" type="button" (click)="openCurrenciesPopup(balanceValue.value)" [attr.disabled]="disableAlternativeCurrencies(balanceValue.value)">Валюты</span>
-        </span>
+      <div class="form-row">
+        <bk-input-group [historyItem]="historyItem"
+                        [currencies]="currencies" [selectedCurrency]="historyItem.balance.currency" (chooseCurrency)="changeCurrency($event)"
+                        [inputValue]="historyItem.balance.value" (changeInputValue)="historyItem.balance.value = $event">
+        </bk-input-group>
       </div>
 
       <div class="form-row" *ngIf="!isTypeSelected('exchange')">
         <bk-select [placeholder]="getAccountPlaceholder()" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
       </div>
-      <div class="input-group form-row" *ngIf="isTypeSelected('exchange')">
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-default dropdown-toggle currency-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol>&nbsp;&nbsp;<span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li *ngFor="let currency of currencies">
-              <a (click)="chooseNewCurrency(currency)">
-                <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <input type="text" [(ngModel)]="historyItem.balance.newValue" class="form-control" placeholder="Стало" bkCurrencyValue>
+      <div class="form-row" *ngIf="isTypeSelected('exchange')">
+        <bk-input-group [historyItem]="historyItem"
+                        [currencies]="currencies" [selectedCurrency]="historyItem.balance.newCurrency" (chooseCurrency)="changeNewCurrency($event)"
+                        [inputValue]="historyItem.balance.newValue" (changeInputValue)="historyItem.balance.newValue = $event">
+        </bk-input-group>
       </div>
 
       <div class="form-row" *ngIf="isTypeSelected('expense') || isTypeSelected('income')">

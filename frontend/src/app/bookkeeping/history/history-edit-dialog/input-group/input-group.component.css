@@ -1,0 +1,19 @@
+.currency-button {
+  width: 65px;
+}
+
+ul.nav-tabs li {
+  cursor: pointer;
+}
+
+.input-group-addon {
+  border-left: none;
+}
+
+.validation-success {
+  border-color: #0fbd0f;
+}
+
+.validation-fail {
+  border-color: red;
+}

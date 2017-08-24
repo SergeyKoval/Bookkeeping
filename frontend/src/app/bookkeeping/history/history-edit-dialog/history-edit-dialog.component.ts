@@ -2,20 +2,17 @@ import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core'
 import { Response } from '@angular/http';
 import { MD_DIALOG_DATA, MdDialog, MdDialogRef } from '@angular/material';
 
-import { isNumeric } from 'rxjs/util/isNumeric';
-
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
 import { HistoryService } from '../../../common/service/history.service';
 import { CurrencyService } from '../../../common/service/currency.service';
 import { SettingsService } from '../../../common/service/settings.service';
-import { DateUtilsService } from '../../../common/utils/date-utils.service';
+import { DateUtils } from '../../../common/utils/date-utils';
 import { AuthenticationService } from '../../../common/service/authentication.service';
 import { LoadingDialogComponent } from '../../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../../common/service/loading.service';
 import { AlertService } from '../../../common/service/alert.service';
 import { AlertType } from '../../../common/model/alert/AlertType';
 import { Alert } from '../../../common/model/alert/Alert';
-import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -53,8 +50,8 @@ export class HistoryEditDialogComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtilsService.getUTCDate());
-    this.selectedDate = DateUtilsService.getDateFromUTC(this.historyItem.date);
+    this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtils.getUTCDate());
+    this.selectedDate = DateUtils.getDateFromUTC(this.historyItem.date);
 
     this._currencyService.currencies$.subscribe((currencies: Currency[]) => this.currencies = currencies);
     this._settingsService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._settingsService.transformAccounts(accounts));
@@ -68,7 +65,7 @@ export class HistoryEditDialogComponent implements OnInit {
     // TODO: update goal
     this._titleElement.nativeElement.click();
     this.selectedDate = event.date;
-    this.historyItem.date = DateUtilsService.getUTCDateByDay(this.selectedDate);
+    this.historyItem.date = DateUtils.getUTCDateByDay(this.selectedDate);
   }
 
   public onChangeSelectedType(type: string): void {
@@ -85,27 +82,12 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
-  public openCurrenciesPopup(balanceValue: string): void {
-    if (isNumeric(balanceValue)) {
-      this._dialog.open(AlternativeCurrenciesDialogComponent, {
-        disableClose: true,
-        width: '470px',
-        data: {
-          balance: this.historyItem.balance
-        }
-      });
-    }
-  }
-
-  public chooseCurrency(currency: Currency): void {
+  public changeCurrency(currency: Currency): void {
     // TODO: update goal
     this.historyItem.balance.currency = currency.name;
-    if (this.isTypeSelected('expense') || this.isTypeSelected('income')) {
-      this.historyItem.balance.alternativeCurrency = currency.conversions;
-    }
   }
 
-  public chooseNewCurrency(currency: Currency): void {
+  public changeNewCurrency(currency: Currency): void {
     this.historyItem.balance.newCurrency = currency.name;
   }
 
@@ -147,24 +129,12 @@ export class HistoryEditDialogComponent implements OnInit {
     return this.historyItem.type === type;
   }
 
-  public getValuePlaceholder(): string {
-    if (this.isTypeSelected('exchange')) {
-      return 'Было';
-    }
-
-    return 'Сумма';
-  }
-
   public getAccountPlaceholder(): string {
     if (this.isTypeSelected('transfer')) {
       return 'Со счета';
     }
 
     return 'Счет';
-  }
-
-  public disableAlternativeCurrencies(balanceValue: string): boolean {
-    return !isNumeric(balanceValue) ? true : null;
   }
 
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {

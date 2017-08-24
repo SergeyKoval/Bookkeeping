@@ -352,6 +352,93 @@
       },
       "order": 0,
       "id": 16
+    },
+    {
+      "ownerId": 1,
+      "type": "expense",
+      "date": 1503316800000,
+      "description": "Расход",
+      "balance": {
+        "value": 5,
+        "account": "Деньги",
+        "subAccount": "Резерв",
+        "currency": "EUR",
+        "alternativeCurrency": {
+          "BYN": 2,
+          "USD": 1.081
+        }
+      },
+      "category": "Дети",
+      "subCategory": "Одежда",
+      "order": 0,
+      "id": 17
+    },
+    {
+      "ownerId": 1,
+      "type": "income",
+      "date": 1503316800000,
+      "description": "Доход",
+      "balance": {
+        "value": 6,
+        "account": "Сбережения",
+        "subAccount": "Белагро",
+        "currency": "USD",
+        "alternativeCurrency": {
+          "BYN": 1.8711,
+          "EUR": 1
+        }
+      },
+      "category": "Инвестиции",
+      "subCategory": "Проценты",
+      "order": 1,
+      "id": 18
+    },
+    {
+      "ownerId": 1,
+      "type": "transfer",
+      "date": 1503403200000,
+      "description": "Перевод",
+      "balance": {
+        "value": 20.1,
+        "account": "Деньги",
+        "subAccount": "Резерв",
+        "currency": "BYN",
+        "accountTo": "Деньги",
+        "subAccountTo": "Альфа"
+      },
+      "order": 0,
+      "id": 19
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1503403200000,
+      "description": "Обмен",
+      "balance": {
+        "value": 6,
+        "account": "Деньги",
+        "subAccount": "Резерв",
+        "currency": "EUR",
+        "newCurrency": "BYN",
+        "newValue": 10
+      },
+      "order": 1,
+      "id": 20
+    },
+    {
+      "ownerId": 1,
+      "type": "exchange",
+      "date": 1503576000000,
+      "balance": {
+        "value": 243,
+        "account": "Деньги",
+        "subAccount": "Автокарта",
+        "currency": "USD",
+        "newCurrency": "EUR",
+        "newValue": 11
+      },
+      "order": 0,
+      "id": 21
     }
   ],
   "accounts": [

@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-6 no-right-padding" *ngIf="historyItem.type !== 'exchange'">
               <div [ngClass]="historyItem.type">
-                {{historyItem.balance.value | currencyValue:false}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
               </div>
               <div class="footnote" *ngIf="historyItem.type !== 'transfer'">{{historyItem.balance.subAccount}}</div>
             </div>
@@ -56,13 +56,13 @@
             <div class="transfer-exchange-row" *ngIf="historyItem.type === 'exchange'">
               <div class="float-left">
                 <span class="description">
-                  <strong><bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></strong> {{historyItem.balance.value | currencyValue:true}}
+                  <strong><bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></strong> {{historyItem.balance.value | currencyValue}}
                 </span>
               </div>
               <span class="glyphicon glyphicon-transfer transfer-exchange-icon float-left"></span>
               <div class="float-left">
                 <span class="description">
-                  <strong><bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol></strong> {{historyItem.balance.newValue | currencyValue:true}}
+                  <strong><bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol></strong> {{historyItem.balance.newValue | currencyValue}}
                 </span>
               </div>
             </div>

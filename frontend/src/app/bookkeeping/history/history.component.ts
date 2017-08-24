@@ -1,17 +1,17 @@
-import {Component, OnInit} from '@angular/core';
-import {Response} from '@angular/http';
+import { Component, OnInit } from '@angular/core';
+import { Response } from '@angular/http';
 
-import {Subscription} from 'rxjs/Subscription';
-import {MdDialog} from '@angular/material';
+import { Subscription } from 'rxjs/Subscription';
+import { MdDialog } from '@angular/material';
 
-import {HistoryService} from '../../common/service/history.service';
-import {AuthenticationService} from '../../common/service/authentication.service';
-import {ConfirmDialogService} from '../../common/components/confirm-dialog/confirm-dialog.service';
-import {HistoryItem} from '../../common/model/history/HistoryItem';
-import {AlertService} from '../../common/service/alert.service';
-import {AlertType} from '../../common/model/alert/AlertType';
-import {HistoryEditDialogComponent} from './history-edit-dialog/history-edit-dialog.component';
-import {SettingsService} from '../../common/service/settings.service';
+import { HistoryService } from '../../common/service/history.service';
+import { AuthenticationService } from '../../common/service/authentication.service';
+import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { HistoryItem } from '../../common/model/history/HistoryItem';
+import { AlertService } from '../../common/service/alert.service';
+import { AlertType } from '../../common/model/alert/AlertType';
+import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
+import { SettingsService } from '../../common/service/settings.service';
 
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
@@ -24,7 +24,7 @@ import 'rxjs/add/operator/first';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public static readonly PAGE_LIMIT: number = 3;
+  public static readonly PAGE_LIMIT: number = 10;
 
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;

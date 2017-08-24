@@ -1,12 +1,18 @@
-import {Directive, ElementRef, HostListener, OnInit} from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
-import {CurrencyValuePipe} from '../pipes/currency-value.pipe';
-import {NgControl} from '@angular/forms';
+import { CurrencyValuePipe } from '../pipes/currency-value.pipe';
+import { CurrencyUtils } from '../utils/currency-utils';
 
 @Directive({
   selector: '[bkCurrencyValue]'
 })
 export class CurrencyValueDirective implements OnInit {
+  @Input()
+  public bkCurrencyValue: number;
+  @Input()
+  public skipDecimalZeros: boolean;
+
   private _element: HTMLInputElement;
 
   public constructor(
@@ -20,17 +26,14 @@ export class CurrencyValueDirective implements OnInit {
   public ngOnInit(): void {
     const value: string = this._element.value;
     if (value) {
-      this._element.value = this._currencyValuePipe.transform(Number(value), true);
+      this._element.value = this._currencyValuePipe.transform(Number(value), this.bkCurrencyValue, this.skipDecimalZeros);
     }
   }
 
   @HostListener('blur', ['$event.target.value'])
   private onBlur(value: string): void {
-    value = value.replace('\'', '').replace(',', '.');
-    if (value.length > 0) {
-      const numberValue: number = Number(value);
-      this._ngControl.control.patchValue(numberValue);
-      this._element.value = this._currencyValuePipe.transform(numberValue, true);
-    }
+    const numberValue: number = CurrencyUtils.convertValue(value);
+    this._ngControl.control.patchValue(numberValue);
+    this._element.value = this._currencyValuePipe.transform(numberValue, this.bkCurrencyValue, this.skipDecimalZeros);
   }
 }

@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { HistoryGroup } from '../model/history/HistoryGroup';
-import { DateUtilsService } from '../utils/date-utils.service';
+import { DateUtils } from '../utils/date-utils';
 import { HistoryItem } from '../model/history/HistoryItem';
 import { SettingsService } from '../service/settings.service';
 
@@ -19,9 +19,9 @@ export class HistoryGroupPipe implements PipeTransform {
     items.forEach((item: HistoryType) => {
       const itemDate: Date = new Date();
       itemDate.setTime(item.date);
-      const itemDateString: string = DateUtilsService.convertDateToString(itemDate);
+      const itemDateString: string = DateUtils.convertDateToString(itemDate);
       if (!historyGroupsMap.has(itemDateString)) {
-        historyGroupsMap.set(itemDateString, new HistoryGroup(item.date, itemDateString, DateUtilsService.getDayOfWeek(itemDate), []));
+        historyGroupsMap.set(itemDateString, new HistoryGroup(item.date, itemDateString, DateUtils.getDayOfWeek(itemDate), []));
       }
       const historyGroup: HistoryGroup = historyGroupsMap.get(itemDateString);
       const historyItem: HistoryItem = new HistoryItem(item, item.id, item.order, item.type, item.category, item.subCategory, item.description, item.goal, item.balance);

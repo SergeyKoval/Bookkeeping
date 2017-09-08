@@ -26,19 +26,21 @@ export class GoalsContainerComponent implements OnInit {
   @Output()
   public statusChange: EventEmitter<boolean> = new EventEmitter();
 
-  public selectedGoal: BudgetGoal;
-  public isCategoryGoalsSelected: boolean;
-  public categoryBudgetItem: BudgetItem;
-  public otherGoals: BudgetGoal[];
+  // public selectedGoal: BudgetGoal;
+  // public isCategoryGoalsSelected: boolean;
+  // public categoryBudgetItem: BudgetItem;
+  // public otherGoals: BudgetGoal[];
   public categoryLoading: boolean = true;
 
-  private _selectedGoalChangeStatus: boolean = false;
+  private _budgetCategory: BudgetCategory;
   private _selectedCategory: string;
   private _selectedDate: IMyDate;
-  private _selectedValue: number;
   private _alternativeCurrencies: {[key: string]: number};
-  private _selectedGoalAffectedValue: number = 0;
-  private _originallySelectedGoal: BudgetGoal;
+  private _selectedValue: number;
+
+  // private _selectedGoalChangeStatus: boolean = false;
+  // private _selectedGoalAffectedValue: number = 0;
+  // private _originallySelectedGoal: BudgetGoal;
 
   public constructor(
     private _budgetService: BudgetService,
@@ -63,32 +65,26 @@ export class GoalsContainerComponent implements OnInit {
 
   @Input()
   public set selectedDate(value: IMyDate) {
-    // if (this._selectedDate && (this._selectedDate.year !== value.year || this._selectedDate.month !== value.month)) {
-    //   this.categoryLoading = true;
-    //   this.categoryBudgetItem = null;
-    //   this.otherGoals = null;
-    //   this.loadCategoryGoals(value);
-    //   this.loadOtherGoals(value);
-    // }
+    if (this._selectedDate && (this._selectedDate.year !== value.year || this._selectedDate.month !== value.month)) {
+      this.loadCategoryGoals(value);
+    }
 
     this._selectedDate = value;
   }
 
   @Input()
   public set selectedCategory(value: string) {
-    const needToReload: boolean = this._selectedCategory && this.selectedCategory !== value;
-    this._selectedCategory = value;
-    if (needToReload) {
-      this.categoryLoading = true;
-      this.categoryBudgetItem = null;
+    if (this._selectedCategory !== value) {
+      this._selectedCategory = value;
       this.loadCategoryGoals(this._selectedDate);
     }
   }
 
   public ngOnInit(): void {
-    this.isCategoryGoalsSelected = !this.goal || this.goal.category === this._selectedCategory;
-    this.loadCategoryGoals(this._selectedDate);
-    this.loadOtherGoals(this._selectedDate);
+    // console.log('init');
+    // this.isCategoryGoalsSelected = !this.goal || this.goal.category === this._selectedCategory;
+    // this.loadCategoryGoals(this._selectedDate);
+    // this.loadOtherGoals(this._selectedDate);
   }
 
   // public displayLoadingIndicator(): boolean {
@@ -154,30 +150,17 @@ export class GoalsContainerComponent implements OnInit {
   //   return this._selectedCategory;
   // }
   //
-  public get selectedDate(): IMyDate {
-    return this._selectedDate;
-  }
 
-  private loadCategoryGoals(selectedDate: IMyDate): void {
-    this._budgetService.loadBudgetItem(this._authenticationService.authenticatedProfile.id, selectedDate.year, selectedDate.month, this._selectedCategory, this.historyItem.type)
-      .subscribe((budgetItems: BudgetItem[]) => {
-        this.categoryBudgetItem = budgetItems.length === 1 ? budgetItems[0] : null;
-        if (this.categoryBudgetItem && this.goal && this.goal.category === this._selectedCategory) {
-          this.selectedGoal = this.categoryBudgetItem.goals.filter((budgetGoal: BudgetGoal) => budgetGoal.name === this.goal.name).shift();
-        }
-        this.categoryLoading = false;
-      });
-  }
 
-  private loadOtherGoals(selectedDate: IMyDate): void {
-    this._budgetService.loadBudgetItem(this._authenticationService.authenticatedProfile.id, selectedDate.year, selectedDate.month, '', this.historyItem.type)
-      .subscribe((budgetItems: BudgetItem[]) => {
-        this.otherGoals = budgetItems.length === 1 ? budgetItems[0].goals : [];
-        if (this.goal && this.goal.category === null) {
-          this.selectedGoal = this.otherGoals.filter((budgetGoal: BudgetGoal) => budgetGoal.name === this.goal.name).shift();
-        }
-      });
-  }
+  // private loadOtherGoals(selectedDate: IMyDate): void {
+  //   this._budgetService.loadBudgetItem(this._authenticationService.authenticatedProfile.id, selectedDate.year, selectedDate.month, '', this.historyItem.type)
+  //     .subscribe((budgetItems: BudgetItem[]) => {
+  //       this.otherGoals = budgetItems.length === 1 ? budgetItems[0].goals : [];
+  //       if (this.goal && this.goal.category === null) {
+  //         this.selectedGoal = this.otherGoals.filter((budgetGoal: BudgetGoal) => budgetGoal.name === this.goal.name).shift();
+  //       }
+  //     });
+  // }
   //
   // private convertValueToCurrency(value: number, valueCurrency: string, goalCurrency: string, alternativeCurrencies: {[key: string]: number}): number {
   //   if (valueCurrency === goalCurrency) {
@@ -186,4 +169,25 @@ export class GoalsContainerComponent implements OnInit {
   //
   //   return Math.round(((value || 0) * alternativeCurrencies[goalCurrency]) * 100) / 100 ;
   // }
+
+
+  public get selectedDate(): IMyDate {
+    return this._selectedDate;
+  }
+
+  public get budgetCategory(): BudgetCategory {
+    return this._budgetCategory;
+  }
+
+  private loadCategoryGoals(selectedDate: IMyDate): void {
+    this.categoryLoading = true;
+    this._budgetCategory = null;
+    this._budgetService.loadBudget(this._authenticationService.authenticatedProfile.id, selectedDate.year, selectedDate.month, this.historyItem.type)
+      .subscribe((budget: Budget) => {
+        if (budget) {
+          this._budgetCategory = budget.budgetCategories.filter((budgetCategory: BudgetCategory) => budgetCategory.category === this._selectedCategory)[0];
+        }
+        this.categoryLoading = false;
+      });
+  }
 }

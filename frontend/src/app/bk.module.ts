@@ -53,7 +53,7 @@ import { MapKeysPipe } from './common/pipes/map-keys.pipe';
 import { InputGroupComponent } from './bookkeeping/history/history-edit-dialog/input-group/input-group.component';
 import { AlternativeCurrenciesDialogComponent } from './bookkeeping/history/history-edit-dialog/input-group/alternative-currencies-dialog/alternative-currencies-dialog.component';
 import { BudgetService } from './common/service/budget.service';
-import { GoalBudgetItemComponent } from './bookkeeping/history/history-edit-dialog/goals-container/goal-budget-item/goal-budget-item.component';
+import { GoalBudgetCategoryComponent } from './bookkeeping/history/history-edit-dialog/goals-container/goal-budget-category/goal-budget-category.component';
 import { TemplateVariableComponent } from './common/components/template-variable/template-variable.component';
 
 @NgModule({
@@ -91,7 +91,7 @@ import { TemplateVariableComponent } from './common/components/template-variable
     AlternativeCurrenciesDialogComponent,
     MapKeysPipe,
     InputGroupComponent,
-    GoalBudgetItemComponent,
+    GoalBudgetCategoryComponent,
     TemplateVariableComponent
   ],
   imports: [

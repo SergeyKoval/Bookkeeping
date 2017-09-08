@@ -1,11 +1,16 @@
-type BudgetItem = {
+type Budget = {
   id: number,
   ownerId: number,
-  order: number,
   year: number,
   month: number,
-  category: string,
   type: string,
+  balance: BudgetBalance[],
+  budgetCategories: BudgetCategory[]
+};
+
+type BudgetCategory = {
+  order: number,
+  category: string,
   balance: BudgetBalance[],
   goals: BudgetGoal[]
 };

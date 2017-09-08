@@ -7,11 +7,11 @@ import { CurrencyService } from '../../../../../common/service/currency.service'
 import { CurrencyUtils } from '../../../../../common/utils/currency-utils';
 
 @Component({
-  selector: 'bk-goal-budget-item',
-  templateUrl: './goal-budget-item.component.html',
-  styleUrls: ['./goal-budget-item.component.css']
+  selector: 'bk-goal-budget-category',
+  templateUrl: './goal-budget-category.component.html',
+  styleUrls: ['./goal-budget-category.component.css']
 })
-export class GoalBudgetItemComponent {
+export class GoalBudgetCategoryComponent {
   @Input()
   public historyItem: HistoryType;
   @Input()
@@ -19,7 +19,7 @@ export class GoalBudgetItemComponent {
   @Input()
   public categoryLoading: boolean;
   @Input()
-  public categoryBudgetItem: BudgetItem;
+  public budgetCategory: BudgetCategory;
 
   public constructor(private _currencyService: CurrencyService) { }
 
@@ -51,18 +51,18 @@ export class GoalBudgetItemComponent {
 
   public getBudgetBalance(): BudgetBalance {
     const historyItemCurrency: string = this.historyItem.balance.currency;
-    let budgetBalances: BudgetBalance[] = this.categoryBudgetItem.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === historyItemCurrency);
+    let budgetBalances: BudgetBalance[] = this.budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === historyItemCurrency);
     if (budgetBalances.length === 1) {
       return budgetBalances[0];
     }
 
     const defaultCurrency: string = this._currencyService.defaultCurrency.name;
-    budgetBalances = this.categoryBudgetItem.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
+    budgetBalances = this.budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
     if (budgetBalances.length === 1) {
       return budgetBalances[0];
     }
 
-    return this.categoryBudgetItem.balance[0];
+    return this.budgetCategory.balance[0];
   }
 
   public getPercentBeforeAction(budgetBalance: BudgetBalance): number {

@@ -1,0 +1,37 @@
+.budget {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.day-percent-top, .day-percent-bottom {
+  border-right: 2px dotted #adadad;
+  height: 10px;
+}
+
+.day-percent-top {
+  margin-top: 5px;
+}
+
+.day-percent-bottom {
+  margin-bottom: 5px;
+}
+
+.no-day-percent {
+  margin-top: 15px;
+  margin-bottom: 15px !important;
+}
+
+.category-loading {
+  font-weight: bold;
+}
+
+.progress {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.progress-value, .category-loading {
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+}

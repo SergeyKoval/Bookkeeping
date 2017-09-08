@@ -35,6 +35,7 @@ export class AlternativeCurrenciesDialogComponent {
   }
 
   public save(): void {
+    this.data.balance.alternativeCurrency = Object.assign({}, this.data.balance.alternativeCurrency);
     this._dialogRef.close();
   }
 

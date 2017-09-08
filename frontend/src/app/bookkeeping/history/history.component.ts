@@ -66,8 +66,8 @@ export class HistoryComponent implements OnInit {
       width: '1000px',
       position: {top: 'top'},
       data: {
-        'title': 'Редактирование операции',
-        'historyItem': historyItem.originalItem
+        'historyItem': historyItem.originalItem,
+        'editMode': true
       },
     });
   }

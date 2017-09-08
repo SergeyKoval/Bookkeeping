@@ -18,4 +18,12 @@ export class CurrencyUtils {
       return Number(value);
     }
   }
+
+  public static convertValueToCurrency(value: number, valueCurrency: string, resultCurrency: string, alternativeCurrencies: {[key: string]: number}): number {
+    if (valueCurrency === resultCurrency) {
+      return value || 0;
+    }
+
+    return Math.round(((value || 0) * alternativeCurrencies[resultCurrency]) * 100) / 100 ;
+  }
 }

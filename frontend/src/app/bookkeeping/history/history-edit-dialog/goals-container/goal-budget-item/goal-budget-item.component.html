@@ -1,0 +1,20 @@
+<div class="row budget">
+  <div *ngIf="isCurrentMonth()" [ngStyle]="{'width.%': getDayPercent()}" class="day-percent-top"></div>
+  <div [ngClass]="{'progress': true, 'no-day-percent': !isCurrentMonth()}" class="progress">
+    <div *ngIf="categoryLoading" class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%;"></div>
+    <div *ngIf="categoryLoading" class="category-loading">Загрузка...</div>
+
+    <div *ngIf="!categoryLoading && !categoryBudgetItem" class="progress-value">Бюджет по категории не запланирован</div>
+
+    <span *ngIf="!categoryLoading && categoryBudgetItem">
+      <bk-template-variable #budgetBalance [value]="getBudgetBalance()"></bk-template-variable>
+      <div aria-valuemax="100" aria-valuemin="0" role="progressbar"
+           [ngClass]="['progress-bar', getCurrentBudgetStyle(budgetBalance.value)]" [ngStyle]="{'width.%': getPercentBeforeAction(budgetBalance.value)}"></div>
+      <div class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getActionPercent(budgetBalance.value)}"></div>
+      <div class="progress-value">
+        <strong><bk-currency-symbol [currencyName]="budgetBalance.value.currency"></bk-currency-symbol></strong> {{getBudgetValue(budgetBalance.value)}} / {{budgetBalance.value.completeValue}}
+      </div>
+    </span>
+  </div>
+  <div *ngIf="isCurrentMonth()" [ngStyle]="{'width.%': getDayPercent()}" class="day-percent-bottom"></div>
+</div>

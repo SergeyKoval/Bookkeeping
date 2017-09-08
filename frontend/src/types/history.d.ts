@@ -24,6 +24,6 @@ type HistoryBalanceType = {
 };
 
 type HistoryGoal = {
-  category: string,
+  category?: string,
   name: string
 };

@@ -1,68 +1,47 @@
 <hr>
-<div class="row">
-  <div class="col-md-3">
-    <ul class="list-group goal-groups">
-      <li class="list-group-item text-center" style="font-weight: bold; background-color: #cccccc">Цели</li>
-      <a class="list-group-item"><span class="badge">5</span>Dapibus ac facilisis in</a>
-      <a class="list-group-item goal-group-active"><span class="badge">14</span>Morbi leo risus</a>
-    </ul>
-  </div>
-  <div class="col-md-9">
-    <div class="row">
-      <div class="col-md-1 text-right no-right-padding">
-          <span class="glyphicon glyphicon-ok"
-                popover="Выполнено" popoverPlacement="top"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-      </div>
-      <div class="col-md-8">
-        <div class="progress">
-          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 5%"></div>
-          <div style="position: absolute; padding-left: 10px;">40% Complete (success)</div>
-        </div>
-      </div>
-      <div class="col-md-3 right-column text-right">
-        Byn 25 / 100
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-1 text-right no-right-padding">
-          <span class="glyphicon glyphicon-ok goal-done"
-                popover="Выполнено" popoverPlacement="top"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-      </div>
-      <div class="col-md-8">
-        <div class="progress">
-          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 5%"></div>
-          <div style="position: absolute; padding-left: 10px;">40% Complete (success)</div>
-        </div>
-      </div>
-      <div class="col-md-3 right-column text-right">
-        <strong>$</strong> 10 / 50
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-1 text-right no-right-padding">
-          <span class="glyphicon glyphicon-ok goal-done"
-                popover="Выполнено" popoverPlacement="top"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-      </div>
-      <div class="col-md-8">
-        <div class="progress">
-          <div class="progress-bar progress-bar-success" style="width: 35%"></div>
-          <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%"></div>
-          <div style="position: absolute; padding-left: 10px;">40% Complete (success)</div>
-        </div>
-      </div>
-      <div class="col-md-3 no-left-padding">
-          <span class="glyphicon glyphicon-remove"
-                popover="Не учитывать" popoverPlacement="top"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-        <span style="float: right;"><strong>Byn</strong> 25 / 100</span>
-      </div>
-    </div>
-  </div>
-</div>
+<bk-goal-budget-item [historyItem]="historyItem" [selectedDate]="selectedDate" [categoryLoading]="categoryLoading" [categoryBudgetItem]="categoryBudgetItem"></bk-goal-budget-item>
+
+<!--<div class="row">-->
+  <!--<div class="col-md-4 left-column">-->
+    <!--<ul class="list-group goal-groups">-->
+      <!--<li class="list-group-item text-center goals-header">Цели</li>-->
+      <!--<a [ngClass]="{'list-group-item': true, 'goal-group-active': isCategoryGoalsSelected}" (click)="isCategoryGoalsSelected = true">-->
+        <!--<span *ngIf="!categoryLoading; else numberOfItemsLoadingIndicator" class="badge">{{categoryBudgetItem?.goals?.length || 0}}</span>{{selectedCategory}}-->
+      <!--</a>-->
+      <!--<a [ngClass]="{'list-group-item': true, 'goal-group-active': !isCategoryGoalsSelected}" (click)="isCategoryGoalsSelected = false">-->
+        <!--<span *ngIf="otherGoals; else numberOfItemsLoadingIndicator" class="badge">{{otherGoals.length}}</span>Другие-->
+      <!--</a>-->
+    <!--</ul>-->
+  <!--</div>-->
+
+  <!--<div class="col-md-8 right-column">-->
+    <!--<bk-spinner [display]="displayLoadingIndicator()"></bk-spinner>-->
+    <!--<div class="row" *ngFor="let goalItem of getSelectedGoals()" >-->
+      <!--<div [ngClass]="{'goal-popover-container': true, 'col-md-11 no-right-padding': selectedGoal === goalItem, 'col-md-12 selectable-goal': selectedGoal !== goalItem}">-->
+        <!--<span [ngClass]="{'glyphicon glyphicon-ok status-icon': true, 'goal-done': goalItem.done}"-->
+              <!--[popover]="goalItem.done ? 'Выполнено' : 'Не выполнено'" popoverPlacement="top"-->
+              <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="changeGoalStatus(goalItem)">-->
+        <!--</span>-->
+        <!--<div class="progress" [ngClass]="{'selected-goal': selectedGoal === goalItem}" (click)="chooseGoal(goalItem)">-->
+          <!--<div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"-->
+               <!--[ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>-->
+          <!--<div *ngIf="selectedGoal === goalItem" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>-->
+          <!--<div class="goal-name">{{goalItem.name}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>-->
+          <!--<div class="progress-value">-->
+            <!--<bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem)}} / {{goalItem.balance.completeValue}}-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="col-md-1 goal-popover-container" *ngIf="selectedGoal === goalItem">-->
+        <!--<span class="glyphicon glyphicon-remove"-->
+              <!--popover="Не учитывать" popoverPlacement="left"-->
+              <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="uncheckGoal()">-->
+        <!--</span>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+
+<ng-template #numberOfItemsLoadingIndicator>
+  <bk-spinner class="goals-count-indicator" [size]="20"></bk-spinner>
+</ng-template>

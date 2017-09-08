@@ -31,8 +31,8 @@ export class HistoryPageActionsComponent implements OnInit {
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',
       data: {
-        'title': 'Новая операция',
-        'historyItem': null
+        'historyItem': null,
+        'editMode': false
       },
     }).afterClosed()
       .filter((result: boolean) => result === true)

@@ -58,5 +58,18 @@
       {"title": "Аренда", "order": 0, "type": "income"},
       {"title": "Проценты", "order": 1, "type": "income"}
     ]}
+  ],
+  "budget": [
+    {"id": 1, "ownerId": 1, "order": 0, "year": 2017, "month": 9, "category": "Дети", "type": "expense", "balance":[
+      {"currency": "USD", "value": 150, "completeValue": 500}, {"currency": "BYN", "value": 1500, "completeValue": 5700}
+    ], "goals": [
+      {"name": "Баба ЗП", "done":false, "balance": {"currency": "BYN", "value": 0, "completeValue": 650}},
+      {"name": "Одежда в сад", "done":false, "balance": {"currency": "BYN", "value": 0, "completeValue": 300}},
+      {"name": "Игрушки", "done":false, "balance": {"currency": "BYN", "value": 0, "completeValue": 100}}
+    ]},
+    {"id": 2, "ownerId": 1, "order": 1, "year": 2017, "month": 9, "category": "", "type": "expense", "balance":[{"currency": "BYN", "value": 0, "completeValue": 650}], "goals": [
+      {"name": "Цель 1", "done":true, "balance": {"currency": "BYN", "value": 250, "completeValue": 300}},
+      {"name": "Цель 2", "done":false, "balance": {"currency": "BYN", "value": 100, "completeValue": 350}}
+    ]}
   ]
 }

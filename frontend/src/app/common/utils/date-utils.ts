@@ -29,6 +29,10 @@ export class DateUtils {
     return {year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate()};
   }
 
+  public static daysInMonth(year: number, month: number): number {
+    return new Date(year, month, 0).getDate();
+  }
+
   private static initUTCDate(year: number, month: number, day: number): number {
     return Date.UTC(year, month, day, 12, 0, 0, 0);
   }

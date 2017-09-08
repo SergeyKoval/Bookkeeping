@@ -38,7 +38,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public constructor(
     public dialogRef: MdDialogRef<HistoryEditDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: {title: string, historyItem: HistoryType},
+    @Inject(MD_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
     private _dialogRef: MdDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
@@ -135,6 +135,10 @@ export class HistoryEditDialogComponent implements OnInit {
     }
 
     return 'Счет';
+  }
+
+  public showGoalContainer(): boolean {
+    return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
   }
 
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {

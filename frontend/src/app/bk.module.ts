@@ -52,6 +52,9 @@ import { LoadingDialogComponent } from './common/components/loading-dialog/loadi
 import { MapKeysPipe } from './common/pipes/map-keys.pipe';
 import { InputGroupComponent } from './bookkeeping/history/history-edit-dialog/input-group/input-group.component';
 import { AlternativeCurrenciesDialogComponent } from './bookkeeping/history/history-edit-dialog/input-group/alternative-currencies-dialog/alternative-currencies-dialog.component';
+import { BudgetService } from './common/service/budget.service';
+import { GoalBudgetItemComponent } from './bookkeeping/history/history-edit-dialog/goals-container/goal-budget-item/goal-budget-item.component';
+import { TemplateVariableComponent } from './common/components/template-variable/template-variable.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +90,9 @@ import { AlternativeCurrenciesDialogComponent } from './bookkeeping/history/hist
     LoadingDialogComponent,
     AlternativeCurrenciesDialogComponent,
     MapKeysPipe,
-    InputGroupComponent
+    InputGroupComponent,
+    GoalBudgetItemComponent,
+    TemplateVariableComponent
   ],
   imports: [
     BrowserModule,
@@ -116,6 +121,7 @@ import { AlternativeCurrenciesDialogComponent } from './bookkeeping/history/hist
     CurrencyService,
     HistoryService,
     ConfirmDialogService,
+    BudgetService,
     AlertService,
     {
       provide: HOST,

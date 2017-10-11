@@ -21,7 +21,7 @@
               </span>
             </div>
             <div *ngIf="historyItem.goal" class="glyphicon glyphicon-screenshot goal-icon col-md-1 no-left-right-padding"
-                  popover="{{getGoalDescription(historyItem.goal)}}" popoverPlacement="top"
+                  popover="{{historyItem.goal}}" popoverPlacement="top"
                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
             </div>
             <div class="col-md-6 no-right-padding" *ngIf="historyItem.type !== 'exchange'">

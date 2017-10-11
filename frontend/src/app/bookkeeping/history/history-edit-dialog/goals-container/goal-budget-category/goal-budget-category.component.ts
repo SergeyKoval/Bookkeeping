@@ -3,8 +3,8 @@ import { Component, Input } from '@angular/core';
 import { IMyDate } from 'mydatepicker';
 
 import { DateUtils } from '../../../../../common/utils/date-utils';
-import { CurrencyService } from '../../../../../common/service/currency.service';
 import { CurrencyUtils } from '../../../../../common/utils/currency-utils';
+import { HistoryService } from '../../../../../common/service/history.service';
 
 @Component({
   selector: 'bk-goal-budget-category',
@@ -21,7 +21,7 @@ export class GoalBudgetCategoryComponent {
   @Input()
   public budgetCategory: BudgetCategory;
 
-  public constructor(private _currencyService: CurrencyService) { }
+  public constructor(private _historyService: HistoryService) { }
 
   public isCurrentMonth(): boolean {
     return (new Date(Date.now()).getUTCMonth() + 1) === this.selectedDate.month;
@@ -50,19 +50,7 @@ export class GoalBudgetCategoryComponent {
   }
 
   public getBudgetBalance(): BudgetBalance {
-    const historyItemCurrency: string = this.historyItem.balance.currency;
-    let budgetBalances: BudgetBalance[] = this.budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === historyItemCurrency);
-    if (budgetBalances.length === 1) {
-      return budgetBalances[0];
-    }
-
-    const defaultCurrency: string = this._currencyService.defaultCurrency.name;
-    budgetBalances = this.budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
-    if (budgetBalances.length === 1) {
-      return budgetBalances[0];
-    }
-
-    return this.budgetCategory.balance[0];
+    return this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this.budgetCategory);
   }
 
   public getPercentBeforeAction(budgetBalance: BudgetBalance): number {

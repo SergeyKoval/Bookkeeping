@@ -7,7 +7,7 @@ type HistoryType = {
   category?: string,
   subCategory?: string,
   balance: HistoryBalanceType,
-  goal?: HistoryGoal,
+  goal?: string,
   description?: string
 };
 
@@ -21,9 +21,4 @@ type HistoryBalanceType = {
   currency: string,
   newCurrency?: string,
   alternativeCurrency?: {[key: string]: number}
-};
-
-type HistoryGoal = {
-  category?: string,
-  name: string
 };

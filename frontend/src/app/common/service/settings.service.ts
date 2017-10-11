@@ -85,6 +85,22 @@ export class SettingsService {
     return result;
   }
 
+  public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {
+    const selectedItem: SelectItem[] = [];
+    items.forEach((item: SelectItem) => {
+      if (item.title === firstLevel) {
+        selectedItem.push(item);
+        item.children.forEach((subItem: SelectItem) => {
+          if (subItem.title === secondLevel) {
+            selectedItem.push(subItem);
+          }
+        });
+      }
+    });
+
+    return selectedItem;
+  }
+
   public getCategoryIcon(categoryTitle: string): string {
     return this._categoryIcon.get(categoryTitle);
   }

@@ -55,6 +55,8 @@ import { AlternativeCurrenciesDialogComponent } from './bookkeeping/history/hist
 import { BudgetService } from './common/service/budget.service';
 import { GoalBudgetCategoryComponent } from './bookkeeping/history/history-edit-dialog/goals-container/goal-budget-category/goal-budget-category.component';
 import { TemplateVariableComponent } from './common/components/template-variable/template-variable.component';
+import { GoalFilterPipe } from './common/pipes/goal-filter.pipe';
+import { GoalSortPipe } from './common/pipes/goal-sort.pipe';
 
 @NgModule({
   declarations: [
@@ -92,7 +94,9 @@ import { TemplateVariableComponent } from './common/components/template-variable
     MapKeysPipe,
     InputGroupComponent,
     GoalBudgetCategoryComponent,
-    TemplateVariableComponent
+    TemplateVariableComponent,
+    GoalFilterPipe,
+    GoalSortPipe
   ],
   imports: [
     BrowserModule,

@@ -66,7 +66,7 @@ export class HistoryComponent implements OnInit {
       width: '1000px',
       position: {top: 'top'},
       data: {
-        'historyItem': historyItem.originalItem,
+        'historyItem': historyItem.cloneOriginalItem(),
         'editMode': true
       },
     });
@@ -109,10 +109,6 @@ export class HistoryComponent implements OnInit {
         this.loading = false;
         subscription.unsubscribe();
       });
-  }
-
-  public getGoalDescription(goal: HistoryGoal): string {
-    return goal.category ? `${goal.category} >> ${goal.name}` : goal.name;
   }
 
   private showMoreHistoryItems(): void {

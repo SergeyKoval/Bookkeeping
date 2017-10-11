@@ -4,6 +4,8 @@ import { Headers, Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { HOST } from '../config/config';
+import { GoalFilterType } from '../model/history/GoalFilterType';
+import { CurrencyService } from './currency.service';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/first';
@@ -13,6 +15,7 @@ import 'rxjs/add/operator/switchMap';
 export class HistoryService {
   public constructor(
     private _http: Http,
+    private _currencyService: CurrencyService,
     @Inject(HOST) private _host: string
   ) {}
 
@@ -34,6 +37,59 @@ export class HistoryService {
 
   public deleteHistoryItem(historyItem: HistoryType): Observable<Response> {
     return this._http.delete(`${this._host}/history/${historyItem.id}`).delay(1500);
+  }
+
+  public chooseBudgetBalanceBasedOnCurrency(historyItem: HistoryType, budgetCategory: BudgetCategory): BudgetBalance {
+    const historyItemCurrency: string = historyItem.balance.currency;
+    let budgetBalances: BudgetBalance[] = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === historyItemCurrency);
+    if (budgetBalances.length === 1) {
+      return budgetBalances[0];
+    }
+
+    const defaultCurrency: string = this._currencyService.defaultCurrency.name;
+    budgetBalances = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
+    if (budgetBalances.length === 1) {
+      return budgetBalances[0];
+    }
+
+    return budgetCategory.balance[0];
+  }
+
+  public static filterGoals(goals: BudgetGoal[], filterType: GoalFilterType): BudgetGoal[] {
+    if (!goals) {
+      return [];
+    }
+
+    switch (filterType) {
+      case GoalFilterType.DONE: {
+        return goals.filter((goal: BudgetGoal) => goal.done);
+      }
+      case GoalFilterType.NOT_DONE: {
+        return goals.filter((goal: BudgetGoal) => !goal.done);
+      }
+      case GoalFilterType.ALL: {
+        return goals;
+      }
+    }
+  }
+
+  public static sortGoals(goals: BudgetGoal[], selectedGoal?: BudgetGoal): BudgetGoal[] {
+    return goals.sort((firstGoal: BudgetGoal, secondGoal: BudgetGoal) => {
+      if (firstGoal === selectedGoal) {
+        return -3;
+      }
+      if (secondGoal === selectedGoal) {
+        return 3;
+      }
+
+      if ((firstGoal.done && !secondGoal.done) || (!firstGoal.done && secondGoal.done)) {
+        return secondGoal.done ? -2 : 2;
+      }
+
+      const firstPercentDone: number = firstGoal.balance.value / firstGoal.balance.completeValue;
+      const secondPercentDone: number = secondGoal.balance.value / secondGoal.balance.completeValue;
+      return firstPercentDone === secondPercentDone ? 0 : (firstPercentDone < secondPercentDone ? -1 : 1);
+    });
   }
 
   private getLastHistoryItemForDay(date: number, ownerId: number): Observable<HistoryType[]> {

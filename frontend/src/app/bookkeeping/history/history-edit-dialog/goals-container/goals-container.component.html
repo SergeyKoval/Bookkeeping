@@ -1,46 +1,46 @@
 <hr>
 <bk-goal-budget-category [historyItem]="historyItem" [selectedDate]="selectedDate" [categoryLoading]="categoryLoading" [budgetCategory]="budgetCategory"></bk-goal-budget-category>
 
-<!--<div class="row">-->
-  <!--<div class="col-md-4 left-column">-->
-    <!--<ul class="list-group goal-groups">-->
-      <!--<li class="list-group-item text-center goals-header">Цели</li>-->
-      <!--<a [ngClass]="{'list-group-item': true, 'goal-group-active': isCategoryGoalsSelected}" (click)="isCategoryGoalsSelected = true">-->
-        <!--<span *ngIf="!categoryLoading; else numberOfItemsLoadingIndicator" class="badge">{{categoryBudgetItem?.goals?.length || 0}}</span>{{selectedCategory}}-->
-      <!--</a>-->
-      <!--<a [ngClass]="{'list-group-item': true, 'goal-group-active': !isCategoryGoalsSelected}" (click)="isCategoryGoalsSelected = false">-->
-        <!--<span *ngIf="otherGoals; else numberOfItemsLoadingIndicator" class="badge">{{otherGoals.length}}</span>Другие-->
-      <!--</a>-->
-    <!--</ul>-->
-  <!--</div>-->
+<div class="row">
+  <div class="col-md-4 left-column">
+    <ul class="list-group goal-groups">
+      <li class="list-group-item text-center goals-header">Цели</li>
+      <a *ngFor="let filterType of getAllGoalFilterTypes()" (click)="chooseGoalFilterType(filterType)"
+         [ngClass]="{'list-group-item': true, 'goal-group-active': isSelectedGoalFilterType(filterType)}">
+        <span *ngIf="!categoryLoading; else numberOfItemsLoadingIndicator" class="badge">{{getGoalCount(filterType)}}</span>{{filterType}}
+      </a>
+    </ul>
+  </div>
 
-  <!--<div class="col-md-8 right-column">-->
-    <!--<bk-spinner [display]="displayLoadingIndicator()"></bk-spinner>-->
-    <!--<div class="row" *ngFor="let goalItem of getSelectedGoals()" >-->
-      <!--<div [ngClass]="{'goal-popover-container': true, 'col-md-11 no-right-padding': selectedGoal === goalItem, 'col-md-12 selectable-goal': selectedGoal !== goalItem}">-->
-        <!--<span [ngClass]="{'glyphicon glyphicon-ok status-icon': true, 'goal-done': goalItem.done}"-->
-              <!--[popover]="goalItem.done ? 'Выполнено' : 'Не выполнено'" popoverPlacement="top"-->
-              <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="changeGoalStatus(goalItem)">-->
-        <!--</span>-->
-        <!--<div class="progress" [ngClass]="{'selected-goal': selectedGoal === goalItem}" (click)="chooseGoal(goalItem)">-->
-          <!--<div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"-->
-               <!--[ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>-->
-          <!--<div *ngIf="selectedGoal === goalItem" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>-->
-          <!--<div class="goal-name">{{goalItem.name}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>-->
-          <!--<div class="progress-value">-->
-            <!--<bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem)}} / {{goalItem.balance.completeValue}}-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="col-md-1 goal-popover-container" *ngIf="selectedGoal === goalItem">-->
-        <!--<span class="glyphicon glyphicon-remove"-->
-              <!--popover="Не учитывать" popoverPlacement="left"-->
-              <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="uncheckGoal()">-->
-        <!--</span>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
-<!--</div>-->
+  <div class="col-md-8 right-column">
+    <bk-spinner [display]="categoryLoading"></bk-spinner>
+    <div *ngIf="budgetCategory">
+      <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType | goalSort: selectedGoal" >
+        <div [ngClass]="{'goal-popover-container': true, 'col-md-11 no-right-padding': isSelectedGoal(goalItem), 'col-md-12 selectable-goal': !isSelectedGoal(goalItem)}">
+          <span [ngClass]="{'glyphicon glyphicon-ok status-icon': true, 'goal-done': goalItem.done}"
+                [popover]="goalItem.done ? 'Выполнено' : 'Не выполнено'" popoverPlacement="top"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="changeGoalStatus(goalItem)">
+          </span>
+          <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
+            <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
+                 [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+            <div *ngIf="isSelectedGoal(goalItem)" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>
+            <div class="goal-name">{{goalItem.name}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>
+            <div class="progress-value">
+              <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem)}} / {{goalItem.balance.completeValue}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
+          <span class="glyphicon glyphicon-remove"
+                popover="Не учитывать" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="uncheckGoal()">
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <ng-template #numberOfItemsLoadingIndicator>
   <bk-spinner class="goals-count-indicator" [size]="20"></bk-spinner>

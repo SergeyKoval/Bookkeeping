@@ -50,8 +50,8 @@
       </div>
     </div>
   </div>
-  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [(goal)]="historyItem.goal" [editMode]="false" [historyItem]="historyItem"
-                      [selectedValue]="historyItem.balance.value" [selectedCurrency]="historyItem.balance.currency" [alternativeCurrencies]="historyItem.balance.alternativeCurrency" *ngIf="showGoalContainer()"></bk-goals-container>
+  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode"
+                      [historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
 </md-dialog-content>
 <md-dialog-actions>
   <span class="history-actions">

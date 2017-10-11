@@ -35,6 +35,7 @@ export class HistoryEditDialogComponent implements OnInit {
   @ViewChild('title')
   private _titleElement: ElementRef;
   private _allCategories: Category[];
+  private _goalStatusChange: boolean = false;
 
   public constructor(
     public dialogRef: MdDialogRef<HistoryEditDialogComponent>,
@@ -59,10 +60,14 @@ export class HistoryEditDialogComponent implements OnInit {
       this._allCategories = categories;
       this.categories = this._settingsService.transformCategories(categories, this.historyItem.type);
     });
+
+    if (this.data.editMode) {
+      this.selectedAccount = SettingsService.chooseSelectedItem(this.accounts, this.historyItem.balance.account, this.historyItem.balance.subAccount);
+      this.selectedCategory = SettingsService.chooseSelectedItem(this.categories, this.historyItem.category, this.historyItem.subCategory);
+    }
   }
 
   public onDateChanged(event: IMyDateModel): void {
-    // TODO: update goal
     this._titleElement.nativeElement.click();
     this.selectedDate = event.date;
     this.historyItem.date = DateUtils.getUTCDateByDay(this.selectedDate);
@@ -83,7 +88,6 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public changeCurrency(currency: Currency): void {
-    // TODO: update goal
     this.historyItem.balance.currency = currency.name;
   }
 
@@ -139,6 +143,10 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public showGoalContainer(): boolean {
     return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
+  }
+
+  public onSelectedGoalStatusChange(status: boolean): void {
+    this._goalStatusChange = status;
   }
 
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {

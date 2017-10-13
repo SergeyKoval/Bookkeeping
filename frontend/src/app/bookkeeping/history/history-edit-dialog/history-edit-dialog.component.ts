@@ -64,6 +64,9 @@ export class HistoryEditDialogComponent implements OnInit {
     if (this.data.editMode) {
       this.selectedAccount = SettingsService.chooseSelectedItem(this.accounts, this.historyItem.balance.account, this.historyItem.balance.subAccount);
       this.selectedCategory = SettingsService.chooseSelectedItem(this.categories, this.historyItem.category, this.historyItem.subCategory);
+      if (this.historyItem.type === 'transfer') {
+        this.selectedToAccount = SettingsService.chooseSelectedItem(this.accounts, this.historyItem.balance.accountTo, this.historyItem.balance.subAccountTo);
+      }
     }
   }
 
@@ -166,13 +169,11 @@ export class HistoryEditDialogComponent implements OnInit {
         value: balanceValue,
         account: balanceAccount,
         subAccount: balanceSubAccount,
-        currency: balanceCurrency || this._currencyService.defaultCurrency.name
+        currency: balanceCurrency || this._currencyService.defaultCurrency.name,
+        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.defaultCurrency.conversions
       }
     };
 
-    if (historyType === 'expense' || historyType === 'income') {
-      result.balance.alternativeCurrency = balanceAlternativeCurrency || this._currencyService.defaultCurrency.conversions;
-    }
     if (historyType === 'exchange') {
       result.balance.newCurrency = balanceNewCurrency || this._currencyService.defaultCurrency.name;
     }

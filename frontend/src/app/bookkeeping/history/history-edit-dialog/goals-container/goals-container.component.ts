@@ -157,8 +157,14 @@ export class GoalsContainerComponent implements OnInit {
             this._originallySelectedBudget = budget;
             const budgetBalance: BudgetBalance = this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this._budgetCategory);
             budgetBalance.value = budgetBalance.value - this.convertValueToCurrency(budgetBalance.currency);
-            this.selectedGoal = this.budgetCategory.goals.filter((goal: BudgetGoal) => goal.name === this.historyItem.goal)[0];
-            this.selectedGoal.balance.value = this.selectedGoal.balance.value - this.convertValueToCurrency(this.selectedGoal.balance.currency);
+            if (this.budgetCategory.goals) {
+              this.selectedGoal = this.budgetCategory.goals.filter((goal: BudgetGoal) => goal.name === this.historyItem.goal)[0];
+              if (this.selectedGoal) {
+                this.selectedGoal.balance.value = this.selectedGoal.balance.value - this.convertValueToCurrency(this.selectedGoal.balance.currency);
+              }
+            } else {
+              this.selectedGoal = null;
+            }
           }
 
           this.categoryLoading = false;

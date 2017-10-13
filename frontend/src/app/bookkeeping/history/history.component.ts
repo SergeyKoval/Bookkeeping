@@ -34,7 +34,6 @@ export class HistoryComponent implements OnInit {
 
   private authenticatedProfileId: number;
 
-
   public constructor(
     private _historyService: HistoryService,
     private _authenticationService: AuthenticationService,

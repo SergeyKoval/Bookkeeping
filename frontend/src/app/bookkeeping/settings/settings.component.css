@@ -1,0 +1,14 @@
+.panel {
+  border-top: none;
+  border-top-left-radius: unset;
+  border-top-right-radius: unset;
+}
+
+li>a {
+  color: #777;
+}
+
+.nav-tabs.nav-justified>.active>a, .nav-tabs.nav-justified>.active>a:focus, .nav-tabs.nav-justified>.active>a:hover {
+  color: #555;
+  font-weight: bold;
+}

@@ -57,6 +57,9 @@ import { GoalBudgetCategoryComponent } from './bookkeeping/history/history-edit-
 import { TemplateVariableComponent } from './common/components/template-variable/template-variable.component';
 import { GoalFilterPipe } from './common/pipes/goal-filter.pipe';
 import { GoalSortPipe } from './common/pipes/goal-sort.pipe';
+import { CurrenciesComponent } from './bookkeeping/settings/currencies/currencies.component';
+import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.component';
+import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +99,10 @@ import { GoalSortPipe } from './common/pipes/goal-sort.pipe';
     GoalBudgetCategoryComponent,
     TemplateVariableComponent,
     GoalFilterPipe,
-    GoalSortPipe
+    GoalSortPipe,
+    CurrenciesComponent,
+    AccountsComponent,
+    CategoriesComponent
   ],
   imports: [
     BrowserModule,

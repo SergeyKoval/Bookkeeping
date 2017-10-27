@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import {Router} from '@angular/router';
+import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import {Subscription} from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Subscription';
 
-import {AuthenticationService} from '../common/service/authentication.service';
-import {LoadingService} from '../common/service/loading.service';
-import {CurrencyService} from '../common/service/currency.service';
+import { AuthenticationService } from '../common/service/authentication.service';
+import { LoadingService } from '../common/service/loading.service';
+import { CurrencyService } from '../common/service/currency.service';
 
 @Component({
   selector: 'bk-authentication',
@@ -57,7 +57,9 @@ export class AuthenticationComponent implements OnInit {
       this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
       this.applicationLoading = true;
       this._router.navigate(['bookkeeping']);
-      this._currencyService.loadCurrencies(profile.id);
+      const currentDate: Date = new Date(Date.now());
+      const currencies: string[] = profile.currencies.map((currency: CurrencyDetail) => currency.name);
+      this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), currencies);
     });
   }
 }

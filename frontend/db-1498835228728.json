@@ -1,13 +1,45 @@
 {
   "profiles": [
-    {"id": 1, "email": "skoval@gmail.com", "password": "098f6bcd4621d373cade4e832627b4f6"},
-    {"id": 2, "email": "test@gmail.com", "password": "test"}
+    {"id": 1, "email": "skoval@gmail.com", "password": "098f6bcd4621d373cade4e832627b4f6", "currencies": [
+      {"name": "BYN", "default": false, "symbol": "Byn", "order": 1},
+      {"name": "EUR", "default": true, "symbol": "&euro;", "order": 3},
+      {"name": "USD", "default": false, "symbol": "&#x24;", "order": 2}
+    ]},
+    {"id": 2, "email": "test@gmail.com", "password": "test", "currencies": [
+      {"name": "BYN", "default": false, "symbol": "Byn", "order": 1}
+    ]}
   ],
   "currencies": [
-    {"ownerId": 1, "name": "BYN", "default": false, "symbol": "Byn", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}},
-    {"ownerId": 1, "name": "EUR", "default": true, "symbol": "&euro;", "order": 3, "conversions": {"BYN": 2.25, "USD": 1.081}},
-    {"ownerId": 1, "name": "USD", "default": false, "symbol": "&#x24;", "order": 2, "conversions": {"BYN": 1.8711, "EUR": 0.9132}},
-    {"ownerId": 2, "name": "USD", "default": true, "symbol": "&#x24;", "order": 1, "conversions": {"EUR": 2.25, "USD": 1.8711}}
+    {"name": "BYN", "year": 2017, "month": 10, "day": 26, "conversions": {"EUR": 0.431, "USD": 0.5128}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 25, "conversions": {"EUR": 0.431, "USD": 0.5127}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 24, "conversions": {"EUR": 0.431, "USD": 0.5126}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 23, "conversions": {"EUR": 0.431, "USD": 0.5125}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 22, "conversions": {"EUR": 0.431, "USD": 0.5124}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 21, "conversions": {"EUR": 0.431, "USD": 0.5123}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 20, "conversions": {"EUR": 0.431, "USD": 0.5122}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 19, "conversions": {"EUR": 0.431, "USD": 0.5121}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 18, "conversions": {"EUR": 0.431, "USD": 0.512}},
+    {"name": "BYN", "year": 2017, "month": 10, "day": 27, "conversions": {"EUR": 0.431, "USD": 0.5129}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 26, "conversions": {"BYN": 2.32, "USD": 1.081}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 25, "conversions": {"BYN": 2.251, "USD": 1.0811}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 24, "conversions": {"BYN": 2.252, "USD": 1.0812}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 23, "conversions": {"BYN": 2.253, "USD": 1.0813}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 22, "conversions": {"BYN": 2.254, "USD": 1.0814}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 21, "conversions": {"BYN": 2.255, "USD": 1.0815}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 20, "conversions": {"BYN": 2.256, "USD": 1.0816}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 19, "conversions": {"BYN": 2.257, "USD": 1.0817}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 18, "conversions": {"BYN": 2.258, "USD": 1.0818}},
+    {"name": "EUR", "year": 2017, "month": 10, "day": 27, "conversions": {"BYN": 2.259, "USD": 1.0819}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 26, "conversions": {"BYN": 1.8711, "EUR": 0.9132}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 25, "conversions": {"BYN": 1.8712, "EUR": 0.9133}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 24, "conversions": {"BYN": 1.8713, "EUR": 0.9134}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 23, "conversions": {"BYN": 1.8714, "EUR": 0.9135}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 22, "conversions": {"BYN": 1.8715, "EUR": 0.9136}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 21, "conversions": {"BYN": 1.8716, "EUR": 0.9137}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 20, "conversions": {"BYN": 1.8717, "EUR": 0.9138}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 19, "conversions": {"BYN": 1.8718, "EUR": 0.9139}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 18, "conversions": {"BYN": 1.8719, "EUR": 0.913}},
+    {"name": "USD", "year": 2017, "month": 10, "day": 27, "conversions": {"BYN": 1.871, "EUR": 0.9131}}
   ],
   "history": [
     {"id": 1, "ownerId": 1, "date":1494180127641, "order": 1, "type":"expense", "balance": {"value":5.6, "account": "Карточки", "subAccount": "Альфа", "currency": "BYN", "alternativeCurrency": {"USD": 2.97, "EUR": 2.6}}, "category": "Питание", "subCategory": "Продукты питания", "description": "Детское питание с очень длинным названием"},

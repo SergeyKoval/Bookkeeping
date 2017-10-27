@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import {LoadingService} from '../../common/service/loading.service';
-import {SettingsService} from '../../common/service/settings.service';
+import { LoadingService } from '../../common/service/loading.service';
+import { SettingsService } from '../../common/service/settings.service';
 
 @Component({
   selector: 'bk-summary',
@@ -10,7 +10,7 @@ import {SettingsService} from '../../common/service/settings.service';
 })
 export class SummaryComponent implements OnInit {
   public loading: boolean = true;
-  public conversionCurrency: Currency;
+  public conversionCurrency: CurrencyDetail;
   public accounts: FinAccount[];
 
   public constructor(
@@ -25,7 +25,7 @@ export class SummaryComponent implements OnInit {
     });
   }
 
-  public setSummaryConversion(currency: Currency): void {
+  public setSummaryConversion(currency: CurrencyDetail): void {
     this.conversionCurrency = currency;
   }
 }

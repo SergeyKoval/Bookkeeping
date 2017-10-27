@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'bk-summary-footer',
@@ -9,5 +9,5 @@ export class SummaryFooterComponent {
   @Input()
   public accounts: FinAccount[];
   @Input()
-  public conversionCurrency: Currency;
+  public conversionCurrency: CurrencyDetail;
 }

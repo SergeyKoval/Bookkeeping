@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MdDialog } from '@angular/material';
 
+import { IMyDate } from 'mydatepicker';
+
 import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
-import { CurrencyValueDirective } from 'app/common/directives/currency-value.directive';
 import { CurrencyUtils } from '../../../../common/utils/currency-utils';
+import { CurrencyService } from '../../../../common/service/currency.service';
 
 @Component({
   selector: 'bk-input-group',
@@ -11,24 +13,28 @@ import { CurrencyUtils } from '../../../../common/utils/currency-utils';
   styleUrls: ['./input-group.component.css']
 })
 export class InputGroupComponent implements OnInit {
-
-
   @Input()
   public selectedCurrency: string;
   @Input()
-  public currencies: Currency[];
+  public currencies: CurrencyDetail[];
   @Input()
   public historyItem: HistoryType;
   @Input()
   public inputValue: number;
 
   @Output()
-  public chooseCurrency: EventEmitter<Currency> = new EventEmitter();
+  public chooseCurrency: EventEmitter<CurrencyDetail> = new EventEmitter();
   @Output()
   public changeInputValue: EventEmitter<number> = new EventEmitter();
 
+  @Input()
+  private selectedDate: IMyDate;
 
-  public constructor(private _dialog: MdDialog) { }
+
+  public constructor(
+    private _dialog: MdDialog,
+    private _currencyService: CurrencyService
+  ) { }
 
   public ngOnInit(): void {
   }
@@ -38,10 +44,10 @@ export class InputGroupComponent implements OnInit {
     this.changeInputValue.next(this.inputValue);
   }
 
-  public changeCurrency(currency: Currency): void {
+  public changeCurrency(currency: CurrencyDetail): void {
     if (currency.name !== this.selectedCurrency) {
       if (this.historyItem.type === 'expense' || this.historyItem.type === 'income') {
-        this.historyItem.balance.alternativeCurrency = currency.conversions;
+        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistory(currency.name, this.selectedDate).conversions;
       }
       this.chooseCurrency.next(currency);
     }

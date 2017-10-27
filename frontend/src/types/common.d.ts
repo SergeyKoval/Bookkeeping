@@ -1,9 +1,22 @@
-type Currency = {
-  ownerId: number,
+type Profile = {
+  id: number,
+  email: string,
+  password: string,
+  currencies: CurrencyDetail[]
+};
+
+type CurrencyDetail = {
   default: boolean,
   name: string,
   order: number,
   symbol: string,
+};
+
+type CurrencyHistory = {
+  name: string,
+  year: number,
+  month: number,
+  day: number,
   conversions: CurrencyConversion
 };
 

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { HOST } from '../config/config';
 import { GoalFilterType } from '../model/history/GoalFilterType';
-import { CurrencyService } from './currency.service';
+import { AuthenticationService } from './authentication.service';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/first';
@@ -15,7 +15,7 @@ import 'rxjs/add/operator/switchMap';
 export class HistoryService {
   public constructor(
     private _http: Http,
-    private _currencyService: CurrencyService,
+    private _authenticationService: AuthenticationService,
     @Inject(HOST) private _host: string
   ) {}
 
@@ -46,7 +46,7 @@ export class HistoryService {
       return budgetBalances[0];
     }
 
-    const defaultCurrency: string = this._currencyService.defaultCurrency.name;
+    const defaultCurrency: string = this._authenticationService.defaultCurrency.name;
     budgetBalances = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
     if (budgetBalances.length === 1) {
       return budgetBalances[0];

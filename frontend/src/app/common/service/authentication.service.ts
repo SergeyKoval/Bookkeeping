@@ -1,15 +1,15 @@
-import {Inject, Injectable} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Http, Response} from '@angular/http';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import { Inject, Injectable } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Http, Response } from '@angular/http';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {Md5} from 'ts-md5/dist/md5';
-import {isNullOrUndefined} from 'util';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
+import { Md5 } from 'ts-md5/dist/md5';
+import { isNullOrUndefined } from 'util';
 
-import {LoadingService} from 'app/common/service/loading.service';
-import {HOST} from '../config/config';
+import { LoadingService } from 'app/common/service/loading.service';
+import { HOST } from '../config/config';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/delay';
@@ -18,6 +18,7 @@ import 'rxjs/add/operator/delay';
 export class AuthenticationService implements CanActivate {
   private _authenticationLoading: Subject<boolean>;
   private _authenticatedProfile: Profile;
+  private _userCurrencies: Map<String, CurrencyDetail> = new Map();
 
   public constructor(
     private _router: Router,
@@ -60,6 +61,8 @@ export class AuthenticationService implements CanActivate {
       return false;
     }
 
+    profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+    profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
     this._authenticatedProfile = profile;
     return true;
   }
@@ -70,5 +73,21 @@ export class AuthenticationService implements CanActivate {
 
   public get authenticatedProfile(): Profile {
     return this._authenticatedProfile;
+  }
+
+  public getCurrencyDetails(currency: string): CurrencyDetail {
+    return this._userCurrencies.get(currency);
+  }
+
+  public get defaultCurrency(): CurrencyDetail {
+    let defaultCurrency: CurrencyDetail = null;
+    this._authenticatedProfile.currencies.forEach((currency: CurrencyDetail) => {
+      if (currency.default) {
+        defaultCurrency = currency;
+        return;
+      }
+    });
+
+    return defaultCurrency || this._authenticatedProfile.currencies.values().next().value;
   }
 }

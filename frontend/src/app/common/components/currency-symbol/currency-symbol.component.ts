@@ -1,6 +1,6 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
-import {CurrencyService} from '../../service/currency.service';
+import { AuthenticationService } from '../../service/authentication.service';
 
 @Component({
   selector: 'bk-currency-symbol',
@@ -9,11 +9,10 @@ import {CurrencyService} from '../../service/currency.service';
 export class CurrencySymbolComponent {
   @Input()
   public set currencyName(currencyName: string) {
-    this.currencyCode = this._currencyService.getCurrencySymbol(currencyName);
+    this.currencyCode = this._authenticationService.getCurrencyDetails(currencyName).symbol;
   }
 
   public currencyCode: string;
 
-
-  public constructor(private _currencyService: CurrencyService) {}
+  public constructor(private _authenticationService: AuthenticationService) {}
 }

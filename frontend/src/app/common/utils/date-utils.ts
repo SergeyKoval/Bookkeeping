@@ -24,7 +24,7 @@ export class DateUtils {
     return DateUtils.initUTCDate(date.year, date.month - 1, date.day);
   }
 
-  public static getDateFromUTC(timestamp: number): IMyDate {
+  public static getDateFromUTC(timestamp: number = DateUtils.getUTCDate()): IMyDate {
     const date: Date = new Date(timestamp);
     return {year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate()};
   }

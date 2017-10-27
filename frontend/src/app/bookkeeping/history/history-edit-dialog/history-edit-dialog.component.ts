@@ -24,7 +24,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public errors: string;
   public historyItem: HistoryType;
-  public currencies: Currency[];
+  public currencies: CurrencyDetail[];
   public selectedDate: IMyDate;
   public accounts: SelectItem[];
   public categories: SelectItem[];
@@ -54,7 +54,7 @@ export class HistoryEditDialogComponent implements OnInit {
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtils.getUTCDate());
     this.selectedDate = DateUtils.getDateFromUTC(this.historyItem.date);
 
-    this._currencyService.currencies$.subscribe((currencies: Currency[]) => this.currencies = currencies);
+    this.currencies = this._authenticationService.authenticatedProfile.currencies;
     this._settingsService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._settingsService.transformAccounts(accounts));
     this._settingsService.categories$.subscribe((categories: Category[]) => {
       this._allCategories = categories;
@@ -90,11 +90,11 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
-  public changeCurrency(currency: Currency): void {
+  public changeCurrency(currency: CurrencyDetail): void {
     this.historyItem.balance.currency = currency.name;
   }
 
-  public changeNewCurrency(currency: Currency): void {
+  public changeNewCurrency(currency: CurrencyDetail): void {
     this.historyItem.balance.newCurrency = currency.name;
   }
 
@@ -160,6 +160,8 @@ export class HistoryEditDialogComponent implements OnInit {
 
   private initNewHistoryItem(historyType: string, historyDate: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
+
+    const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
     const result: HistoryType = {
       ownerId: this._authenticationService.authenticatedProfile.id,
       type: historyType,
@@ -169,13 +171,13 @@ export class HistoryEditDialogComponent implements OnInit {
         value: balanceValue,
         account: balanceAccount,
         subAccount: balanceSubAccount,
-        currency: balanceCurrency || this._currencyService.defaultCurrency.name,
-        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.defaultCurrency.conversions
+        currency: currencyName,
+        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.getCurrencyHistory(currencyName, this.selectedDate).conversions
       }
     };
 
     if (historyType === 'exchange') {
-      result.balance.newCurrency = balanceNewCurrency || this._currencyService.defaultCurrency.name;
+      result.balance.newCurrency = balanceNewCurrency || this._authenticationService.defaultCurrency.name;
     }
 
     return result;

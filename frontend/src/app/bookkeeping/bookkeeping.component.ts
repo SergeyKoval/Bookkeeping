@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import {Subscription} from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Subscription';
 
-import {AlertService} from '../common/service/alert.service';
-import {Alert} from '../common/model/alert/Alert';
-import {SettingsService} from '../common/service/settings.service';
-import {AuthenticationService} from '../common/service/authentication.service';
+import { AlertService } from '../common/service/alert.service';
+import { Alert } from '../common/model/alert/Alert';
+import { SettingsService } from '../common/service/settings.service';
+import { AuthenticationService } from '../common/service/authentication.service';
 
 @Component({
   selector: 'bk-bookkeeping',

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {Alert} from '../model/alert/Alert';
-import {AlertType} from '../model/alert/AlertType';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
+import { Alert } from '../model/alert/Alert';
+import { AlertType } from '../model/alert/AlertType';
 
 @Injectable()
 export class AlertService {
@@ -16,7 +16,7 @@ export class AlertService {
   }
 
   public addAlert(type: AlertType, message: string, title?: string, timeoutSeconds?: number): void {
-    this.addAlertObject(new Alert(type, title, message, timeoutSeconds));
+    this.addAlertObject(new Alert(type, message, title, timeoutSeconds));
   }
 
   public addAlertObject(alert: Alert): void {

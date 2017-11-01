@@ -19,6 +19,8 @@ export class GoalsContainerComponent implements OnInit {
   public historyItem: HistoryType;
   @Input()
   public editMode: boolean;
+  @Input()
+  public alternativeCurrencyLoading: boolean;
   @Output()
   public statusChange: EventEmitter<boolean> = new EventEmitter();
 

@@ -19,6 +19,8 @@ export class GoalBudgetCategoryComponent {
   @Input()
   public categoryLoading: boolean;
   @Input()
+  public alternativeCurrencyLoading: boolean;
+  @Input()
   public budgetCategory: BudgetCategory;
 
   public constructor(private _historyService: HistoryService) { }

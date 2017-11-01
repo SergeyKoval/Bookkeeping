@@ -58,8 +58,7 @@ export class AuthenticationComponent implements OnInit {
       this.applicationLoading = true;
       this._router.navigate(['bookkeeping']);
       const currentDate: Date = new Date(Date.now());
-      const currencies: string[] = profile.currencies.map((currency: CurrencyDetail) => currency.name);
-      this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), currencies);
+      this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), this._authenticationService.getProfileCurrencies());
     });
   }
 }

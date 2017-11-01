@@ -19,7 +19,7 @@
       </ul>
 
       <div class="form-row">
-        <bk-input-group [historyItem]="historyItem"
+        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
                         [currencies]="currencies" [selectedCurrency]="historyItem.balance.currency" (chooseCurrency)="changeCurrency($event)"
                         [inputValue]="historyItem.balance.value" (changeInputValue)="historyItem.balance.value = $event">
         </bk-input-group>
@@ -29,7 +29,7 @@
         <bk-select [placeholder]="getAccountPlaceholder()" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
       </div>
       <div class="form-row" *ngIf="isTypeSelected('exchange')">
-        <bk-input-group [historyItem]="historyItem"
+        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
                         [currencies]="currencies" [selectedCurrency]="historyItem.balance.newCurrency" (chooseCurrency)="changeNewCurrency($event)"
                         [inputValue]="historyItem.balance.newValue" (changeInputValue)="historyItem.balance.newValue = $event">
         </bk-input-group>
@@ -50,7 +50,7 @@
       </div>
     </div>
   </div>
-  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode"
+  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
                       [historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
 </md-dialog-content>
 <md-dialog-actions>

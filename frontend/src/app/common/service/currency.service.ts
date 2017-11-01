@@ -20,7 +20,7 @@ export class CurrencyService {
   private _todayConversions: Map<String, CurrencyHistory> = new Map();
   private _currencies: Map<string, Map<number, Map<number, CurrencyHistory[]>>> = new Map();
   private _currenciesIndicatorMap: Map<string, Map<number, Map<number, boolean>>> = new Map();
-  private _currenciesUpdate$$: Subject<null> = new ReplaySubject(1);
+  private _currenciesUpdate$$: Subject<string> = new Subject();
 
   public constructor(
     private _http: Http,
@@ -35,7 +35,7 @@ export class CurrencyService {
         .map((response: Response) => response.json())
         .subscribe((currencyHistories: CurrencyHistory[]) => {
           if (!this._todayConversions.has(currency)) {
-            const todayConversions: CurrencyHistory = currencyHistories.reduce((first: CurrencyHistory, second: CurrencyHistory) => first.day > second.day ? first : second)[0];
+            const todayConversions: CurrencyHistory = currencyHistories.reduce((first: CurrencyHistory, second: CurrencyHistory) => first.day > second.day ? first : second);
             this._todayConversions.set(currency, todayConversions);
           }
 
@@ -72,7 +72,7 @@ export class CurrencyService {
           currencyMonths.set(month, currencyHistories);
           indicatorMonths.set(month, true);
 
-          this._currenciesUpdate$$.next();
+          this._currenciesUpdate$$.next(currency);
           subscription.unsubscribe();
         });
     });
@@ -87,7 +87,7 @@ export class CurrencyService {
     return items;
   }
 
-  public get currenciesUpdate$(): Observable<null> {
+  public get currenciesUpdate$(): Observable<string> {
     return this._currenciesUpdate$$.asObservable();
   }
 
@@ -130,5 +130,10 @@ export class CurrencyService {
     }
 
     return false;
+  }
+
+  public getCurrencyHistoryConversions(currencyName: string, date: IMyDate): {[key: string]: number} {
+    const currencyHistory: CurrencyHistory = this.getCurrencyHistory(currencyName, date);
+    return currencyHistory ? currencyHistory.conversions : {};
   }
 }

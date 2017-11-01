@@ -1,5 +1,7 @@
 <hr>
-<bk-goal-budget-category [historyItem]="historyItem" [selectedDate]="selectedDate" [categoryLoading]="categoryLoading" [budgetCategory]="budgetCategory"></bk-goal-budget-category>
+<bk-goal-budget-category [historyItem]="historyItem" [selectedDate]="selectedDate" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
+                         [categoryLoading]="categoryLoading" [budgetCategory]="budgetCategory">
+</bk-goal-budget-category>
 
 <div class="row">
   <div class="col-md-4 left-column">
@@ -13,8 +15,8 @@
   </div>
 
   <div class="col-md-8 right-column">
-    <bk-spinner [display]="categoryLoading"></bk-spinner>
-    <div *ngIf="budgetCategory">
+    <bk-spinner [display]="categoryLoading || alternativeCurrencyLoading"></bk-spinner>
+    <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
       <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType | goalSort: selectedGoal" >
         <div [ngClass]="{'goal-popover-container': true, 'col-md-11 no-right-padding': isSelectedGoal(goalItem), 'col-md-12 selectable-goal': !isSelectedGoal(goalItem)}">
           <span [ngClass]="{'glyphicon glyphicon-ok status-icon': true, 'goal-done': goalItem.done}"

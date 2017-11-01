@@ -79,6 +79,10 @@ export class AuthenticationService implements CanActivate {
     return this._userCurrencies.get(currency);
   }
 
+  public getProfileCurrencies(): string[] {
+    return this.authenticatedProfile.currencies.map((currency: CurrencyDetail) => currency.name);
+  }
+
   public get defaultCurrency(): CurrencyDetail {
     let defaultCurrency: CurrencyDetail = null;
     this._authenticatedProfile.currencies.forEach((currency: CurrencyDetail) => {

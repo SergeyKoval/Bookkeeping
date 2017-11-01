@@ -2,7 +2,9 @@ import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core'
 import { Response } from '@angular/http';
 import { MD_DIALOG_DATA, MdDialog, MdDialogRef } from '@angular/material';
 
+import { Subscription } from 'rxjs/Subscription';
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
+
 import { HistoryService } from '../../../common/service/history.service';
 import { CurrencyService } from '../../../common/service/currency.service';
 import { SettingsService } from '../../../common/service/settings.service';
@@ -31,6 +33,7 @@ export class HistoryEditDialogComponent implements OnInit {
   public selectedAccount: SelectItem[];
   public selectedToAccount: SelectItem[];
   public selectedCategory: SelectItem[];
+  public alternativeCurrencyLoading: boolean;
 
   @ViewChild('title')
   private _titleElement: ElementRef;
@@ -53,6 +56,10 @@ export class HistoryEditDialogComponent implements OnInit {
   public ngOnInit(): void {
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtils.getUTCDate());
     this.selectedDate = DateUtils.getDateFromUTC(this.historyItem.date);
+    this.alternativeCurrencyLoading = !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate);
+    if (this.alternativeCurrencyLoading) {
+      this.loadAlternativeCurrencies();
+    }
 
     this.currencies = this._authenticationService.authenticatedProfile.currencies;
     this._settingsService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._settingsService.transformAccounts(accounts));
@@ -72,8 +79,19 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public onDateChanged(event: IMyDateModel): void {
     this._titleElement.nativeElement.click();
-    this.selectedDate = event.date;
-    this.historyItem.date = DateUtils.getUTCDateByDay(this.selectedDate);
+    const date: IMyDate = event.date;
+    if (date.day !== this.selectedDate.day || date.month !== this.selectedDate.month || date.year !== this.selectedDate.year) {
+      if (this.selectedDate.month !== date.month && !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, date)) {
+        this.alternativeCurrencyLoading = true;
+        this.historyItem.balance.alternativeCurrency = {};
+          this._currencyService.loadCurrencies(date.month, date.year, this._authenticationService.getProfileCurrencies());
+        this.loadAlternativeCurrencies();
+      } else {
+        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);
+      }
+      this.selectedDate = date;
+      this.historyItem.date = DateUtils.getUTCDateByDay(this.selectedDate);
+    }
   }
 
   public onChangeSelectedType(type: string): void {
@@ -92,6 +110,15 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public changeCurrency(currency: CurrencyDetail): void {
     this.historyItem.balance.currency = currency.name;
+    if (this.historyItem.type === 'expense' || this.historyItem.type === 'income') {
+      if (!this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate)) {
+        this.alternativeCurrencyLoading = true;
+        this.historyItem.balance.alternativeCurrency = {};
+        this.loadAlternativeCurrencies();
+      } else {
+        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, this.selectedDate);
+      }
+    }
   }
 
   public changeNewCurrency(currency: CurrencyDetail): void {
@@ -172,7 +199,7 @@ export class HistoryEditDialogComponent implements OnInit {
         account: balanceAccount,
         subAccount: balanceSubAccount,
         currency: currencyName,
-        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.getCurrencyHistory(currencyName, this.selectedDate).conversions
+        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.getCurrencyHistoryConversions(currencyName, this.selectedDate)
       }
     };
 
@@ -255,5 +282,15 @@ export class HistoryEditDialogComponent implements OnInit {
     }
 
     return true;
+  }
+
+  private loadAlternativeCurrencies(): void {
+    const subscription: Subscription = this._currencyService.currenciesUpdate$.subscribe((currency: string) => {
+      if (currency === this.historyItem.balance.currency && this._currencyService.isCurrencyHistoryLoaded(currency, this.selectedDate)) {
+        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(currency, this.selectedDate);
+        this.alternativeCurrencyLoading = false;
+        subscription.unsubscribe();
+      }
+    });
   }
 }

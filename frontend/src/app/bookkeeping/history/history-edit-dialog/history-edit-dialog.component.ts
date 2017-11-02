@@ -1,15 +1,14 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { Response } from '@angular/http';
-import { MD_DIALOG_DATA, MdDialog, MdDialogRef } from '@angular/material';
+import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
 
 import { Subscription } from 'rxjs/Subscription';
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
 
 import { HistoryService } from '../../../common/service/history.service';
 import { CurrencyService } from '../../../common/service/currency.service';
-import { SettingsService } from '../../../common/service/settings.service';
 import { DateUtils } from '../../../common/utils/date-utils';
-import { AuthenticationService } from '../../../common/service/authentication.service';
+import { ProfileService } from '../../../common/service/profile.service';
 import { LoadingDialogComponent } from '../../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../../common/service/loading.service';
 import { AlertService } from '../../../common/service/alert.service';
@@ -46,11 +45,9 @@ export class HistoryEditDialogComponent implements OnInit {
     private _dialogRef: MdDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
-    private _settingsService: SettingsService,
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService,
-    private _dialog: MdDialog
+    private _alertService: AlertService
   ) {}
 
   public ngOnInit(): void {
@@ -61,18 +58,17 @@ export class HistoryEditDialogComponent implements OnInit {
       this.loadAlternativeCurrencies();
     }
 
-    this.currencies = this._authenticationService.authenticatedProfile.currencies;
-    this._settingsService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._settingsService.transformAccounts(accounts));
-    this._settingsService.categories$.subscribe((categories: Category[]) => {
-      this._allCategories = categories;
-      this.categories = this._settingsService.transformCategories(categories, this.historyItem.type);
-    });
+    const profile: Profile = this._authenticationService.authenticatedProfile;
+    this.currencies = profile.currencies;
+    this._allCategories = profile.categories;
+    this.categories = this._authenticationService.transformCategories(this._allCategories, this.historyItem.type);
+    this._authenticationService.accounts$.subscribe((accounts: FinAccount[]) => this.accounts = this._authenticationService.transformAccounts(accounts));
 
     if (this.data.editMode) {
-      this.selectedAccount = SettingsService.chooseSelectedItem(this.accounts, this.historyItem.balance.account, this.historyItem.balance.subAccount);
-      this.selectedCategory = SettingsService.chooseSelectedItem(this.categories, this.historyItem.category, this.historyItem.subCategory);
+      this.selectedAccount = ProfileService.chooseSelectedItem(this.accounts, this.historyItem.balance.account, this.historyItem.balance.subAccount);
+      this.selectedCategory = ProfileService.chooseSelectedItem(this.categories, this.historyItem.category, this.historyItem.subCategory);
       if (this.historyItem.type === 'transfer') {
-        this.selectedToAccount = SettingsService.chooseSelectedItem(this.accounts, this.historyItem.balance.accountTo, this.historyItem.balance.subAccountTo);
+        this.selectedToAccount = ProfileService.chooseSelectedItem(this.accounts, this.historyItem.balance.accountTo, this.historyItem.balance.subAccountTo);
       }
     }
   }
@@ -104,7 +100,7 @@ export class HistoryEditDialogComponent implements OnInit {
       }
 
       this.historyItem = this.initNewHistoryItemFromExisting(type, this.historyItem);
-      this.categories = this._settingsService.transformCategories(this._allCategories, this.historyItem.type);
+      this.categories = this._authenticationService.transformCategories(this._allCategories, this.historyItem.type);
     }
   }
 
@@ -145,9 +141,7 @@ export class HistoryEditDialogComponent implements OnInit {
       this._historyService.addHistoryItem(this.historyItem).subscribe((response: Response) => {
         const alert: Alert = response.ok ? new Alert(AlertType.SUCCESS, 'Операция успешно добавлена') : new Alert(AlertType.WARNING, 'При добавлении возникла ошибка', null, 10);
         this._alertService.addAlertObject(alert);
-
-        const ownerId: number = this._authenticationService.authenticatedProfile.id;
-        this._settingsService.loadAccounts(ownerId);
+        this._authenticationService.reloadAccounts();
 
         mdDialogRef.close();
         this.close(true);

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
-import {AuthenticationService} from '../../common/service/authentication.service';
+import { ProfileService } from '../../common/service/profile.service';
 
 @Component({
   selector: 'bk-header',
@@ -11,7 +11,7 @@ import {AuthenticationService} from '../../common/service/authentication.service
 export class HeaderComponent {
 
   public constructor(
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
     private _router: Router
   ) {}
 

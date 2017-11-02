@@ -3,14 +3,14 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { HistoryGroup } from '../model/history/HistoryGroup';
 import { DateUtils } from '../utils/date-utils';
 import { HistoryItem } from '../model/history/HistoryItem';
-import { SettingsService } from '../service/settings.service';
+import { ProfileService } from '../service/profile.service';
 
 @Pipe({
   name: 'historyGroup'
 })
 export class HistoryGroupPipe implements PipeTransform {
 
-  public constructor(private _settingsService: SettingsService) {}
+  public constructor(private _authenticationService: ProfileService) {}
 
   public transform(items: HistoryType[]): HistoryGroup[] {
     const historyGroups: HistoryGroup[] = [];
@@ -29,12 +29,12 @@ export class HistoryGroupPipe implements PipeTransform {
       switch (item.type) {
         case 'expense':
         case 'income':
-          historyItem.icon = this._settingsService.getCategoryIcon(item.category);
+          historyItem.icon = this._authenticationService.getCategoryIcon(item.category);
           break;
         case 'transfer':
-          historyItem.additionalIcon = this._settingsService.getAccountIcon(item.balance.accountTo, item.balance.subAccountTo);
+          historyItem.additionalIcon = this._authenticationService.getAccountIcon(item.balance.accountTo, item.balance.subAccountTo);
         case  'exchange':
-          historyItem.icon = this._settingsService.getAccountIcon(item.balance.account, item.balance.subAccount);
+          historyItem.icon = this._authenticationService.getAccountIcon(item.balance.account, item.balance.subAccount);
           break;
       }
 

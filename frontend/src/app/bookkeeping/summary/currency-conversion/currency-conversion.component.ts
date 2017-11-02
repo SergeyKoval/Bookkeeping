@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
-import { AuthenticationService } from '../../../common/service/authentication.service';
+import { ProfileService } from '../../../common/service/profile.service';
 import { CurrencyService } from '../../../common/service/currency.service';
 import { AlertService } from '../../../common/service/alert.service';
 import { AlertType } from '../../../common/model/alert/AlertType';
@@ -18,7 +18,7 @@ export class CurrencyConversionComponent implements OnInit {
   public selectedCurrency: CurrencyDetail = null;
 
   public constructor(
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
     private _currencyService: CurrencyService,
     private _alertService: AlertService
   ) { }

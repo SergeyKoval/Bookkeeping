@@ -5,13 +5,12 @@ import { Subscription } from 'rxjs/Subscription';
 import { MdDialog } from '@angular/material';
 
 import { HistoryService } from '../../common/service/history.service';
-import { AuthenticationService } from '../../common/service/authentication.service';
+import { ProfileService } from '../../common/service/profile.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { HistoryItem } from '../../common/model/history/HistoryItem';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
-import { SettingsService } from '../../common/service/settings.service';
 
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/filter';
@@ -36,11 +35,10 @@ export class HistoryComponent implements OnInit {
 
   public constructor(
     private _historyService: HistoryService,
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
     private _confirmDialogService: ConfirmDialogService,
     private _alertService: AlertService,
-    private _dialog: MdDialog,
-    private _settingsService: SettingsService
+    private _dialog: MdDialog
   ) {}
 
   public ngOnInit(): void {
@@ -97,7 +95,7 @@ export class HistoryComponent implements OnInit {
         }
       })
       .filter((response: Response) => response.ok)
-      .do(() => this._settingsService.loadAccounts(this.authenticatedProfileId))
+      .do(() => this._authenticationService.reloadAccounts())
       .switchMap(() => this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, itemsLimit))
       .subscribe((historyItems: HistoryType[]) => {
         if (historyItems.length < itemsLimit) {

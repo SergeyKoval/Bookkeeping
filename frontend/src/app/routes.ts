@@ -5,7 +5,7 @@ import { BookkeepingComponent } from './bookkeeping/bookkeeping.component';
 import { BudgetComponent } from './bookkeeping/budget/budget.component';
 import { HistoryComponent } from './bookkeeping/history/history.component';
 import { SettingsComponent } from './bookkeeping/settings/settings.component';
-import { AuthenticationService } from './common/service/authentication.service';
+import { ProfileService } from './common/service/profile.service';
 import { CurrenciesComponent } from './bookkeeping/settings/currencies/currencies.component';
 import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.component';
 import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
@@ -23,7 +23,7 @@ export const BOOKKEEPING_ROUTES: Route[] = [
   {
     path: 'bookkeeping',
     component: BookkeepingComponent,
-    canActivate: [AuthenticationService],
+    canActivate: [ProfileService],
     children: [
       {
         path: '',

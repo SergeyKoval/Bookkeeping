@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import { MdDialog, MdDialogRef } from '@angular/material';
 
-import {Subject} from 'rxjs/Subject';
+import { Subject } from 'rxjs/Subject';
 
-import {LoadingDialogComponent} from '../components/loading-dialog/loading-dialog.component';
+import { LoadingDialogComponent } from '../components/loading-dialog/loading-dialog.component';
 
 @Injectable()
 export class LoadingService {

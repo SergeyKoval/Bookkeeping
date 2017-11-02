@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IMyDate } from 'mydatepicker';
 
 import { BudgetService } from '../../../../common/service/budget.service';
-import { AuthenticationService } from '../../../../common/service/authentication.service';
+import { ProfileService } from '../../../../common/service/profile.service';
 import { GoalFilterType } from '../../../../common/model/history/GoalFilterType';
 import { HistoryService } from '../../../../common/service/history.service';
 
@@ -37,7 +37,7 @@ export class GoalsContainerComponent implements OnInit {
   public constructor(
     private _budgetService: BudgetService,
     private _historyService: HistoryService,
-    private _authenticationService: AuthenticationService
+    private _authenticationService: ProfileService
   ) { }
 
   @Input()

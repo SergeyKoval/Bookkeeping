@@ -12,7 +12,7 @@ import { BookkeepingRootComponent } from './bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { InputComponent } from './authentication/input/input.component';
-import { AuthenticationService } from './common/service/authentication.service';
+import { ProfileService } from './common/service/profile.service';
 import { LoadingService } from './common/service/loading.service';
 import { environment } from '../environments/environment';
 import { HOST } from './common/config/config';
@@ -46,7 +46,6 @@ import { CurrencyValueDirective } from './common/directives/currency-value.direc
 import { SelectComponent } from './common/components/select/select.component';
 import { FocusDirective } from './common/directives/focus.directive';
 import { ClickOutsideDirective } from './common/directives/click-outside.directive';
-import { SettingsService } from './common/service/settings.service';
 import { AssetImagePipe } from './common/pipes/asset-image.pipe';
 import { LoadingDialogComponent } from './common/components/loading-dialog/loading-dialog.component';
 import { MapKeysPipe } from './common/pipes/map-keys.pipe';
@@ -123,10 +122,9 @@ import { CategoriesComponent } from './bookkeeping/settings/categories/categorie
     AlternativeCurrenciesDialogComponent
   ],
   providers: [
-    SettingsService,
     CurrencyValuePipe,
     AssetImagePipe,
-    AuthenticationService,
+    ProfileService,
     LoadingService,
     CurrencyService,
     HistoryService,

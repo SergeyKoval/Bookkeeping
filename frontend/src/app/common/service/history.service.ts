@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { HOST } from '../config/config';
 import { GoalFilterType } from '../model/history/GoalFilterType';
-import { AuthenticationService } from './authentication.service';
+import { ProfileService } from './profile.service';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/first';
@@ -15,7 +15,7 @@ import 'rxjs/add/operator/switchMap';
 export class HistoryService {
   public constructor(
     private _http: Http,
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
     @Inject(HOST) private _host: string
   ) {}
 

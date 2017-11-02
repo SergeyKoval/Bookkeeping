@@ -2,7 +2,9 @@ type Profile = {
   id: number,
   email: string,
   password: string,
-  currencies: CurrencyDetail[]
+  currencies: CurrencyDetail[],
+  categories: Category[],
+  accounts: FinAccount[]
 };
 
 type CurrencyDetail = {

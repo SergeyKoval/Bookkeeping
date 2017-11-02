@@ -3,12 +3,11 @@ import { Http, Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subscription } from 'rxjs/Subscription';
 import { IMyDate } from 'mydatepicker';
 
 import { HOST } from '../config/config';
-import { AuthenticationService } from './authentication.service';
+import { ProfileService } from './profile.service';
 import { DateUtils } from '../utils/date-utils';
 
 import 'rxjs/add/operator/delay';
@@ -25,7 +24,7 @@ export class CurrencyService {
   public constructor(
     private _http: Http,
     @Inject(HOST) private _host: string,
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
   ) {}
 
   public loadCurrencies(month: number, year: number, currencies: string[]): void {

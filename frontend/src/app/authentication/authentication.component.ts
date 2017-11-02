@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { AuthenticationService } from '../common/service/authentication.service';
+import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
 import { CurrencyService } from '../common/service/currency.service';
 
@@ -23,7 +23,7 @@ export class AuthenticationComponent implements OnInit {
   private _AUTHENTICATION_LOADING_SUBSCRIPTION: Subscription;
 
   public constructor(
-    private _authenticationService: AuthenticationService,
+    private _authenticationService: ProfileService,
     private _loadingService: LoadingService,
     private _currencyService: CurrencyService,
     private _router: Router

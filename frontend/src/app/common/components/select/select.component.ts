@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
-import {FocusDirective} from '../../directives/focus.directive';
+import { FocusDirective } from '../../directives/focus.directive';
 
 @Component({
   selector: 'bk-select',

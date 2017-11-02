@@ -9,6 +9,7 @@ import { ProfileService } from './common/service/profile.service';
 import { CurrenciesComponent } from './bookkeeping/settings/currencies/currencies.component';
 import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.component';
 import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
+import { ProfileComponent } from './bookkeeping/settings/profile/profile.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -44,8 +45,12 @@ export const BOOKKEEPING_ROUTES: Route[] = [
         children: [
           {
             path: '',
-            redirectTo: 'currencies',
+            redirectTo: 'profile',
             pathMatch: 'full'
+          },
+          {
+            path: 'profile',
+            component: ProfileComponent
           },
           {
             path: 'currencies',

@@ -59,6 +59,7 @@ import { GoalSortPipe } from './common/pipes/goal-sort.pipe';
 import { CurrenciesComponent } from './bookkeeping/settings/currencies/currencies.component';
 import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.component';
 import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
+import { ProfileComponent } from './bookkeeping/settings/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { CategoriesComponent } from './bookkeeping/settings/categories/categorie
     GoalSortPipe,
     CurrenciesComponent,
     AccountsComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

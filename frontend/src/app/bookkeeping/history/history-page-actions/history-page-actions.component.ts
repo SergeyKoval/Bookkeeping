@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
-import { MdDialog, MdDialogConfig } from '@angular/material';
+import { filter } from 'rxjs/operators';
 
 import { HistoryEditDialogComponent } from '../history-edit-dialog/history-edit-dialog.component';
 import { HistoryComponent } from '../history.component';
@@ -18,14 +19,12 @@ export class HistoryPageActionsComponent implements OnInit {
   @Output()
   public loadMore: EventEmitter<number> = new EventEmitter();
 
-  public constructor(private _dialog: MdDialog) { }
+  public constructor(private _dialog: MatDialog) { }
 
   public ngOnInit(): void {
   }
 
   public addHistoryItem(): void {
-    const mdDialogConfig: MdDialogConfig = new MdDialogConfig();
-
     this._dialog.open(HistoryEditDialogComponent, {
       width: '850px',
       position: {top: 'top'},
@@ -35,7 +34,7 @@ export class HistoryPageActionsComponent implements OnInit {
         'editMode': false
       },
     }).afterClosed()
-      .filter((result: boolean) => result === true)
+      .pipe(filter((result: boolean) => result === true))
       .subscribe(() => this.loadMore.emit(1));
   }
 

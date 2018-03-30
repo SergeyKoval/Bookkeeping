@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Response } from '@angular/http';
+import { HttpResponse } from '@angular/common/http';
+import { MatDialog } from '@angular/material';
 
 import { Subscription } from 'rxjs/Subscription';
-import { MdDialog } from '@angular/material';
+import { filter, switchMap, tap } from 'rxjs/operators';
 
 import { HistoryService } from '../../common/service/history.service';
 import { ProfileService } from '../../common/service/profile.service';
@@ -11,11 +12,6 @@ import { HistoryItem } from '../../common/model/history/HistoryItem';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
-
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/first';
 
 @Component({
   selector: 'bk-history',
@@ -38,7 +34,7 @@ export class HistoryComponent implements OnInit {
     private _authenticationService: ProfileService,
     private _confirmDialogService: ConfirmDialogService,
     private _alertService: AlertService,
-    private _dialog: MdDialog
+    private _dialog: MatDialog
   ) {}
 
   public ngOnInit(): void {
@@ -81,23 +77,24 @@ export class HistoryComponent implements OnInit {
     const itemsLimit: number = this.historyItems.length;
     const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'Точно удалить?')
       .afterClosed()
-      .filter((result: boolean) => result === true)
-      .do(() => this.loading = true)
-      .switchMap(() => this.historyItems)
-      .filter((historyType: HistoryType) => historyType.id === historyItem.id)
-      .switchMap((historyType: HistoryType) => this._historyService.deleteHistoryItem(historyType))
-      .do((response: Response) => {
-        if (!response.ok) {
-          this._alertService.addAlert(AlertType.WARNING, 'Возникла ошибка при удалении записи.');
-          this.loading = false;
-        } else {
-          this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена.');
-        }
-      })
-      .filter((response: Response) => response.ok)
-      .do(() => this._authenticationService.reloadAccounts())
-      .switchMap(() => this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, itemsLimit))
-      .subscribe((historyItems: HistoryType[]) => {
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => this.loading = true),
+        switchMap(() => this.historyItems),
+        filter((historyType: HistoryType) => historyType.id === historyItem.id),
+        switchMap((historyType: HistoryType) => this._historyService.deleteHistoryItem(historyType)),
+        tap((response: HttpResponse<Object>) => {
+          if (!response.ok) {
+            this._alertService.addAlert(AlertType.WARNING, 'Возникла ошибка при удалении записи.');
+            this.loading = false;
+          } else {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена.');
+          }
+        }),
+        filter((response: HttpResponse<Object>) => response.ok),
+        tap(() => this._authenticationService.reloadAccounts()),
+        switchMap(() => this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, itemsLimit))
+      ).subscribe((historyItems: HistoryType[]) => {
         if (historyItems.length < itemsLimit) {
           this.disableMoreButton = true;
         }

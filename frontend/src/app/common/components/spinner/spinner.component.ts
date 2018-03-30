@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'bk-spinner',
-  template: `<md-spinner *ngIf="display" [style.width.px]="size" [style.height.px]="size" [style.margin]="'auto'"></md-spinner>`
+  template: `<mat-spinner *ngIf="display" [diameter]="size" [style.margin]="'auto'"></mat-spinner>`
 })
 export class SpinnerComponent {
   @Input()

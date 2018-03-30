@@ -38,6 +38,7 @@
 
 .right-column {
   padding-left: 5px;
+  min-height: 50px;
   max-height: 150px;
   overflow-x: visible !important;
   overflow-y: auto;

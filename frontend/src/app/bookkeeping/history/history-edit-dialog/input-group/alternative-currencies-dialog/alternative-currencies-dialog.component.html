@@ -1,5 +1,5 @@
-<h2 md-dialog-title align="center">Альтернативные валюты</h2>
-<md-dialog-content>
+<h2 mat-dialog-title align="center">Альтернативные валюты</h2>
+<mat-dialog-content>
   <p class="text-center description">Указанные курсы будут использоваться при приведении операции к другим валютам</p>
   <div class="table">
     <div class="row">
@@ -20,11 +20,11 @@
     </div>
   </div>
   <p class="text-center">Такущая валюта: <strong><bk-currency-symbol [currencyName]="data.balance.currency"></bk-currency-symbol></strong></p>
-</md-dialog-content>
-<md-dialog-actions>
+</mat-dialog-content>
+<mat-dialog-actions>
   <span class="history-actions">
     <a class="btn btn-default history-action-item" (click)="close()">Закрыть</a>
     <span class="history-action-item">&nbsp;</span>
     <a class="btn btn-default history-action-item" (click)="save()">Сохранить</a>
   </span>
-</md-dialog-actions>
+</mat-dialog-actions>

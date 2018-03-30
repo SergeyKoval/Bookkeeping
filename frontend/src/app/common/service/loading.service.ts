@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { Subject } from 'rxjs/Subject';
 
@@ -11,9 +11,9 @@ export class LoadingService {
   private _accounts$$: Subject<boolean> = new Subject();
   private _categories$$: Subject<boolean> = new Subject();
 
-  public constructor(private _dialog: MdDialog) {}
+  public constructor(private _dialog: MatDialog) {}
 
-  public openLoadingDialog(title: string): MdDialogRef<LoadingDialogComponent> {
+  public openLoadingDialog(title: string): MatDialogRef<LoadingDialogComponent> {
     return this._dialog.open(LoadingDialogComponent, {
       disableClose: true,
       data: {'title': title},

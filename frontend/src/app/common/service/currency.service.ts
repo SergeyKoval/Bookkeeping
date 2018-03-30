@@ -1,18 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { IMyDate } from 'mydatepicker';
+import { delay } from 'rxjs/operators';
 
 import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';
 import { DateUtils } from '../utils/date-utils';
-
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
 
 @Injectable()
 export class CurrencyService {
@@ -22,16 +19,15 @@ export class CurrencyService {
   private _currenciesUpdate$$: Subject<string> = new Subject();
 
   public constructor(
-    private _http: Http,
+    private _http: HttpClient,
     @Inject(HOST) private _host: string,
     private _authenticationService: ProfileService,
   ) {}
 
   public loadCurrencies(month: number, year: number, currencies: string[]): void {
     currencies.forEach((currency: string) => {
-      const subscription: Subscription = this._http.get(`${this._host}/currencies?name=${currency}&year=${year}&month=${month}`)
-        .delay(5500)
-        .map((response: Response) => response.json())
+      const subscription: Subscription = this._http.get(`${this._host}/currencies?name=${currency}&year=${year}&month=${month}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
+        .pipe(delay(5500))
         .subscribe((currencyHistories: CurrencyHistory[]) => {
           if (!this._todayConversions.has(currency)) {
             const todayConversions: CurrencyHistory = currencyHistories.reduce((first: CurrencyHistory, second: CurrencyHistory) => first.day > second.day ? first : second);

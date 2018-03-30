@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 import { CurrencyUtils } from '../../../../common/utils/currency-utils';
@@ -28,7 +28,7 @@ export class InputGroupComponent {
   public changeInputValue: EventEmitter<number> = new EventEmitter();
 
   public constructor(
-    private _dialog: MdDialog,
+    private _dialog: MatDialog,
     private _currencyService: CurrencyService
   ) { }
 

@@ -1,8 +1,8 @@
-<h2 md-dialog-title align="center" #title>
+<h2 mat-dialog-title align="center" #title>
   <span *ngIf="data.editMode">Редактирование операции</span>
   <span *ngIf="!data.editMode">Новая операция</span>
 </h2>
-<md-dialog-content id="history-add-edit-dialog">
+<mat-dialog-content id="history-add-edit-dialog">
   <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
     <strong>{{errors}}</strong>
   </div>
@@ -52,11 +52,11 @@
   </div>
   <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
                       [historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
-</md-dialog-content>
-<md-dialog-actions>
+</mat-dialog-content>
+<mat-dialog-actions>
   <span class="history-actions">
     <a class="btn btn-default history-action-item" (click)="close()">Закрыть</a>
     <span class="history-action-item">&nbsp;</span>
     <a class="btn btn-default history-action-item" (click)="save()">Сохранить</a>
   </span>
-</md-dialog-actions>
+</mat-dialog-actions>

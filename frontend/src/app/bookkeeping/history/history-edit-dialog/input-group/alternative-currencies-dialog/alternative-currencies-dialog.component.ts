@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { isNumeric } from 'rxjs/util/isNumeric';
 
@@ -14,8 +14,8 @@ export class AlternativeCurrenciesDialogComponent {
   private _originalAlternativeCurrencies: {[key: string]: number};
 
   public constructor(
-    @Inject(MD_DIALOG_DATA) public data: {balance: HistoryBalanceType},
-    private _dialogRef: MdDialogRef<AlternativeCurrenciesDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {balance: HistoryBalanceType},
+    private _dialogRef: MatDialogRef<AlternativeCurrenciesDialogComponent>,
     private _currencyValuePipe: CurrencyValuePipe
   ) {
     this._originalAlternativeCurrencies = Object.assign({}, this.data.balance.alternativeCurrency);

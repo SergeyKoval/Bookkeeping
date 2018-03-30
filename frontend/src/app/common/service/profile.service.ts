@@ -1,20 +1,18 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Http, Response } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Observable } from 'rxjs/Observable';
+import { delay, map, tap } from 'rxjs/operators';
 import { Md5 } from 'ts-md5/dist/md5';
 import { isNullOrUndefined } from 'util';
 
 import { LoadingService } from 'app/common/service/loading.service';
 import { HOST } from '../config/config';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
-
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/delay';
 
 @Injectable()
 export class ProfileService implements CanActivate {
@@ -30,7 +28,7 @@ export class ProfileService implements CanActivate {
     private _formBuilder: FormBuilder,
     private _loadingService: LoadingService,
     private _assetImagePipe: AssetImagePipe,
-    private _http: Http,
+    private _http: HttpClient,
     @Inject(HOST) private _host: string
   ) {
     this._authenticationLoading = _loadingService.authentication$$;
@@ -54,12 +52,14 @@ export class ProfileService implements CanActivate {
 
   public getProfileByEmail(email: string): Observable<Profile> {
     this._authenticationLoading.next(true);
-    return this._http.get(`${this._host}/profiles?email=${email}`)
-      .delay(1500)
-      .map((response: Response) => {
-        this._authenticationLoading.next(false);
-        return response.json()[0];
-      });
+    return this._http.get<Profile[]>(`${this._host}/profiles?email=${email}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
+      .pipe(
+        delay(1500),
+        map((response: Profile[]) => {
+          this._authenticationLoading.next(false);
+          return response[0];
+        })
+      );
   }
 
   public authenticate(profile: Profile, password: string): boolean {
@@ -130,11 +130,11 @@ export class ProfileService implements CanActivate {
 
   public reloadAccounts(): void {
     this._loadingService.accounts$$.next(true);
-    this._http.get(`${this._host}/profiles/${this.authenticatedProfile.id}/accounts`)
-      .delay(1500)
-      .do(() => this._loadingService.accounts$$.next(false))
-      .subscribe((response: Response) => {
-        const accounts: FinAccount[] = response.json();
+    this._http.get<FinAccount[]>(`${this._host}/profiles/${this.authenticatedProfile.id}/accounts`)
+      .pipe(
+        delay(1500),
+        tap(() => this._loadingService.accounts$$.next(false))
+      ).subscribe((accounts: FinAccount[]) => {
         this._accountIcon.clear();
         accounts.forEach((account: FinAccount) => {
           account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
@@ -163,6 +163,16 @@ export class ProfileService implements CanActivate {
     });
 
     return result;
+  }
+
+  public prepareProfileForm(): FormGroup {
+    return this._formBuilder.group({
+      id: [this._authenticatedProfile.id],
+      email: this._formBuilder.control({value: this._authenticatedProfile.email, disabled: true}),
+      oldPassword: ['', Validators.required],
+      newPassword: this._formBuilder.control({value: '', disabled: true}, Validators.required),
+      newPasswordAgain: this._formBuilder.control({value: '', disabled: true}, Validators.required)
+    });
   }
 
   public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {

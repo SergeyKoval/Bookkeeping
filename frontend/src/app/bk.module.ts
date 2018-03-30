@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { MdDialogModule, MdProgressSpinnerModule } from '@angular/material';
+import { MatDialogModule, MatProgressSpinnerModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { PopoverModule } from 'ngx-popover';
@@ -109,10 +109,10 @@ import { ProfileComponent } from './bookkeeping/settings/profile/profile.compone
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
-    MdProgressSpinnerModule,
-    MdDialogModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
     PopoverModule,
     MyDatePickerModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),

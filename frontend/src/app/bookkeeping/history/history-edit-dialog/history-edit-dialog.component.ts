@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { Response } from '@angular/http';
-import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
+import { HttpResponse } from '@angular/common/http';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Subscription } from 'rxjs/Subscription';
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
@@ -40,9 +40,9 @@ export class HistoryEditDialogComponent implements OnInit {
   private _goalStatusChange: boolean = false;
 
   public constructor(
-    public dialogRef: MdDialogRef<HistoryEditDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
-    private _dialogRef: MdDialogRef<HistoryEditDialogComponent>,
+    public dialogRef: MatDialogRef<HistoryEditDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
+    private _dialogRef: MatDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
     private _authenticationService: ProfileService,
@@ -137,8 +137,8 @@ export class HistoryEditDialogComponent implements OnInit {
     }
 
     if (validationResult) {
-      const mdDialogRef: MdDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
-      this._historyService.addHistoryItem(this.historyItem).subscribe((response: Response) => {
+      const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
+      this._historyService.addHistoryItem(this.historyItem).subscribe((response: HttpResponse<Object>) => {
         const alert: Alert = response.ok ? new Alert(AlertType.SUCCESS, 'Операция успешно добавлена') : new Alert(AlertType.WARNING, 'При добавлении возникла ошибка', null, 10);
         this._alertService.addAlertObject(alert);
         this._authenticationService.reloadAccounts();

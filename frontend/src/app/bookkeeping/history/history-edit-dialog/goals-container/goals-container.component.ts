@@ -7,8 +7,6 @@ import { ProfileService } from '../../../../common/service/profile.service';
 import { GoalFilterType } from '../../../../common/model/history/GoalFilterType';
 import { HistoryService } from '../../../../common/service/history.service';
 
-import 'rxjs/add/operator/first';
-
 @Component({
   selector: 'bk-goals-container',
   templateUrl: './goals-container.component.html',

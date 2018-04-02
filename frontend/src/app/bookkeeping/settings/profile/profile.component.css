@@ -1,0 +1,26 @@
+.profile-email {
+  padding-bottom: 20px;
+}
+
+.profile-password {
+  padding-top: 5px;
+}
+
+.profile-apply {
+  margin-top: 10px;
+}
+
+.input-group-addon {
+  width: 175px;
+}
+
+.input-group {
+  width: 100%;
+}
+
+.error-message {
+  margin-top: 15px;
+  color: red;
+  font-weight: bold;
+  padding-left: 2px;
+}

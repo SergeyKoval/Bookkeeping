@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
@@ -172,6 +172,8 @@ export class ProfileService implements CanActivate {
       oldPassword: ['', Validators.required],
       newPassword: this._formBuilder.control({value: '', disabled: true}, Validators.required),
       newPasswordAgain: this._formBuilder.control({value: '', disabled: true}, Validators.required)
+    }, {
+      validator: ProfileService.validateNewPassword
     });
   }
 
@@ -189,5 +191,15 @@ export class ProfileService implements CanActivate {
     });
 
     return selectedItem;
+  }
+
+  public static validateNewPassword(fg: FormGroup): void {
+    const newPasswordAgainFormControl: AbstractControl = fg.controls.newPasswordAgain;
+    const passwordAgainValue: string = newPasswordAgainFormControl.value;
+    const passwordValue: string = fg.controls.newPassword.value;
+
+    if (!fg.invalid && passwordAgainValue.length >= 1 && passwordAgainValue !== passwordValue) {
+      newPasswordAgainFormControl.setErrors({message: 'Новый пароль введен второй раз неверно'});
+    }
   }
 }

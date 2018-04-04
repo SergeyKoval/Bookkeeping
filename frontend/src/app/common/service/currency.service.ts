@@ -73,6 +73,10 @@ export class CurrencyService {
     });
   }
 
+  public loadAllCurrencies(): Observable<CurrencyDetail[]> {
+    return this._http.get<CurrencyDetail[]>(`${this._host}/defaultCurrencies`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})}).pipe(delay(2000));
+  }
+
   public sortSummaryBalanceItems(items: BalanceItem[]): BalanceItem[] {
     items.sort((firstItem: BalanceItem, secondItem: BalanceItem) => {
       const firstItemOrder: number = this._authenticationService.getCurrencyDetails(firstItem.currency).order;

@@ -1,4 +1,9 @@
 {
+  "defaultCurrencies": [
+    {"name": "BYN", "symbol": "Byn"},
+    {"name": "EUR", "symbol": "&euro;"},
+    {"name": "USD", "symbol": "&#x24;"}
+  ],
   "profiles": [
     {"id": 1, "email": "skoval@gmail.com", "password": "098f6bcd4621d373cade4e832627b4f6",
       "currencies": [

@@ -1,4 +1,8 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { RouterEvent } from '@angular/router/src/events';
+
+import { Subscription } from 'rxjs/Subscription';
 
 import { ProfileService } from '../../../common/service/profile.service';
 import { CurrencyService } from '../../../common/service/currency.service';
@@ -10,21 +14,34 @@ import { AlertType } from '../../../common/model/alert/AlertType';
   templateUrl: './currency-conversion.component.html',
   styleUrls: ['./currency-conversion.component.css']
 })
-export class CurrencyConversionComponent implements OnInit {
+export class CurrencyConversionComponent implements OnInit, OnDestroy {
   @Output()
   public currencyConversion: EventEmitter<CurrencyDetail> = new EventEmitter();
 
   public currencies: CurrencyDetail[];
   public selectedCurrency: CurrencyDetail = null;
 
+  private _reloadNavigation: Subscription;
+
   public constructor(
+    private _router: Router,
     private _authenticationService: ProfileService,
     private _currencyService: CurrencyService,
     private _alertService: AlertService
-  ) { }
+  ) {
+    this._reloadNavigation = this._router.events.subscribe((e: RouterEvent) => {
+      if (e instanceof NavigationEnd && e.urlAfterRedirects.endsWith('reload=true')) {
+        this.currencies = this._authenticationService.authenticatedProfile.currencies;
+      }
+    });
+  }
 
   public ngOnInit(): void {
     this.currencies = this._authenticationService.authenticatedProfile.currencies;
+  }
+
+  public ngOnDestroy(): void {
+    this._reloadNavigation.unsubscribe();
   }
 
   public chooseCurrency(currency: CurrencyDetail): void {

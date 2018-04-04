@@ -60,6 +60,7 @@ import { CurrenciesComponent } from './bookkeeping/settings/currencies/currencie
 import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.component';
 import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
 import { ProfileComponent } from './bookkeeping/settings/profile/profile.component';
+import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { ProfileComponent } from './bookkeeping/settings/profile/profile.compone
     CurrenciesComponent,
     AccountsComponent,
     CategoriesComponent,
-    ProfileComponent
+    ProfileComponent,
+    CurrencySortPipe
   ],
   imports: [
     BrowserModule,

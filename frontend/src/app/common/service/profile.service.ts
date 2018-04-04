@@ -90,6 +90,10 @@ export class ProfileService implements CanActivate {
     return this._userCurrencies.get(currency);
   }
 
+  public isCurrencyUsed(currency: string): boolean {
+    return this._userCurrencies.has(currency);
+  }
+
   public getProfileCurrencies(): string[] {
     return this.authenticatedProfile.currencies.map((currency: CurrencyDetail) => currency.name);
   }
@@ -132,7 +136,7 @@ export class ProfileService implements CanActivate {
     this._loadingService.accounts$$.next(true);
     this._http.get<FinAccount[]>(`${this._host}/profiles/${this.authenticatedProfile.id}/accounts`)
       .pipe(
-        delay(1500),
+        delay(3000),
         tap(() => this._loadingService.accounts$$.next(false))
       ).subscribe((accounts: FinAccount[]) => {
         this._accountIcon.clear();
@@ -175,6 +179,15 @@ export class ProfileService implements CanActivate {
     }, {
       validator: ProfileService.validateNewPassword
     });
+  }
+
+  public reloadProfile(): Observable<Profile[]> {
+    return this._http.get<Profile[]>(`${this._host}/profiles?email=${this._authenticatedProfile.email}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
+      .pipe(
+        delay(3000),
+        tap((profiles: Profile[]) => this._authenticatedProfile = profiles[0]),
+        tap(x => this._authenticatedProfile.currencies.push({'name': 'EUR', 'default': true, 'symbol': '&euro;', 'order': 3})),
+        tap(x => this._authenticatedProfile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency))));
   }
 
   public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {

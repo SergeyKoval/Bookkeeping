@@ -1,0 +1,41 @@
+.header {
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  font-weight: bolder;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.page-title {
+  padding-bottom: 15px;
+  font-size: 16px;
+}
+
+.green-mark {
+  color: #5cb85c;
+}
+
+.red-mark {
+  color: red;
+}
+
+hr {
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
+
+.action {
+  cursor: pointer;
+  color: #999;
+  padding-left: 5px;
+}
+
+.action:hover {
+  color: #5e5e5e;
+}
+
+.empty-action {
+  padding-left: 15px;
+}

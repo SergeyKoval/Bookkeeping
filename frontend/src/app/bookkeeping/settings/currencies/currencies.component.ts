@@ -54,13 +54,13 @@ export class CurrenciesComponent implements OnInit {
   }
 
   public unUseCurrencyForProfile(currencyName: string): void {
-    const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При отключении валютыб все существующие операции в этой валюте будут удаоены. Продолжить?')
+    const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При отключении валюты все существующие операции в этой валюте будут удалены. Продолжить?')
       .afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
-        tap(x => this.loading = true),
+        tap((result: boolean) => this.loading = true),
         switchMap(() => this._profileService.reloadProfile())
-      ).subscribe(value => {
+      ).subscribe((profiles: Profile[]) => {
         this._router.navigate(['bookkeeping', 'settings', 'currencies'], {queryParams: {reload: true}});
         subscription.unsubscribe();
       });

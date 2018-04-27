@@ -35,17 +35,17 @@
           {"title": "Игрушки", "order": 2, "type": "expense"},
           {"title": "Подарки", "order": 3, "type": "expense"}
         ]},
-        {"id": 4, "ownerId": 1, "order": 3, "icon": "home.gif", "title": "Инвестиции", "subCategories": [
+        {"id": 4, "ownerId": 1, "order": 3, "icon": "Money.gif", "title": "Инвестиции", "subCategories": [
           {"title": "Аренда", "order": 0, "type": "income"},
           {"title": "Проценты", "order": 1, "type": "income"}
         ]}
       ],
       "accounts": [
         {"id": 1, "ownerId": 1, "order": 0, "opened":true, "title": "Деньги", "subAccounts": [
-          {"title": "Наличные", "order": 0, "icon": "home.gif", "balance": [{"currency": "BYN", "value": 196.82}]},
+          {"title": "Наличные", "order": 0, "icon": "Money.gif", "balance": [{"currency": "BYN", "value": 196.82}]},
           {"title": "Резерв", "order": 1, "icon": "other_exp.gif", "balance": [{"currency": "BYN", "value": 35.75}, {"currency": "USD", "value": 180}, {"currency": "EUR", "value": 7230}]},
           {"title": "Альфа", "order": 2, "icon": "home.gif", "balance": [{"currency": "BYN", "value": 895.48}]},
-          {"title": "PayOK", "order": 3, "icon": "home.gif", "balance": [{"currency": "BYN", "value": 1385.13}]},
+          {"title": "PayOK", "order": 3, "icon": "", "balance": [{"currency": "BYN", "value": 1385.13}]},
           {"title": "Автокарта", "order": 4, "icon": "", "balance": [{"currency": "BYN", "value": 196.20}]}
         ]},
         {"id": 2, "ownerId": 1, "order": 1, "opened":false, "title": "Сбережения", "subAccounts": [

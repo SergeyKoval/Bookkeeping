@@ -1,3 +1,74 @@
-<p>
-  categories works!
-</p>
+<div class="text-center page-title">
+  <button type="button" class="btn btn-default pull-left add-category" [disabled]="loading" (click)="addCategory()">Добавить категорию</button>
+  Конфигурация расходных и доходных категорий.<br/>
+  <span class="income-category">Доходные</span> выделены зеленым цветом а <span class="expense-category">расходные</span> красным.
+</div>
+
+<div class="table" *ngIf="!loading; else loadingIndicator">
+  <div *ngFor="let category of categories; let lastCategory = last; let firstCategory = first;">
+    <hr *ngIf="firstCategory" />
+    <div class="row">
+      <div class="col-md-8">
+        <span *ngIf="hasSubcategories(category) && !category.opened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="category.opened = !category.opened"></span>
+        <span *ngIf="hasSubcategories(category) && category.opened" class="tree-icon glyphicon glyphicon-chevron-down" (click)="category.opened = !category.opened"></span>
+        <img class="icon" [src]="category.icon | assetImage:'category'">
+        <span>{{category.title}}</span>
+      </div>
+      <div class="col-md-4 text-right">
+        <span class="action glyphicon glyphicon-plus" (click)="addSubCategory(category)"
+              popover="Добавить подкатегорию" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span class="action glyphicon glyphicon-pencil" (click)="editCategory(category)"
+              popover="Редактировать категорию" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span class="action glyphicon glyphicon-remove" (click)="deleteCategory(category)"
+              popover="Удалить категорию" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastCategory" (click)="moveCategoryDown(category)"
+              popover="Переместить ниже" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span *ngIf="lastCategory" class="empty-action">&nbsp;</span>
+        <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstCategory" (click)="moveCategoryUp(category)"
+              popover="Переместить выше" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span *ngIf="firstCategory" class="empty-action">&nbsp;</span>
+      </div>
+    </div>
+    <div *ngIf="category.opened">
+      <div class="row subcategory"  *ngFor="let subCategory of category.subCategories; let lastSubCategory = last; let firstSubCategory = first;">
+        <hr/>
+        <div [ngClass]="{'col-md-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
+        <div class="col-md-4 text-right">
+          <span class="action glyphicon glyphicon-pencil" (click)="editSubCategory(category, subCategory)"
+                popover="Редактировать" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span class="action glyphicon glyphicon-remove" (click)="deleteSubCategory(category, subCategory)"
+                popover="Удалить" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastSubCategory" (click)="moveSubCategoryDown(category, subCategory)"
+                popover="Переместить ниже" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span *ngIf="lastSubCategory" class="empty-action">&nbsp;</span>
+          <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstSubCategory" (click)="moveSubCategoryUp(category, subCategory)"
+                popover="Переместить выше" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span *ngIf="firstSubCategory" class="empty-action">&nbsp;</span>
+        </div>
+      </div>
+    </div>
+    <hr/>
+  </div>
+</div>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="80"></bk-spinner>
+</ng-template>

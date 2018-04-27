@@ -1,0 +1,65 @@
+.page-title {
+  padding-bottom: 15px;
+  font-size: 16px;
+}
+
+.income-category {
+  color: #5cb85c;
+}
+
+.expense-category {
+  color: orangered;
+}
+
+.add-category {
+  margin-top: 5px;
+}
+
+hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.icon {
+  padding-bottom: 2px;
+  padding-right: 3px;
+  padding-left: 9px;
+}
+
+.glyphicon {
+  cursor: pointer;
+  color: #999;
+}
+
+.glyphicon:hover {
+  color: #5e5e5e;
+}
+
+.action {
+  padding-right: 5px;
+}
+
+.tree-icon {
+  padding-left: 5px;
+}
+
+.no-subcategories {
+  padding-left: 15px;
+}
+
+.empty-action {
+  padding-right: 15px;
+}
+
+.subcategory {
+  padding-left: 70px;
+  padding-right: 15px;
+}
+
+.subcategory .col-md-8 {
+  padding-left: 0;
+}
+
+.subcategory .col-md-4 {
+  padding-right: 0;
+}

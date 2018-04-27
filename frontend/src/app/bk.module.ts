@@ -61,6 +61,7 @@ import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.comp
 import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
 import { ProfileComponent } from './bookkeeping/settings/profile/profile.component';
 import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
+import { CategoryDialogComponent } from './bookkeeping/settings/categories/category-dialog/category-dialog.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
     AccountsComponent,
     CategoriesComponent,
     ProfileComponent,
-    CurrencySortPipe
+    CurrencySortPipe,
+    CategoryDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -123,7 +125,8 @@ import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
     ConfirmDialogComponent,
     HistoryEditDialogComponent,
     LoadingDialogComponent,
-    AlternativeCurrenciesDialogComponent
+    AlternativeCurrenciesDialogComponent,
+    CategoryDialogComponent
   ],
   providers: [
     CurrencyValuePipe,

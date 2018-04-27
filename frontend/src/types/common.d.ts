@@ -53,7 +53,8 @@ type Category = {
   order: number,
   icon: string,
   title: string,
-  subCategories: SubCategory[]
+  subCategories: SubCategory[],
+  opened: boolean
 };
 
 type SubCategory = {

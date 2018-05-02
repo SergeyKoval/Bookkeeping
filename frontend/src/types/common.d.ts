@@ -32,6 +32,7 @@ type FinAccount = {
   title: string,
   order: number,
   opened: boolean,
+  settingsOpened: boolean,
   subAccounts: SubAccount[]
 };
 

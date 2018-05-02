@@ -1,0 +1,20 @@
+<h2 mat-dialog-title align="center">
+  <span>Редактирование остатков субсчета</span>
+</h2>
+<mat-dialog-content>
+  <div class="table">
+    <div class="row" *ngFor="let currency of currencies | currencySort">
+      <div class="input-group">
+        <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></span>
+        <input type="text" [value]="getCurrencyValue(currency)" (blur)="setCurrencyValue(currency, $event.target.value)" class="form-control" bkCurrencyValue="2" [skipDecimalZeros]="true">
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="sub-account-actions">
+    <a class="btn btn-default sub-account-action-item" (click)="close()">Закрыть</a>
+    <span class="sub-account-action-item">&nbsp;</span>
+    <a class="btn btn-default sub-account-action-item" (click)="save()">Сохранить</a>
+  </span>
+</mat-dialog-actions>

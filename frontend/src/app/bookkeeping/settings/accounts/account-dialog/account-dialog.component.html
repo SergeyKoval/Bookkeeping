@@ -1,0 +1,41 @@
+<h2 mat-dialog-title align="center">
+  <span *ngIf="data.editMode">Редактирование <span *ngIf="isAccount()">счета</span><span *ngIf="!isAccount()">субсчета</span></span>
+  <span *ngIf="!data.editMode">Новый <span *ngIf="isAccount()">счет</span><span *ngIf="!isAccount()">субсчет</span></span>
+</h2>
+<mat-dialog-content>
+  <div *ngIf="errorMessage" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errorMessage}}</strong>
+  </div>
+  <div class="table">
+    <div class="row title">
+      <div class="col-md-3 left-column">Название:</div>
+      <div class="col-md-9">
+        <input type="text" [(ngModel)]="title" class="form-control" *ngIf="isAccount()">
+        <div class="input-group" *ngIf="!isAccount()">
+          <input type="text" [(ngModel)]="title" class="form-control">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" (click)="editSubAccountBalance()">Остаток</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="!isAccount()">
+      <div class="col-md-3 left-column">Иконка:</div>
+      <div class="col-md-9 right-column">
+        <span *ngFor="let accountIcon of accountIcons;" class="icon-wrapper">
+          <img [ngClass]="{'account-icon':true, 'active-icon':accountIcon===data.icon}"
+               [src]="accountIcon | assetImage:'account'"
+               (click)="chooseIcon(accountIcon)">
+        </span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="account-actions">
+    <a class="btn btn-default account-action-item" (click)="close()">Закрыть</a>
+    <span class="account-action-item">&nbsp;</span>
+    <a class="btn btn-default account-action-item" (click)="save()">Сохранить</a>
+  </span>
+</mat-dialog-actions>

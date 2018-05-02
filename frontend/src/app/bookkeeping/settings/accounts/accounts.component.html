@@ -1,3 +1,79 @@
-<p>
-  accounts works!
-</p>
+<div class="text-center page-title">
+  <button type="button" class="btn btn-default pull-left" [disabled]="loading" (click)="addAccount()">Добавить счет</button>
+  <span class="page-title-text">Конфигурация счетов и субсчетов</span>
+</div>
+
+<div class="table" *ngIf="!loading; else loadingIndicator">
+  <div *ngFor="let account of accounts; let lastAccount = last; let firstAccount = first;">
+    <hr *ngIf="firstAccount" />
+    <div class="row">
+      <div class="col-md-8">
+        <span *ngIf="hasSubAccounts(account) && !account.settingsOpened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="account.settingsOpened = !account.settingsOpened"></span>
+        <span *ngIf="hasSubAccounts(account) && account.settingsOpened" class="tree-icon glyphicon glyphicon-chevron-down" (click)="account.settingsOpened = !account.settingsOpened"></span>
+        <span class="account-title">{{account.title}}</span>
+      </div>
+      <div class="col-md-4 text-right">
+        <span class="action glyphicon glyphicon-plus" (click)="addSubAccount(account)"
+              popover="Добавить субсчет" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span class="action glyphicon glyphicon-pencil" (click)="editAccount(account)"
+              popover="Редактировать счет" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span class="action glyphicon glyphicon-remove" (click)="deleteAccount(account)"
+              popover="Удалить cчет" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastAccount" (click)="moveAccountDown(account)"
+              popover="Переместить ниже" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span *ngIf="lastAccount" class="empty-action">&nbsp;</span>
+        <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstAccount" (click)="moveAccountUp(account)"
+              popover="Переместить выше" popoverPlacement="left"
+              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+        </span>
+        <span *ngIf="firstAccount" class="empty-action">&nbsp;</span>
+      </div>
+    </div>
+    <div *ngIf="account.settingsOpened">
+      <div class="row sub-account" *ngFor="let subAccount of account.subAccounts; let lastSubAccount = last; let firstSubAccount = first;">
+        <hr/>
+        <div class="col-md-8">
+          <img class="icon" [src]="subAccount.icon | assetImage:'account'">
+          {{subAccount.title}}
+        </div>
+        <div class="col-md-4 text-right">
+          <span class="action glyphicon glyphicon-piggy-bank" (click)="editSubAccountBalance(account, subAccount)"
+                popover="Редактировать остатки" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span class="action glyphicon glyphicon-pencil" (click)="editSubAccount(account, subAccount)"
+                popover="Редактировать" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span class="action glyphicon glyphicon-remove" (click)="deleteSubAccount(account, subAccount)"
+                popover="Удалить" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastSubAccount" (click)="moveSubAccountDown(account, subAccount)"
+                popover="Переместить ниже" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span *ngIf="lastSubAccount" class="empty-action">&nbsp;</span>
+          <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstSubAccount" (click)="moveSubAccountUp(account, subAccount)"
+                popover="Переместить выше" popoverPlacement="left"
+                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+          </span>
+          <span *ngIf="firstSubAccount" class="empty-action">&nbsp;</span>
+        </div>
+      </div>
+    </div>
+    <hr/>
+  </div>
+</div>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="80"></bk-spinner>
+</ng-template>

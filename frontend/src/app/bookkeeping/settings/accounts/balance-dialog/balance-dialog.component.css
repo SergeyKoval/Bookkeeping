@@ -1,0 +1,19 @@
+.sub-account-actions {
+  width: 100%;
+}
+
+.sub-account-action-item {
+  float: right;
+}
+
+.input-group-addon {
+  width: 70px;
+}
+
+.input-group {
+  width: 100%;
+}
+
+.row {
+  margin-top: 5px;
+}

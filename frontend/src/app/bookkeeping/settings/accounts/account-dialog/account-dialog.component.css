@@ -1,0 +1,34 @@
+.account-actions {
+  width: 100%;
+}
+
+.account-action-item {
+  float: right;
+}
+
+.left-column {
+  line-height: 34px;
+  font-size: 16px;
+}
+
+.title {
+  padding-bottom: 10px;
+}
+
+.right-column {
+  line-height: 34px;
+}
+
+.account-icon {
+  cursor: pointer;
+  padding: 1px;
+}
+
+.active-icon {
+  border: 1px solid red;
+  background-color: gainsboro;
+}
+
+.icon-wrapper {
+  padding-right: 5px;
+}

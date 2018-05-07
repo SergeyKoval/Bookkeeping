@@ -1,15 +1,14 @@
 import { Route } from '@angular/router';
 
 import { AuthenticationComponent } from './authentication/authentication.component';
-import { BookkeepingComponent } from './bookkeeping/bookkeeping.component';
-import { BudgetComponent } from './bookkeeping/budget/budget.component';
-import { HistoryComponent } from './bookkeeping/history/history.component';
-import { SettingsComponent } from './bookkeeping/settings/settings.component';
+import { BudgetComponent } from './budget/budget.component';
+import { HistoryComponent } from './history/history.component';
+import { SettingsComponent } from './settings/settings.component';
 import { ProfileService } from './common/service/profile.service';
-import { CurrenciesComponent } from './bookkeeping/settings/currencies/currencies.component';
-import { AccountsComponent } from './bookkeeping/settings/accounts/accounts.component';
-import { CategoriesComponent } from './bookkeeping/settings/categories/categories.component';
-import { ProfileComponent } from './bookkeeping/settings/profile/profile.component';
+import { CurrenciesComponent } from './settings/currencies/currencies.component';
+import { AccountsComponent } from './settings/accounts/accounts.component';
+import { CategoriesComponent } from './settings/categories/categories.component';
+import { ProfileComponent } from './settings/profile/profile.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {

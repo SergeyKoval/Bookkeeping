@@ -14,7 +14,7 @@ import { ProfileComponent } from './bookkeeping/settings/profile/profile.compone
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
     path: '',
-    redirectTo: 'authentication',
+    redirectTo: 'budget',
     pathMatch: 'full'
   },
   {
@@ -22,49 +22,40 @@ export const BOOKKEEPING_ROUTES: Route[] = [
     component: AuthenticationComponent
   },
   {
-    path: 'bookkeeping',
-    component: BookkeepingComponent,
+    path: 'budget',
+    component: BudgetComponent,
+    canActivate: [ProfileService]
+  },
+  {
+    path: 'history',
+    component: HistoryComponent,
+    canActivate: [ProfileService]
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
     canActivate: [ProfileService],
     children: [
       {
         path: '',
-        redirectTo: 'budget',
+        redirectTo: 'profile',
         pathMatch: 'full'
       },
       {
-        path: 'budget',
-        component: BudgetComponent
+        path: 'profile',
+        component: ProfileComponent
       },
       {
-        path: 'history',
-        component: HistoryComponent
+        path: 'currencies',
+        component: CurrenciesComponent
       },
       {
-        path: 'settings',
-        component: SettingsComponent,
-        children: [
-          {
-            path: '',
-            redirectTo: 'profile',
-            pathMatch: 'full'
-          },
-          {
-            path: 'profile',
-            component: ProfileComponent
-          },
-          {
-            path: 'currencies',
-            component: CurrenciesComponent
-          },
-          {
-            path: 'accounts',
-            component: AccountsComponent
-          },
-          {
-            path: 'categories',
-            component: CategoriesComponent
-          }
-        ]
+        path: 'accounts',
+        component: AccountsComponent
+      },
+      {
+        path: 'categories',
+        component: CategoriesComponent
       }
     ]
   }

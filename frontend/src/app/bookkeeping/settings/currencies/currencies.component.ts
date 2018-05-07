@@ -49,7 +49,7 @@ export class CurrenciesComponent implements OnInit {
   public useCurrencyForProfile(currencyName: string): void {
     this.loading = true;
     this._profileService.reloadProfile().subscribe(value => {
-      this._router.navigate(['bookkeeping', 'settings', 'currencies'], {queryParams: {reload: true}});
+      this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
     });
   }
 
@@ -61,7 +61,7 @@ export class CurrenciesComponent implements OnInit {
         tap((result: boolean) => this.loading = true),
         switchMap(() => this._profileService.reloadProfile())
       ).subscribe((profiles: Profile[]) => {
-        this._router.navigate(['bookkeeping', 'settings', 'currencies'], {queryParams: {reload: true}});
+        this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
         subscription.unsubscribe();
       });
   }

@@ -1,16 +1,14 @@
-<div class="form">
-  <h1>Бухгалтерия</h1>
+<h1>Бухгалтерия</h1>
 
-  <div *ngIf="!applicationLoading; else applicationLoadingIndicator">
-    <form [formGroup]="authenticationForm">
-      <bk-authentication-input [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
-      <bk-authentication-input [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
+<div *ngIf="!applicationLoading; else applicationLoadingIndicator">
+  <form [formGroup]="authenticationForm">
+    <bk-authentication-input [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
+    <bk-authentication-input [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
 
-      <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!loading; else loadingIndicator">Войти</button>
-    </form>
+    <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!loading; else loadingIndicator">Войти</button>
+  </form>
 
-    <h2 *ngIf="errorMessage">{{errorMessage}}</h2>
-  </div>
+  <h2 *ngIf="errorMessage">{{errorMessage}}</h2>
 </div>
 
 <ng-template #loadingIndicator>

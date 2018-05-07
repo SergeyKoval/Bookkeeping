@@ -4,3 +4,19 @@
 .history-add-edit-dialog mat-dialog-container {
   overflow: visible !important;
 }
+
+.init-form {
+  background: #f5f5f5;
+  padding: 20px;
+  max-width: 600px;
+  margin: 40px auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+}
+
+.init-form h1 {
+  text-align: center;
+  color: #777;
+  font-weight: bold;
+  font-size: 30px;
+}

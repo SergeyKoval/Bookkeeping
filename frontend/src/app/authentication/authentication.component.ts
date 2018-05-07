@@ -56,7 +56,7 @@ export class AuthenticationComponent implements OnInit {
 
       this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
       this.applicationLoading = true;
-      this._router.navigate(['bookkeeping']);
+      this._router.navigate(['budget']);
       const currentDate: Date = new Date(Date.now());
       this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), this._authenticationService.getProfileCurrencies());
     });

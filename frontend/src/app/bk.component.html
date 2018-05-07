@@ -1,0 +1,30 @@
+<div class="container" *ngIf="isAuthenticated(); else authenticationContainer">
+  <bk-header></bk-header>
+  <div class="row">
+    <bk-summary></bk-summary>
+
+    <div id="details" class="col-lg-8">
+      <div [ngClass]="['alert alert-dismissable fade in', 'alert-' + alert.style]" *ngFor="let alert of alerts">
+        <span class="close" aria-label="close" (click)="close(alert)">&times;</span>
+        <strong *ngIf="alert.title">{{alert.title}}</strong> {{alert.message}}
+      </div>
+
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+<ng-template #authenticationContainer>
+  <div class="form">
+    <div class="table authentication-check" *ngIf="authenticationCheckIndicator">
+      <div class="row">
+        <div class="col-md-2 authentication-check-spinner">
+          <bk-spinner [size]="35"></bk-spinner>
+        </div>
+        <div class="col-md-10 authentication-check-text">Проверка аутентификации...</div>
+      </div>
+    </div>
+
+    <router-outlet *ngIf="!authenticationCheckIndicator"></router-outlet>
+  </div>
+</ng-template>

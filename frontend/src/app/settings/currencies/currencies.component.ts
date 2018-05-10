@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { RouterEvent } from '@angular/router/src/events';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 
 import { CurrencyService } from '../../common/service/currency.service';

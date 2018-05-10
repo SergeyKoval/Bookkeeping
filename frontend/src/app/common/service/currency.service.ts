@@ -1,11 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
-import { IMyDate } from 'mydatepicker';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { IMyDate } from 'mydatepicker';
 
 import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';

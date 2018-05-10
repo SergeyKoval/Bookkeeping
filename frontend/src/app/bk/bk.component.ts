@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+
+import { Subscription } from 'rxjs';
+import { isNullOrUndefined } from "util";
+
 import { Alert } from '../common/model/alert/Alert';
 import { AlertService } from '../common/service/alert.service';
-import { Subscription } from 'rxjs/Subscription';
 import { ProfileService } from '../common/service/profile.service';
-import { isNullOrUndefined } from "util";
 import { LoadingService } from '../common/service/loading.service';
 
 @Component({

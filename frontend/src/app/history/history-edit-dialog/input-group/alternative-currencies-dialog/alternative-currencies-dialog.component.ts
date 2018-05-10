@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { isNumeric } from 'rxjs/util/isNumeric';
+import { isNumeric } from 'rxjs/internal/util/isNumeric';
 
 import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
 

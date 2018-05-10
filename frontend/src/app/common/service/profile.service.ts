@@ -3,9 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
-import { Subject } from 'rxjs/Subject';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Observable } from 'rxjs/Observable';
+import { Subject ,  ReplaySubject ,  Observable } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
 import { Md5 } from 'ts-md5/dist/md5';
 import { isNullOrUndefined } from 'util';

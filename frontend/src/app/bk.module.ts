@@ -7,6 +7,7 @@ import { MatDialogModule, MatProgressSpinnerModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { PopoverModule } from 'ngx-popover';
+// import { LocalStorageModule } from 'angular-2-local-storage';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
@@ -122,6 +123,10 @@ import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balan
     PopoverModule,
     MyDatePickerModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
+    // LocalStorageModule.withConfig({
+    //   prefix: 'Bookkeeper',
+    //   storageType: 'localStorage'
+    // })
   ],
   entryComponents: [
     ConfirmDialogComponent,

@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CategoryDialogComponent } from './category-dialog/category-dialog.component';

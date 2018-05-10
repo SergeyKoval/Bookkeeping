@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 import { NavigationEnd, Router } from '@angular/router';
 import { RouterEvent } from '@angular/router/src/events';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CurrencyService } from '../../common/service/currency.service';

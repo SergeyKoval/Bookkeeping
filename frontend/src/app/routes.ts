@@ -4,11 +4,11 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import { BudgetComponent } from './budget/budget.component';
 import { HistoryComponent } from './history/history.component';
 import { SettingsComponent } from './settings/settings.component';
-import { ProfileService } from './common/service/profile.service';
 import { CurrenciesComponent } from './settings/currencies/currencies.component';
 import { AccountsComponent } from './settings/accounts/accounts.component';
 import { CategoriesComponent } from './settings/categories/categories.component';
 import { ProfileComponent } from './settings/profile/profile.component';
+import { AuthenticationService } from './common/service/authentication.service';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -23,17 +23,17 @@ export const BOOKKEEPING_ROUTES: Route[] = [
   {
     path: 'budget',
     component: BudgetComponent,
-    canActivate: [ProfileService]
+    canActivate: [AuthenticationService]
   },
   {
     path: 'history',
     component: HistoryComponent,
-    canActivate: [ProfileService]
+    canActivate: [AuthenticationService]
   },
   {
     path: 'settings',
     component: SettingsComponent,
-    canActivate: [ProfileService],
+    canActivate: [AuthenticationService],
     children: [
       {
         path: '',

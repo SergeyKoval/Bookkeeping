@@ -7,7 +7,8 @@ import { MatDialogModule, MatProgressSpinnerModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { PopoverModule } from 'ngx-popover';
-// import { LocalStorageModule } from 'angular-2-local-storage';
+import { LocalStorageModule } from 'angular-2-local-storage';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
@@ -64,6 +65,7 @@ import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
 import { CategoryDialogComponent } from './settings/categories/category-dialog/category-dialog.component';
 import { AccountDialogComponent } from './settings/accounts/account-dialog/account-dialog.component';
 import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balance-dialog.component';
+import { AuthenticationService } from './common/service/authentication.service';
 
 @NgModule({
   declarations: [
@@ -117,16 +119,23 @@ import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balan
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {return localStorage.getItem(AuthenticationService.TOKEN)},
+        whitelistedDomains: ['localhost:8080', 'localhost:3000'],
+        blacklistedRoutes: ['localhost:8080/token/']
+      }
+    }),
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     MatDialogModule,
     PopoverModule,
     MyDatePickerModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
-    // LocalStorageModule.withConfig({
-    //   prefix: 'Bookkeeper',
-    //   storageType: 'localStorage'
-    // })
+    LocalStorageModule.withConfig({
+      prefix: 'Bookkeeper',
+      storageType: 'localStorage'
+    })
   ],
   entryComponents: [
     ConfirmDialogComponent,

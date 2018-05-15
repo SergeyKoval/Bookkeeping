@@ -49,9 +49,9 @@ export class AuthenticationComponent implements OnInit {
         (response: HttpResponse<{token: string}>) => {
           this.applicationLoading = true;
           this._profileService.loadFullProfile().subscribe(() => {
-            this._router.navigate(['budget']);
             const currentDate: Date = new Date(Date.now());
             this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), this._profileService.getProfileCurrencies());
+            this._router.navigate(['budget']);
           });
         },(errorResponse: HttpErrorResponse)  => {
           if (errorResponse.status === 401) {

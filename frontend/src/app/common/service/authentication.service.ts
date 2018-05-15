@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { LocalStorageService } from 'angular-2-local-storage';
-import { Observable } from 'rxjs/index';
+import { Observable, Subject } from 'rxjs/index';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { isNullOrUndefined } from "util";
 import { tap } from 'rxjs/internal/operators';
+
 import { LoadingService } from './loading.service';
+import { ProfileService } from './profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,7 @@ export class AuthenticationService implements CanActivate {
   public static readonly TOKEN: string = 'access_token';
 
   public constructor(
+    private _profileService: ProfileService,
     private _loadingService: LoadingService,
     private _formBuilder: FormBuilder,
     private _router: Router,
@@ -40,11 +43,29 @@ export class AuthenticationService implements CanActivate {
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
-    if (!isNullOrUndefined(token) && !this._jwtHelper.isTokenExpired(token)) {
+    if (isNullOrUndefined(token) || this._jwtHelper.isTokenExpired(token)) {
+      this.exit();
+      return false;
+    }
+
+    if (this._profileService.isProfileLoaded()) {
       return true;
     }
 
+    let authenticationCheck$$: Subject<boolean> = this._loadingService.authenticationCheck$$;
+    authenticationCheck$$.next(true);
+    const result: Subject<boolean> = new Subject<boolean>();
+    this._profileService.loadFullProfile().subscribe(() => {
+      authenticationCheck$$.next(false);
+      result.next(true);
+    });
+
+    return result.asObservable();
+  }
+
+  public exit(): void {
+    this._localStorageService.remove(AuthenticationService.TOKEN);
+    this._profileService.clearProfile();
     this._router.navigate(['/authentication']);
-    return false;
   }
 }

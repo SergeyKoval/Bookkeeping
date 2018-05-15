@@ -54,36 +54,16 @@ export class ProfileService implements CanActivate {
       }));
   }
 
-  // public getProfileByEmail(email: string): Observable<Profile> {
-  //   this._authenticationLoading.next(true);
-  //   return this._http.get<Profile[]>(`${this._host}/profiles?email=${email}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
-  //     .pipe(
-  //       delay(1500),
-  //       map((response: Profile[]) => {
-  //         this._authenticationLoading.next(false);
-  //         return response[0];
-  //       })
-  //     );
-  // }
-
-  // public authenticate(profile: Profile, password: string): boolean {
-  //   if (Md5.hashStr(password) !== profile.password) {
-  //     return false;
-  //   }
-  //
-  //   profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
-  //   profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
-  //   profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
-  //   profile.accounts.forEach((account: FinAccount) => {
-  //     account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
-  //   });
-  //   this._accounts$$.next(profile.accounts);
-  //   this._authenticatedProfile = profile;
-  //   return true;
-  // }
-
-  public exit(): void {
+  public clearProfile(): void {
     this._authenticatedProfile = null;
+    this._userCurrencies.clear();
+    this._categoryIcon.clear();
+    this._accountIcon.clear();
+    this._accounts$$.next(null);
+  }
+
+  public isProfileLoaded(): boolean {
+    return !isNullOrUndefined(this.authenticatedProfile);
   }
 
   public get authenticatedProfile(): Profile {

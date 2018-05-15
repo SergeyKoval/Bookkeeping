@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
 import { CurrencyService } from '../common/service/currency.service';
+import { AuthenticationService } from '../common/service/authentication.service';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'bk-authentication',
@@ -23,7 +25,8 @@ export class AuthenticationComponent implements OnInit {
   private _AUTHENTICATION_LOADING_SUBSCRIPTION: Subscription;
 
   public constructor(
-    private _authenticationService: ProfileService,
+    private _authenticationService: AuthenticationService,
+    private _profileService: ProfileService,
     private _loadingService: LoadingService,
     private _currencyService: CurrencyService,
     private _router: Router
@@ -41,24 +44,22 @@ export class AuthenticationComponent implements OnInit {
       return;
     }
 
-    const subscription: Subscription = this._authenticationService.getProfileByEmail(this.authenticationForm.value.email).subscribe((profile: Profile) => {
-      subscription.unsubscribe();
-
-      if (!profile) {
-        this.errorMessage = 'Несуществующий пользователь';
-        return;
-      }
-
-      if (!this._authenticationService.authenticate(profile, this.authenticationForm.value.password)) {
-        this.errorMessage = 'Неверный пароль';
-        return;
-      }
-
-      this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
-      this.applicationLoading = true;
-      this._router.navigate(['budget']);
-      const currentDate: Date = new Date(Date.now());
-      this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), this._authenticationService.getProfileCurrencies());
-    });
+    this._authenticationService.authenticate(this.authenticationForm.value)
+      .subscribe(
+        (response: HttpResponse<{token: string}>) => {
+          this.applicationLoading = true;
+          this._profileService.loadFullProfile().subscribe(() => {
+            this._router.navigate(['budget']);
+            const currentDate: Date = new Date(Date.now());
+            this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), this._profileService.getProfileCurrencies());
+          });
+        },(errorResponse: HttpErrorResponse)  => {
+          if (errorResponse.status === 401) {
+            if (errorResponse.error === 'BAD CREDENTIALS') {
+              this.errorMessage = 'Неверный пароль';
+            }
+          }
+          this.loading = false;
+        });
   }
 }

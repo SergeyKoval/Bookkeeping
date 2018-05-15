@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy-dev.json",
     "json": "json-server db.json",
     "build": "ng build",
     "test": "ng test",
@@ -30,7 +30,6 @@
     "mydatepicker": "^2.0.21",
     "ngx-popover": "0.0.16",
     "rxjs": "^6.1.0",
-    "ts-md5": "^1.2.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

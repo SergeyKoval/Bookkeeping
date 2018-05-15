@@ -121,9 +121,9 @@ import { AuthenticationService } from './common/service/authentication.service';
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => {return localStorage.getItem(AuthenticationService.TOKEN)},
+        tokenGetter: () => {return localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`)},
         whitelistedDomains: ['localhost:8080', 'localhost:3000'],
-        blacklistedRoutes: ['localhost:8080/token/']
+        blacklistedRoutes: [/token\/.*/]
       }
     }),
     BrowserAnimationsModule,

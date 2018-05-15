@@ -4,8 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Subject ,  ReplaySubject ,  Observable } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
-import { Md5 } from 'ts-md5/dist/md5';
+import { delay, tap } from 'rxjs/operators';
 import { isNullOrUndefined } from 'util';
 
 import { LoadingService } from 'app/common/service/loading.service';
@@ -41,40 +40,47 @@ export class ProfileService implements CanActivate {
     return false;
   }
 
-  public initAuthenticationForm(): FormGroup {
-    return this._formBuilder.group({
-      email: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(3)]]
-    });
+  public loadFullProfile(): Observable<Profile> {
+    return this._http.get<Profile>('/api/profile/full')
+      .pipe(tap(profile => {
+        profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+        profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
+        profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+        profile.accounts.forEach((account: FinAccount) => {
+          account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
+        });
+        this._accounts$$.next(profile.accounts);
+        this._authenticatedProfile = profile;
+      }));
   }
 
-  public getProfileByEmail(email: string): Observable<Profile> {
-    this._authenticationLoading.next(true);
-    return this._http.get<Profile[]>(`${this._host}/profiles?email=${email}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
-      .pipe(
-        delay(1500),
-        map((response: Profile[]) => {
-          this._authenticationLoading.next(false);
-          return response[0];
-        })
-      );
-  }
+  // public getProfileByEmail(email: string): Observable<Profile> {
+  //   this._authenticationLoading.next(true);
+  //   return this._http.get<Profile[]>(`${this._host}/profiles?email=${email}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
+  //     .pipe(
+  //       delay(1500),
+  //       map((response: Profile[]) => {
+  //         this._authenticationLoading.next(false);
+  //         return response[0];
+  //       })
+  //     );
+  // }
 
-  public authenticate(profile: Profile, password: string): boolean {
-    if (Md5.hashStr(password) !== profile.password) {
-      return false;
-    }
-
-    profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
-    profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
-    profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
-    profile.accounts.forEach((account: FinAccount) => {
-      account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
-    });
-    this._accounts$$.next(profile.accounts);
-    this._authenticatedProfile = profile;
-    return true;
-  }
+  // public authenticate(profile: Profile, password: string): boolean {
+  //   if (Md5.hashStr(password) !== profile.password) {
+  //     return false;
+  //   }
+  //
+  //   profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+  //   profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
+  //   profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+  //   profile.accounts.forEach((account: FinAccount) => {
+  //     account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
+  //   });
+  //   this._accounts$$.next(profile.accounts);
+  //   this._authenticatedProfile = profile;
+  //   return true;
+  // }
 
   public exit(): void {
     this._authenticatedProfile = null;

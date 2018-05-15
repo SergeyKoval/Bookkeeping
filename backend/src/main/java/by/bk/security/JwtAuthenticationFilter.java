@@ -20,7 +20,8 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String TOKEN_PREFIX = "Bearer \"";
+    private static final String TOKEN_SUFFIX = "\"";
 
     @Autowired
     private JwtTokenUtil tokenUtil;
@@ -33,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String requestHeader = request.getHeader(TOKEN_HEADER);
 
         if (StringUtils.startsWith(requestHeader, TOKEN_PREFIX)) {
-            final String authToken = StringUtils.substringAfter(requestHeader, TOKEN_PREFIX);
+            final String authToken = StringUtils.substringBetween(requestHeader, TOKEN_PREFIX, TOKEN_SUFFIX);
             if (securityContext.getAuthentication() == null && !tokenUtil.isTokenExpired(authToken)) {
                 Authentication authentication = authenticationAPI.getAuthentication(tokenUtil.getUsernameFromToken(authToken));
                 SecurityContextHolder.getContext().setAuthentication(authentication);

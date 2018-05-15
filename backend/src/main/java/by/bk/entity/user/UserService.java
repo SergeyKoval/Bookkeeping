@@ -1,27 +1,42 @@
 package by.bk.entity.user;
 
+import by.bk.entity.user.model.User;
 import by.bk.security.model.JwtUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 /**
  * @author Sergey Koval
  */
 @Service
 public class UserService implements UserAPI, UserDetailsService {
+    @Autowired
+    private UserRepository userRepository;
+//    @Autowired
+//    private MongoTemplate mongoTemplate;
+
     @Override
     public JwtUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new JwtUser(username, "$2a$10$cMO13d9W3yS2HMcGHrA/reiR8rQW7poKZIlbe6rrlzL493yy4FrtC", Collections.singletonList(UserPermission.USER));
+        return userRepository.authenticateUser(username)
+                .map(user -> new JwtUser(username, user.getPassword(), user.getRoles()))
+                .orElse(new JwtUser());
     }
 
     @Override
-    public Authentication getAuthentication(String username) {
-        JwtUser jwtUser = new JwtUser(username, null, Collections.singletonList(UserPermission.USER));
-        return new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
+    public User getFullUserProfile(String login) {
+        return userRepository.findById(login).get();
+    }
+
+    @Override
+    public Authentication getAuthentication(String login) {
+        return userRepository.getAuthenticatedUser(login)
+                .map(user -> new JwtUser(login, null, user.getRoles()))
+                .map(jwtUser -> new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities()))
+                .get();
     }
 }

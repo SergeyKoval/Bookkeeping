@@ -1,5 +1,6 @@
 package by.bk.security.model;
 
+import by.bk.entity.user.UserPermission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,9 +13,12 @@ import java.util.List;
 public class JwtUser implements UserDetails {
     private String username;
     private String password;
-    private List<GrantedAuthority> authorities;
+    private List<UserPermission> authorities;
 
-    public JwtUser(String username, String password, List<GrantedAuthority> permissions) {
+    public JwtUser() {
+    }
+
+    public JwtUser(String username, String password, List<UserPermission> permissions) {
         this.username = username;
         this.authorities = permissions;
         this.password = password;

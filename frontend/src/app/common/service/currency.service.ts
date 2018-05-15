@@ -22,6 +22,10 @@ export class CurrencyService {
     private _authenticationService: ProfileService,
   ) {}
 
+  public loadCurrenciesForMonth(reuest: {month: number, year: number, currencies: string[]}): Observable<CurrencyHistory[]> {
+    return this._http.post<CurrencyHistory[]>('/api/currency/month-currencies', reuest);
+  }
+
   public loadCurrencies(month: number, year: number, currencies: string[]): void {
     currencies.forEach((currency: string) => {
       const subscription: Subscription = this._http.get(`${this._host}/currencies?name=${currency}&year=${year}&month=${month}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})

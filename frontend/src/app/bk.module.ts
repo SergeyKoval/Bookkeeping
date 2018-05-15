@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule, MatProgressSpinnerModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -66,6 +66,7 @@ import { CategoryDialogComponent } from './settings/categories/category-dialog/c
 import { AccountDialogComponent } from './settings/accounts/account-dialog/account-dialog.component';
 import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balance-dialog.component';
 import { AuthenticationService } from './common/service/authentication.service';
+import { AuthenticationInterceptor } from './authentication.interceptor';
 
 @NgModule({
   declarations: [
@@ -147,6 +148,10 @@ import { AuthenticationService } from './common/service/authentication.service';
     BalanceDialogComponent
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS,
+      useClass: AuthenticationInterceptor,
+      multi: true
+    },
     CurrencyValuePipe,
     AssetImagePipe,
     ProfileService,

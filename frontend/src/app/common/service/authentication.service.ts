@@ -18,6 +18,10 @@ import { ProfileService } from './profile.service';
 export class AuthenticationService implements CanActivate {
   public static readonly TOKEN: string = 'access_token';
 
+  private _errorMessage$$: Subject<string> = new Subject<string>();
+  private _authentication$$: Subject<boolean> = new Subject();
+  private _applicationLoading$$: Subject<boolean> = new Subject();
+
   public constructor(
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
@@ -36,7 +40,7 @@ export class AuthenticationService implements CanActivate {
   }
 
   public authenticate(credentials: {email: string, password: string}): Observable<HttpResponse<{token: string}>> {
-    this._loadingService.authentication$$.next(true);
+    this._authentication$$.next(true);
     return this._http.post<{token: string}>('/token/generate-token', credentials, { observe: 'response' })
       .pipe(tap((response: HttpResponse<{token: string}>) => this._localStorageService.add(AuthenticationService.TOKEN, response.body.token)));
   }
@@ -66,6 +70,27 @@ export class AuthenticationService implements CanActivate {
   public exit(): void {
     this._localStorageService.remove(AuthenticationService.TOKEN);
     this._profileService.clearProfile();
+    this._authentication$$.next(false);
+    this._applicationLoading$$.next(false);
     this._router.navigate(['/authentication']);
+  }
+
+  public addErrorMessage(message: string): void {
+    this._errorMessage$$.next(message);
+    this._authentication$$.next(false);
+    this._applicationLoading$$.next(false);
+  }
+
+  public get errorMessage$(): Observable<string> {
+    return this._errorMessage$$.asObservable();
+  }
+
+  public get authentication$$(): Subject<boolean> {
+    return this._authentication$$;
+  }
+
+
+  public get applicationLoading$$(): Subject<boolean> {
+    return this._applicationLoading$$;
   }
 }

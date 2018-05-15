@@ -1,21 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/internal/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
 import { CurrencyService } from '../common/service/currency.service';
 import { AuthenticationService } from '../common/service/authentication.service';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'bk-authentication',
   templateUrl: './authentication.component.html',
   styleUrls: ['./authentication.component.css']
 })
-export class AuthenticationComponent implements OnInit {
+export class AuthenticationComponent implements OnInit, OnDestroy {
   public authenticationForm: FormGroup;
   public submitted: boolean = false;
   public errorMessage: string;
@@ -23,6 +24,8 @@ export class AuthenticationComponent implements OnInit {
   public applicationLoading: boolean = false;
 
   private _AUTHENTICATION_LOADING_SUBSCRIPTION: Subscription;
+  private _APPLICATION_LOADING_SUBSCRIPTION: Subscription;
+  private _AUTHENTICATION_ERROR_SUBSCRIPTION: Subscription;
 
   public constructor(
     private _authenticationService: AuthenticationService,
@@ -34,7 +37,15 @@ export class AuthenticationComponent implements OnInit {
 
   public ngOnInit(): void {
     this.authenticationForm = this._authenticationService.initAuthenticationForm();
-    this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._loadingService.authentication$$.subscribe((value: boolean) => this.loading = value);
+    this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._authenticationService.authentication$$.subscribe((value: boolean) => this.loading = value);
+    this._APPLICATION_LOADING_SUBSCRIPTION = this._authenticationService.applicationLoading$$.subscribe((value: boolean) => this.applicationLoading = value);
+    this._AUTHENTICATION_ERROR_SUBSCRIPTION = this._authenticationService.errorMessage$.subscribe(value => this.errorMessage = value);
+  }
+
+  public ngOnDestroy(): void {
+    this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
+    this._APPLICATION_LOADING_SUBSCRIPTION.unsubscribe();
+    this._AUTHENTICATION_ERROR_SUBSCRIPTION.unsubscribe();
   }
 
   public authenticate(): void {
@@ -45,21 +56,20 @@ export class AuthenticationComponent implements OnInit {
     }
 
     this._authenticationService.authenticate(this.authenticationForm.value)
-      .subscribe(
-        (response: HttpResponse<{token: string}>) => {
-          this.applicationLoading = true;
-          this._profileService.loadFullProfile().subscribe(() => {
-            const currentDate: Date = new Date(Date.now());
-            this._currencyService.loadCurrencies(currentDate.getUTCMonth() + 1, currentDate.getUTCFullYear(), this._profileService.getProfileCurrencies());
-            this._router.navigate(['budget']);
-          });
-        },(errorResponse: HttpErrorResponse)  => {
-          if (errorResponse.status === 401) {
-            if (errorResponse.error === 'BAD CREDENTIALS') {
-              this.errorMessage = 'Неверный пароль';
-            }
-          }
-          this.loading = false;
-        });
+      .pipe(
+        tap(() => this.applicationLoading = true),
+        switchMap(() => this._profileService.loadFullProfile()),
+        switchMap(() => {
+          const currentDate: Date = new Date(Date.now());
+          const currenciesRequest: {month: number, year: number, currencies: string[]} = {
+            month: currentDate.getUTCMonth() + 1,
+            year: currentDate.getUTCFullYear(),
+            currencies: this._profileService.getProfileCurrencies()
+          };
+          return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
+        })
+      ).subscribe(() => {
+        this._router.navigate(['budget']);
+      });
   }
 }

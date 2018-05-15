@@ -13,7 +13,6 @@ import { AssetImagePipe } from '../pipes/asset-image.pipe';
 
 @Injectable()
 export class ProfileService implements CanActivate {
-  private _authenticationLoading: Subject<boolean>;
   private _authenticatedProfile: Profile;
   private _userCurrencies: Map<String, CurrencyDetail> = new Map();
   private _categoryIcon: Map<string, string> = new Map();
@@ -27,9 +26,7 @@ export class ProfileService implements CanActivate {
     private _assetImagePipe: AssetImagePipe,
     private _http: HttpClient,
     @Inject(HOST) private _host: string
-  ) {
-    this._authenticationLoading = _loadingService.authentication$$;
-  }
+  ) {}
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (!isNullOrUndefined(this._authenticatedProfile)) {
@@ -42,15 +39,16 @@ export class ProfileService implements CanActivate {
 
   public loadFullProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full')
-      .pipe(tap(profile => {
-        profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
-        profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
-        profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
-        profile.accounts.forEach((account: FinAccount) => {
-          account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
-        });
-        this._accounts$$.next(profile.accounts);
-        this._authenticatedProfile = profile;
+      .pipe(
+        tap(profile => {
+          profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+          profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
+          profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+          profile.accounts.forEach((account: FinAccount) => {
+            account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
+          });
+          this._accounts$$.next(profile.accounts);
+          this._authenticatedProfile = profile;
       }));
   }
 

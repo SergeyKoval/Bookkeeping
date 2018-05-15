@@ -7,7 +7,6 @@ import { LoadingDialogComponent } from '../components/loading-dialog/loading-dia
 
 @Injectable()
 export class LoadingService {
-  private _authentication$$: Subject<boolean> = new Subject();
   private _authenticationCheck$$: Subject<boolean> = new Subject();
   private _accounts$$: Subject<boolean> = new Subject();
   private _categories$$: Subject<boolean> = new Subject();
@@ -19,10 +18,6 @@ export class LoadingService {
       disableClose: true,
       data: {'title': title},
     });
-  }
-
-  public get authentication$$(): Subject<boolean> {
-    return this._authentication$$;
   }
 
   public get authenticationCheck$$(): Subject<boolean> {

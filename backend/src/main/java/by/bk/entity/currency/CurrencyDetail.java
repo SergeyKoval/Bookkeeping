@@ -1,5 +1,6 @@
 package by.bk.entity.currency;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -15,6 +16,7 @@ import java.util.Map;
 @Setter
 public class CurrencyDetail {
     @Id
+    @JsonIgnore
     private String id;
     private Currency name;
     private Integer year;

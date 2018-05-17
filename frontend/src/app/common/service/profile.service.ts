@@ -18,6 +18,7 @@ export class ProfileService implements CanActivate {
   private _categoryIcon: Map<string, string> = new Map();
   private _accountIcon: Map<string, string> = new Map();
   private _accounts$$: Subject<FinAccount[]> = new ReplaySubject(1);
+  private _initialDataLoaded: boolean = false;
 
   public constructor(
     private _router: Router,
@@ -196,5 +197,14 @@ export class ProfileService implements CanActivate {
     if (!fg.invalid && passwordAgainValue.length >= 1 && passwordAgainValue !== passwordValue) {
       newPasswordAgainFormControl.setErrors({message: 'Новый пароль введен второй раз неверно'});
     }
+  }
+
+
+  public set initialDataLoaded(value: boolean) {
+    this._initialDataLoaded = value;
+  }
+
+  public get initialDataLoaded(): boolean {
+    return this._initialDataLoaded;
   }
 }

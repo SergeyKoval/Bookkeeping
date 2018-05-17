@@ -8,9 +8,11 @@ import { Observable, Subject } from 'rxjs/index';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { isNullOrUndefined } from "util";
 import { tap } from 'rxjs/internal/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { LoadingService } from './loading.service';
 import { ProfileService } from './profile.service';
+import { CurrencyService } from './currency.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,7 @@ export class AuthenticationService implements CanActivate {
   private _applicationLoading$$: Subject<boolean> = new Subject();
 
   public constructor(
+    private _currencyService: CurrencyService,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
     private _formBuilder: FormBuilder,
@@ -42,7 +45,7 @@ export class AuthenticationService implements CanActivate {
   public authenticate(credentials: {email: string, password: string}): Observable<HttpResponse<{token: string}>> {
     this._authentication$$.next(true);
     return this._http.post<{token: string}>('/token/generate-token', credentials, { observe: 'response' })
-      .pipe(tap((response: HttpResponse<{token: string}>) => this._localStorageService.add(AuthenticationService.TOKEN, response.body.token)));
+      .pipe(tap((response: HttpResponse<{token: string}>) => this._localStorageService.set(AuthenticationService.TOKEN, response.body.token)));
   }
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
@@ -59,15 +62,27 @@ export class AuthenticationService implements CanActivate {
     let authenticationCheck$$: Subject<boolean> = this._loadingService.authenticationCheck$$;
     authenticationCheck$$.next(true);
     const result: Subject<boolean> = new Subject<boolean>();
-    this._profileService.loadFullProfile().subscribe(() => {
-      authenticationCheck$$.next(false);
-      result.next(true);
+    this._profileService.loadFullProfile()
+      .pipe(switchMap(() => {
+        const currentDate: Date = new Date(Date.now());
+        const currenciesRequest: {month: number, year: number, currencies: string[]} = {
+          month: currentDate.getUTCMonth() + 1,
+          year: currentDate.getUTCFullYear(),
+          currencies: this._profileService.getProfileCurrencies()
+        };
+        return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
+      }))
+      .subscribe(() => {
+        authenticationCheck$$.next(false);
+        result.next(true);
+        this._profileService.initialDataLoaded = true;
     });
 
     return result.asObservable();
   }
 
   public exit(): void {
+    this._profileService.initialDataLoaded = false;
     this._localStorageService.remove(AuthenticationService.TOKEN);
     this._profileService.clearProfile();
     this._authentication$$.next(false);

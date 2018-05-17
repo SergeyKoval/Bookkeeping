@@ -69,6 +69,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
           return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
         })
       ).subscribe(() => {
+        this._profileService.initialDataLoaded = true;
         this._router.navigate(['budget']);
       });
   }

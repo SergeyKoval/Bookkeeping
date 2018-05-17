@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { isNullOrUndefined } from "util";
 
 import { Alert } from '../common/model/alert/Alert';
 import { AlertService } from '../common/service/alert.service';
@@ -45,7 +44,7 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
     this.alerts = this.alerts.filter((alert: Alert) => alert !== alertToClose);
   }
 
-  public isAuthenticated(): boolean {
-    return !isNullOrUndefined(this._profileService.authenticatedProfile);
+  public isInitialDataLoaded(): boolean {
+    return this._profileService.initialDataLoaded;
   }
 }

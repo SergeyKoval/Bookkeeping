@@ -1,6 +1,5 @@
 package by.bk.entity.currency;
 
-import by.bk.entity.user.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

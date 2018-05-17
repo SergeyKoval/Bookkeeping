@@ -1,4 +1,4 @@
-<div class="container" *ngIf="isAuthenticated(); else authenticationContainer">
+<div class="container" *ngIf="isInitialDataLoaded(); else authenticationContainer">
   <bk-header></bk-header>
   <div class="row">
     <bk-summary></bk-summary>

@@ -37,7 +37,6 @@ public class NbrbJob {
     @Scheduled(fixedDelay = 3600000)
     public void getFreshCurrencies() {
         LocalDateTime today = LocalDateTime.now();
-        System.out.println(today);
         List<CurrencyDetail> todayCurrencies = currencyAPI.getCurrenciesForDay(today);
         if (todayCurrencies.isEmpty()) {
             NbrbCurrency eurCurrency = restTemplate.getForObject(EUR_URL, NbrbCurrency.class);

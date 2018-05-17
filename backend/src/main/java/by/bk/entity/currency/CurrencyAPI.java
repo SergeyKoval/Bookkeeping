@@ -8,5 +8,6 @@ import java.util.List;
  */
 public interface CurrencyAPI {
     List<CurrencyDetail> getCurrenciesForDay(LocalDateTime date);
+    List<CurrencyDetail> getCurrenciesForMonth(Integer year, Integer month, List<Currency> currencies);
     CurrencyDetail insert(CurrencyDetail currencyDetail);
 }

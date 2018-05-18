@@ -13,7 +13,7 @@ type Profile = {
 };
 
 type CurrencyDetail = {
-  default: boolean,
+  defaultCurrency: boolean,
   name: string,
   order: number,
   symbol: string,

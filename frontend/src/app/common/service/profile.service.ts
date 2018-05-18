@@ -84,7 +84,7 @@ export class ProfileService implements CanActivate {
   public get defaultCurrency(): CurrencyDetail {
     let defaultCurrency: CurrencyDetail = null;
     this._authenticatedProfile.currencies.forEach((currency: CurrencyDetail) => {
-      if (currency.default) {
+      if (currency.defaultCurrency) {
         defaultCurrency = currency;
         return;
       }
@@ -168,7 +168,7 @@ export class ProfileService implements CanActivate {
       .pipe(
         delay(3000),
         tap((profiles: Profile[]) => this._authenticatedProfile = profiles[0]),
-        tap(x => this._authenticatedProfile.currencies.push({'name': 'EUR', 'default': true, 'symbol': '&euro;', 'order': 3})),
+        tap(x => this._authenticatedProfile.currencies.push({'name': 'EUR', 'defaultCurrency': true, 'symbol': '&euro;', 'order': 3})),
         tap(x => this._authenticatedProfile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency))));
   }
 

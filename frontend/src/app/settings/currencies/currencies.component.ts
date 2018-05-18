@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterEvent } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -13,27 +13,31 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
   templateUrl: './currencies.component.html',
   styleUrls: ['./currencies.component.css']
 })
-export class CurrenciesComponent implements OnInit {
+export class CurrenciesComponent implements OnInit, OnDestroy {
   public loading: boolean = true;
   public allCurrencies: CurrencyDetail[];
+
+  private _NAVIGATION_SUBSCRIPTION: Subscription;
 
   public constructor(
     private _router: Router,
     private _confirmDialogService: ConfirmDialogService,
     private _currencyService: CurrencyService,
     private _profileService: ProfileService
-  ) {}
+  ) {
+    this._NAVIGATION_SUBSCRIPTION = this._router.events.subscribe((e: RouterEvent) => {
+      if (e instanceof NavigationEnd && e.urlAfterRedirects.endsWith('reload=true')) {
+        this.init();
+      }
+    });
+  }
 
   public ngOnInit(): void {
-    this._currencyService.loadAllCurrencies()
-      .subscribe((currencies: CurrencyDetail[]) => {
-        currencies.forEach((currency: CurrencyDetail) => {
-          const currencyDetails: CurrencyDetail = this._profileService.getCurrencyDetails(currency.name);
-          currency.order = currencyDetails ? currencyDetails.order : null;
-        });
-        this.allCurrencies = currencies;
-        this.loading = false;
-      });
+    this.init();
+  }
+
+  public ngOnDestroy(): void {
+    this._NAVIGATION_SUBSCRIPTION.unsubscribe();
   }
 
   public isCurrencyUsed(currencyName: string): boolean {
@@ -42,7 +46,7 @@ export class CurrenciesComponent implements OnInit {
 
   public isCurrencyDefault(currencyName: string): boolean {
     const currencyDetails: CurrencyDetail = this._profileService.getCurrencyDetails(currencyName);
-    return currencyDetails ? currencyDetails.default : false;
+    return currencyDetails ? currencyDetails.defaultCurrency : false;
   }
 
   public useCurrencyForProfile(currencyName: string): void {
@@ -75,5 +79,19 @@ export class CurrenciesComponent implements OnInit {
 
   public moveCurrencyUp(currency: string): void {
 
+  }
+
+  private init(): void {
+    this.loading = true;
+    this._currencyService.loadAllCurrencies()
+      .subscribe((currencies: CurrencyDetail[]) => {
+        currencies.forEach((currency: CurrencyDetail) => {
+          const currencyDetails: CurrencyDetail = this._profileService.getCurrencyDetails(currency.name);
+          currency.order = currencyDetails ? currencyDetails.order : null;
+          currency.defaultCurrency = currencyDetails ? currencyDetails.defaultCurrency : false;
+        });
+        this.allCurrencies = currencies;
+        this.loading = false;
+      });
   }
 }

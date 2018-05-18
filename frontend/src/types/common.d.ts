@@ -1,3 +1,8 @@
+type SimpleResponse = {
+  status: string,
+  message?: string
+}
+
 type Profile = {
   id: number,
   email: string,

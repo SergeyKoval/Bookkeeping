@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 
 import { ProfileService } from '../../common/service/profile.service';
+import { AlertService } from '../../common/service/alert.service';
+import { AlertType } from '../../common/model/alert/AlertType';
 
 @Component({
   selector: 'bk-profile',
@@ -10,8 +12,12 @@ import { ProfileService } from '../../common/service/profile.service';
 })
 export class ProfileComponent implements OnInit {
   public profileForm: FormGroup;
+  public submitIndicator: boolean = false;
 
-  public constructor(private _profileService: ProfileService) { }
+  public constructor(
+    private _profileService: ProfileService,
+    private _alertService: AlertService
+  ) { }
 
   public ngOnInit(): void {
     this.profileForm = this._profileService.prepareProfileForm();
@@ -40,7 +46,19 @@ export class ProfileComponent implements OnInit {
   }
 
   public submitProfile(): void {
-    console.log('submit');
+    this.submitIndicator = true;
+    this._profileService.updatePassword(this.profileForm.value).subscribe(response => {
+      this.submitIndicator = false;
+      if (response.status === 'FAIL') {
+        const message: string = response.message === 'INVALID_PASSWORD' ? 'Неверный старый пароль': 'Ошибка сервера';
+        this._alertService.addAlert(AlertType.WARNING, message);
+      } else {
+        this._alertService.addAlert(AlertType.SUCCESS, 'Пороль успешно изменен');
+        this.profileForm.reset();
+        this.profileForm.controls.newPassword.disable();
+        this.disableNewPasswordAgain();
+      }
+    });
   }
 
   private disableNewPasswordAgain(): void {

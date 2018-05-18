@@ -55,7 +55,7 @@ export class AuthenticationService implements CanActivate {
       return false;
     }
 
-    if (this._profileService.isProfileLoaded()) {
+    if (this._profileService.initialDataLoaded === true) {
       return true;
     }
 

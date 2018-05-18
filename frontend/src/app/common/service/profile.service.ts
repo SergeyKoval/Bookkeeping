@@ -61,8 +61,8 @@ export class ProfileService implements CanActivate {
     this._accounts$$.next(null);
   }
 
-  public isProfileLoaded(): boolean {
-    return !isNullOrUndefined(this.authenticatedProfile);
+  public updatePassword(profile:{oldPassword: string, newPassword: string}): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/change-password', profile);
   }
 
   public get authenticatedProfile(): Profile {
@@ -154,7 +154,6 @@ export class ProfileService implements CanActivate {
 
   public prepareProfileForm(): FormGroup {
     return this._formBuilder.group({
-      id: [this._authenticatedProfile.id],
       email: this._formBuilder.control({value: this._authenticatedProfile.email, disabled: true}),
       oldPassword: ['', Validators.required],
       newPassword: this._formBuilder.control({value: '', disabled: true}, Validators.required),
@@ -194,7 +193,7 @@ export class ProfileService implements CanActivate {
     const passwordAgainValue: string = newPasswordAgainFormControl.value;
     const passwordValue: string = fg.controls.newPassword.value;
 
-    if (!fg.invalid && passwordAgainValue.length >= 1 && passwordAgainValue !== passwordValue) {
+    if (!fg.invalid && passwordAgainValue && passwordAgainValue.length >= 1 && passwordAgainValue !== passwordValue) {
       newPasswordAgainFormControl.setErrors({message: 'Новый пароль введен второй раз неверно'});
     }
   }

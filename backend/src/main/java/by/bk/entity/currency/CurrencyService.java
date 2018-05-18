@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,7 @@ public class CurrencyService implements CurrencyAPI {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public List<CurrencyDetail> getCurrenciesForDay(LocalDateTime date) {
+    public List<CurrencyDetail> getCurrenciesForDay(LocalDate date) {
         return currencyRepository.getByYearAndMonthAndDay(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 

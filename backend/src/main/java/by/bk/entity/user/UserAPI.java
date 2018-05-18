@@ -8,4 +8,5 @@ import by.bk.security.AuthenticationAPI;
  */
 public interface UserAPI extends AuthenticationAPI {
     User getFullUserProfile(String login);
+    void updateUserPassword(String login, String oldPassword, String newPassword);
 }

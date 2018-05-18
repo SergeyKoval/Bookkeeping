@@ -80,7 +80,7 @@ export class HistoryEditDialogComponent implements OnInit {
       if (this.selectedDate.month !== date.month && !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, date)) {
         this.alternativeCurrencyLoading = true;
         this.historyItem.balance.alternativeCurrency = {};
-          this._currencyService.loadCurrencies(date.month, date.year, this._authenticationService.getProfileCurrencies());
+        this._currencyService.loadCurrenciesForMonth({month: date.month, year: date.year, currencies: this._authenticationService.getProfileCurrencies()}).subscribe(value => console.log(value));
         this.loadAlternativeCurrencies();
       } else {
         this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);

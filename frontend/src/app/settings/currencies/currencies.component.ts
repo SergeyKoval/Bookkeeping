@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { RouterEvent } from '@angular/router/src/events';
+import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -18,23 +17,23 @@ export class CurrenciesComponent implements OnInit {
   public loading: boolean = true;
   public allCurrencies: CurrencyDetail[];
 
-  private _navigationSubscription: Subscription;
-
   public constructor(
     private _router: Router,
     private _confirmDialogService: ConfirmDialogService,
     private _currencyService: CurrencyService,
     private _profileService: ProfileService
-  ) {
-    this._navigationSubscription = this._router.events.subscribe((e: RouterEvent) => {
-      if (e instanceof NavigationEnd && e.urlAfterRedirects.endsWith('reload=true')) {
-        this.init();
-      }
-    });
-  }
+  ) {}
 
   public ngOnInit(): void {
-    this.init();
+    this._currencyService.loadAllCurrencies()
+      .subscribe((currencies: CurrencyDetail[]) => {
+        currencies.forEach((currency: CurrencyDetail) => {
+          const currencyDetails: CurrencyDetail = this._profileService.getCurrencyDetails(currency.name);
+          currency.order = currencyDetails ? currencyDetails.order : null;
+        });
+        this.allCurrencies = currencies;
+        this.loading = false;
+      });
   }
 
   public isCurrencyUsed(currencyName: string): boolean {
@@ -76,17 +75,5 @@ export class CurrenciesComponent implements OnInit {
 
   public moveCurrencyUp(currency: string): void {
 
-  }
-
-  private init(): void {
-    this._currencyService.loadAllCurrencies()
-      .subscribe((currencies: CurrencyDetail[]) => {
-        currencies.forEach((currency: CurrencyDetail) => {
-          const currencyDetails: CurrencyDetail = this._profileService.getCurrencyDetails(currency.name);
-          currency.order = currencyDetails ? currencyDetails.order : null;
-        });
-        this.allCurrencies = currencies;
-        this.loading = false;
-      });
   }
 }

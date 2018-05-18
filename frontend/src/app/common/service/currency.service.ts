@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable,  Subject } from 'rxjs';
 import { tap } from 'rxjs/internal/operators';
 import { IMyDate } from 'mydatepicker';
 
@@ -81,66 +80,22 @@ export class CurrencyService {
       );
   }
 
-
-
-
-
-
-
-
-
-  public loadCurrencies(month: number, year: number, currencies: string[]): void {
-    currencies.forEach((currency: string) => {
-      const subscription: Subscription = this._http.get(`${this._host}/currencies?name=${currency}&year=${year}&month=${month}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
-        .pipe(delay(5500))
-        .subscribe((currencyHistories: CurrencyHistory[]) => {
-          // if (!this._todayConversions.has(currency)) {
-          //   const todayConversions: CurrencyHistory = currencyHistories.reduce((first: CurrencyHistory, second: CurrencyHistory) => first.day > second.day ? first : second);
-          //   this._todayConversions.set(currency, todayConversions);
-          // }
-
-          // let currencyYears: Map<number, Map<number, CurrencyHistory[]>>;
-          // if (this._currencies.has(currency)) {
-          //   currencyYears = this._currencies.get(currency);
-          // } else {
-          //   currencyYears = new Map();
-          //   this._currencies.set(currency, currencyYears);
-          // }
-          // let indicatorYears: Map<number, Map<number, boolean>>;
-          // if (this._currenciesIndicatorMap.has(currency)) {
-          //   indicatorYears = this._currenciesIndicatorMap.get(currency);
-          // } else {
-          //   indicatorYears = new Map();
-          //   this._currenciesIndicatorMap.set(currency, indicatorYears);
-          // }
-          //
-          // let currencyMonths: Map<number, CurrencyHistory[]>;
-          // if (currencyYears.has(year)) {
-          //   currencyMonths = currencyYears.get(year);
-          // } else {
-          //   currencyMonths = new Map();
-          //   currencyYears.set(year, currencyMonths);
-          // }
-          // let indicatorMonths: Map<number, boolean>;
-          // if (indicatorYears.has(year)) {
-          //   indicatorMonths = indicatorYears.get(year);
-          // } else {
-          //   indicatorMonths = new Map();
-          //   indicatorYears.set(year, indicatorMonths);
-          // }
-          //
-          // currencyMonths.set(month, currencyHistories);
-          // indicatorMonths.set(month, true);
-          //
-          // this._currenciesUpdate$$.next(currency);
-          // subscription.unsubscribe();
-        });
-    });
-  }
-
   public loadAllCurrencies(): Observable<CurrencyDetail[]> {
-    return this._http.get<CurrencyDetail[]>(`${this._host}/defaultCurrencies`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})}).pipe(delay(2000));
+    return this._http.get<CurrencyDetail[]>('/api/currency/default-currencies');
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public sortSummaryBalanceItems(items: BalanceItem[]): BalanceItem[] {
     items.sort((firstItem: BalanceItem, secondItem: BalanceItem) => {

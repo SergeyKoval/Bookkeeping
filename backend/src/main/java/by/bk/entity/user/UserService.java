@@ -107,12 +107,26 @@ public class UserService implements UserAPI, UserDetailsService {
 
     @Override
     public SimpleResponse excludeCurrency(String login, Currency currency) {
+        User user = userRepository.getUserCurrencies(login);
+        List<UserCurrency> currencies = user.getCurrencies();
+        Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
+
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().pull("currencies", Collections.singletonMap("name", currency));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - removing currency. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail("ERROR");
+        }
+
+        if (currencyItem.get().isDefaultCurrency()) {
+            Optional<UserCurrency> newDefaultCurrency = currencies.stream().filter(userCurrency -> !userCurrency.getName().equals(currency)).findFirst();
+            Update newDefaultUpdate = new Update().set(StringUtils.join("currencies.", currencies.indexOf(newDefaultCurrency.get()), ".defaultCurrency"), true);
+            UpdateResult newDefaultUpdateResult = mongoTemplate.updateFirst(query, newDefaultUpdate, User.class);
+            if (newDefaultUpdateResult.getModifiedCount() != 1) {
+                LOG.error("Error updating user profile - removing currency (setting new default currency). Number of updated items " + updateResult.getModifiedCount());
+                return SimpleResponse.fail("ERROR");
+            }
         }
 
         return SimpleResponse.success();

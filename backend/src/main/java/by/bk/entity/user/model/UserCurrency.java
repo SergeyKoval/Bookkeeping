@@ -1,16 +1,27 @@
 package by.bk.entity.user.model;
 
+import by.bk.entity.currency.Currency;
 import lombok.Getter;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * @author Sergey Koval
  */
 @Getter
 public class UserCurrency {
-    private String name;
-    @Field("default")
+    private Currency name;
     private boolean defaultCurrency;
-    private String symbol;
     private int order;
+
+    public UserCurrency() {
+    }
+
+    public UserCurrency(Currency name, boolean defaultCurrency, int order) {
+        this.name = name;
+        this.defaultCurrency = defaultCurrency;
+        this.order = order;
+    }
+
+    public String getSymbol() {
+        return name.getSymbol();
+    }
 }

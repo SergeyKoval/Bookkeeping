@@ -1,7 +1,7 @@
 package by.bk.controller;
 
-import by.bk.controller.model.CurrencyResponse;
-import by.bk.controller.model.MonthCurrenciesRequest;
+import by.bk.controller.model.response.CurrencyResponse;
+import by.bk.controller.model.request.MonthCurrenciesRequest;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.currency.CurrencyAPI;
 import by.bk.entity.currency.CurrencyDetail;

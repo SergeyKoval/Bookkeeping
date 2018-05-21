@@ -1,4 +1,4 @@
-package by.bk.controller.model;
+package by.bk.controller.model.response;
 
 import lombok.Getter;
 import lombok.Setter;

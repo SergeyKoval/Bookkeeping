@@ -16,4 +16,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> authenticateUser(String login);
     @Query(value = "{_id: ?0}", fields = "{email: 0, roles: 1}")
     Optional<User> getAuthenticatedUser(String login);
+    @Query(value = "{_id: ?0}", fields = "{email: 0, currencies: 1}")
+    User getUserCurrencies(String login);
 }

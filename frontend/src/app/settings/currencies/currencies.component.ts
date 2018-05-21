@@ -7,6 +7,8 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { AlertService } from '../../common/service/alert.service';
+import { AlertType } from '../../common/model/alert/AlertType';
 
 @Component({
   selector: 'bk-currencies',
@@ -21,6 +23,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
 
   public constructor(
     private _router: Router,
+    private _alertService: AlertService,
     private _confirmDialogService: ConfirmDialogService,
     private _currencyService: CurrencyService,
     private _profileService: ProfileService
@@ -51,8 +54,17 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
 
   public useCurrencyForProfile(currencyName: string): void {
     this.loading = true;
-    this._profileService.reloadProfile().subscribe(value => {
-      this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
+    this._profileService.updateProfileUseCurrency(currencyName)
+      .pipe(
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+          }
+        }),
+        switchMap(() => this._profileService.reloadProfile())
+      ).subscribe(() => {
+        this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
+        this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
     });
   }
 
@@ -63,7 +75,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
         filter((result: boolean) => result === true),
         tap((result: boolean) => this.loading = true),
         switchMap(() => this._profileService.reloadProfile())
-      ).subscribe((profiles: Profile[]) => {
+      ).subscribe(() => {
         this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
         subscription.unsubscribe();
       });

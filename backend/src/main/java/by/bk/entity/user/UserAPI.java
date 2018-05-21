@@ -1,5 +1,7 @@
 package by.bk.entity.user;
 
+import by.bk.controller.model.response.SimpleResponse;
+import by.bk.entity.currency.Currency;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
 
@@ -8,5 +10,6 @@ import by.bk.security.AuthenticationAPI;
  */
 public interface UserAPI extends AuthenticationAPI {
     User getFullUserProfile(String login);
-    void updateUserPassword(String login, String oldPassword, String newPassword);
+    SimpleResponse updateUserPassword(String login, String oldPassword, String newPassword);
+    SimpleResponse addCurrencyToUser(String login, Currency currency);
 }

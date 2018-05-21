@@ -1,18 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { CurrencyService } from '../../service/currency.service';
+import { ProfileService } from '../../service/profile.service';
 
 @Pipe({
   name: 'summaryBalanceOrdering'
 })
 export class SummaryBalanceOrderingPipe implements PipeTransform {
-  public constructor(private _currencyService: CurrencyService) {}
+  public constructor(private _profileService: ProfileService) {}
 
   public transform(items: BalanceItem[]): BalanceItem[] {
     if (items.length < 2) {
       return items;
     }
 
-    return this._currencyService.sortSummaryBalanceItems(items);
+    return this._profileService.sortSummaryBalanceItems(items);
   }
 }

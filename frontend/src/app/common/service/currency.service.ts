@@ -6,7 +6,6 @@ import { tap } from 'rxjs/internal/operators';
 import { IMyDate } from 'mydatepicker';
 
 import { HOST } from '../config/config';
-import { ProfileService } from './profile.service';
 import { DateUtils } from '../utils/date-utils';
 
 @Injectable()
@@ -18,8 +17,7 @@ export class CurrencyService {
 
   public constructor(
     private _http: HttpClient,
-    @Inject(HOST) private _host: string,
-    private _authenticationService: ProfileService,
+    @Inject(HOST) private _host: string
   ) {}
 
   public loadCurrenciesForMonth(request: {month: number, year: number, currencies: string[]}): Observable<CurrencyHistory[]> {
@@ -97,14 +95,7 @@ export class CurrencyService {
 
 
 
-  public sortSummaryBalanceItems(items: BalanceItem[]): BalanceItem[] {
-    items.sort((firstItem: BalanceItem, secondItem: BalanceItem) => {
-      const firstItemOrder: number = this._authenticationService.getCurrencyDetails(firstItem.currency).order;
-      const secondItemOrder: number = this._authenticationService.getCurrencyDetails(secondItem.currency).order;
-      return firstItemOrder - secondItemOrder;
-    });
-    return items;
-  }
+
 
   public get currenciesUpdate$(): Observable<string> {
     return this._currenciesUpdate$$.asObservable();

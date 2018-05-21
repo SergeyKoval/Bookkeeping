@@ -58,10 +58,10 @@ export class AccountsComponent implements OnInit {
     }).afterClosed().pipe(
       filter((result: BalanceItem[]) => result !== null),
       switchMap((result: BalanceItem[]) => this._profileService.reloadProfile())
-    ).subscribe((profiles: Profile[]) => {
-      const updatedAccounts: FinAccount[] = profiles[0].accounts;
-      updatedAccounts.forEach((account: FinAccount) => account.settingsOpened = this.getAccountOpened(this.accounts, account.title));
-      this.accounts = updatedAccounts;
+    ).subscribe(() => {
+      // const updatedAccounts: FinAccount[] = profiles[0].accounts;
+      // updatedAccounts.forEach((account: FinAccount) => account.settingsOpened = this.getAccountOpened(this.accounts, account.title));
+      // this.accounts = updatedAccounts;
       this.loading = false;
       this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
       subscription.unsubscribe();
@@ -101,10 +101,10 @@ export class AccountsComponent implements OnInit {
       filter((result: boolean) => result === true),
       tap((result: boolean) => this.loading = true),
       switchMap(() => this._profileService.reloadProfile())
-    ).subscribe((profiles: Profile[]) => {
-      const updatedAccounts: FinAccount[] = profiles[0].accounts;
-      updatedAccounts.forEach((account: FinAccount) => account.settingsOpened = this.getAccountOpened(this.accounts, account.title));
-      this.accounts = updatedAccounts;
+    ).subscribe(() => {
+      // const updatedAccounts: FinAccount[] = profiles[0].accounts;
+      // updatedAccounts.forEach((account: FinAccount) => account.settingsOpened = this.getAccountOpened(this.accounts, account.title));
+      // this.accounts = updatedAccounts;
       this.loading = false;
       this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
       subscription.unsubscribe();

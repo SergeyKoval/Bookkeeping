@@ -115,10 +115,10 @@ export class CategoriesComponent implements OnInit {
       filter((result: boolean) => result === true),
       tap((result: boolean) => this.loading = true),
       switchMap(() => this._profileService.reloadProfile())
-    ).subscribe((profiles: Profile[]) => {
-      const updatedCategories: Category[] = profiles[0].categories;
-      updatedCategories.forEach((category: Category) => category.opened = this.getCategoryOpened(this.categories, category.title));
-      this.categories = updatedCategories;
+    ).subscribe(() => {
+      // const updatedCategories: Category[] = profiles[0].categories;
+      // updatedCategories.forEach((category: Category) => category.opened = this.getCategoryOpened(this.categories, category.title));
+      // this.categories = updatedCategories;
       this.loading = false;
       this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
       subscription.unsubscribe();

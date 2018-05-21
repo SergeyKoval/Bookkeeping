@@ -1,18 +1,19 @@
 import { Inject, Injectable } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Subject ,  ReplaySubject ,  Observable } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
-import { isNullOrUndefined } from 'util';
 
 import { LoadingService } from 'app/common/service/loading.service';
 import { HOST } from '../config/config';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
+import { CurrencyService } from './currency.service';
+import { switchMap } from 'rxjs/internal/operators';
 
 @Injectable()
-export class ProfileService implements CanActivate {
+export class ProfileService {
   private _authenticatedProfile: Profile;
   private _userCurrencies: Map<String, CurrencyDetail> = new Map();
   private _categoryIcon: Map<string, string> = new Map();
@@ -24,19 +25,11 @@ export class ProfileService implements CanActivate {
     private _router: Router,
     private _formBuilder: FormBuilder,
     private _loadingService: LoadingService,
+    private _currencyService: CurrencyService,
     private _assetImagePipe: AssetImagePipe,
     private _http: HttpClient,
     @Inject(HOST) private _host: string
   ) {}
-
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (!isNullOrUndefined(this._authenticatedProfile)) {
-      return true;
-    }
-
-    this._router.navigate(['/authentication']);
-    return false;
-  }
 
   public loadFullProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full')
@@ -53,6 +46,23 @@ export class ProfileService implements CanActivate {
       }));
   }
 
+  public reloadProfile(): Observable<CurrencyHistory[]> {
+    this._userCurrencies.clear();
+    this._categoryIcon.clear();
+    this._accountIcon.clear();
+    return this.loadFullProfile()
+      .pipe(
+        switchMap(() => {
+          const currentDate: Date = new Date(Date.now());
+          const currenciesRequest: {month: number, year: number, currencies: string[]} = {
+            month: currentDate.getUTCMonth() + 1,
+            year: currentDate.getUTCFullYear(),
+            currencies: this.getProfileCurrencies()
+          };
+          return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
+    }));
+  }
+
   public clearProfile(): void {
     this._authenticatedProfile = null;
     this._userCurrencies.clear();
@@ -64,6 +74,26 @@ export class ProfileService implements CanActivate {
   public updatePassword(profile:{oldPassword: string, newPassword: string}): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/change-password', profile);
   }
+
+  public updateProfileUseCurrency(currencyName: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/update-user-currency', {name: currencyName});
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public get authenticatedProfile(): Profile {
     return this._authenticatedProfile;
@@ -152,6 +182,15 @@ export class ProfileService implements CanActivate {
     return result;
   }
 
+  public sortSummaryBalanceItems(items: BalanceItem[]): BalanceItem[] {
+    items.sort((firstItem: BalanceItem, secondItem: BalanceItem) => {
+      const firstItemOrder: number = this.getCurrencyDetails(firstItem.currency).order;
+      const secondItemOrder: number = this.getCurrencyDetails(secondItem.currency).order;
+      return firstItemOrder - secondItemOrder;
+    });
+    return items;
+  }
+
   public prepareProfileForm(): FormGroup {
     return this._formBuilder.group({
       email: this._formBuilder.control({value: this._authenticatedProfile.email, disabled: true}),
@@ -161,15 +200,6 @@ export class ProfileService implements CanActivate {
     }, {
       validator: ProfileService.validateNewPassword
     });
-  }
-
-  public reloadProfile(): Observable<Profile[]> {
-    return this._http.get<Profile[]>(`${this._host}/profiles?email=${this._authenticatedProfile.email}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
-      .pipe(
-        delay(3000),
-        tap((profiles: Profile[]) => this._authenticatedProfile = profiles[0]),
-        tap(x => this._authenticatedProfile.currencies.push({'name': 'EUR', 'defaultCurrency': true, 'symbol': '&euro;', 'order': 3})),
-        tap(x => this._authenticatedProfile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency))));
   }
 
   public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {

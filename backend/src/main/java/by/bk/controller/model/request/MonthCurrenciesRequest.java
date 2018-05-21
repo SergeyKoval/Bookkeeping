@@ -1,4 +1,4 @@
-package by.bk.controller.model;
+package by.bk.controller.model.request;
 
 import by.bk.entity.currency.Currency;
 import lombok.Getter;

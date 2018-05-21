@@ -115,4 +115,33 @@ public class UserService implements UserAPI, UserDetailsService {
 
         return SimpleResponse.success();
     }
+
+    @Override
+    public SimpleResponse markCurrencyAsDefault(String login, Currency currency) {
+        User user = userRepository.getUserCurrencies(login);
+        Optional<UserCurrency> oldDefaultCurrency = user.getCurrencies().stream().filter(UserCurrency::isDefaultCurrency).findFirst();
+        if (!oldDefaultCurrency.isPresent()) {
+            LOG.error("There is no default currency for user " + login);
+        }
+
+        Optional<UserCurrency> defaultCurrency = user.getCurrencies().stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
+        if (!defaultCurrency.isPresent()) {
+            LOG.error(StringUtils.join("User ", login, " doesn't have currency which is requested to be default ", currency));
+            return SimpleResponse.fail("ERROR");
+        }
+        if (defaultCurrency.equals(oldDefaultCurrency)) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().set(StringUtils.join("currencies.", user.getCurrencies().indexOf(defaultCurrency.get()), ".defaultCurrency"), true);
+        oldDefaultCurrency.ifPresent(userCurrency -> update.set(StringUtils.join("currencies.", user.getCurrencies().indexOf(userCurrency), ".defaultCurrency"), false));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - mark currency default. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail("ERROR");
+        }
+
+        return SimpleResponse.success();
+    }
 }

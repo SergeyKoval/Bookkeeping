@@ -83,6 +83,10 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/update-user-currency', {name: currencyName, use: false});
   }
 
+  public markCurrencyAsDefault(currencyName: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/update-user-currency-default', {name: currencyName});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }
@@ -273,4 +277,6 @@ export class ProfileService {
   public get initialDataLoaded(): boolean {
     return this._initialDataLoaded;
   }
+
+
 }

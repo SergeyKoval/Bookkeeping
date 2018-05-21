@@ -88,8 +88,19 @@ export class CurrenciesComponent implements OnInit {
       });
   }
 
-  public markCurrencyAsDefault(currency: string): void {
-
+  public markCurrencyAsDefault(currencyName: string): void {
+    this.loading = true;
+    this._profileService.markCurrencyAsDefault(currencyName)
+      .pipe(
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+          } else {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
+          }
+        }),
+        switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
+      ).subscribe(() => this.init());
   }
 
   public moveCurrencyDown(currency: string): void {

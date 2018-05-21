@@ -32,12 +32,17 @@ public class ProfileController extends BaseAPIController {
     @PostMapping("/update-user-currency")
     public SimpleResponse updateProfileCurrency(@RequestBody UpdateCurrencyRequest request, Principal principal) {
         return request.getUse()
-                ? userAPI.addCurrencyToUser(principal.getName(), request.getName())
-                : userAPI.removeCurrencyFromUser(principal.getName(), request.getName());
+                ? userAPI.includeCurrency(principal.getName(), request.getName())
+                : userAPI.excludeCurrency(principal.getName(), request.getName());
     }
 
     @PostMapping("/update-user-currency-default")
     public SimpleResponse updateProfileCurrencyDefault(@RequestBody UpdateCurrencyRequest request, Principal principal) {
         return userAPI.markCurrencyAsDefault(principal.getName(), request.getName());
+    }
+
+    @PostMapping("/update-user-currency-move")
+    public SimpleResponse updateProfileMoveCurrency(@RequestBody UpdateCurrencyRequest request, Principal principal) {
+        return userAPI.moveCurrency(principal.getName(), request.getName(), request.getDirection());
     }
 }

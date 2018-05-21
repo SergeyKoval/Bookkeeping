@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs/index';
 
 import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
@@ -9,7 +10,6 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { LoadingService } from '../../common/service/loading.service';
-import { Subject } from 'rxjs/index';
 
 @Component({
   selector: 'bk-currencies',
@@ -103,12 +103,33 @@ export class CurrenciesComponent implements OnInit {
       ).subscribe(() => this.init());
   }
 
-  public moveCurrencyDown(currency: string): void {
-
+  public moveCurrencyDown(currencyName: string): void {
+    this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
+    this.moveCurrency(this._profileService.moveCurrencyDown(currencyName));
   }
 
-  public moveCurrencyUp(currency: string): void {
+  public moveCurrencyUp(currencyName: string): void {
+    this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
+    this.moveCurrency(this._profileService.moveCurrencyUp(currencyName));
+  }
 
+  private moveCurrency(result: Observable<SimpleResponse>): void {
+    result
+      .pipe(
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+          } else {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно перемещена');
+          }
+        }),
+        switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
+      ).subscribe(() => {
+      this._ACCOUNTS_LOADING.next(false);
+      this.init();
+    });
   }
 
   private init(): void {

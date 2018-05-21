@@ -1,5 +1,6 @@
 package by.bk.entity.user;
 
+import by.bk.controller.model.request.UpdateCurrencyRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.user.model.User;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -84,13 +86,13 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public SimpleResponse addCurrencyToUser(String login, Currency currency) {
+    public SimpleResponse includeCurrency(String login, Currency currency) {
         User user = userRepository.getUserCurrencies(login);
         if (user.getCurrencies().stream().anyMatch(userCurrency -> userCurrency.getName().equals(currency))) {
             return SimpleResponse.fail("ALREADY_EXIST");
         }
         Optional<UserCurrency> maxOrder = user.getCurrencies().stream().max(Comparator.comparingInt(UserCurrency::getOrder));
-        UserCurrency newCurrency = new UserCurrency(currency, false, maxOrder.map(UserCurrency::getOrder).orElse(0));
+        UserCurrency newCurrency = new UserCurrency(currency, false, maxOrder.map(UserCurrency::getOrder).orElse(0) + 1);
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet("currencies", newCurrency);
@@ -104,7 +106,7 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public SimpleResponse removeCurrencyFromUser(String login, Currency currency) {
+    public SimpleResponse excludeCurrency(String login, Currency currency) {
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().pull("currencies", Collections.singletonMap("name", currency));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
@@ -119,12 +121,13 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public SimpleResponse markCurrencyAsDefault(String login, Currency currency) {
         User user = userRepository.getUserCurrencies(login);
-        Optional<UserCurrency> oldDefaultCurrency = user.getCurrencies().stream().filter(UserCurrency::isDefaultCurrency).findFirst();
+        List<UserCurrency> currencies = user.getCurrencies();
+        Optional<UserCurrency> oldDefaultCurrency = currencies.stream().filter(UserCurrency::isDefaultCurrency).findFirst();
         if (!oldDefaultCurrency.isPresent()) {
             LOG.error("There is no default currency for user " + login);
         }
 
-        Optional<UserCurrency> defaultCurrency = user.getCurrencies().stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
+        Optional<UserCurrency> defaultCurrency = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
         if (!defaultCurrency.isPresent()) {
             LOG.error(StringUtils.join("User ", login, " doesn't have currency which is requested to be default ", currency));
             return SimpleResponse.fail("ERROR");
@@ -134,11 +137,50 @@ public class UserService implements UserAPI, UserDetailsService {
         }
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().set(StringUtils.join("currencies.", user.getCurrencies().indexOf(defaultCurrency.get()), ".defaultCurrency"), true);
-        oldDefaultCurrency.ifPresent(userCurrency -> update.set(StringUtils.join("currencies.", user.getCurrencies().indexOf(userCurrency), ".defaultCurrency"), false));
+        Update update = new Update().set(StringUtils.join("currencies.", currencies.indexOf(defaultCurrency.get()), ".defaultCurrency"), true);
+        oldDefaultCurrency.ifPresent(userCurrency -> update.set(StringUtils.join("currencies.", currencies.indexOf(userCurrency), ".defaultCurrency"), false));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - mark currency default. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail("ERROR");
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse moveCurrency(String login, Currency currency, UpdateCurrencyRequest.Direction direction) {
+        User user = userRepository.getUserCurrencies(login);
+        List<UserCurrency> currencies = user.getCurrencies();
+        Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
+
+        Optional<UserCurrency> secondCurrency;
+        switch (direction) {
+            case DOWN:
+                secondCurrency = currencies.stream()
+                        .filter(userCurrency -> userCurrency.getOrder() > currencyItem.get().getOrder())
+                        .min(Comparator.comparingInt(UserCurrency::getOrder));
+                break;
+            case UP:
+                secondCurrency = currencies.stream()
+                        .filter(userCurrency -> userCurrency.getOrder() < currencyItem.get().getOrder())
+                        .max(Comparator.comparingInt(UserCurrency::getOrder));
+                break;
+            default:
+                secondCurrency = Optional.empty();
+        }
+
+        if (!secondCurrency.isPresent()) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update()
+                .set(StringUtils.join("currencies.", currencies.indexOf(secondCurrency.get()), ".order"), currencyItem.map(UserCurrency::getOrder).get())
+                .set(StringUtils.join("currencies.", currencies.indexOf(currencyItem.get()), ".order"), secondCurrency.map(UserCurrency::getOrder).get());
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail("ERROR");
         }
 

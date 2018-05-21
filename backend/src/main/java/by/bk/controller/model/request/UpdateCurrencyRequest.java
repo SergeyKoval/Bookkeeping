@@ -8,6 +8,9 @@ import lombok.Getter;
  */
 @Getter
 public class UpdateCurrencyRequest {
+    public enum Direction {UP, DOWN}
+
     private Currency name;
     private Boolean use;
+    private Direction direction;
 }

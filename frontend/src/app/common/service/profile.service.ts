@@ -87,6 +87,14 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/update-user-currency-default', {name: currencyName});
   }
 
+  public moveCurrencyUp(currencyName: string) {
+    return this._http.post<SimpleResponse>('/api/profile/update-user-currency-move', {name: currencyName, direction: 'UP'});
+  }
+
+  public moveCurrencyDown(currencyName: string) {
+    return this._http.post<SimpleResponse>('/api/profile/update-user-currency-move', {name: currencyName, direction: 'DOWN'});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }
@@ -277,6 +285,7 @@ export class ProfileService {
   public get initialDataLoaded(): boolean {
     return this._initialDataLoaded;
   }
+
 
 
 }

@@ -63,35 +63,6 @@ export class ProfileService {
       );
   }
 
-  public reloadProfile(clearCurrencies: boolean = true): Observable<CurrencyHistory[]> {
-    if (clearCurrencies) {
-      this._userCurrencies.clear();
-      this._currencyService.clearCurrencies();
-    }
-    this._categoryIcon.clear();
-    this._accountIcon.clear();
-
-    return this.getUserProfile()
-      .pipe(
-        tap(profile => {
-            if (clearCurrencies) {
-              profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
-              profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
-              this.authenticatedProfile.currencies = profile.currencies;
-            }
-
-            profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
-            profile.accounts.forEach((account: FinAccount) => {
-              account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
-            });
-
-            this.authenticatedProfile.accounts = profile.accounts;
-            this.authenticatedProfile.categories = profile.categories;
-            this._accounts$$.next(profile.accounts);
-        }),
-        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this.getProfileCurrencies())));
-  }
-
   public clearProfile(): void {
     this._authenticatedProfile = null;
     this._userCurrencies.clear();
@@ -105,7 +76,11 @@ export class ProfileService {
   }
 
   public updateProfileUseCurrency(currencyName: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/update-user-currency', {name: currencyName});
+    return this._http.post<SimpleResponse>('/api/profile/update-user-currency', {name: currencyName, use: true});
+  }
+
+  public updateProfileUnUseCurrency(currencyName: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/update-user-currency', {name: currencyName, use: false});
   }
 
   private getUserProfile(): Observable<Profile> {
@@ -127,6 +102,35 @@ export class ProfileService {
 
 
 
+
+  public reloadProfile(clearCurrencies: boolean = true): Observable<CurrencyHistory[]> {
+    if (clearCurrencies) {
+      this._userCurrencies.clear();
+      this._currencyService.clearCurrencies();
+    }
+    this._categoryIcon.clear();
+    this._accountIcon.clear();
+
+    return this.getUserProfile()
+      .pipe(
+        tap(profile => {
+          if (clearCurrencies) {
+            profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+            profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
+            this.authenticatedProfile.currencies = profile.currencies;
+          }
+
+          profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+          profile.accounts.forEach((account: FinAccount) => {
+            account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
+          });
+
+          this.authenticatedProfile.accounts = profile.accounts;
+          this.authenticatedProfile.categories = profile.categories;
+          this._accounts$$.next(profile.accounts);
+        }),
+        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this.getProfileCurrencies())));
+  }
 
   public get authenticatedProfile(): Profile {
     return this._authenticatedProfile;

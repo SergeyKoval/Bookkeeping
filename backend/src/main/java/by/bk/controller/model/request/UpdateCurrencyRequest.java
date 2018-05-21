@@ -9,4 +9,5 @@ import lombok.Getter;
 @Getter
 public class UpdateCurrencyRequest {
     private Currency name;
+    private Boolean use;
 }

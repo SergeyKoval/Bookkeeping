@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 
 import { CurrencyService } from '../../common/service/currency.service';
@@ -54,26 +53,38 @@ export class CurrenciesComponent implements OnInit {
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
             this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+          } else {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
           }
         }),
         switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
       ).subscribe(() => {
-        this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
         this._ACCOUNTS_LOADING.next(false);
         this.init();
     });
   }
 
   public unUseCurrencyForProfile(currencyName: string): void {
-    const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При отключении валюты все существующие операции в этой валюте будут удалены. Остатки на счетах в этой валюте будут обнулены. Продолжить?')
+    this._confirmDialogService.openConfirmDialog('Подтверждение', 'При отключении валюты все существующие операции в этой валюте будут удалены. Остатки на счетах в этой валюте будут обнулены. Продолжить?')
       .afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
-        tap((result: boolean) => this.loading = true),
-        switchMap(() => this._profileService.reloadProfile(true))
+        tap(() => {
+          this.loading = true;
+          this._ACCOUNTS_LOADING.next(true);
+        }),
+        switchMap(() => this._profileService.updateProfileUnUseCurrency(currencyName)),
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+          } else {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно удалена');
+          }
+        }),
+        switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
       ).subscribe(() => {
-        this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
-        subscription.unsubscribe();
+        this._ACCOUNTS_LOADING.next(false);
+        this.init();
       });
   }
 

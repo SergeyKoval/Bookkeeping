@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -96,6 +97,19 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - adding currency. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail("ERROR");
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse removeCurrencyFromUser(String login, Currency currency) {
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().pull("currencies", Collections.singletonMap("name", currency));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - removing currency. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail("ERROR");
         }
 

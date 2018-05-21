@@ -12,4 +12,5 @@ public interface UserAPI extends AuthenticationAPI {
     User getFullUserProfile(String login);
     SimpleResponse updateUserPassword(String login, String oldPassword, String newPassword);
     SimpleResponse addCurrencyToUser(String login, Currency currency);
+    SimpleResponse removeCurrencyFromUser(String login, Currency currency);
 }

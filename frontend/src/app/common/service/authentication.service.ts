@@ -63,15 +63,7 @@ export class AuthenticationService implements CanActivate {
     authenticationCheck$$.next(true);
     const result: Subject<boolean> = new Subject<boolean>();
     this._profileService.loadFullProfile()
-      .pipe(switchMap(() => {
-        const currentDate: Date = new Date(Date.now());
-        const currenciesRequest: {month: number, year: number, currencies: string[]} = {
-          month: currentDate.getUTCMonth() + 1,
-          year: currentDate.getUTCFullYear(),
-          currencies: this._profileService.getProfileCurrencies()
-        };
-        return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
-      }))
+      .pipe(switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies())))
       .subscribe(() => {
         authenticationCheck$$.next(false);
         result.next(true);

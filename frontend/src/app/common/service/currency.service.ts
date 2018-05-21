@@ -20,6 +20,16 @@ export class CurrencyService {
     @Inject(HOST) private _host: string
   ) {}
 
+  public loadCurrenciesForCurrentMoth(profileCurrencies: string[]): Observable<CurrencyHistory[]> {
+    const currentDate: Date = new Date(Date.now());
+    const currenciesRequest: {month: number, year: number, currencies: string[]} = {
+      month: currentDate.getUTCMonth() + 1,
+      year: currentDate.getUTCFullYear(),
+      currencies: profileCurrencies
+    };
+    return this.loadCurrenciesForMonth(currenciesRequest);
+  }
+
   public loadCurrenciesForMonth(request: {month: number, year: number, currencies: string[]}): Observable<CurrencyHistory[]> {
     return this._http.post<CurrencyHistory[]>('/api/currency/month-currencies', request)
       .pipe(
@@ -80,6 +90,12 @@ export class CurrencyService {
 
   public loadAllCurrencies(): Observable<CurrencyDetail[]> {
     return this._http.get<CurrencyDetail[]>('/api/currency/default-currencies');
+  }
+
+  public clearCurrencies(): void {
+    this._todayConversions.clear();
+    this._currencies.clear();
+    this._currenciesIndicatorMap.clear();
   }
 
 

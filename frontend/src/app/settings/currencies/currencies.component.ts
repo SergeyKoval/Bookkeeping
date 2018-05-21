@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterEvent } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -9,38 +9,32 @@ import { ProfileService } from '../../common/service/profile.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
+import { LoadingService } from '../../common/service/loading.service';
+import { Subject } from 'rxjs/index';
 
 @Component({
   selector: 'bk-currencies',
   templateUrl: './currencies.component.html',
   styleUrls: ['./currencies.component.css']
 })
-export class CurrenciesComponent implements OnInit, OnDestroy {
+export class CurrenciesComponent implements OnInit {
   public loading: boolean = true;
   public allCurrencies: CurrencyDetail[];
 
-  private _NAVIGATION_SUBSCRIPTION: Subscription;
+  private _ACCOUNTS_LOADING: Subject<boolean>;
 
   public constructor(
     private _router: Router,
+    private _loadingService: LoadingService,
     private _alertService: AlertService,
     private _confirmDialogService: ConfirmDialogService,
     private _currencyService: CurrencyService,
     private _profileService: ProfileService
-  ) {
-    this._NAVIGATION_SUBSCRIPTION = this._router.events.subscribe((e: RouterEvent) => {
-      if (e instanceof NavigationEnd && e.urlAfterRedirects.endsWith('reload=true')) {
-        this.init();
-      }
-    });
-  }
+  ) {}
 
   public ngOnInit(): void {
+    this._ACCOUNTS_LOADING = this._loadingService.accounts$$;
     this.init();
-  }
-
-  public ngOnDestroy(): void {
-    this._NAVIGATION_SUBSCRIPTION.unsubscribe();
   }
 
   public isCurrencyUsed(currencyName: string): boolean {
@@ -54,6 +48,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
 
   public useCurrencyForProfile(currencyName: string): void {
     this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
     this._profileService.updateProfileUseCurrency(currencyName)
       .pipe(
         tap(simpleResponse => {
@@ -61,20 +56,21 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
             this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
           }
         }),
-        switchMap(() => this._profileService.reloadProfile())
+        switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
       ).subscribe(() => {
         this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
-        this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
+        this._ACCOUNTS_LOADING.next(false);
+        this.init();
     });
   }
 
   public unUseCurrencyForProfile(currencyName: string): void {
-    const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При отключении валюты все существующие операции в этой валюте будут удалены. Продолжить?')
+    const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При отключении валюты все существующие операции в этой валюте будут удалены. Остатки на счетах в этой валюте будут обнулены. Продолжить?')
       .afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
         tap((result: boolean) => this.loading = true),
-        switchMap(() => this._profileService.reloadProfile())
+        switchMap(() => this._profileService.reloadProfile(true))
       ).subscribe(() => {
         this._router.navigate(['settings', 'currencies'], {queryParams: {reload: true}});
         subscription.unsubscribe();

@@ -32,7 +32,7 @@ export class ProfileService {
   ) {}
 
   public loadFullProfile(): Observable<Profile> {
-    return this._http.get<Profile>('/api/profile/full')
+    return this.getUserProfile()
       .pipe(
         tap(profile => {
           profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
@@ -46,21 +46,50 @@ export class ProfileService {
       }));
   }
 
-  public reloadProfile(): Observable<CurrencyHistory[]> {
+  public reloadCurrenciesAndAccountsInProfile(): Observable<CurrencyHistory[]> {
     this._userCurrencies.clear();
+    this._currencyService.clearCurrencies();
+
+    return this.getUserProfile()
+      .pipe(
+        tap(profile => {
+          profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+          profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
+          this.authenticatedProfile.currencies = profile.currencies;
+          this.authenticatedProfile.accounts = profile.accounts;
+          this._accounts$$.next(profile.accounts);
+        }),
+        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this.getProfileCurrencies()))
+      );
+  }
+
+  public reloadProfile(clearCurrencies: boolean = true): Observable<CurrencyHistory[]> {
+    if (clearCurrencies) {
+      this._userCurrencies.clear();
+      this._currencyService.clearCurrencies();
+    }
     this._categoryIcon.clear();
     this._accountIcon.clear();
-    return this.loadFullProfile()
+
+    return this.getUserProfile()
       .pipe(
-        switchMap(() => {
-          const currentDate: Date = new Date(Date.now());
-          const currenciesRequest: {month: number, year: number, currencies: string[]} = {
-            month: currentDate.getUTCMonth() + 1,
-            year: currentDate.getUTCFullYear(),
-            currencies: this.getProfileCurrencies()
-          };
-          return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
-    }));
+        tap(profile => {
+            if (clearCurrencies) {
+              profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
+              profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
+              this.authenticatedProfile.currencies = profile.currencies;
+            }
+
+            profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+            profile.accounts.forEach((account: FinAccount) => {
+              account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
+            });
+
+            this.authenticatedProfile.accounts = profile.accounts;
+            this.authenticatedProfile.categories = profile.categories;
+            this._accounts$$.next(profile.accounts);
+        }),
+        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this.getProfileCurrencies())));
   }
 
   public clearProfile(): void {
@@ -77,6 +106,10 @@ export class ProfileService {
 
   public updateProfileUseCurrency(currencyName: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/update-user-currency', {name: currencyName});
+  }
+
+  private getUserProfile(): Observable<Profile> {
+    return this._http.get<Profile>('/api/profile/full');
   }
 
 

@@ -43,9 +43,15 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
-    this._APPLICATION_LOADING_SUBSCRIPTION.unsubscribe();
-    this._AUTHENTICATION_ERROR_SUBSCRIPTION.unsubscribe();
+    if (this._AUTHENTICATION_LOADING_SUBSCRIPTION) {
+      this._AUTHENTICATION_LOADING_SUBSCRIPTION.unsubscribe();
+    }
+    if (this._APPLICATION_LOADING_SUBSCRIPTION) {
+      this._APPLICATION_LOADING_SUBSCRIPTION.unsubscribe();
+    }
+    if (this._AUTHENTICATION_ERROR_SUBSCRIPTION) {
+      this._AUTHENTICATION_ERROR_SUBSCRIPTION.unsubscribe();
+    }
   }
 
   public authenticate(): void {
@@ -59,15 +65,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
       .pipe(
         tap(() => this.applicationLoading = true),
         switchMap(() => this._profileService.loadFullProfile()),
-        switchMap(() => {
-          const currentDate: Date = new Date(Date.now());
-          const currenciesRequest: {month: number, year: number, currencies: string[]} = {
-            month: currentDate.getUTCMonth() + 1,
-            year: currentDate.getUTCFullYear(),
-            currencies: this._profileService.getProfileCurrencies()
-          };
-          return this._currencyService.loadCurrenciesForMonth(currenciesRequest);
-        })
+        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies()))
       ).subscribe(() => {
         this._profileService.initialDataLoaded = true;
         this._router.navigate(['budget']);

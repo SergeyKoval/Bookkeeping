@@ -18,4 +18,5 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse moveCurrency(String login, Currency currency, UpdateCurrencyRequest.Direction direction);
     SimpleResponse addAccount(String login, String title);
     SimpleResponse editAccount(String login, String newTitle, String oldTitle);
+    SimpleResponse deleteAccount(String login, String title);
 }

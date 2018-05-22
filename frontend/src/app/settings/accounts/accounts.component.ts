@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 
 import { Subscription ,  Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs/index';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
@@ -10,6 +11,7 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 import { AlertType } from '../../common/model/alert/AlertType';
 import { AccountDialogComponent } from './account-dialog/account-dialog.component';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
+import { LoadingService } from '../../common/service/loading.service';
 
 @Component({
   selector: 'bk-accounts',
@@ -20,7 +22,10 @@ export class AccountsComponent implements OnInit {
   public loading: boolean = false;
   public profile: Profile;
 
+  private _ACCOUNTS_LOADING: Subject<boolean>;
+
   public constructor(
+    private _loadingService: LoadingService,
     private _profileService: ProfileService,
     private _dialog: MatDialog,
     private _alertService: AlertService,
@@ -28,6 +33,7 @@ export class AccountsComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
+    this._ACCOUNTS_LOADING = this._loadingService.accounts$$;
     this.profile = this._profileService.authenticatedProfile;
     this.profile.accounts.forEach((account: FinAccount) => account.settingsOpened = false);
   }
@@ -47,6 +53,30 @@ export class AccountsComponent implements OnInit {
     });
   }
 
+  public deleteAccount(deleteAccount: FinAccount): void {
+    this._confirmDialogService.openConfirmDialog('Подтверждение', 'При удалении счета все существующие операции с использованием этого счета будут удалены. Остатки на удаляемом счете будут утерены. Продолжить?')
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => {
+          this.loading = true;
+          this._ACCOUNTS_LOADING.next(true);
+        }),
+        switchMap(() => this._profileService.deleteAccount(deleteAccount.title)),
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+          } else {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Счет успешно удален');
+          }
+        }),
+        switchMap(() => this._profileService.reloadAccountsInProfile())
+      ).subscribe(() => {
+        this._ACCOUNTS_LOADING.next(false);
+        this.loading = false;
+    });
+  }
+
   private openAccountDialog(dialogData: {}): void {
     const dialogResult: Observable<boolean> = this._dialog.open(AccountDialogComponent, {
       width: '550px',
@@ -63,10 +93,12 @@ export class AccountsComponent implements OnInit {
         tap(() => {
           this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
           this.loading = true;
+          this._ACCOUNTS_LOADING.next(true);
         }),
         switchMap(() => this._profileService.reloadAccountsInProfile())
       ).subscribe(() => {
         this.loading = false;
+        this._ACCOUNTS_LOADING.next(false);
     });
   }
 

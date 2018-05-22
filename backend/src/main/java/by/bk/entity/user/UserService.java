@@ -112,7 +112,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().pull("currencies", Collections.singletonMap("name", currency));
+        Update update = new Update().pull("currencies", currencyItem.get());
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - removing currency. Number of updated items " + updateResult.getModifiedCount());
@@ -238,6 +238,26 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - change account title. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse deleteAccount(String login, String title) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), title)).findFirst();
+        if (!account.isPresent()) {
+            LOG.error(StringUtils.join("Account ", title, " which need to be removed is missed for user ", login));
+            return SimpleResponse.fail();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().pull("accounts", account.get());
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - removing account. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail();
         }
 

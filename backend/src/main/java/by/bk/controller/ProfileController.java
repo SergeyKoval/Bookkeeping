@@ -60,4 +60,9 @@ public class ProfileController extends BaseAPIController {
         }
         return userAPI.editAccount(principal.getName(), request.getTitle(), request.getOldTitle());
     }
+
+    @PostMapping("/delete-account")
+    public SimpleResponse deleteAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.deleteAccount(principal.getName(), request.getTitle());
+    }
 }

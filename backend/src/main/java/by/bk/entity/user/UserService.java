@@ -56,11 +56,11 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updatedResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updatedResult.getModifiedCount() != 1) {
             LOG.error(StringUtils.join("Error updating password for user ", login, ". Update result count=", updatedResult.getModifiedCount()));
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
         if (!passwordEncoder.matches(newPassword, encodedPassword)) {
             LOG.error(StringUtils.join("Error updating password for user ", login, ". After update new password is not satisfied."));
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
 
         return SimpleResponse.success();
@@ -88,11 +88,11 @@ public class UserService implements UserAPI, UserDetailsService {
 
     @Override
     public SimpleResponse includeCurrency(String login, Currency currency) {
-        User user = userRepository.getUserCurrencies(login);
-        if (user.getCurrencies().stream().anyMatch(userCurrency -> userCurrency.getName().equals(currency))) {
+        List<UserCurrency> currencies = userRepository.getUserCurrencies(login).getCurrencies();
+        if (currencies.stream().anyMatch(userCurrency -> userCurrency.getName().equals(currency))) {
             return SimpleResponse.fail("ALREADY_EXIST");
         }
-        Optional<UserCurrency> maxOrder = user.getCurrencies().stream().max(Comparator.comparingInt(UserCurrency::getOrder));
+        Optional<UserCurrency> maxOrder = currencies.stream().max(Comparator.comparingInt(UserCurrency::getOrder));
         UserCurrency newCurrency = new UserCurrency(currency, false, maxOrder.map(UserCurrency::getOrder).orElse(0) + 1);
 
         Query query = Query.query(Criteria.where("email").is(login));
@@ -100,7 +100,7 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - adding currency. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
 
         return SimpleResponse.success();
@@ -108,8 +108,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
     @Override
     public SimpleResponse excludeCurrency(String login, Currency currency) {
-        User user = userRepository.getUserCurrencies(login);
-        List<UserCurrency> currencies = user.getCurrencies();
+        List<UserCurrency> currencies = userRepository.getUserCurrencies(login).getCurrencies();
         Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
 
         Query query = Query.query(Criteria.where("email").is(login));
@@ -117,7 +116,7 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - removing currency. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
 
         if (currencyItem.get().isDefaultCurrency()) {
@@ -126,7 +125,7 @@ public class UserService implements UserAPI, UserDetailsService {
             UpdateResult newDefaultUpdateResult = mongoTemplate.updateFirst(query, newDefaultUpdate, User.class);
             if (newDefaultUpdateResult.getModifiedCount() != 1) {
                 LOG.error("Error updating user profile - removing currency (setting new default currency). Number of updated items " + updateResult.getModifiedCount());
-                return SimpleResponse.fail("ERROR");
+                return SimpleResponse.fail();
             }
         }
 
@@ -135,8 +134,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
     @Override
     public SimpleResponse markCurrencyAsDefault(String login, Currency currency) {
-        User user = userRepository.getUserCurrencies(login);
-        List<UserCurrency> currencies = user.getCurrencies();
+        List<UserCurrency> currencies = userRepository.getUserCurrencies(login).getCurrencies();
         Optional<UserCurrency> oldDefaultCurrency = currencies.stream().filter(UserCurrency::isDefaultCurrency).findFirst();
         if (!oldDefaultCurrency.isPresent()) {
             LOG.error("There is no default currency for user " + login);
@@ -145,7 +143,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Optional<UserCurrency> defaultCurrency = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
         if (!defaultCurrency.isPresent()) {
             LOG.error(StringUtils.join("User ", login, " doesn't have currency which is requested to be default ", currency));
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
         if (defaultCurrency.equals(oldDefaultCurrency)) {
             return SimpleResponse.success();
@@ -157,7 +155,7 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - mark currency default. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
 
         return SimpleResponse.success();
@@ -165,8 +163,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
     @Override
     public SimpleResponse moveCurrency(String login, Currency currency, UpdateCurrencyRequest.Direction direction) {
-        User user = userRepository.getUserCurrencies(login);
-        List<UserCurrency> currencies = user.getCurrencies();
+        List<UserCurrency> currencies = userRepository.getUserCurrencies(login).getCurrencies();
         Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
 
         Optional<UserCurrency> secondCurrency;
@@ -196,7 +193,7 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
         }
 
         return SimpleResponse.success();
@@ -204,12 +201,12 @@ public class UserService implements UserAPI, UserDetailsService {
 
     @Override
     public SimpleResponse addAccount(String login, String title) {
-        User user = userRepository.getUserAccounts(login);
-        if (user.getAccounts().stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), title))) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        if (accounts.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), title))) {
             return SimpleResponse.fail("ALREADY_EXIST");
         }
 
-        int order = 1 + user.getAccounts().stream()
+        int order = 1 + accounts.stream()
                 .max(Comparator.comparingInt(Account::getOrder))
                 .map(Account::getOrder)
                 .orElse(0);
@@ -218,7 +215,30 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - add account. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail("ERROR");
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse editAccount(String login, String newTitle, String oldTitle) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), oldTitle)).findFirst();
+        if (!account.isPresent()) {
+            LOG.error(StringUtils.join("Account ", oldTitle, " which need to be updated is missed for user ", login));
+            return SimpleResponse.fail();
+        }
+        if (accounts.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), newTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().set(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".title"), newTitle);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - change account title. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
         }
 
         return SimpleResponse.success();

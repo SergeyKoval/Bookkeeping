@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SimpleResponse {
+    private static final String ERROR = "ERROR";
     private enum Status {
         SUCCESS, FAIL
     }
@@ -27,5 +28,9 @@ public class SimpleResponse {
 
     public static SimpleResponse fail(String message) {
         return new SimpleResponse(Status.FAIL, message);
+    }
+
+    public static SimpleResponse fail() {
+        return new SimpleResponse(Status.FAIL, ERROR);
     }
 }

@@ -6,6 +6,7 @@ import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.request.UserPasswordChangeRequest;
 import by.bk.entity.user.model.User;
 import by.bk.entity.user.UserAPI;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,5 +51,13 @@ public class ProfileController extends BaseAPIController {
     @PostMapping("/add-account")
     public SimpleResponse addAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.addAccount(principal.getName(), request.getTitle());
+    }
+
+    @PostMapping("/edit-account")
+    public SimpleResponse editAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        if (StringUtils.equals(request.getTitle(), request.getOldTitle())) {
+            return SimpleResponse.success();
+        }
+        return userAPI.editAccount(principal.getName(), request.getTitle(), request.getOldTitle());
     }
 }

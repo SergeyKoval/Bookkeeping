@@ -46,6 +46,18 @@ export class AccountDialogComponent implements OnInit {
 
         this._dialogRef.close(true);
       });
+    } else if (this.title === this.data.account) {
+      this._dialogRef.close(false);
+    } else {
+      this._profileService.editAccount(this.data.account, this.title).subscribe(result => {
+        this.loading = false;
+        if (result.status === 'FAIL') {
+          this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
+          return;
+        }
+
+        this._dialogRef.close(true);
+      });
     }
   }
 

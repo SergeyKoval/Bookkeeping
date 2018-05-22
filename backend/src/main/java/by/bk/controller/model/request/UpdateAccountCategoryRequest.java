@@ -8,4 +8,5 @@ import lombok.Getter;
 @Getter
 public class UpdateAccountCategoryRequest {
     private String title;
+    private String oldTitle;
 }

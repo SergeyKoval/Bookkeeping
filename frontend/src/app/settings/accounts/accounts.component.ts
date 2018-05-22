@@ -39,6 +39,14 @@ export class AccountsComponent implements OnInit {
     });
   }
 
+  public editAccount(editAccount: FinAccount): void {
+    this.openAccountDialog({
+      'type': 'account',
+      'editMode': true,
+      'account': editAccount.title
+    });
+  }
+
   private openAccountDialog(dialogData: {}): void {
     const dialogResult: Observable<boolean> = this._dialog.open(AccountDialogComponent, {
       width: '550px',
@@ -77,14 +85,6 @@ export class AccountsComponent implements OnInit {
 
   public hasSubAccounts(account: FinAccount): boolean {
     return account.subAccounts && account.subAccounts.length > 0;
-  }
-
-  public editAccount(editAccount: FinAccount): void {
-    this.openAccountDialog({
-      'type': 'account',
-      'editMode': true,
-      'account': editAccount.title
-    });
   }
 
   public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {

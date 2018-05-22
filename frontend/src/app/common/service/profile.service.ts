@@ -108,6 +108,10 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/add-account', {title: accountTitle});
   }
 
+  public editAccount(oldAccountTitle: string, newAccountTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/edit-account', {title: newAccountTitle, oldTitle: oldAccountTitle});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }
@@ -298,6 +302,7 @@ export class ProfileService {
   public get initialDataLoaded(): boolean {
     return this._initialDataLoaded;
   }
+
 
 
 

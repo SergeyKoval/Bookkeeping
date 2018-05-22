@@ -1,9 +1,10 @@
 package by.bk.entity.user;
 
-import by.bk.controller.model.request.UpdateCurrencyRequest;
+import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.user.model.Account;
+import by.bk.entity.user.model.Orderable;
 import by.bk.entity.user.model.User;
 import by.bk.entity.user.model.UserCurrency;
 import by.bk.security.model.JwtUser;
@@ -23,7 +24,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -162,26 +162,10 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public SimpleResponse moveCurrency(String login, Currency currency, UpdateCurrencyRequest.Direction direction) {
+    public SimpleResponse moveCurrency(String login, Currency currency, Direction direction) {
         List<UserCurrency> currencies = userRepository.getUserCurrencies(login).getCurrencies();
         Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
-
-        Optional<UserCurrency> secondCurrency;
-        switch (direction) {
-            case DOWN:
-                secondCurrency = currencies.stream()
-                        .filter(userCurrency -> userCurrency.getOrder() > currencyItem.get().getOrder())
-                        .min(Comparator.comparingInt(UserCurrency::getOrder));
-                break;
-            case UP:
-                secondCurrency = currencies.stream()
-                        .filter(userCurrency -> userCurrency.getOrder() < currencyItem.get().getOrder())
-                        .max(Comparator.comparingInt(UserCurrency::getOrder));
-                break;
-            default:
-                secondCurrency = Optional.empty();
-        }
-
+        Optional<UserCurrency> secondCurrency = getSecondItem(currencies, direction, currencyItem.get().getOrder());;
         if (!secondCurrency.isPresent()) {
             return SimpleResponse.success();
         }
@@ -262,5 +246,51 @@ public class UserService implements UserAPI, UserDetailsService {
         }
 
         return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse moveAccount(String login, String title, Direction direction) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), title)).findFirst();
+        if (!account.isPresent()) {
+            LOG.error(StringUtils.join("Account ", title, " which need to be moved is missed for user ", login));
+            return SimpleResponse.fail();
+        }
+        Optional<Account> secondAccount = getSecondItem(accounts, direction, account.get().getOrder());
+        if (!secondAccount.isPresent()) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update()
+                .set(StringUtils.join("accounts.", accounts.indexOf(secondAccount.get()), ".order"), account.map(Account::getOrder).get())
+                .set(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".order"), secondAccount.map(Account::getOrder).get());
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
+        Optional<T> secondItem;
+        switch (direction) {
+            case DOWN:
+                secondItem = items.stream()
+                        .filter(item -> item.getOrder() > itemOrder)
+                        .min(Comparator.comparingInt(Orderable::getOrder));
+                break;
+            case UP:
+                secondItem = items.stream()
+                        .filter(item -> item.getOrder() < itemOrder)
+                        .max(Comparator.comparingInt(Orderable::getOrder));
+                break;
+            default:
+                secondItem = Optional.empty();
+        }
+
+        return secondItem;
     }
 }

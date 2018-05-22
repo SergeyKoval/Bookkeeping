@@ -9,4 +9,5 @@ import lombok.Getter;
 public class UpdateAccountCategoryRequest {
     private String title;
     private String oldTitle;
+    private Direction direction;
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * @author Sergey Koval
  */
 @Getter
-public class Account {
+public class Account implements Orderable {
     private int order;
     private boolean opened;
     private String title;

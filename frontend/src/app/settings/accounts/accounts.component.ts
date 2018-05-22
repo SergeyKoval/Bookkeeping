@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 
 import { Subscription ,  Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { Subject } from 'rxjs/index';
+import { of, Subject } from 'rxjs/index';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
@@ -38,6 +38,10 @@ export class AccountsComponent implements OnInit {
     this.profile.accounts.forEach((account: FinAccount) => account.settingsOpened = false);
   }
 
+  public hasSubAccounts(account: FinAccount): boolean {
+    return account.subAccounts && account.subAccounts.length > 0;
+  }
+
   public addAccount(): void {
     this.openAccountDialog({
       'type': 'account',
@@ -54,7 +58,7 @@ export class AccountsComponent implements OnInit {
   }
 
   public deleteAccount(deleteAccount: FinAccount): void {
-    this._confirmDialogService.openConfirmDialog('Подтверждение', 'При удалении счета все существующие операции с использованием этого счета будут удалены. Остатки на удаляемом счете будут утерены. Продолжить?')
+    const dialogResult: Observable<boolean> = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При удалении счета все существующие операции с использованием этого счета будут удалены. Остатки на удаляемом счете будут утерены. Продолжить?')
       .afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
@@ -66,15 +70,36 @@ export class AccountsComponent implements OnInit {
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
             this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
-          } else {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Счет успешно удален');
           }
         }),
-        switchMap(() => this._profileService.reloadAccountsInProfile())
-      ).subscribe(() => {
-        this._ACCOUNTS_LOADING.next(false);
-        this.loading = false;
-    });
+        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
+      );
+    this.processAccountDialogResult(dialogResult);
+  }
+
+  public moveAccountDown(account: FinAccount): void {
+    this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
+    this.moveAccount(this._profileService.moveAccountDown(account.title));
+  }
+
+  public moveAccountUp(account: FinAccount): void {
+    this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
+    this.moveAccount(this._profileService.moveAccountUp(account.title));
+  }
+
+  private moveAccount(result: Observable<SimpleResponse>): void {
+    const moveResult: Observable<boolean> = result
+      .pipe(
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время перемещения произошла ошибка');
+          }
+        }),
+        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
+      );
+    this.processAccountDialogResult(moveResult);
   }
 
   private openAccountDialog(dialogData: {}): void {
@@ -115,9 +140,7 @@ export class AccountsComponent implements OnInit {
 
 
 
-  public hasSubAccounts(account: FinAccount): boolean {
-    return account.subAccounts && account.subAccounts.length > 0;
-  }
+
 
   public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {
     const subscription: Subscription = this._dialog.open(BalanceDialogComponent, {

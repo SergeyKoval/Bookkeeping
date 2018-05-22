@@ -7,7 +7,7 @@ import lombok.Getter;
  * @author Sergey Koval
  */
 @Getter
-public class UserCurrency {
+public class UserCurrency implements Orderable {
     private Currency name;
     private boolean defaultCurrency;
     private int order;

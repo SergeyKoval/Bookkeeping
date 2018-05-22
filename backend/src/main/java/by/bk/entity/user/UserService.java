@@ -3,6 +3,7 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.UpdateCurrencyRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.user.model.Account;
 import by.bk.entity.user.model.User;
 import by.bk.entity.user.model.UserCurrency;
 import by.bk.security.model.JwtUser;
@@ -195,6 +196,28 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail("ERROR");
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse addAccount(String login, String title) {
+        User user = userRepository.getUserAccounts(login);
+        if (user.getAccounts().stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), title))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        int order = 1 + user.getAccounts().stream()
+                .max(Comparator.comparingInt(Account::getOrder))
+                .map(Account::getOrder)
+                .orElse(0);
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().addToSet("accounts", new Account(title, order));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - add account. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail("ERROR");
         }
 

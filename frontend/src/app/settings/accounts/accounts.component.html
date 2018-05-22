@@ -4,7 +4,7 @@
 </div>
 
 <div class="table" *ngIf="!loading; else loadingIndicator">
-  <div *ngFor="let account of accounts; let lastAccount = last; let firstAccount = first;">
+  <div *ngFor="let account of profile.accounts; let lastAccount = last; let firstAccount = first;">
     <hr *ngIf="firstAccount" />
     <div class="row">
       <div class="col-md-8">
@@ -42,7 +42,7 @@
         <hr/>
         <div class="col-md-8">
           <img class="icon" [src]="subAccount.icon | assetImage:'account'">
-          {{subAccount.title}}
+          <span>{{subAccount.title}}</span>
         </div>
         <div class="col-md-4 text-right">
           <span class="action glyphicon glyphicon-piggy-bank" (click)="editSubAccountBalance(account, subAccount)"

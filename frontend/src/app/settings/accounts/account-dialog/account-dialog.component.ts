@@ -16,6 +16,7 @@ export class AccountDialogComponent implements OnInit {
   public accountIcons: string[] = ['kwallet.gif', 'Money.gif', 'home.gif', 'other_exp.gif'];
   public title: string;
   public errorMessage: string;
+  public loading: boolean;
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, account: string, subAccount: string, icon: string, balance: BalanceItem[]},
@@ -32,6 +33,30 @@ export class AccountDialogComponent implements OnInit {
       this.data.icon = this.accountIcons[0];
     }
   }
+
+  public save(): void {
+    this.loading = true;
+    if (!this.data.editMode) {
+      this._profileService.addAccount(this.title).subscribe(result => {
+        this.loading = false;
+        if (result.status === 'FAIL') {
+          this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
+          return;
+        }
+
+        this._dialogRef.close(true);
+      });
+    }
+  }
+
+
+
+
+
+
+
+
+
 
   public isAccount(): boolean {
     return this.data.type === 'account';

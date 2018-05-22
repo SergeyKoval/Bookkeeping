@@ -63,6 +63,15 @@ export class ProfileService {
       );
   }
 
+  public reloadAccountsInProfile(): Observable<Profile> {
+    return this.getUserProfile()
+      .pipe(
+        tap(profile => {
+          this.authenticatedProfile.accounts = profile.accounts;
+          this._accounts$$.next(profile.accounts);
+        }));
+  }
+
   public clearProfile(): void {
     this._authenticatedProfile = null;
     this._userCurrencies.clear();
@@ -87,12 +96,16 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/update-user-currency-default', {name: currencyName});
   }
 
-  public moveCurrencyUp(currencyName: string) {
+  public moveCurrencyUp(currencyName: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/update-user-currency-move', {name: currencyName, direction: 'UP'});
   }
 
-  public moveCurrencyDown(currencyName: string) {
+  public moveCurrencyDown(currencyName: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/update-user-currency-move', {name: currencyName, direction: 'DOWN'});
+  }
+
+  public addAccount(accountTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/add-account', {title: accountTitle});
   }
 
   private getUserProfile(): Observable<Profile> {

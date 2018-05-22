@@ -18,7 +18,7 @@ import { BalanceDialogComponent } from './balance-dialog/balance-dialog.componen
 })
 export class AccountsComponent implements OnInit {
   public loading: boolean = false;
-  public accounts: FinAccount[];
+  public profile: Profile;
 
   public constructor(
     private _profileService: ProfileService,
@@ -28,12 +28,8 @@ export class AccountsComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.accounts = this._profileService.authenticatedProfile.accounts;
-    this.accounts.forEach((account: FinAccount) => account.settingsOpened = false);
-  }
-
-  public hasSubAccounts(account: FinAccount): boolean {
-    return account.subAccounts && account.subAccounts.length > 0;
+    this.profile = this._profileService.authenticatedProfile;
+    this.profile.accounts.forEach((account: FinAccount) => account.settingsOpened = false);
   }
 
   public addAccount(): void {
@@ -41,6 +37,46 @@ export class AccountsComponent implements OnInit {
       'type': 'account',
       'editMode': false
     });
+  }
+
+  private openAccountDialog(dialogData: {}): void {
+    const dialogResult: Observable<boolean> = this._dialog.open(AccountDialogComponent, {
+      width: '550px',
+      position: {top: 'top'},
+      data: dialogData
+    }).afterClosed();
+    this.processAccountDialogResult(dialogResult);
+  }
+
+  private processAccountDialogResult(dialogResult: Observable<boolean>): void {
+    dialogResult
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => {
+          this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
+          this.loading = true;
+        }),
+        switchMap(() => this._profileService.reloadAccountsInProfile())
+      ).subscribe(() => {
+        this.loading = false;
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public hasSubAccounts(account: FinAccount): boolean {
+    return account.subAccounts && account.subAccounts.length > 0;
   }
 
   public editAccount(editAccount: FinAccount): void {
@@ -87,29 +123,7 @@ export class AccountsComponent implements OnInit {
     });
   }
 
-  private openAccountDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialog.open(AccountDialogComponent, {
-      width: '550px',
-      position: {top: 'top'},
-      data: dialogData
-    }).afterClosed();
-    this.processAccountDialogResult(dialogResult);
-  }
 
-  private processAccountDialogResult(dialogResult: Observable<boolean>): void {
-    const subscription: Subscription = dialogResult.pipe(
-      filter((result: boolean) => result === true),
-      tap((result: boolean) => this.loading = true),
-      switchMap(() => this._profileService.reloadProfile())
-    ).subscribe(() => {
-      // const updatedAccounts: FinAccount[] = profiles[0].accounts;
-      // updatedAccounts.forEach((account: FinAccount) => account.settingsOpened = this.getAccountOpened(this.accounts, account.title));
-      // this.accounts = updatedAccounts;
-      this.loading = false;
-      this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
-      subscription.unsubscribe();
-    });
-  }
 
   private getAccountOpened(accounts: FinAccount[], title: string): boolean {
     const element: FinAccount = accounts.filter((account: FinAccount) => account.title === title)[0];

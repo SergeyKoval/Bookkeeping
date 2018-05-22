@@ -1,5 +1,6 @@
 package by.bk.controller;
 
+import by.bk.controller.model.request.UpdateAccountCategoryRequest;
 import by.bk.controller.model.request.UpdateCurrencyRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.request.UserPasswordChangeRequest;
@@ -44,5 +45,10 @@ public class ProfileController extends BaseAPIController {
     @PostMapping("/update-user-currency-move")
     public SimpleResponse updateProfileMoveCurrency(@RequestBody UpdateCurrencyRequest request, Principal principal) {
         return userAPI.moveCurrency(principal.getName(), request.getName(), request.getDirection());
+    }
+
+    @PostMapping("/add-account")
+    public SimpleResponse addAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.addAccount(principal.getName(), request.getTitle());
     }
 }

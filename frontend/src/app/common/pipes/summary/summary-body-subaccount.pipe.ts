@@ -8,17 +8,17 @@ import { CurrencyService } from '../../service/currency.service';
 export class SummaryBodySubAccountPipe implements PipeTransform {
   public constructor(private _currencyService: CurrencyService) {}
 
-  public transform(items: BalanceItem[], currency: CurrencyDetail): BalanceItem[] {
+  public transform(balance: {[currency: string]: number}, currency: CurrencyDetail): BalanceItem[] {
     if (!currency) {
-      return items;
+      const result: BalanceItem[] = [];
+      Object.entries(balance).forEach(([balanceCurrency, balanceValue]) => result.push({currency: balanceCurrency, value: balanceValue}));
+      return result;
     }
 
     const balanceItem: BalanceItem = {currency: currency.name, value: 0};
-    items.forEach((item: BalanceItem) => {
-      balanceItem.value += this._currencyService.convertToCurrency(item.value, item.currency, currency);
+    Object.entries(balance).forEach(([balanceCurrency, balanceValue]) => {
+      balanceItem.value += this._currencyService.convertToCurrency(balanceValue, balanceCurrency, currency);
     });
-
     return [balanceItem];
   }
-
 }

@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PopoverModule } from 'ngx-popover';
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
+import { MyDatePickerModule } from 'mydatepicker';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
@@ -41,7 +42,6 @@ import { HistoryEditDialogComponent } from './history/history-edit-dialog/histor
 import { ConfirmDialogComponent } from './common/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogService } from './common/components/confirm-dialog/confirm-dialog.service';
 import { AlertService } from './common/service/alert.service';
-import { MyDatePickerModule } from 'mydatepicker';
 import { GoalsContainerComponent } from './history/history-edit-dialog/goals-container/goals-container.component';
 import { CurrencyValueDirective } from './common/directives/currency-value.directive';
 import { SelectComponent } from './common/components/select/select.component';

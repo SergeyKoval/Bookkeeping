@@ -5,12 +5,11 @@ export abstract class BaseSummaryPipe {
 
   protected populateBalanceMap(account: FinAccount, balanceMap: Map<string, number>): void {
     account.subAccounts.forEach((subAccount: SubAccount) => {
-      subAccount.balance.forEach((balance: BalanceItem) => {
-        const balanceCurrency: string = balance.currency;
-        if (!balanceMap.has(balanceCurrency)) {
-          balanceMap.set(balanceCurrency, balance.value);
+      Object.entries(subAccount.balance).forEach(([currency, value]) => {
+        if (!balanceMap.has(currency)) {
+          balanceMap.set(currency, value);
         } else {
-          balanceMap.set(balanceCurrency, balanceMap.get(balanceCurrency) + balance.value);
+          balanceMap.set(currency, balanceMap.get(currency) + value);
         }
       });
     });

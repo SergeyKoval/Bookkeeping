@@ -45,7 +45,7 @@ type SubAccount = {
   title: string,
   order: number,
   icon: string,
-  balance: BalanceItem[]
+  balance: {[currency: string]: number}
 };
 
 type BalanceItem = {

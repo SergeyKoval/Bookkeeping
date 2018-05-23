@@ -127,6 +127,10 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/move-account', {title: accountTitle, direction: 'UP'});
   }
 
+  public addSubAccount(subAccountTitle: string, accountTitle: string, icon: string, balance: {[currency: string]: number}) {
+    return this._http.post<SimpleResponse>('/api/profile/add-sub-account', {title: subAccountTitle, parentTitle: accountTitle, icon: icon, balance: balance});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }

@@ -3,10 +3,7 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
-import by.bk.entity.user.model.Account;
-import by.bk.entity.user.model.Orderable;
-import by.bk.entity.user.model.User;
-import by.bk.entity.user.model.UserCurrency;
+import by.bk.entity.user.model.*;
 import by.bk.security.model.JwtUser;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -268,6 +266,36 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), accountTitle)).findFirst();
+
+        if (!account.isPresent()) {
+            LOG.error(StringUtils.join("Account ", accountTitle, " for which sub account ", subAccountTitle, " need to be added is missed for user ", login));
+            return SimpleResponse.fail();
+        }
+        List<SubAccount> subAccounts = account.get().getSubAccounts();
+        if (subAccounts.stream().anyMatch(subAccount -> StringUtils.equals(subAccount.getTitle(), subAccountTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        balance.entrySet().removeIf(entry -> entry.getValue() == 0);
+        int order = 1 + subAccounts.stream()
+                .max(Comparator.comparingInt(SubAccount::getOrder))
+                .map(SubAccount::getOrder)
+                .orElse(0);
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - add sub account. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail();
         }
 

@@ -13,7 +13,7 @@ export class BalanceDialogComponent implements OnInit {
   public loading: boolean = true;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {subAccountBalance: BalanceItem[]},
+    @Inject(MAT_DIALOG_DATA) public data: {subAccountBalance: {[currency: string]: number}},
     private _dialogRef: MatDialogRef<BalanceDialogComponent>,
     private _profileService: ProfileService
   ) {}
@@ -31,20 +31,10 @@ export class BalanceDialogComponent implements OnInit {
   }
 
   public getCurrencyValue(currency: CurrencyDetail): number {
-    const result: BalanceItem = this.data.subAccountBalance.filter((balanceItem: BalanceItem) => balanceItem.currency === currency.name)[0];
-    return result ? result.value : 0;
+    return this.data.subAccountBalance[currency.name] || 0;
   }
 
   public setCurrencyValue(currencyDetails: CurrencyDetail, currencyValue: number): void {
-    const valueNumber: number = Number(currencyValue);
-    let result: BalanceItem = this.data.subAccountBalance.filter((balanceItem: BalanceItem) => balanceItem.currency === currencyDetails.name)[0];
-
-    if (!result) {
-      result = {currency: currencyDetails.name, value: valueNumber};
-      this.data.subAccountBalance.push(result);
-      return;
-    }
-
-    result.value = valueNumber;
+    this.data.subAccountBalance[currencyDetails.name] = Number(currencyValue);
   }
 }

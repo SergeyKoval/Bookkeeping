@@ -6,6 +6,8 @@ import by.bk.entity.currency.Currency;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
 
+import java.util.Map;
+
 /**
  * @author Sergey Koval
  */
@@ -20,4 +22,5 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse editAccount(String login, String newTitle, String oldTitle);
     SimpleResponse deleteAccount(String login, String title);
     SimpleResponse moveAccount(String login, String title, Direction direction);
+    SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance);
 }

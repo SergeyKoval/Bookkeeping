@@ -93,7 +93,8 @@ export class AccountsComponent implements OnInit {
     this.openAccountDialog({
       'type': 'subAccount',
       'editMode': false,
-      'account': account.title
+      'account': account.title,
+      'balance': {}
     });
   }
 

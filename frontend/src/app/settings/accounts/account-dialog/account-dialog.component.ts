@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
-import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { ProfileService } from '../../../common/service/profile.service';
@@ -18,10 +17,8 @@ export class AccountDialogComponent implements OnInit {
   public errorMessage: string;
   public loading: boolean;
 
-  private balance: BalanceItem[];
-
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, account: string, subAccount: string, icon: string, balance: BalanceItem[]},
+    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, account: string, subAccount: string, icon: string, balance: {[currency: string]: number}},
     private _dialogRef: MatDialogRef<AccountDialogComponent>,
     private _profileService: ProfileService,
     private _dialog: MatDialog
@@ -34,6 +31,17 @@ export class AccountDialogComponent implements OnInit {
     if (!this.data.editMode && !this.isAccount()) {
       this.data.icon = this.accountIcons[0];
     }
+  }
+
+  public editSubAccountBalance(): void {
+    this._dialog.open(BalanceDialogComponent, {
+      width: '350px',
+      data: {'subAccountBalance': Object.assign({}, this.data.balance)}
+    }).afterClosed()
+      .pipe(filter((result: {[currency: string]: number}) => result !== null))
+      .subscribe((result: {[currency: string]: number}) => {
+        this.data.balance = result;
+    });
   }
 
   public save(): void {
@@ -64,19 +72,18 @@ export class AccountDialogComponent implements OnInit {
       }
     } else {
       if (!this.data.editMode) {
+        this._profileService.addSubAccount(this.title, this.data.account, this.data.icon, this.data.balance).subscribe(result => {
+          this.loading = false;
+          if (result.status === 'FAIL') {
+            this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Субчет с таким названием уже существует': 'Ошибка при добавлении субсчета';
+            return;
+          }
 
+          this._dialogRef.close(true);
+        });
       }
     }
   }
-
-
-
-
-
-
-
-
-
 
   public isAccount(): boolean {
     return this.data.type === 'account';
@@ -88,19 +95,5 @@ export class AccountDialogComponent implements OnInit {
 
   public chooseIcon(icon: string): void {
     this.data.icon = icon;
-  }
-
-  public editSubAccountBalance(): void {
-    console.log(this.data);
-    const subscription: Subscription = this._dialog.open(BalanceDialogComponent, {
-      width: '350px',
-      data: {'subAccountBalance': Object.assign([], this.data.balance)}
-    }).afterClosed().pipe(
-      filter((result: BalanceItem[]) => result !== null),
-    ).subscribe((result: BalanceItem[]) => {
-      this.balance = result;
-      console.log(result);
-      subscription.unsubscribe();
-    });
   }
 }

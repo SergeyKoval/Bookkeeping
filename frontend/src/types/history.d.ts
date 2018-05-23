@@ -20,5 +20,5 @@ type HistoryBalanceType = {
   subAccountTo?: string,
   currency: string,
   newCurrency?: string,
-  alternativeCurrency?: {[key: string]: number}
+  alternativeCurrency?: {[currncy: string]: number}
 };

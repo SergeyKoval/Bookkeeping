@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { CurrencyService } from '../../../common/service/currency.service';
 import { ProfileService } from '../../../common/service/profile.service';
 
 @Component({
@@ -16,7 +15,6 @@ export class BalanceDialogComponent implements OnInit {
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {subAccountBalance: BalanceItem[]},
     private _dialogRef: MatDialogRef<BalanceDialogComponent>,
-    private _currencyService: CurrencyService,
     private _profileService: ProfileService
   ) {}
 

@@ -18,6 +18,8 @@ export class AccountDialogComponent implements OnInit {
   public errorMessage: string;
   public loading: boolean;
 
+  private balance: BalanceItem[];
+
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, account: string, subAccount: string, icon: string, balance: BalanceItem[]},
     private _dialogRef: MatDialogRef<AccountDialogComponent>,
@@ -36,28 +38,34 @@ export class AccountDialogComponent implements OnInit {
 
   public save(): void {
     this.loading = true;
-    if (!this.data.editMode) {
-      this._profileService.addAccount(this.title).subscribe(result => {
-        this.loading = false;
-        if (result.status === 'FAIL') {
-          this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
-          return;
-        }
+    if (this.data.type === 'account') {
+      if (!this.data.editMode) {
+        this._profileService.addAccount(this.title).subscribe(result => {
+          this.loading = false;
+          if (result.status === 'FAIL') {
+            this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
+            return;
+          }
 
-        this._dialogRef.close(true);
-      });
-    } else if (this.title === this.data.account) {
-      this._dialogRef.close(false);
+          this._dialogRef.close(true);
+        });
+      } else if (this.title === this.data.account) {
+        this._dialogRef.close(false);
+      } else {
+        this._profileService.editAccount(this.data.account, this.title).subscribe(result => {
+          this.loading = false;
+          if (result.status === 'FAIL') {
+            this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
+            return;
+          }
+
+          this._dialogRef.close(true);
+        });
+      }
     } else {
-      this._profileService.editAccount(this.data.account, this.title).subscribe(result => {
-        this.loading = false;
-        if (result.status === 'FAIL') {
-          this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
-          return;
-        }
+      if (!this.data.editMode) {
 
-        this._dialogRef.close(true);
-      });
+      }
     }
   }
 
@@ -83,12 +91,14 @@ export class AccountDialogComponent implements OnInit {
   }
 
   public editSubAccountBalance(): void {
+    console.log(this.data);
     const subscription: Subscription = this._dialog.open(BalanceDialogComponent, {
       width: '350px',
       data: {'subAccountBalance': Object.assign([], this.data.balance)}
     }).afterClosed().pipe(
       filter((result: BalanceItem[]) => result !== null),
     ).subscribe((result: BalanceItem[]) => {
+      this.balance = result;
       console.log(result);
       subscription.unsubscribe();
     });

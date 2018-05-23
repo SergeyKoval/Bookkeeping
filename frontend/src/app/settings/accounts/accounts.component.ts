@@ -89,6 +89,14 @@ export class AccountsComponent implements OnInit {
     this.moveAccount(this._profileService.moveAccountUp(account.title));
   }
 
+  public addSubAccount(account: FinAccount): void {
+    this.openAccountDialog({
+      'type': 'subAccount',
+      'editMode': false,
+      'account': account.title
+    });
+  }
+
   private moveAccount(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
@@ -159,13 +167,7 @@ export class AccountsComponent implements OnInit {
     });
   }
 
-  public addSubAccount(account: FinAccount): void {
-    this.openAccountDialog({
-      'type': 'subAccount',
-      'editMode': false,
-      'account': account.title
-    });
-  }
+
 
   public editSubAccount(account: FinAccount, subAccount: SubAccount): void {
     this.openAccountDialog({

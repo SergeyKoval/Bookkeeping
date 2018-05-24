@@ -11,6 +11,8 @@ import { HOST } from '../config/config';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
 import { CurrencyService } from './currency.service';
 import { switchMap } from 'rxjs/internal/operators';
+import { AlertService } from './alert.service';
+import { AlertType } from '../model/alert/AlertType';
 
 @Injectable()
 export class ProfileService {
@@ -22,6 +24,7 @@ export class ProfileService {
   private _initialDataLoaded: boolean = false;
 
   public constructor(
+    private _alertService: AlertService,
     private _router: Router,
     private _formBuilder: FormBuilder,
     private _loadingService: LoadingService,
@@ -154,6 +157,15 @@ export class ProfileService {
 
   public moveSubAccountDown(accountTitle: string, subAccountTitle: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/move-sub-account', {title: subAccountTitle, parentTitle: accountTitle, direction: 'DOWN'});
+  }
+
+  public toggleAccount(accountTitle: string, toggleState: boolean): void {
+    this._http.post<SimpleResponse>('/api/profile/toggle-account', {title: accountTitle, toggleState: toggleState})
+      .subscribe(simpleResponse => {
+        if (simpleResponse.status === 'FAIL') {
+          this._alertService.addAlert(AlertType.WARNING, 'Ошибка при сохранения измененного статуса счета');
+        }
+      });
   }
 
   private getUserProfile(): Observable<Profile> {

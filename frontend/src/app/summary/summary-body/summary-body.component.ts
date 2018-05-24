@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 
+import { ProfileService } from '../../common/service/profile.service';
+
 @Component({
   selector: 'bk-summary-body',
   templateUrl: './summary-body.component.html',
@@ -11,7 +13,10 @@ export class SummaryBodyComponent {
   @Input()
   public conversionCurrency: CurrencyDetail;
 
+  public constructor(private _profileService: ProfileService) {}
+
   public changeOpenState(account: FinAccount): void {
     account.opened = !account.opened;
+    this._profileService.toggleAccount(account.title, account.opened);
   }
 }

@@ -98,4 +98,9 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse moveSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.moveSubAccount(principal.getName(), request.getParentTitle(), request.getTitle(), request.getDirection());
     }
+
+    @PostMapping("/toggle-account")
+    public SimpleResponse toggleAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.toggleAccount(principal.getName(), request.getTitle(), request.isToggleState());
+    }
 }

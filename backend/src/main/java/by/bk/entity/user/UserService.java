@@ -294,6 +294,16 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse toggleAccount(String login, String accountTitle, boolean toggleState) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".opened"), toggleState);
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

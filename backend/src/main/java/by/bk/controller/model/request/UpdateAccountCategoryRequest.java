@@ -16,4 +16,5 @@ public class UpdateAccountCategoryRequest {
     private String parentTitle;
     private String icon;
     private Map<Currency, Double> balance;
+    private boolean toggleState;
 }

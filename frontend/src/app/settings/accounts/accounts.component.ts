@@ -80,13 +80,13 @@ export class AccountsComponent implements OnInit {
   public moveAccountDown(account: FinAccount): void {
     this.loading = true;
     this._ACCOUNTS_LOADING.next(true);
-    this.moveAccount(this._profileService.moveAccountDown(account.title));
+    this.moveAccountOrSubAccount(this._profileService.moveAccountDown(account.title));
   }
 
   public moveAccountUp(account: FinAccount): void {
     this.loading = true;
     this._ACCOUNTS_LOADING.next(true);
-    this.moveAccount(this._profileService.moveAccountUp(account.title));
+    this.moveAccountOrSubAccount(this._profileService.moveAccountUp(account.title));
   }
 
   public addSubAccount(account: FinAccount): void {
@@ -135,7 +135,19 @@ export class AccountsComponent implements OnInit {
     });
   }
 
-  private moveAccount(result: Observable<SimpleResponse>): void {
+  public moveSubAccountUp(account: FinAccount, subAccount: SubAccount): void {
+    this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
+    this.moveAccountOrSubAccount(this._profileService.moveSubAccountUp(account.title, subAccount.title));
+  }
+
+  public moveSubAccountDown(account: FinAccount, subAccount: SubAccount): void {
+    this.loading = true;
+    this._ACCOUNTS_LOADING.next(true);
+    this.moveAccountOrSubAccount(this._profileService.moveSubAccountDown(account.title, subAccount.title));
+  }
+
+  private moveAccountOrSubAccount(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
         tap(simpleResponse => {

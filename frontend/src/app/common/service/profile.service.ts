@@ -40,6 +40,7 @@ export class ProfileService {
           profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
           profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
           profile.accounts.forEach((account: FinAccount) => {
+            account.subAccounts.sort((first: SubAccount, second: SubAccount) => first.order - second.order);
             account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
           });
           this._accounts$$.next(profile.accounts);
@@ -56,6 +57,9 @@ export class ProfileService {
         tap(profile => {
           profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
           profile.accounts.sort((first: FinAccount, second: FinAccount) => first.order - second.order);
+          profile.accounts.forEach((account: FinAccount) => {
+            account.subAccounts.sort((first: SubAccount, second: SubAccount) => first.order - second.order);
+          });
           profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
           this.authenticatedProfile.currencies = profile.currencies;
           this.authenticatedProfile.accounts = profile.accounts;
@@ -70,6 +74,9 @@ export class ProfileService {
       .pipe(
         tap(profile => {
           profile.accounts.sort((first: FinAccount, second: FinAccount) => first.order - second.order);
+          profile.accounts.forEach((account: FinAccount) => {
+            account.subAccounts.sort((first: SubAccount, second: SubAccount) => first.order - second.order);
+          });
           this.authenticatedProfile.accounts = profile.accounts;
           this._accounts$$.next(profile.accounts);
         }));
@@ -137,6 +144,14 @@ export class ProfileService {
 
   public editSubAccount(accountTitle: string, oldSubAccountTitle: string, newSubAccountTitle: string, icon: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/edit-sub-account', {oldTitle: oldSubAccountTitle, title: newSubAccountTitle, parentTitle: accountTitle, balance: balance, icon: icon});
+  }
+
+  public moveSubAccountUp(accountTitle: string, subAccountTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-account', {title: subAccountTitle, parentTitle: accountTitle, direction: 'UP'});
+  }
+
+  public moveSubAccountDown(accountTitle: string, subAccountTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-account', {title: subAccountTitle, parentTitle: accountTitle, direction: 'DOWN'});
   }
 
   private getUserProfile(): Observable<Profile> {

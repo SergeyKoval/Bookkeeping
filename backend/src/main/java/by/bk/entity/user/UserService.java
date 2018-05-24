@@ -160,8 +160,8 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update()
-                .set(StringUtils.join("currencies.", currencies.indexOf(secondCurrency.get()), ".order"), currencyItem.map(UserCurrency::getOrder).get())
-                .set(StringUtils.join("currencies.", currencies.indexOf(currencyItem.get()), ".order"), secondCurrency.map(UserCurrency::getOrder).get());
+                .set(StringUtils.join("currencies.", currencies.indexOf(secondCurrency.get()), ".order"), currencyItem.get().getOrder())
+                .set(StringUtils.join("currencies.", currencies.indexOf(currencyItem.get()), ".order"), secondCurrency.get().getOrder());
         return updateUser(query, update);
     }
 
@@ -217,7 +217,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update()
                 .set(StringUtils.join("accounts.", accounts.indexOf(secondAccount.get()), ".order"), account.getOrder())
-                .set(StringUtils.join("accounts.", accounts.indexOf(account), ".order"), secondAccount.map(Account::getOrder).get());
+                .set(StringUtils.join("accounts.", accounts.indexOf(account), ".order"), secondAccount.get().getOrder());
         return updateUser(query, update);
     }
 
@@ -270,6 +270,27 @@ public class UserService implements UserAPI, UserDetailsService {
         SubAccount newSubAccount = new SubAccount(newSubAccountTitle, subAccount.getOrder(), icon, balance);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount)), newSubAccount);
+        return updateUser(query, update);
+    }
+
+    @Override
+    public SimpleResponse moveSubAccount(String login, String accountTitle, String subAccountTitle, Direction direction) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
+
+        List<SubAccount> subAccounts = account.getSubAccounts();
+        SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
+
+        Optional<SubAccount> secondSubAccount = getSecondItem(subAccounts, direction, subAccount.getOrder());
+        if (!secondSubAccount.isPresent()) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        String queryPrefix = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.");
+        Update update = new Update()
+                .set(StringUtils.join(queryPrefix, subAccounts.indexOf(secondSubAccount.get()), ".order"), subAccount.getOrder())
+                .set(StringUtils.join(queryPrefix, subAccounts.indexOf(subAccount), ".order"), secondSubAccount.get().getOrder());
         return updateUser(query, update);
     }
 

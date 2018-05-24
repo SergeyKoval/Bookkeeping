@@ -93,4 +93,9 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse editSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.editSubAccount(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getIcon(), request.getBalance());
     }
+
+    @PostMapping("/move-sub-account")
+    public SimpleResponse moveSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.moveSubAccount(principal.getName(), request.getParentTitle(), request.getTitle(), request.getDirection());
+    }
 }

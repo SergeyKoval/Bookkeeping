@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { Subscription ,  Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { of, Subject } from 'rxjs/index';
 
@@ -124,6 +124,17 @@ export class AccountsComponent implements OnInit {
     });
   }
 
+  public editSubAccount(account: FinAccount, subAccount: SubAccount): void {
+    this.openAccountDialog({
+      'type': 'subAccount',
+      'editMode': true,
+      'account': account.title,
+      'subAccount': subAccount.title,
+      'icon': subAccount.icon,
+      'balance': subAccount.balance
+    });
+  }
+
   private moveAccount(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
@@ -181,16 +192,7 @@ export class AccountsComponent implements OnInit {
 
 
 
-  public editSubAccount(account: FinAccount, subAccount: SubAccount): void {
-    this.openAccountDialog({
-      'type': 'subAccount',
-      'editMode': true,
-      'account': account.title,
-      'subAccount': subAccount.title,
-      'icon': subAccount.icon,
-      'balance': subAccount.balance
-    });
-  }
+
 
 
 

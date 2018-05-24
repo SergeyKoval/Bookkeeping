@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Sergey Koval
  */
 @Getter
-public class SubAccount {
+public class SubAccount implements Orderable, Selectable {
     private String title;
     private int order;
     private String icon;

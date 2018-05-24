@@ -5,6 +5,7 @@ import { filter } from 'rxjs/operators';
 
 import { ProfileService } from '../../../common/service/profile.service';
 import { BalanceDialogComponent } from '../balance-dialog/balance-dialog.component';
+import { Observable } from 'rxjs/index';
 
 @Component({
   selector: 'bk-account-dialog',
@@ -46,41 +47,22 @@ export class AccountDialogComponent implements OnInit {
 
   public save(): void {
     this.loading = true;
-    if (this.data.type === 'account') {
-      if (!this.data.editMode) {
-        this._profileService.addAccount(this.title).subscribe(result => {
-          this.loading = false;
-          if (result.status === 'FAIL') {
-            this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
-            return;
-          }
 
-          this._dialogRef.close(true);
-        });
+    if(this.data.type === 'account') {
+      if (!this.data.editMode) {
+        this.processResult(this._profileService.addAccount(this.title), 'Счет с таким названием уже существует', 'Ошибка при добавлении счета');
       } else if (this.title === this.data.account) {
         this._dialogRef.close(false);
       } else {
-        this._profileService.editAccount(this.data.account, this.title).subscribe(result => {
-          this.loading = false;
-          if (result.status === 'FAIL') {
-            this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Счет с таким названием уже существует': 'Ошибка при добавлении счета';
-            return;
-          }
-
-          this._dialogRef.close(true);
-        });
+        this.processResult(this._profileService.editAccount(this.data.account, this.title), 'Счет с таким названием уже существует', 'Ошибка при изминении счета');
       }
-    } else {
-      if (!this.data.editMode) {
-        this._profileService.addSubAccount(this.title, this.data.account, this.data.icon, this.data.balance).subscribe(result => {
-          this.loading = false;
-          if (result.status === 'FAIL') {
-            this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Субчет с таким названием уже существует': 'Ошибка при добавлении субсчета';
-            return;
-          }
+    }
 
-          this._dialogRef.close(true);
-        });
+    if(this.data.type === 'subAccount') {
+      if (!this.data.editMode) {
+        this.processResult(this._profileService.addSubAccount(this.title, this.data.account, this.data.icon, this.data.balance), 'Субчет с таким названием уже существует', 'Ошибка при добавлении субсчета');
+      } else {
+        this.processResult(this._profileService.editSubAccount(this.data.account, this.data.subAccount, this.title, this.data.icon, this.data.balance), 'Субсчет с таким названием уже существует', 'Ошибка при изменении субсчета');
       }
     }
   }
@@ -95,5 +77,17 @@ export class AccountDialogComponent implements OnInit {
 
   public chooseIcon(icon: string): void {
     this.data.icon = icon;
+  }
+
+  private processResult(resultObservable: Observable<SimpleResponse>, alreadyExistError: string, otherError: string): void {
+    resultObservable.subscribe(result => {
+      this.loading = false;
+      if (result.status === 'FAIL') {
+        this.errorMessage = result.message === 'ALREADY_EXIST' ? alreadyExistError: otherError;
+        return;
+      }
+
+      this._dialogRef.close(true);
+    });
   }
 }

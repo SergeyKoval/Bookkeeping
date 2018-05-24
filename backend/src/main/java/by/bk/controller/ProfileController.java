@@ -4,6 +4,7 @@ import by.bk.controller.model.request.UpdateAccountCategoryRequest;
 import by.bk.controller.model.request.UpdateCurrencyRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.request.UserPasswordChangeRequest;
+import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.User;
 import by.bk.entity.user.UserAPI;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,13 @@ import java.security.Principal;
 public class ProfileController extends BaseAPIController {
     @Autowired
     private UserAPI userAPI;
+
+    @ExceptionHandler({SelectableItemMissedSettingUpdateException.class})
+    public SimpleResponse handleAuthenticationException(SelectableItemMissedSettingUpdateException e) {
+        LOG.error(e.getErrorMessage());
+        return e.getSimpleResponse();
+    }
+
 
     @GetMapping("/full")
     public User loadFullProfile(Principal principal) {
@@ -79,5 +87,10 @@ public class ProfileController extends BaseAPIController {
     @PostMapping("/change-sub-account-balance")
     public SimpleResponse changeSubAccountBalance(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.changeSubAccountBalance(principal.getName(), request.getTitle(), request.getParentTitle(), request.getBalance());
+    }
+
+    @PostMapping("/edit-sub-account")
+    public SimpleResponse editSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.editSubAccount(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getIcon(), request.getBalance());
     }
 }

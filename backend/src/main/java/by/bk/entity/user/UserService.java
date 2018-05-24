@@ -3,6 +3,7 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
 import by.bk.security.model.JwtUser;
 import com.mongodb.client.result.UpdateResult;
@@ -25,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * @author Sergey Koval
@@ -95,13 +97,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet("currencies", newCurrency);
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - adding currency. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        return updateUser(query, update);
     }
 
     @Override
@@ -150,13 +146,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().set(StringUtils.join("currencies.", currencies.indexOf(defaultCurrency.get()), ".defaultCurrency"), true);
         oldDefaultCurrency.ifPresent(userCurrency -> update.set(StringUtils.join("currencies.", currencies.indexOf(userCurrency), ".defaultCurrency"), false));
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - mark currency default. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        return updateUser(query, update);
     }
 
     @Override
@@ -172,13 +162,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Update update = new Update()
                 .set(StringUtils.join("currencies.", currencies.indexOf(secondCurrency.get()), ".order"), currencyItem.map(UserCurrency::getOrder).get())
                 .set(StringUtils.join("currencies.", currencies.indexOf(currencyItem.get()), ".order"), secondCurrency.map(UserCurrency::getOrder).get());
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        return updateUser(query, update);
     }
 
     @Override
@@ -194,94 +178,55 @@ public class UserService implements UserAPI, UserDetailsService {
                 .orElse(0);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet("accounts", new Account(title, order));
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - add account. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        return updateUser(query, update);
     }
 
     @Override
     public SimpleResponse editAccount(String login, String newTitle, String oldTitle) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
-        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), oldTitle)).findFirst();
-        if (!account.isPresent()) {
-            LOG.error(StringUtils.join("Account ", oldTitle, " which need to be updated is missed for user ", login));
-            return SimpleResponse.fail();
-        }
+        Account account = chooseItem(accounts, oldTitle, getAccountError(login, oldTitle));
         if (accounts.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), newTitle))) {
             return SimpleResponse.fail("ALREADY_EXIST");
         }
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().set(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".title"), newTitle);
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - change account title. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        Update update = new Update().set(StringUtils.join("accounts.", accounts.indexOf(account), ".title"), newTitle);
+        return updateUser(query, update);
     }
 
     @Override
     public SimpleResponse deleteAccount(String login, String title) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
-        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), title)).findFirst();
-        if (!account.isPresent()) {
-            LOG.error(StringUtils.join("Account ", title, " which need to be removed is missed for user ", login));
-            return SimpleResponse.fail();
-        }
+        Account account = chooseItem(accounts, title, getAccountError(login, title));
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().pull("accounts", account.get());
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - removing account. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        Update update = new Update().pull("accounts", account);
+        return updateUser(query, update);
     }
 
     @Override
     public SimpleResponse moveAccount(String login, String title, Direction direction) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
-        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), title)).findFirst();
-        if (!account.isPresent()) {
-            LOG.error(StringUtils.join("Account ", title, " which need to be moved is missed for user ", login));
-            return SimpleResponse.fail();
-        }
-        Optional<Account> secondAccount = getSecondItem(accounts, direction, account.get().getOrder());
+        Account account = chooseItem(accounts, title, getAccountError(login, title));
+
+        Optional<Account> secondAccount = getSecondItem(accounts, direction, account.getOrder());
         if (!secondAccount.isPresent()) {
             return SimpleResponse.success();
         }
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update()
-                .set(StringUtils.join("accounts.", accounts.indexOf(secondAccount.get()), ".order"), account.map(Account::getOrder).get())
-                .set(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".order"), secondAccount.map(Account::getOrder).get());
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - move currency. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+                .set(StringUtils.join("accounts.", accounts.indexOf(secondAccount.get()), ".order"), account.getOrder())
+                .set(StringUtils.join("accounts.", accounts.indexOf(account), ".order"), secondAccount.map(Account::getOrder).get());
+        return updateUser(query, update);
     }
 
     @Override
     public SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
-        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), accountTitle)).findFirst();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
-        if (!account.isPresent()) {
-            LOG.error(StringUtils.join("Account ", accountTitle, " for which sub account ", subAccountTitle, " need to be added is missed for user ", login));
-            return SimpleResponse.fail();
-        }
-        List<SubAccount> subAccounts = account.get().getSubAccounts();
+        List<SubAccount> subAccounts = account.getSubAccounts();
         if (subAccounts.stream().anyMatch(subAccount -> StringUtils.equals(subAccount.getTitle(), subAccountTitle))) {
             return SimpleResponse.fail("ALREADY_EXIST");
         }
@@ -292,42 +237,40 @@ public class UserService implements UserAPI, UserDetailsService {
                 .map(SubAccount::getOrder)
                 .orElse(0);
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance));
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - add sub account. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
-
-        return SimpleResponse.success();
+        Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance));
+        return updateUser(query, update);
     }
 
     @Override
     public SimpleResponse changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
-        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), accountTitle)).findFirst();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
-        if (!account.isPresent()) {
-            LOG.error(StringUtils.join("Account ", accountTitle, " for which sub account ", subAccountTitle, " balance need to be changed is missed for user ", login));
-            return SimpleResponse.fail();
-        }
-        List<SubAccount> subAccounts = account.get().getSubAccounts();
-        Optional<SubAccount> subAccount = subAccounts.stream().filter(subAcc -> StringUtils.equals(subAcc.getTitle(), subAccountTitle)).findFirst();
-        if (!subAccount.isPresent()) {
-            LOG.error(StringUtils.join("Sub account ", subAccountTitle, " for account ", accountTitle, " is missed for user ", login));
-            return SimpleResponse.fail();
-        }
+        List<SubAccount> subAccounts = account.getSubAccounts();
+        SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
 
         balance.entrySet().removeIf(entry -> entry.getValue() == 0);
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".subAccounts.", subAccounts.indexOf(subAccount.get()), ".balance"), balance);
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
-        if (updateResult.getModifiedCount() != 1) {
-            LOG.error("Error updating user profile - add sub account. Number of updated items " + updateResult.getModifiedCount());
-            return SimpleResponse.fail();
-        }
+        Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance"), balance);
+        return updateUser(query, update);
+    }
 
-        return SimpleResponse.success();
+    @Override
+    public SimpleResponse editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
+
+        List<SubAccount> subAccounts = account.getSubAccounts();
+        if (!StringUtils.equals(oldSubAccountTitle, newSubAccountTitle) && subAccounts.stream().anyMatch(subAccount -> StringUtils.equals(subAccount.getTitle(), newSubAccountTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+        SubAccount subAccount = chooseItem(subAccounts, oldSubAccountTitle, getSubAccountError(login, accountTitle, oldSubAccountTitle));
+
+        balance.entrySet().removeIf(entry -> entry.getValue() == 0);
+        SubAccount newSubAccount = new SubAccount(newSubAccountTitle, subAccount.getOrder(), icon, balance);
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount)), newSubAccount);
+        return updateUser(query, update);
     }
 
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
@@ -348,5 +291,30 @@ public class UserService implements UserAPI, UserDetailsService {
         }
 
         return secondItem;
+    }
+
+    private <T extends Selectable> T chooseItem(List<T> items, String title, Supplier<String> errorMessage) {
+        return items.stream()
+                .filter(checkItem -> StringUtils.equals(checkItem.getTitle(), title))
+                .findFirst()
+                .orElseThrow(() -> new SelectableItemMissedSettingUpdateException(errorMessage.get()));
+    }
+
+    private SimpleResponse updateUser(Query query, Update update) {
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    private Supplier<String> getAccountError(String login, String accountTitle) {
+        return () -> StringUtils.join("Account ", accountTitle, " is missed for user ", login);
+    }
+
+    private Supplier<String> getSubAccountError(String login, String accountTitle, String subAccountTitle) {
+        return () -> StringUtils.join("Sub account ", subAccountTitle, " for account ", accountTitle, " is missed for user ", login);
     }
 }

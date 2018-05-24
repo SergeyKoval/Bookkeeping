@@ -135,6 +135,10 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/change-sub-account-balance', {title: subAccountTitle, parentTitle: accountTitle, balance: balance});
   }
 
+  public editSubAccount(accountTitle: string, oldSubAccountTitle: string, newSubAccountTitle: string, icon: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/edit-sub-account', {oldTitle: oldSubAccountTitle, title: newSubAccountTitle, parentTitle: accountTitle, balance: balance, icon: icon});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }
@@ -325,7 +329,4 @@ export class ProfileService {
   public get initialDataLoaded(): boolean {
     return this._initialDataLoaded;
   }
-
-
-
 }

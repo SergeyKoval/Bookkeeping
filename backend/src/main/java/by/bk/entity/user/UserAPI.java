@@ -24,4 +24,5 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse moveAccount(String login, String title, Direction direction);
     SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance);
     SimpleResponse changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance);
+    SimpleResponse editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance);
 }

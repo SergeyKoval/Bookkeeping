@@ -302,6 +302,34 @@ public class UserService implements UserAPI, UserDetailsService {
         return SimpleResponse.success();
     }
 
+    @Override
+    public SimpleResponse changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Optional<Account> account = accounts.stream().filter(userAccount -> StringUtils.equals(userAccount.getTitle(), accountTitle)).findFirst();
+
+        if (!account.isPresent()) {
+            LOG.error(StringUtils.join("Account ", accountTitle, " for which sub account ", subAccountTitle, " balance need to be changed is missed for user ", login));
+            return SimpleResponse.fail();
+        }
+        List<SubAccount> subAccounts = account.get().getSubAccounts();
+        Optional<SubAccount> subAccount = subAccounts.stream().filter(subAcc -> StringUtils.equals(subAcc.getTitle(), subAccountTitle)).findFirst();
+        if (!subAccount.isPresent()) {
+            LOG.error(StringUtils.join("Sub account ", subAccountTitle, " for account ", accountTitle, " is missed for user ", login));
+            return SimpleResponse.fail();
+        }
+
+        balance.entrySet().removeIf(entry -> entry.getValue() == 0);
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account.get()), ".subAccounts.", subAccounts.indexOf(subAccount.get()), ".balance"), balance);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - add sub account. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

@@ -98,6 +98,32 @@ export class AccountsComponent implements OnInit {
     });
   }
 
+  public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {
+    this._dialog.open(BalanceDialogComponent, {
+      width: '350px',
+      data: {'subAccountBalance': Object.assign({}, subAccount.balance)}
+    }).afterClosed()
+      .pipe(
+        filter((result: {[currency: string]: number}) => result !== null),
+        tap(() => {
+          this.loading = true;
+          this._ACCOUNTS_LOADING.next(true);
+        }),
+        switchMap((result: {[currency: string]: number}) => this._profileService.changeSubAccountBalance(finAccount.title, subAccount.title, result)),
+        tap(simpleResponse => {
+            if (simpleResponse.status === 'FAIL') {
+              this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+            } else {
+              this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
+            }
+        }),
+        switchMap(() => this._profileService.reloadAccountsInProfile())
+    ).subscribe(() => {
+      this.loading = false;
+      this._ACCOUNTS_LOADING.next(false);
+    });
+  }
+
   private moveAccount(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
@@ -151,22 +177,7 @@ export class AccountsComponent implements OnInit {
 
 
 
-  public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {
-    const subscription: Subscription = this._dialog.open(BalanceDialogComponent, {
-      width: '350px',
-      data: {'subAccountBalance': Object.assign([], subAccount.balance)}
-    }).afterClosed().pipe(
-      filter((result: BalanceItem[]) => result !== null),
-      switchMap((result: BalanceItem[]) => this._profileService.reloadProfile())
-    ).subscribe(() => {
-      // const updatedAccounts: FinAccount[] = profiles[0].accounts;
-      // updatedAccounts.forEach((account: FinAccount) => account.settingsOpened = this.getAccountOpened(this.accounts, account.title));
-      // this.accounts = updatedAccounts;
-      this.loading = false;
-      this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
-      subscription.unsubscribe();
-    });
-  }
+
 
 
 

@@ -76,6 +76,8 @@ export class ProfileService {
           profile.accounts.sort((first: FinAccount, second: FinAccount) => first.order - second.order);
           profile.accounts.forEach((account: FinAccount) => {
             account.subAccounts.sort((first: SubAccount, second: SubAccount) => first.order - second.order);
+            const finAccount: FinAccount = this.authenticatedProfile.accounts.filter(oldAccount => oldAccount.title === account.title)[0];
+            account.settingsOpened = finAccount ? finAccount.settingsOpened : false;
           });
           this.authenticatedProfile.accounts = profile.accounts;
           this._accounts$$.next(profile.accounts);

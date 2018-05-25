@@ -24,3 +24,23 @@
 .popover.left {
   margin-left: -25px;
 }
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 25px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.text-muted {
+  text-align: center;
+  font-style: italic;
+}

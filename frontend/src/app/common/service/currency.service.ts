@@ -134,7 +134,9 @@ export class CurrencyService {
     if (yearCurrencies && yearCurrencies.has(date.month)) {
       const monthCurrencies: CurrencyHistory[] = yearCurrencies.get(date.month);
       if (monthCurrencies && monthCurrencies.length > 0) {
-        const currencyConversions: CurrencyHistory = monthCurrencies.filter((currencyHistory: CurrencyHistory) => currencyHistory.day === date.day)[0];
+        const currencyConversions: CurrencyHistory = monthCurrencies
+          .filter((currencyHistory: CurrencyHistory) => currencyHistory.day === date.day)
+          .filter((currencyHistory: CurrencyHistory) => currencyHistory.name === currency)[0];
         if (currencyConversions) {
           return currencyConversions;
         }

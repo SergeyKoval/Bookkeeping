@@ -1,7 +1,7 @@
 import { CurrencyService } from '../../service/currency.service';
 
 export abstract class BaseSummaryPipe {
-  public constructor(protected _currencyService: CurrencyService) {}
+  protected constructor(protected _currencyService: CurrencyService) {}
 
   protected populateBalanceMap(account: FinAccount, balanceMap: Map<string, number>): void {
     account.subAccounts.forEach((subAccount: SubAccount) => {

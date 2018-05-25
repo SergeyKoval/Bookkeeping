@@ -1,5 +1,7 @@
 package by.bk.security;
 
+import by.bk.security.model.JwtToken;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,10 +21,6 @@ import java.io.IOException;
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final String TOKEN_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer \"";
-    private static final String TOKEN_SUFFIX = "\"";
-
     @Autowired
     private JwtTokenUtil tokenUtil;
     @Autowired
@@ -31,13 +29,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final SecurityContext securityContext = SecurityContextHolder.getContext();
-        final String requestHeader = request.getHeader(TOKEN_HEADER);
+        final String requestHeader = request.getHeader(JwtToken.TOKEN_HEADER);
 
-        if (StringUtils.startsWith(requestHeader, TOKEN_PREFIX)) {
-            final String authToken = StringUtils.substringBetween(requestHeader, TOKEN_PREFIX, TOKEN_SUFFIX);
-            if (securityContext.getAuthentication() == null && !tokenUtil.isTokenExpired(authToken)) {
-                Authentication authentication = authenticationAPI.getAuthentication(tokenUtil.getUsernameFromToken(authToken));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (StringUtils.startsWith(requestHeader, JwtToken.TOKEN_PREFIX)) {
+            try {
+                JwtToken token = JwtToken.from(requestHeader, tokenUtil);
+                if (securityContext.getAuthentication() == null && !token.isExpired()) {
+                    Authentication authentication = authenticationAPI.getAuthentication(token.getUsername());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (ExpiredJwtException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "EXPIRED");
+                return;
             }
         }
 

@@ -34,7 +34,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="account-actions">
-    <button class="btn btn-default account-action-item" (click)="close()">Закрыть</button>
+    <button class="btn btn-default account-action-item" (click)="close(false)">Закрыть</button>
     <span class="account-action-item">&nbsp;</span>
     <button class="btn btn-default account-action-item" [disabled]="loading" (click)="save()">
       <span *ngIf="!loading">Сохранить</span>

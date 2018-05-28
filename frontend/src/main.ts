@@ -8,4 +8,4 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(BookkeepingModule);
+platformBrowserDynamic().bootstrapModule(BookkeepingModule).catch(err => console.log(err));;

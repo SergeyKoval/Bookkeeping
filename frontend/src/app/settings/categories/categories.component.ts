@@ -84,6 +84,20 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
+  public editSubCategory(category: Category, subCategory: SubCategory): void {
+    this.openCategoryDialog({
+      'type': 'subCategory',
+      'editMode': true,
+      'parentTitle': category.title,
+      'title': subCategory.title,
+      'subCategoryType': subCategory.type
+    });
+  }
+
+  public hasSubcategories(category: Category): boolean {
+    return category.subCategories && category.subCategories.length > 0;
+  }
+
   private moveCategoryOrSubCategory(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
@@ -139,9 +153,6 @@ export class CategoriesComponent implements OnInit {
 
 
 
-  public hasSubcategories(category: Category): boolean {
-    return category.subCategories && category.subCategories.length > 0;
-  }
 
 
 
@@ -151,15 +162,8 @@ export class CategoriesComponent implements OnInit {
 
 
 
-  public editSubCategory(category: Category, subCategory: SubCategory): void {
-    this.openCategoryDialog({
-      'type': 'subCategory',
-      'editMode': true,
-      'category': category.title,
-      'subCategory': subCategory.title,
-      'subCategoryType': subCategory.type
-    });
-  }
+
+
 
   public deleteSubCategory(category: Category, subCategory: SubCategory): void {
 

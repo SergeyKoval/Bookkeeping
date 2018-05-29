@@ -397,6 +397,24 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse editSubCategory(String login, String categoryTitle, String oldSubCategoryTitle, String newSubCategoryTitle, SubCategoryType subCategoryType) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category category = chooseItem(categories, categoryTitle, getAccountError(login, categoryTitle));
+
+        List<SubCategory> subCategories = category.getSubCategories();
+        if (!StringUtils.equals(oldSubCategoryTitle, newSubCategoryTitle) && subCategories.stream().anyMatch(subCategory -> subCategoryType.equals(subCategory.getType()) && StringUtils.equals(subCategory.getTitle(), newSubCategoryTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        SubCategory subCategory = chooseSubCategory(subCategories, oldSubCategoryTitle, subCategoryType, getSubAccountError(login, categoryTitle, oldSubCategoryTitle));
+        subCategory.setTitle(newSubCategoryTitle);
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = Update.update(StringUtils.join("categories.", categories.indexOf(category), ".subCategories.", subCategories.indexOf(subCategory)), subCategory);
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {
@@ -415,6 +433,13 @@ public class UserService implements UserAPI, UserDetailsService {
         }
 
         return secondItem;
+    }
+
+    private SubCategory chooseSubCategory(List<SubCategory> items, String title, SubCategoryType subCategoryType, Supplier<String> errorMessage) {
+        return items.stream()
+                .filter(checkItem -> subCategoryType.equals(checkItem.getType()) && StringUtils.equals(checkItem.getTitle(), title))
+                .findFirst()
+                .orElseThrow(() -> new SelectableItemMissedSettingUpdateException(errorMessage.get()));
     }
 
     private <T extends Selectable> T chooseItem(List<T> items, String title, Supplier<String> errorMessage) {

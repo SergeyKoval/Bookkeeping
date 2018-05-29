@@ -1,11 +1,13 @@
 package by.bk.entity.user.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Sergey Koval
  */
 @Getter
+@Setter
 public class SubCategory {
     private String title;
     private int order;

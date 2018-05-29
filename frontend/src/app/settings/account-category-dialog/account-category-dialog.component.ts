@@ -93,8 +93,10 @@ export class AccountCategoryDialogComponent implements OnInit {
           return;
         }
         this.processResult(this._profileService.addSubCategory(this.title, this.data.parentTitle, this.data.subCategoryType), 'Подкатегория с таким названием уже существует', 'Ошибка при добавлении подкатегории');
+      } else if (this.title === this.data.title) {
+        this._dialogRef.close(false);
       } else {
-        // this.processResult(this._profileService.editSubAccount(this.data.parentTitle, this.data.title, this.title, this.data.icon, this.data.balance), 'Подкатегория с таким названием уже существует', 'Ошибка при изменении подкатегории');
+        this.processResult(this._profileService.editSubCategory(this.data.parentTitle, this.data.title, this.title, this.data.subCategoryType), 'Подкатегория с таким названием уже существует', 'Ошибка при изменении подкатегории');
       }
     }
   }

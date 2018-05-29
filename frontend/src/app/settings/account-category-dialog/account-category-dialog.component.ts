@@ -72,7 +72,7 @@ export class AccountCategoryDialogComponent implements OnInit {
       if (!this.data.editMode) {
         this.processResult(this._profileService.addCategory(this.title, this.data.icon), 'Категория с таким названием уже существует', 'Ошибка при добавлении категории');
       } else {
-        // this.processResult(this._profileService.editCategory(this.data.title, this.title), 'Категория с таким названием уже существует', 'Ошибка при изминении категории');
+        this.processResult(this._profileService.editCategory(this.data.title, this.title, this.data.icon), 'Категория с таким названием уже существует', 'Ошибка при изминении категории');
       }
     }
   }

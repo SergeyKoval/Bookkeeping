@@ -320,7 +320,7 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public SimpleResponse addCategory(String login, String categoryTitle, String icon) {
         List<Category> categories = userRepository.getUserCategories(login).getCategories();
-        if (categories.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), categoryTitle))) {
+        if (categories.stream().anyMatch(userCategory -> StringUtils.equals(userCategory.getTitle(), categoryTitle))) {
             return SimpleResponse.fail("ALREADY_EXIST");
         }
 
@@ -330,6 +330,24 @@ public class UserService implements UserAPI, UserDetailsService {
                 .orElse(0);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet("categories", new Category(categoryTitle, icon, order));
+        return updateUser(query, update);
+    }
+
+    @Override
+    public SimpleResponse editCategory(String login, String oldCategoryTitle, String newCategoryTitle, String icon) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category category = chooseItem(categories, oldCategoryTitle, getAccountError(login, oldCategoryTitle));
+        if (!StringUtils.equals(oldCategoryTitle, newCategoryTitle) && categories.stream().anyMatch(userCategory -> StringUtils.equals(userCategory.getTitle(), newCategoryTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+        if (StringUtils.equals(oldCategoryTitle, newCategoryTitle) && StringUtils.equals(category.getIcon(), icon)) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update()
+                .set(StringUtils.join("categories.", categories.indexOf(category), ".title"), newCategoryTitle)
+                .set(StringUtils.join("categories.", categories.indexOf(category), ".icon"), icon);
         return updateUser(query, update);
     }
 

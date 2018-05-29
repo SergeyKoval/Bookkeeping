@@ -113,4 +113,9 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse addCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.addCategory(principal.getName(), request.getTitle(), request.getIcon());
     }
+
+    @PostMapping("/edit-category")
+    public SimpleResponse editCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.editCategory(principal.getName(), request.getOldTitle(), request.getTitle(), request.getIcon());
+    }
 }

@@ -38,6 +38,15 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
+  public editCategory(editCategory: Category): void {
+    this.openCategoryDialog({
+      'type': 'category',
+      'editMode': true,
+      'title': editCategory.title,
+      'icon': editCategory.icon
+    });
+  }
+
   private openCategoryDialog(dialogData: {}): void {
     const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
       width: '550px',
@@ -81,14 +90,7 @@ export class CategoriesComponent implements OnInit {
     return category.subCategories && category.subCategories.length > 0;
   }
 
-  public editCategory(editCategory: Category): void {
-    this.openCategoryDialog({
-      'type': 'category',
-      'editMode': true,
-      'category': editCategory.title,
-      'icon': editCategory.icon
-    });
-  }
+
 
   public deleteCategory(deleteCategory: Category): void {
     const dialogResult: Observable<boolean> = this._confirmDialogService

@@ -9,7 +9,7 @@ import java.util.List;
  * @author Sergey Koval
  */
 @Getter
-public class Category {
+public class Category implements Orderable, Selectable {
     private int order;
     private String icon;
     private String title;

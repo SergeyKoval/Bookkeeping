@@ -73,6 +73,7 @@ export class ProfileService {
   }
 
   public reloadAccountsInProfile(): Observable<Profile> {
+    this._accountIcon.clear();
     return this.getUserProfile()
       .pipe(
         tap(profile => {
@@ -81,6 +82,7 @@ export class ProfileService {
             account.subAccounts.sort((first: SubAccount, second: SubAccount) => first.order - second.order);
             const finAccount: FinAccount = this.authenticatedProfile.accounts.filter(oldAccount => oldAccount.title === account.title)[0];
             account.settingsOpened = finAccount ? finAccount.settingsOpened : false;
+            account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
           });
           this.authenticatedProfile.accounts = profile.accounts;
           this._accounts$$.next(profile.accounts);
@@ -88,6 +90,7 @@ export class ProfileService {
   }
 
   public reloadCategoriesInProfile(): Observable<Profile> {
+    this._categoryIcon.clear();
     return this.getUserProfile()
       .pipe(
         tap(profile => {
@@ -183,6 +186,10 @@ export class ProfileService {
 
   public addCategory(categoryTitle: string, icon: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/add-category', {title: categoryTitle, icon: icon});
+  }
+
+  public editCategory(oldCategoryTitle: string, newCategoryTitle: string, icon: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/edit-category', {title: newCategoryTitle, oldTitle: oldCategoryTitle, icon: icon});
   }
 
   private getUserProfile(): Observable<Profile> {

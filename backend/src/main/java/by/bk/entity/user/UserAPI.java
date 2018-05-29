@@ -34,4 +34,5 @@ public interface UserAPI extends AuthenticationAPI {
 
     SimpleResponse addCategory(String login, String categoryTitle, String icon);
     SimpleResponse editCategory(String login, String oldCategoryTitle, String newCategoryTitle, String icon);
+    SimpleResponse deleteCategory(String login, String categoryTitle);
 }

@@ -192,6 +192,10 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/edit-category', {title: newCategoryTitle, oldTitle: oldCategoryTitle, icon: icon});
   }
 
+  public deleteCategory(categoryTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/delete-category', {title: categoryTitle});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }

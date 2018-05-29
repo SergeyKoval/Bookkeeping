@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { of } from 'rxjs/index';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
@@ -47,6 +48,24 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
+  public deleteCategory(deleteCategory: Category): void {
+    const dialogResult: Observable<boolean> = this._confirmDialogService
+      .openConfirmDialog('Подтверждение', 'При удалении категории все ее подкатегории а так же существующие операции с этими подкатегориями будут удалены. Продолжить?')
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => this.loading = true),
+        switchMap(() => this._profileService.deleteCategory(deleteCategory.title)),
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+          }
+        }),
+        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
+      );
+    this.processCategoryDialogResult(dialogResult);
+  }
+
   private openCategoryDialog(dialogData: {}): void {
     const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
       width: '550px',
@@ -86,18 +105,16 @@ export class CategoriesComponent implements OnInit {
 
 
 
+
+
+
   public hasSubcategories(category: Category): boolean {
     return category.subCategories && category.subCategories.length > 0;
   }
 
 
 
-  public deleteCategory(deleteCategory: Category): void {
-    const dialogResult: Observable<boolean> = this._confirmDialogService
-      .openConfirmDialog('Подтверждение', 'При удалении категории все ее подкатегории а так же существующие операции с этими подкатегориями будут удалены. Продолжить?')
-      .afterClosed();
-    this.processCategoryDialogResult(dialogResult);
-  }
+
 
   public moveCategoryUp(category: Category): void {
 

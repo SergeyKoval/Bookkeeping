@@ -128,4 +128,9 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse moveCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.moveCategory(principal.getName(), request.getTitle(), request.getDirection());
     }
+
+    @PostMapping("/add-sub-category")
+    public SimpleResponse addSubCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.addSubCategory(principal.getName(), request.getParentTitle(), request.getTitle(), request.getSubCategoryType());
+    }
 }

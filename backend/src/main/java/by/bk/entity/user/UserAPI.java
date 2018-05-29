@@ -3,6 +3,7 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
 
@@ -36,4 +37,6 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse editCategory(String login, String oldCategoryTitle, String newCategoryTitle, String icon);
     SimpleResponse deleteCategory(String login, String categoryTitle);
     SimpleResponse moveCategory(String login, String categoryTitle, Direction direction);
+
+    SimpleResponse addSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType);
 }

@@ -96,7 +96,12 @@ export class ProfileService {
       .pipe(
         tap(profile => {
           profile.categories.sort((first: Category, second: Category) => first.order - second.order);
-          profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+          profile.categories.forEach((category: Category) => {
+            this._categoryIcon.set(category.title, category.icon);
+            category.subCategories.sort((first: SubCategory, second: SubCategory) => first.order - second.order);
+            const userCategory: Category = this.authenticatedProfile.categories.filter(oldCategory => oldCategory.title === category.title)[0];
+            category.opened = userCategory ? userCategory.opened : false;
+          });
           this._authenticatedProfile.categories = profile.categories;
         }));
   }
@@ -198,12 +203,16 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/delete-category', {title: categoryTitle});
   }
 
-  public moveCategoryUp(categoryTitle: string) {
+  public moveCategoryUp(categoryTitle: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/move-category', {title: categoryTitle, direction: 'UP'});
   }
 
-  public moveCategoryDown(categoryTitle: string) {
+  public moveCategoryDown(categoryTitle: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/move-category', {title: categoryTitle, direction: 'DOWN'});
+  }
+
+  public addSubCategory(subCategoryTitle: string, categoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/add-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
   }
 
   private getUserProfile(): Observable<Profile> {

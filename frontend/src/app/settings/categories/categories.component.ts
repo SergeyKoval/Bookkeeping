@@ -76,6 +76,14 @@ export class CategoriesComponent implements OnInit {
     this.moveCategoryOrSubCategory(this._profileService.moveCategoryDown(category.title));
   }
 
+  public addSubCategory(category: Category): void {
+    this.openCategoryDialog({
+      'type': 'subCategory',
+      'editMode': false,
+      'parentTitle': category.title
+    });
+  }
+
   private moveCategoryOrSubCategory(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
@@ -141,13 +149,7 @@ export class CategoriesComponent implements OnInit {
 
 
 
-  public addSubCategory(category: Category): void {
-    this.openCategoryDialog({
-      'type': 'subCategory',
-      'editMode': false,
-      'category': category.title
-    });
-  }
+
 
   public editSubCategory(category: Category, subCategory: SubCategory): void {
     this.openCategoryDialog({

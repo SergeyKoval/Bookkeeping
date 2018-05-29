@@ -378,6 +378,25 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse addSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category category = chooseItem(categories, categoryTitle, getAccountError(login, categoryTitle));
+
+        List<SubCategory> subCategories = category.getSubCategories();
+        if (subCategories.stream().anyMatch(subCategory -> subCategoryType.equals(subCategory.getType()) && StringUtils.equals(subCategory.getTitle(), subCategoryTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        int order = 1 + subCategories.stream()
+                .max(Comparator.comparingInt(SubCategory::getOrder))
+                .map(SubCategory::getOrder)
+                .orElse(0);
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().addToSet(StringUtils.join("categories.", categories.indexOf(category), ".subCategories"), new SubCategory(subCategoryTitle, order, subCategoryType));
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

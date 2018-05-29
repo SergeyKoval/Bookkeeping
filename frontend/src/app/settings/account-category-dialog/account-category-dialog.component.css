@@ -40,3 +40,36 @@
 .expense-category {
   color: orangered;
 }
+
+#category-add-edit-dialog {
+  overflow: visible !important;
+}
+
+#sub-category-type {
+  height: 34px;
+}
+
+#sub-category-type .caret {
+  margin-top: 0;
+}
+
+#sub-category-type .caret.selected {
+  margin-top: 8px;
+}
+
+.value {
+  padding-left: 12px;
+}
+
+.selected-type {
+  float: left;
+}
+
+.caret {
+  float: right;
+  margin-top: 8px;
+}
+
+.dropdown-menu {
+  width: 100%;
+}

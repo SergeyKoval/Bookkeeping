@@ -9,7 +9,7 @@
   <span *ngIf="!data.editMode && isCategoryType()">Новая категории</span>
   <span *ngIf="!data.editMode && isSubCategoryType()">Новая подкатегории</span>
 </h2>
-<mat-dialog-content>
+<mat-dialog-content  id="category-add-edit-dialog">
   <div *ngIf="errorMessage" class="alert alert-dismissable fade in alert-danger error">
     <strong>{{errorMessage}}</strong>
   </div>

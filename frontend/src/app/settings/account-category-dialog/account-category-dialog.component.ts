@@ -1,8 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/index';
-import { ProfileService } from '../../common/service/profile.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+
+import { Observable } from 'rxjs/index';
 import { filter } from 'rxjs/operators';
+import { isNullOrUndefined } from 'util';
+
+import { ProfileService } from '../../common/service/profile.service';
 import { BalanceDialogComponent } from '../accounts/balance-dialog/balance-dialog.component';
 
 @Component({
@@ -50,6 +53,12 @@ export class AccountCategoryDialogComponent implements OnInit {
   public save(): void {
     this.loading = true;
 
+    if (isNullOrUndefined(this.title) || this.title === '') {
+      this.errorMessage = 'Название обязательно для заполнения';
+      this.loading = false;
+      return;
+    }
+
     if(this.isAccountType()) {
       if (!this.data.editMode) {
         this.processResult(this._profileService.addAccount(this.title), 'Счет с таким названием уже существует', 'Ошибка при добавлении счета');
@@ -73,6 +82,19 @@ export class AccountCategoryDialogComponent implements OnInit {
         this.processResult(this._profileService.addCategory(this.title, this.data.icon), 'Категория с таким названием уже существует', 'Ошибка при добавлении категории');
       } else {
         this.processResult(this._profileService.editCategory(this.data.title, this.title, this.data.icon), 'Категория с таким названием уже существует', 'Ошибка при изминении категории');
+      }
+    }
+
+    if(this.isSubCategoryType()) {
+      if (!this.data.editMode) {
+        if (isNullOrUndefined(this.data.subCategoryType)) {
+          this.errorMessage = 'Необходимо выбрать тип';
+          this.loading = false;
+          return;
+        }
+        this.processResult(this._profileService.addSubCategory(this.title, this.data.parentTitle, this.data.subCategoryType), 'Подкатегория с таким названием уже существует', 'Ошибка при добавлении подкатегории');
+      } else {
+        // this.processResult(this._profileService.editSubAccount(this.data.parentTitle, this.data.title, this.title, this.data.icon, this.data.balance), 'Подкатегория с таким названием уже существует', 'Ошибка при изменении подкатегории');
       }
     }
   }

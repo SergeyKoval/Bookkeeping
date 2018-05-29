@@ -1,6 +1,7 @@
 package by.bk.controller.model.request;
 
 import by.bk.entity.currency.Currency;
+import by.bk.entity.user.model.SubCategoryType;
 import lombok.Getter;
 
 import java.util.Map;
@@ -17,4 +18,5 @@ public class UpdateAccountCategoryRequest {
     private String icon;
     private Map<Currency, Double> balance;
     private boolean toggleState;
+    private SubCategoryType subCategoryType;
 }

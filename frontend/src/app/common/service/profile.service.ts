@@ -40,6 +40,7 @@ export class ProfileService {
         tap(profile => {
           profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
           profile.accounts.sort((first: FinAccount, second: FinAccount) => first.order - second.order);
+          profile.categories.sort((first: Category, second: Category) => first.order - second.order);
           profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
           profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
           profile.accounts.forEach((account: FinAccount) => {
@@ -94,6 +95,7 @@ export class ProfileService {
     return this.getUserProfile()
       .pipe(
         tap(profile => {
+          profile.categories.sort((first: Category, second: Category) => first.order - second.order);
           profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
           this._authenticatedProfile.categories = profile.categories;
         }));
@@ -194,6 +196,14 @@ export class ProfileService {
 
   public deleteCategory(categoryTitle: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/delete-category', {title: categoryTitle});
+  }
+
+  public moveCategoryUp(categoryTitle: string) {
+    return this._http.post<SimpleResponse>('/api/profile/move-category', {title: categoryTitle, direction: 'UP'});
+  }
+
+  public moveCategoryDown(categoryTitle: string) {
+    return this._http.post<SimpleResponse>('/api/profile/move-category', {title: categoryTitle, direction: 'DOWN'});
   }
 
   private getUserProfile(): Observable<Profile> {

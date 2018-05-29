@@ -123,4 +123,9 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse deleteCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.deleteCategory(principal.getName(), request.getTitle());
     }
+
+    @PostMapping("/move-category")
+    public SimpleResponse moveCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.moveCategory(principal.getName(), request.getTitle(), request.getDirection());
+    }
 }

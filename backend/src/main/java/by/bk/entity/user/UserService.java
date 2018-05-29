@@ -361,6 +361,23 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse moveCategory(String login, String categoryTitle, Direction direction) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category category = chooseItem(categories, categoryTitle, getAccountError(login, categoryTitle));
+
+        Optional<Category> secondCategory = getSecondItem(categories, direction, category.getOrder());
+        if (!secondCategory.isPresent()) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update()
+                .set(StringUtils.join("categories.", categories.indexOf(secondCategory.get()), ".order"), category.getOrder())
+                .set(StringUtils.join("categories.", categories.indexOf(category), ".order"), secondCategory.get().getOrder());
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

@@ -66,6 +66,29 @@ export class CategoriesComponent implements OnInit {
     this.processCategoryDialogResult(dialogResult);
   }
 
+  public moveCategoryUp(category: Category): void {
+    this.loading = true;
+    this.moveCategoryOrSubCategory(this._profileService.moveCategoryUp(category.title));
+  }
+
+  public moveCategoryDown(category: Category): void {
+    this.loading = true;
+    this.moveCategoryOrSubCategory(this._profileService.moveCategoryDown(category.title));
+  }
+
+  private moveCategoryOrSubCategory(result: Observable<SimpleResponse>): void {
+    const moveResult: Observable<boolean> = result
+      .pipe(
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время перемещения произошла ошибка');
+          }
+        }),
+        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
+      );
+    this.processCategoryDialogResult(moveResult);
+  }
+
   private openCategoryDialog(dialogData: {}): void {
     const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
       width: '550px',
@@ -116,13 +139,7 @@ export class CategoriesComponent implements OnInit {
 
 
 
-  public moveCategoryUp(category: Category): void {
 
-  }
-
-  public moveCategoryDown(category: Category): void {
-
-  }
 
   public addSubCategory(category: Category): void {
     this.openCategoryDialog({

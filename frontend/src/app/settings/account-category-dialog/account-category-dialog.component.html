@@ -1,0 +1,85 @@
+<h2 mat-dialog-title align="center">
+  <span *ngIf="data.editMode && isAccountType()">Редактирование счета</span>
+  <span *ngIf="data.editMode && isSubAccountType()">Редактирование субсчета</span>
+  <span *ngIf="data.editMode && isCategoryType()">Редактирование категории</span>
+  <span *ngIf="data.editMode && isSubCategoryType()">Редактирование подкатегории</span>
+
+  <span *ngIf="!data.editMode && isAccountType()">Новый счета</span>
+  <span *ngIf="!data.editMode && isSubAccountType()">Новый субсчета</span>
+  <span *ngIf="!data.editMode && isCategoryType()">Новая категории</span>
+  <span *ngIf="!data.editMode && isSubCategoryType()">Новая подкатегории</span>
+</h2>
+<mat-dialog-content>
+  <div *ngIf="errorMessage" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errorMessage}}</strong>
+  </div>
+  <div class="table">
+    <div class="row title">
+      <div class="col-md-3 left-column">Название:</div>
+      <div class="col-md-9">
+        <input type="text" [(ngModel)]="title" class="form-control" *ngIf="!isSubAccountType()">
+
+        <div class="input-group" *ngIf="isSubAccountType()">
+          <input type="text" [(ngModel)]="title" class="form-control">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" (click)="editSubAccountBalance()">Остаток</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="isSubAccountType()">
+      <div class="col-md-3 left-column">Иконка:</div>
+      <div class="col-md-9 right-column">
+        <span *ngFor="let accountIcon of accountIcons;" class="icon-wrapper">
+          <img [ngClass]="{'account-icon':true, 'active-icon':accountIcon===data.icon}"
+               [src]="accountIcon | assetImage:'account'"
+               (click)="chooseIcon(accountIcon)">
+        </span>
+      </div>
+    </div>
+    <div class="row" *ngIf="isCategoryType()">
+      <div class="col-md-3 left-column">Иконка:</div>
+      <div class="col-md-9 right-column">
+        <span *ngFor="let categoryIcon of categoryIcons;" class="icon-wrapper">
+          <img [ngClass]="{'account-icon':true, 'active-icon':categoryIcon===data.icon}"
+               [src]="categoryIcon | assetImage:'category'"
+               (click)="chooseIcon(categoryIcon)">
+        </span>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="isSubCategoryType()">
+      <div class="col-md-3 left-column">Тип:</div>
+      <div class="col-md-9 left-column" *ngIf="data.editMode">
+        <span class="income-category value" *ngIf="data.subCategoryType === 'income'">Доходная</span>
+        <span class="expense-category value" *ngIf="data.subCategoryType === 'expense'">Расходная</span>
+      </div>
+      <div class="col-md-9 right-column" *ngIf="!data.editMode">
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="sub-category-type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 100%">
+            <span class="selected-type">
+              <span class="income-category" *ngIf="data.subCategoryType === 'income'">Доходная</span>
+              <span class="expense-category" *ngIf="data.subCategoryType === 'expense'">Расходная</span>
+            </span>
+            <span [ngClass]="{'caret': true, 'selected': data.subCategoryType}"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="sub-category-type">
+            <li><a class="income-category" (click)="changeType('income')">Доходная</a></li>
+            <li><a class="expense-category" (click)="changeType('expense')">Расходная</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="account-actions">
+    <button class="btn btn-default account-action-item" (click)="close(false)">Закрыть</button>
+    <span class="account-action-item">&nbsp;</span>
+    <button class="btn btn-default account-action-item" [disabled]="loading" (click)="save()">
+      <span *ngIf="!loading">Сохранить</span>
+      <bk-spinner [display]="loading" [size]="20"></bk-spinner>
+    </button>
+  </span>
+</mat-dialog-actions>

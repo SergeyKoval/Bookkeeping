@@ -9,9 +9,9 @@ import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AlertType } from '../../common/model/alert/AlertType';
-import { AccountDialogComponent } from './account-dialog/account-dialog.component';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
+import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 
 @Component({
   selector: 'bk-accounts',
@@ -53,7 +53,7 @@ export class AccountsComponent implements OnInit {
     this.openAccountDialog({
       'type': 'account',
       'editMode': true,
-      'account': editAccount.title
+      'title': editAccount.title
     });
   }
 
@@ -93,7 +93,7 @@ export class AccountsComponent implements OnInit {
     this.openAccountDialog({
       'type': 'subAccount',
       'editMode': false,
-      'account': account.title,
+      'parentTitle': account.title,
       'balance': {}
     });
   }
@@ -128,8 +128,8 @@ export class AccountsComponent implements OnInit {
     this.openAccountDialog({
       'type': 'subAccount',
       'editMode': true,
-      'account': account.title,
-      'subAccount': subAccount.title,
+      'parentTitle': account.title,
+      'title': subAccount.title,
       'icon': subAccount.icon,
       'balance': subAccount.balance
     });
@@ -147,6 +147,26 @@ export class AccountsComponent implements OnInit {
     this.moveAccountOrSubAccount(this._profileService.moveSubAccountDown(account.title, subAccount.title));
   }
 
+  public deleteSubAccount(account: FinAccount, subAccount: SubAccount): void {
+    const dialogResult: Observable<boolean> = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При удалении субсчета все существующие операции с использованием этого субсчета будут удалены. Остатки на удаляемом субсчете будут утерены. Продолжить?')
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => {
+          this.loading = true;
+          this._ACCOUNTS_LOADING.next(true);
+        }),
+        switchMap(() => this._profileService.deleteSubAccount(account.title, subAccount.title)),
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+          }
+        }),
+        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
+      );
+    this.processAccountDialogResult(dialogResult);
+  }
+
   private moveAccountOrSubAccount(result: Observable<SimpleResponse>): void {
     const moveResult: Observable<boolean> = result
       .pipe(
@@ -161,7 +181,7 @@ export class AccountsComponent implements OnInit {
   }
 
   private openAccountDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialog.open(AccountDialogComponent, {
+    const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
       width: '550px',
       position: {top: 'top'},
       data: dialogData
@@ -183,33 +203,5 @@ export class AccountsComponent implements OnInit {
         this.loading = false;
         this._ACCOUNTS_LOADING.next(false);
     });
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  private getAccountOpened(accounts: FinAccount[], title: string): boolean {
-    const element: FinAccount = accounts.filter((account: FinAccount) => account.title === title)[0];
-    return element ? element.settingsOpened : false;
   }
 }

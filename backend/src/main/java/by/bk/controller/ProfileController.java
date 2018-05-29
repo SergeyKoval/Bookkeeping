@@ -103,4 +103,9 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse toggleAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.toggleAccount(principal.getName(), request.getTitle(), request.isToggleState());
     }
+
+    @PostMapping("/delete-sub-account")
+    public SimpleResponse deleteSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.deleteSubAccount(principal.getName(), request.getParentTitle(), request.getTitle());
+    }
 }

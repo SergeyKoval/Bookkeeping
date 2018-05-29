@@ -168,6 +168,10 @@ export class ProfileService {
       });
   }
 
+  public deleteSubAccount(accountTitle: string, subAccountTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/delete-sub-account', {title: subAccountTitle, parentTitle: accountTitle});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }

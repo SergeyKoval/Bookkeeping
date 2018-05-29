@@ -32,3 +32,11 @@
 .icon-wrapper {
   padding-right: 5px;
 }
+
+.income-category {
+  color: #5cb85c;
+}
+
+.expense-category {
+  color: orangered;
+}

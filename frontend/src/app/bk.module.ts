@@ -63,10 +63,10 @@ import { CategoriesComponent } from './settings/categories/categories.component'
 import { ProfileComponent } from './settings/profile/profile.component';
 import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
 import { CategoryDialogComponent } from './settings/categories/category-dialog/category-dialog.component';
-import { AccountDialogComponent } from './settings/accounts/account-dialog/account-dialog.component';
 import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balance-dialog.component';
 import { AuthenticationService } from './common/service/authentication.service';
 import { AuthenticationInterceptor } from './authentication.interceptor';
+import { AccountCategoryDialogComponent } from './settings/account-category-dialog/account-category-dialog.component';
 
 @NgModule({
   declarations: [
@@ -112,8 +112,8 @@ import { AuthenticationInterceptor } from './authentication.interceptor';
     ProfileComponent,
     CurrencySortPipe,
     CategoryDialogComponent,
-    AccountDialogComponent,
-    BalanceDialogComponent
+    BalanceDialogComponent,
+    AccountCategoryDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -144,7 +144,7 @@ import { AuthenticationInterceptor } from './authentication.interceptor';
     LoadingDialogComponent,
     AlternativeCurrenciesDialogComponent,
     CategoryDialogComponent,
-    AccountDialogComponent,
+    AccountCategoryDialogComponent,
     BalanceDialogComponent
   ],
   providers: [

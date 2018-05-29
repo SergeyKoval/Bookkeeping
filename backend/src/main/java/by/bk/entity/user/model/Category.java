@@ -2,6 +2,7 @@ package by.bk.entity.user.model;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,4 +14,14 @@ public class Category {
     private String icon;
     private String title;
     private List<SubCategory> subCategories;
+
+    public Category() {
+    }
+
+    public Category(String title, String icon, int order) {
+        this.title = title;
+        this.order = order;
+        this.icon = icon;
+        this.subCategories = new ArrayList<>();
+    }
 }

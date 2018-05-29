@@ -87,6 +87,15 @@ export class ProfileService {
         }));
   }
 
+  public reloadCategoriesInProfile(): Observable<Profile> {
+    return this.getUserProfile()
+      .pipe(
+        tap(profile => {
+          profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+          this._authenticatedProfile.categories = profile.categories;
+        }));
+  }
+
   public clearProfile(): void {
     this._authenticatedProfile = null;
     this._userCurrencies.clear();
@@ -170,6 +179,10 @@ export class ProfileService {
 
   public deleteSubAccount(accountTitle: string, subAccountTitle: string): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/delete-sub-account', {title: subAccountTitle, parentTitle: accountTitle});
+  }
+
+  public addCategory(categoryTitle: string, icon: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/add-category', {title: categoryTitle, icon: icon});
   }
 
   private getUserProfile(): Observable<Profile> {

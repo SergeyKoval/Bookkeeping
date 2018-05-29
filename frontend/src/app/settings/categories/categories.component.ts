@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { Observable ,  Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
-import { CategoryDialogComponent } from './category-dialog/category-dialog.component';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 
 @Component({
   selector: 'bk-categories',
@@ -17,7 +17,7 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 })
 export class CategoriesComponent implements OnInit {
   public loading: boolean = false;
-  public categories: Category[];
+  public profile: Profile;
 
   public constructor(
     private _profileService: ProfileService,
@@ -27,12 +27,8 @@ export class CategoriesComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.categories = this._profileService.authenticatedProfile.categories;
-    this.categories.forEach((category: Category) => category.opened = false);
-  }
-
-  public hasSubcategories(category: Category): boolean {
-    return category.subCategories && category.subCategories.length > 0;
+    this.profile = this._profileService.authenticatedProfile;
+    this.profile.categories.forEach((category: Category) => category.opened = false);
   }
 
   public addCategory(): void {
@@ -40,6 +36,49 @@ export class CategoriesComponent implements OnInit {
       'type': 'category',
       'editMode': false
     });
+  }
+
+  private openCategoryDialog(dialogData: {}): void {
+    const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
+      width: '550px',
+      position: {top: 'top'},
+      data: dialogData
+    }).afterClosed();
+    this.processCategoryDialogResult(dialogResult);
+  }
+
+  private processCategoryDialogResult(dialogResult: Observable<boolean>): void {
+    dialogResult
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap((result: boolean) => {
+          this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
+          this.loading = true;
+        }),
+        switchMap(() =>this._profileService.reloadCategoriesInProfile())
+      ).subscribe(() => {
+      this.loading = false;
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public hasSubcategories(category: Category): boolean {
+    return category.subCategories && category.subCategories.length > 0;
   }
 
   public editCategory(editCategory: Category): void {
@@ -99,29 +138,5 @@ export class CategoriesComponent implements OnInit {
   private getCategoryOpened(categories: Category[], title: string): boolean {
     const element: Category = categories.filter((category: Category) => category.title === title)[0];
     return element ? element.opened : false;
-  }
-
-  private openCategoryDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialog.open(CategoryDialogComponent, {
-      width: '550px',
-      position: {top: 'top'},
-      data: dialogData
-    }).afterClosed();
-    this.processCategoryDialogResult(dialogResult);
-  }
-
-  private processCategoryDialogResult(dialogResult: Observable<boolean>): void {
-    const subscription: Subscription = dialogResult.pipe(
-      filter((result: boolean) => result === true),
-      tap((result: boolean) => this.loading = true),
-      switchMap(() => this._profileService.reloadProfile())
-    ).subscribe(() => {
-      // const updatedCategories: Category[] = profiles[0].categories;
-      // updatedCategories.forEach((category: Category) => category.opened = this.getCategoryOpened(this.categories, category.title));
-      // this.categories = updatedCategories;
-      this.loading = false;
-      this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
-      subscription.unsubscribe();
-    });
   }
 }

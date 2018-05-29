@@ -317,6 +317,22 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse addCategory(String login, String categoryTitle, String icon) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        if (categories.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), categoryTitle))) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        int order = 1 + categories.stream()
+                .max(Comparator.comparingInt(Category::getOrder))
+                .map(Category::getOrder)
+                .orElse(0);
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().addToSet("categories", new Category(categoryTitle, icon, order));
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

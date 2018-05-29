@@ -20,4 +20,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     User getUserCurrencies(String login);
     @Query(value = "{_id: ?0}", fields = "{email: 0, accounts: 1}")
     User getUserAccounts(String login);
+    @Query(value = "{_id: ?0}", fields = "{email: 0, categories: 1}")
+    User getUserCategories(String login);
 }

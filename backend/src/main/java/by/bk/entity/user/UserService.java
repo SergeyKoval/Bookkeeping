@@ -428,6 +428,27 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse moveSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType, Direction direction) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category category = chooseItem(categories, categoryTitle, getAccountError(login, categoryTitle));
+
+        List<SubCategory> subCategories = category.getSubCategories();
+        SubCategory subCategory = chooseSubCategory(subCategories, subCategoryTitle, subCategoryType, getSubAccountError(login, categoryTitle, subCategoryTitle));
+
+        Optional<SubCategory> secondSubCategory = getSecondItem(subCategories, direction, subCategory.getOrder());
+        if (!secondSubCategory.isPresent()) {
+            return SimpleResponse.success();
+        }
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        String queryPrefix = StringUtils.join("categories.", categories.indexOf(category), ".subCategories.");
+        Update update = new Update()
+                .set(StringUtils.join(queryPrefix, subCategories.indexOf(secondSubCategory.get()), ".order"), subCategory.getOrder())
+                .set(StringUtils.join(queryPrefix, subCategories.indexOf(subCategory), ".order"), secondSubCategory.get().getOrder());
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

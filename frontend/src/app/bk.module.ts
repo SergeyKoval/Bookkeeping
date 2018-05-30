@@ -62,7 +62,6 @@ import { AccountsComponent } from './settings/accounts/accounts.component';
 import { CategoriesComponent } from './settings/categories/categories.component';
 import { ProfileComponent } from './settings/profile/profile.component';
 import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
-import { CategoryDialogComponent } from './settings/categories/category-dialog/category-dialog.component';
 import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balance-dialog.component';
 import { AuthenticationService } from './common/service/authentication.service';
 import { AuthenticationInterceptor } from './authentication.interceptor';
@@ -111,7 +110,6 @@ import { AccountCategoryDialogComponent } from './settings/account-category-dial
     CategoriesComponent,
     ProfileComponent,
     CurrencySortPipe,
-    CategoryDialogComponent,
     BalanceDialogComponent,
     AccountCategoryDialogComponent
   ],
@@ -143,7 +141,6 @@ import { AccountCategoryDialogComponent } from './settings/account-category-dial
     HistoryEditDialogComponent,
     LoadingDialogComponent,
     AlternativeCurrenciesDialogComponent,
-    CategoryDialogComponent,
     AccountCategoryDialogComponent,
     BalanceDialogComponent
   ],

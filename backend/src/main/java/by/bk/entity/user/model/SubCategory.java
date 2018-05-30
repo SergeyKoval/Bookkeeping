@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SubCategory {
+public class SubCategory implements Orderable {
     private String title;
     private int order;
     private SubCategoryType type;

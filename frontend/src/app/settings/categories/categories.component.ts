@@ -86,6 +86,16 @@ export class CategoriesComponent implements OnInit {
     this.deleteCategoryOrSubCategory(removeCallback, 'При удалении подкатегории все существующие операции с этой подкатегорией будут удалены. Продолжить?');
   }
 
+  public moveSubCategoryUp(category: Category, subCategory: SubCategory): void {
+    this.loading = true;
+    this.moveCategoryOrSubCategory(this._profileService.moveSubCategoryUp(category.title, subCategory.title, subCategory.type));
+  }
+
+  public moveSubCategoryDown(category: Category, subCategory: SubCategory): void {
+    this.loading = true;
+    this.moveCategoryOrSubCategory(this._profileService.moveSubCategoryDown(category.title, subCategory.title, subCategory.type));
+  }
+
   public hasSubcategories(category: Category): boolean {
     return category.subCategories && category.subCategories.length > 0;
   }
@@ -142,51 +152,5 @@ export class CategoriesComponent implements OnInit {
       ).subscribe(() => {
       this.loading = false;
     });
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public moveSubCategoryUp(category: Category, subCategory: SubCategory): void {
-
-  }
-
-  public moveSubCategoryDown(category: Category, subCategory: SubCategory): void {
-
-  }
-
-  private getCategoryOpened(categories: Category[], title: string): boolean {
-    const element: Category = categories.filter((category: Category) => category.title === title)[0];
-    return element ? element.opened : false;
   }
 }

@@ -42,7 +42,10 @@ export class ProfileService {
           profile.accounts.sort((first: FinAccount, second: FinAccount) => first.order - second.order);
           profile.categories.sort((first: Category, second: Category) => first.order - second.order);
           profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
-          profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
+          profile.categories.forEach((category: Category) => {
+            category.subCategories.sort((first: SubCategory, second: SubCategory) => first.order - second.order);
+            this._categoryIcon.set(category.title, category.icon);
+          });
           profile.accounts.forEach((account: FinAccount) => {
             account.subAccounts.sort((first: SubAccount, second: SubAccount) => first.order - second.order);
             account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
@@ -221,6 +224,14 @@ export class ProfileService {
 
   public deleteSubCategory(categoryTitle: string, subCategoryTitle: string, subCategoryType: string) {
     return this._http.post<SimpleResponse>('/api/profile/delete-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
+  }
+
+  public moveSubCategoryUp(categoryTitle: string, subCategoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType, direction: 'UP'});
+  }
+
+  public moveSubCategoryDown(categoryTitle: string, subCategoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType, direction: 'DOWN'});
   }
 
   private getUserProfile(): Observable<Profile> {

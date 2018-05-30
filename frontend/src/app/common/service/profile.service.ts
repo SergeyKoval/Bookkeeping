@@ -219,6 +219,10 @@ export class ProfileService {
     return this._http.post<SimpleResponse>('/api/profile/edit-sub-category', {oldTitle: oldSubCategoryTitle, title: newSubCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
   }
 
+  public deleteSubCategory(categoryTitle: string, subCategoryTitle: string, subCategoryType: string) {
+    return this._http.post<SimpleResponse>('/api/profile/delete-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
+  }
+
   private getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }

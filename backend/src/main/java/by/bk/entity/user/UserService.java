@@ -415,6 +415,19 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public SimpleResponse deleteSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category category = chooseItem(categories, categoryTitle, getAccountError(login, categoryTitle));
+
+        List<SubCategory> subCategories = category.getSubCategories();
+        SubCategory subCategory = chooseSubCategory(subCategories, subCategoryTitle, subCategoryType, getSubAccountError(login, categoryTitle, subCategoryTitle));
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update().pull(StringUtils.join("categories.", categories.indexOf(category), ".subCategories"), subCategory);
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

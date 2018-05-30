@@ -58,23 +58,8 @@ export class AccountsComponent implements OnInit {
   }
 
   public deleteAccount(deleteAccount: FinAccount): void {
-    const dialogResult: Observable<boolean> = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При удалении счета все существующие операции с использованием этого счета будут удалены. Остатки на удаляемом счете будут утерены. Продолжить?')
-      .afterClosed()
-      .pipe(
-        filter((result: boolean) => result === true),
-        tap(() => {
-          this.loading = true;
-          this._ACCOUNTS_LOADING.next(true);
-        }),
-        switchMap(() => this._profileService.deleteAccount(deleteAccount.title)),
-        tap(simpleResponse => {
-          if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
-          }
-        }),
-        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
-      );
-    this.processAccountDialogResult(dialogResult);
+    let removeCallback = () => this._profileService.deleteAccount(deleteAccount.title);
+    this.deleteAccountOrSubAccount(removeCallback, 'При удалении счета все существующие операции с использованием этого счета будут удалены. Остатки на удаляемом счете будут утерены. Продолжить?');
   }
 
   public moveAccountDown(account: FinAccount): void {
@@ -148,7 +133,12 @@ export class AccountsComponent implements OnInit {
   }
 
   public deleteSubAccount(account: FinAccount, subAccount: SubAccount): void {
-    const dialogResult: Observable<boolean> = this._confirmDialogService.openConfirmDialog('Подтверждение', 'При удалении субсчета все существующие операции с использованием этого субсчета будут удалены. Остатки на удаляемом субсчете будут утерены. Продолжить?')
+    let removeCallback = () => this._profileService.deleteSubAccount(account.title, subAccount.title);
+    this.deleteAccountOrSubAccount(removeCallback, 'При удалении субсчета все существующие операции с использованием этого субсчета будут удалены. Остатки на удаляемом субсчете будут утерены. Продолжить?');
+  }
+
+  private deleteAccountOrSubAccount(removeCallback: () => Observable<SimpleResponse>, message: string): void {
+    const dialogResult: Observable<boolean> = this._confirmDialogService.openConfirmDialog('Подтверждение', message)
       .afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
@@ -156,7 +146,7 @@ export class AccountsComponent implements OnInit {
           this.loading = true;
           this._ACCOUNTS_LOADING.next(true);
         }),
-        switchMap(() => this._profileService.deleteSubAccount(account.title, subAccount.title)),
+        switchMap(removeCallback),
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
             this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');

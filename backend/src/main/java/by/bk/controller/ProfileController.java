@@ -141,4 +141,9 @@ public class ProfileController extends BaseAPIController {
         }
         return userAPI.editSubCategory(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getSubCategoryType());
     }
+
+    @PostMapping("/delete-sub-category")
+    public SimpleResponse deleteSubCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
+        return userAPI.deleteSubCategory(principal.getName(), request.getParentTitle(), request.getTitle(), request.getSubCategoryType());
+    }
 }

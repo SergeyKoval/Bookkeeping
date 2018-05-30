@@ -49,21 +49,8 @@ export class CategoriesComponent implements OnInit {
   }
 
   public deleteCategory(deleteCategory: Category): void {
-    const dialogResult: Observable<boolean> = this._confirmDialogService
-      .openConfirmDialog('Подтверждение', 'При удалении категории все ее подкатегории а так же существующие операции с этими подкатегориями будут удалены. Продолжить?')
-      .afterClosed()
-      .pipe(
-        filter((result: boolean) => result === true),
-        tap(() => this.loading = true),
-        switchMap(() => this._profileService.deleteCategory(deleteCategory.title)),
-        tap(simpleResponse => {
-          if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
-          }
-        }),
-        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
-      );
-    this.processCategoryDialogResult(dialogResult);
+    let removeCallback = () => this._profileService.deleteCategory(deleteCategory.title);
+    this.deleteCategoryOrSubCategory(removeCallback, 'При удалении категории все ее подкатегории а так же существующие операции с этими подкатегориями будут удалены. Продолжить?');
   }
 
   public moveCategoryUp(category: Category): void {
@@ -94,8 +81,31 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
+  public deleteSubCategory(category: Category, subCategory: SubCategory): void {
+    let removeCallback = () => this._profileService.deleteSubCategory(category.title, subCategory.title, subCategory.type);
+    this.deleteCategoryOrSubCategory(removeCallback, 'При удалении подкатегории все существующие операции с этой подкатегорией будут удалены. Продолжить?');
+  }
+
   public hasSubcategories(category: Category): boolean {
     return category.subCategories && category.subCategories.length > 0;
+  }
+
+  private deleteCategoryOrSubCategory(removeCallback: () => Observable<SimpleResponse>, message: string): void {
+    const dialogResult: Observable<boolean> = this._confirmDialogService
+      .openConfirmDialog('Подтверждение', message)
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => this.loading = true),
+        switchMap(removeCallback),
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+          }
+        }),
+        switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
+      );
+    this.processCategoryDialogResult(dialogResult);
   }
 
   private moveCategoryOrSubCategory(result: Observable<SimpleResponse>): void {
@@ -165,9 +175,7 @@ export class CategoriesComponent implements OnInit {
 
 
 
-  public deleteSubCategory(category: Category, subCategory: SubCategory): void {
 
-  }
 
   public moveSubCategoryUp(category: Category, subCategory: SubCategory): void {
 

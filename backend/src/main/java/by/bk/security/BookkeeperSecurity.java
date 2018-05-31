@@ -1,7 +1,9 @@
 package by.bk.security;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +27,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
+    @Value("${bookkeeper.require.http}")
+    private Boolean requireHttp;
+
     @Autowired
     private JwtAuthenticationFilter authenticationFilter;
     @Autowired
@@ -42,13 +47,17 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        if (!BooleanUtils.toBoolean(requireHttp)) {
+            http.requiresChannel().anyRequest().requiresSecure();
+        }
+
         http
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/api/**").authenticated()
-                .anyRequest().permitAll();
+                .antMatchers(HttpMethod.POST, "/token/generate-token").permitAll()
+                .anyRequest().authenticated();
         http
                 .headers()
                 .frameOptions().sameOrigin()
@@ -58,9 +67,8 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(HttpMethod.POST, "/token/**");
-        web.ignoring().antMatchers(HttpMethod.GET, "/", "/*.html", "/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js");
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers(HttpMethod.GET, "/*.html", "/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js");
     }
 
     @Bean

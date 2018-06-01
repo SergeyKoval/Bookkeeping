@@ -4,6 +4,8 @@
 
 .panel-heading {
   cursor: pointer;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .panel-body hr {
@@ -18,10 +20,6 @@
   line-height: 15px;
 }
 
-.balance {
-  padding-right: 0;
-}
-
 .panel-title {
   font-size: 15px;
 }
@@ -29,4 +27,10 @@
 .icon {
   padding-bottom: 2px;
   padding-right: 5px;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .col-sm-5 {
+    padding-left: 0;
+  }
 }

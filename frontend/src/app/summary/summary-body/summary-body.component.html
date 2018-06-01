@@ -6,12 +6,12 @@
             <div class="col-lg-7"><strong><em>{{account.title}}</em></strong></div>
             <div class="col-lg-5">
               <div class="row" *ngFor="let balanceItem of account | summaryBodyAccount:conversionCurrency | summaryBalanceOrdering">
-                <div class="col-lg-3 col-sm-7 text-right">
+                <div class="col-lg-3 col-sm-7 col-md-8 text-right">
                   <strong>
                     <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
                   </strong>
                 </div>
-                <div class="col-lg-9 col-sm-5 text-right">{{balanceItem.value | currencyValue:2}}</div>
+                <div class="col-lg-9 col-sm-5 col-md-4 text-right">{{balanceItem.value | currencyValue:2}}</div>
               </div>
             </div>
           </div>

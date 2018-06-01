@@ -5,3 +5,7 @@ a {
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
   font-weight: bold;
 }
+
+.navbar {
+  margin-bottom: 10px;
+}

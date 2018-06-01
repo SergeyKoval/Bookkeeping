@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 import { Subscription } from 'rxjs';
 
@@ -22,10 +23,13 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
   public constructor(
     private _alertService: AlertService,
     private _profileService: ProfileService,
-    private _loadingService: LoadingService
+    private _loadingService: LoadingService,
+    private _titleService: Title
   ) {}
 
   public ngOnInit(): void {
+    this._titleService.setTitle('Бухгалтерия');
+
     this.subscription = this._alertService.alerts.subscribe((alert: Alert) => {
       alert.initAutoClose(this.close.bind(this));
       this.alerts.push(alert);

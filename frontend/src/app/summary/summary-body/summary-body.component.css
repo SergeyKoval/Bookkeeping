@@ -39,11 +39,7 @@
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
-  .col-md-4 {
+  .col-md-7 {
     padding-left: 0;
-  }
-  .col-md-8 {
-    padding-right: 5px;
-    padding-left: 155px;
   }
 }

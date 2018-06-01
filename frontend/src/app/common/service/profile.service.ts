@@ -1,21 +1,21 @@
 import { Inject, Injectable } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Subject ,  ReplaySubject ,  Observable } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/internal/operators';
 
 import { LoadingService } from 'app/common/service/loading.service';
 import { HOST } from '../config/config';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
 import { CurrencyService } from './currency.service';
-import { switchMap } from 'rxjs/internal/operators';
 import { AlertService } from './alert.service';
 import { AlertType } from '../model/alert/AlertType';
 
 @Injectable()
-export class ProfileService {
+export class ProfileService implements CanActivate {
   private _authenticatedProfile: Profile;
   private _userCurrencies: Map<String, CurrencyDetail> = new Map();
   private _categoryIcon: Map<string, string> = new Map();
@@ -33,6 +33,10 @@ export class ProfileService {
     private _http: HttpClient,
     @Inject(HOST) private _host: string
   ) {}
+
+  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    return this._authenticatedProfile.roles.indexOf('ADMIN') > -1;
+  }
 
   public loadFullProfile(): Observable<Profile> {
     return this.getUserProfile()

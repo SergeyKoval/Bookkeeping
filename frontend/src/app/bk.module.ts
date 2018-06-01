@@ -66,6 +66,7 @@ import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balan
 import { AuthenticationService } from './common/service/authentication.service';
 import { AuthenticationInterceptor } from './authentication.interceptor';
 import { AccountCategoryDialogComponent } from './settings/account-category-dialog/account-category-dialog.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +112,8 @@ import { AccountCategoryDialogComponent } from './settings/account-category-dial
     ProfileComponent,
     CurrencySortPipe,
     BalanceDialogComponent,
-    AccountCategoryDialogComponent
+    AccountCategoryDialogComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

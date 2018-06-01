@@ -25,7 +25,7 @@ export class HistoryComponent implements OnInit {
   public loadingMoreIndicator: boolean = false;
   public disableMoreButton: boolean = false;
 
-  public historyItems: HistoryType[];
+  public historyItems: HistoryType[] = [];
 
   private authenticatedProfileId: number;
 
@@ -39,15 +39,15 @@ export class HistoryComponent implements OnInit {
 
   public ngOnInit(): void {
     this.authenticatedProfileId = this._authenticationService.authenticatedProfile.id;
-    const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, HistoryComponent.PAGE_LIMIT)
-      .subscribe((historyItems: HistoryType[]) => {
-        if (historyItems.length < HistoryComponent.PAGE_LIMIT) {
-          this.disableMoreButton = true;
-        }
-        this.historyItems = historyItems;
-        subscription.unsubscribe();
+    // const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, HistoryComponent.PAGE_LIMIT)
+    //   .subscribe((historyItems: HistoryType[]) => {
+    //     if (historyItems.length < HistoryComponent.PAGE_LIMIT) {
+    //       this.disableMoreButton = true;
+    //     }
+    //     this.historyItems = historyItems;
+    //     subscription.unsubscribe();
         this.loading = false;
-      });
+    //   });
   }
 
   public addHistoryItem(): void {

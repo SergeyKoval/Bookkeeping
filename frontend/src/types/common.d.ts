@@ -6,7 +6,7 @@ type SimpleResponse = {
 type Profile = {
   id: number,
   email: string,
-  password: string,
+  roles: string[],
   currencies: CurrencyDetail[],
   categories: Category[],
   accounts: FinAccount[]

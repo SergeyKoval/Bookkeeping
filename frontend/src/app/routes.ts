@@ -9,6 +9,8 @@ import { AccountsComponent } from './settings/accounts/accounts.component';
 import { CategoriesComponent } from './settings/categories/categories.component';
 import { ProfileComponent } from './settings/profile/profile.component';
 import { AuthenticationService } from './common/service/authentication.service';
+import { UsersComponent } from './users/users.component';
+import { ProfileService } from './common/service/profile.service';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -29,6 +31,11 @@ export const BOOKKEEPING_ROUTES: Route[] = [
     path: 'history',
     component: HistoryComponent,
     canActivate: [AuthenticationService]
+  },
+  {
+    path: 'users',
+    component: UsersComponent,
+    canActivate: [AuthenticationService, ProfileService],
   },
   {
     path: 'settings',

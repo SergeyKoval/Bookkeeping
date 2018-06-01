@@ -18,7 +18,6 @@ public class User {
     private String email;
     @JsonIgnore
     private String password;
-    @JsonIgnore
     private List<UserPermission> roles;
     private List<UserCurrency> currencies;
     private List<Category> categories;

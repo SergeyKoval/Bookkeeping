@@ -1,3 +1,10 @@
 .footer-balance-item, .footer-balance-title {
   line-height: 17px;
 }
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .col-sm-3 {
+    padding-left: 0;
+    text-align: left;
+  }
+}

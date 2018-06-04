@@ -16,7 +16,7 @@
         <span *ngIf="hasSubcategories(category) && !category.opened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="category.opened = !category.opened"></span>
         <span *ngIf="hasSubcategories(category) && category.opened" class="tree-icon glyphicon glyphicon-chevron-down" (click)="category.opened = !category.opened"></span>
         <img class="icon" [src]="category.icon | assetImage:'category'">
-        <span>{{category.title}}</span>
+        <span (click)="category.opened = !category.opened">{{category.title}}</span>
       </div>
       <div class="col-sm-4 text-right">
         <span class="action glyphicon glyphicon-plus" (click)="addSubCategory(category)"

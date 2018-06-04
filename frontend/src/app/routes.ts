@@ -20,22 +20,26 @@ export const BOOKKEEPING_ROUTES: Route[] = [
   },
   {
     path: 'authentication',
-    component: AuthenticationComponent
+    component: AuthenticationComponent,
+    data: {title: 'Бухгалтерия - аутентификация'}
   },
   {
     path: 'budget',
     component: BudgetComponent,
-    canActivate: [AuthenticationService]
+    canActivate: [AuthenticationService],
+    data: {title: 'Бухгалтерия - бюджет'}
   },
   {
     path: 'history',
     component: HistoryComponent,
-    canActivate: [AuthenticationService]
+    canActivate: [AuthenticationService],
+    data: {title: 'Бухгалтерия - учет'}
   },
   {
     path: 'users',
     component: UsersComponent,
     canActivate: [AuthenticationService, ProfileService],
+    data: {title: 'Бухгалтерия - пользователи'}
   },
   {
     path: 'settings',
@@ -49,19 +53,23 @@ export const BOOKKEEPING_ROUTES: Route[] = [
       },
       {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
+        data: {title: 'Бухгалтерия - настройки - профиль'}
       },
       {
         path: 'currencies',
-        component: CurrenciesComponent
+        component: CurrenciesComponent,
+        data: {title: 'Бухгалтерия - настройки - валюты'}
       },
       {
         path: 'accounts',
-        component: AccountsComponent
+        component: AccountsComponent,
+        data: {title: 'Бухгалтерия - настройки - счета'}
       },
       {
         path: 'categories',
-        component: CategoriesComponent
+        component: CategoriesComponent,
+        data: {title: 'Бухгалтерия - настройки - категории'}
       }
     ]
   }

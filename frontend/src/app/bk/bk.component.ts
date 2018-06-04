@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/internal/operators';
 
 import { Alert } from '../common/model/alert/Alert';
 import { AlertService } from '../common/service/alert.service';
@@ -21,6 +23,8 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
   private authenticationCheckSubscription: Subscription;
 
   public constructor(
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
     private _alertService: AlertService,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
@@ -28,8 +32,6 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this._titleService.setTitle('Бухгалтерия');
-
     this.subscription = this._alertService.alerts.subscribe((alert: Alert) => {
       alert.initAutoClose(this.close.bind(this));
       this.alerts.push(alert);
@@ -38,6 +40,24 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
     this.authenticationCheckSubscription = this._loadingService.authenticationCheck$$.subscribe(value => {
       this.authenticationCheckIndicator = value;
     });
+
+    this._router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        map(value => {
+          let child = this._activatedRoute.firstChild;
+          while (child) {
+            if (child.firstChild) {
+              child = child.firstChild;
+            } else if (child.snapshot.data && child.snapshot.data['title']) {
+              return child.snapshot.data['title'];
+            } else {
+              return null;
+            }
+          }
+          return null;
+        })
+      ).subscribe((title: string) => this._titleService.setTitle(title));
   }
 
   public ngOnDestroy(): void {

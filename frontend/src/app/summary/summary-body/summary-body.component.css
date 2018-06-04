@@ -7,8 +7,12 @@
   padding: 5px 0;
 }
 
+.panel-body {
+  padding: 5px 0;
+}
+
 .panel-body hr {
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .panel-group {
@@ -17,6 +21,10 @@
 
 .summary-balance-item, .summary-balance-title {
   line-height: 15px;
+}
+
+.summary-balance-item {
+  margin: 0;
 }
 
 .panel-title {

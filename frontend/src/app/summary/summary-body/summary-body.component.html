@@ -20,18 +20,18 @@
     <div class="panel-body" *ngIf="account.opened">
       <div *ngFor="let subAccount of account.subAccounts; last as last">
         <div class="row summary-balance-item" >
-          <div class="col-lg-7 summary-balance-title">
+          <div class="col-lg-7 col-md-6 summary-balance-title">
             <img class="icon" *ngIf="subAccount.icon" [src]="subAccount.icon | assetImage:'account'">
             <strong><em>{{subAccount.title}}</em></strong>
           </div>
-          <div class="col-lg-5">
+          <div class="col-lg-5 col-md-6">
             <div class="row" *ngFor="let balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering">
-              <div class="col-lg-3 text-right">
+              <div class="col-lg-3 col-sm-7 col-md-5">
                 <strong>
                   <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
                 </strong>
               </div>
-              <div class="col-lg-9 text-right">{{balanceItem.value | currencyValue:2}}</div>
+              <div class="col-lg-9 col-sm-5 col-md-7 text-right">{{balanceItem.value | currencyValue:2}}</div>
             </div>
           </div>
         </div>

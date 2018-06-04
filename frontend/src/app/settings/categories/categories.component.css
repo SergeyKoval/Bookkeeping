@@ -56,10 +56,36 @@ hr {
   padding-right: 15px;
 }
 
-.subcategory .col-md-8 {
+.subcategory .col-sm-8 {
   padding-left: 0;
 }
 
-.subcategory .col-md-4 {
+.subcategory .col-sm-4 {
   padding-right: 0;
+}
+
+.page-title .table {
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .add-category {
+    white-space: normal;
+  }
+  .page-title {
+    font-size: 14px;
+  }
+  .page-title-description {
+    padding-left: 10px;
+    padding-right: 0;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .page-title {
+    font-size: 14px;
+  }
+  .page-title-description {
+    padding: 0;
+  }
 }

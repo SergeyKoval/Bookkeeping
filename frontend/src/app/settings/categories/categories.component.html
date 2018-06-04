@@ -1,20 +1,24 @@
 <div class="text-center page-title">
-  <button type="button" class="btn btn-default pull-left add-category" [disabled]="loading" (click)="addCategory()">Добавить категорию</button>
-  Конфигурация расходных и доходных категорий.<br/>
-  <span class="income-category">Доходные</span> выделены зеленым цветом а <span class="expense-category">расходные</span> красным.
+  <div class="table row">
+    <div class="col-sm-3 col-md-4"><button type="button" class="btn btn-default pull-left add-category" [disabled]="loading" (click)="addCategory()">Добавить категорию</button></div>
+    <div class="col-sm-9 col-md-8 page-title-description">
+      Конфигурация расходных и доходных категорий.<br/>
+      <span class="income-category">Доходные</span> выделены зеленым цветом а <span class="expense-category">расходные</span> красным.
+    </div>
+  </div>
 </div>
 
 <div class="table" *ngIf="!loading; else loadingIndicator">
   <div *ngFor="let category of profile.categories; let lastCategory = last; let firstCategory = first;">
     <hr *ngIf="firstCategory" />
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-sm-8">
         <span *ngIf="hasSubcategories(category) && !category.opened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="category.opened = !category.opened"></span>
         <span *ngIf="hasSubcategories(category) && category.opened" class="tree-icon glyphicon glyphicon-chevron-down" (click)="category.opened = !category.opened"></span>
         <img class="icon" [src]="category.icon | assetImage:'category'">
         <span>{{category.title}}</span>
       </div>
-      <div class="col-md-4 text-right">
+      <div class="col-sm-4 text-right">
         <span class="action glyphicon glyphicon-plus" (click)="addSubCategory(category)"
               popover="Добавить подкатегорию" popoverPlacement="left"
               [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
@@ -42,8 +46,8 @@
     <div *ngIf="category.opened">
       <div class="row subcategory"  *ngFor="let subCategory of category.subCategories; let lastSubCategory = last; let firstSubCategory = first;">
         <hr/>
-        <div [ngClass]="{'col-md-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
-        <div class="col-md-4 text-right">
+        <div [ngClass]="{'col-sm-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
+        <div class="col-sm-4 text-right">
           <span class="action glyphicon glyphicon-pencil" (click)="editSubCategory(category, subCategory)"
                 popover="Редактировать" popoverPlacement="left"
                 [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">

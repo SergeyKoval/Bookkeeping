@@ -85,6 +85,7 @@ export class AccountsComponent implements OnInit {
 
   public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {
     this._dialog.open(BalanceDialogComponent, {
+      position: {top: 'top'},
       width: '350px',
       data: {'subAccountBalance': Object.assign({}, subAccount.balance)}
     }).afterClosed()

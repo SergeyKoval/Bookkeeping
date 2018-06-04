@@ -22,3 +22,7 @@
 .authentication-check-spinner {
   padding-top: 3px;
 }
+
+#details {
+  padding-left: 0;
+}

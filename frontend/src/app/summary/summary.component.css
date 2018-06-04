@@ -27,3 +27,7 @@
 .panel-body {
   padding: 5px;
 }
+
+#summary {
+  padding-right: 10px;
+}

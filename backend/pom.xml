@@ -81,7 +81,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${build.directory}/classes/static/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes/static/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>../frontend/dist</directory>
@@ -98,7 +98,7 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <replace token="$BOOKKEEPER_VERSION$" value="${version}" dir="target/classes/static">
+                                <replace token="$BOOKKEEPER_VERSION$" value="${project.version}" dir="target/classes/static">
                                     <include name="**/*.html"/>
                                 </replace>
                             </tasks>

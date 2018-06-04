@@ -2,19 +2,19 @@
 
 <div class="table" *ngIf="!loading; else loadingIndicator">
   <div class="row header">
-    <div class="col-md-2 text-center">Символ</div>
-    <div class="col-md-2 text-center">Название</div>
-    <div class="col-md-2 text-center">Используется</div>
-    <div class="col-md-3 text-center">По умолчанию</div>
-    <div class="col-md-3">Действия</div>
+    <div class="col-sm-2 text-center first-column">Символ</div>
+    <div class="col-sm-2 text-center">Название</div>
+    <div class="col-sm-2 text-center">Используется</div>
+    <div class="col-sm-3 text-center forth-column">По умолчанию</div>
+    <div class="col-sm-3">Действия</div>
   </div>
 
   <div class="row" *ngFor="let defaultCurrency of allCurrencies | currencySort; let lastCurrency = last; let firstCurrency = first;">
-    <div class="col-md-2 text-center"><span [innerHTML]="defaultCurrency.symbol"></span></div>
-    <div class="col-md-2 text-center">{{defaultCurrency.name}}</div>
-    <div class="col-md-2 text-center"><span *ngIf="isCurrencyUsed(defaultCurrency.name)" class="glyphicon glyphicon-ok green-mark"></span></div>
-    <div class="col-md-3 text-center"><span *ngIf="isCurrencyDefault(defaultCurrency.name)" class="glyphicon glyphicon-star red-mark"></span></div>
-    <div class="col-md-3">
+    <div class="col-sm-2 text-center"><span [innerHTML]="defaultCurrency.symbol"></span></div>
+    <div class="col-sm-2 text-center">{{defaultCurrency.name}}</div>
+    <div class="col-sm-2 text-center"><span *ngIf="isCurrencyUsed(defaultCurrency.name)" class="glyphicon glyphicon-ok green-mark"></span></div>
+    <div class="col-sm-3 text-center"><span *ngIf="isCurrencyDefault(defaultCurrency.name)" class="glyphicon glyphicon-star red-mark"></span></div>
+    <div class="col-sm-3">
       <span class="action glyphicon glyphicon-remove" *ngIf="isCurrencyUsed(defaultCurrency.name)"
             popover="Не использовать" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="unUseCurrencyForProfile(defaultCurrency.name)">

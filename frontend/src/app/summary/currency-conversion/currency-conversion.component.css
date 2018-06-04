@@ -10,8 +10,25 @@
 
 li a {
   cursor: pointer;
+  line-height: 16px;
+}
+
+li a.static-line {
+  padding: 3px 10px;
 }
 
 button {
   padding: 3px 12px;
+}
+
+.dropdown-menu {
+  min-width: 120px;
+}
+
+.dropdown-menu{
+  padding: 3px 0;
+}
+
+.divider {
+  margin: 3px 0;
 }

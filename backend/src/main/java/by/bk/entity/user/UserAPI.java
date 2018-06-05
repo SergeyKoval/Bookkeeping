@@ -7,6 +7,7 @@ import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,4 +43,9 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse editSubCategory(String login, String categoryTitle, String oldSubCategoryTitle, String newSubCategoryTitle, SubCategoryType subCategoryType);
     SimpleResponse deleteSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType);
     SimpleResponse moveSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType, Direction direction);
+
+    List<User> getAllUsers();
+    SimpleResponse addUser(String email, String password, List<UserPermission> roles);
+    SimpleResponse editUser(String email, String password, List<UserPermission> roles);
+    SimpleResponse deleteUser(String email);
 }

@@ -1,0 +1,41 @@
+<h2 mat-dialog-title align="center">
+  <span *ngIf="data.editMode">Редактирование пользователя</span>
+  <span *ngIf="!data.editMode">Добавление пользователя</span>
+</h2>
+<mat-dialog-content>
+  <div *ngIf="errorMessage" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errorMessage}}</strong>
+  </div>
+  <div class="table">
+    <div class="row first-line">
+      <div class="col-sm-3 left-column">Мэил:</div>
+      <div class="col-sm-9" #emailWrapper>
+        <input type="email" email minlength="3" required [(ngModel)]="email" class="form-control" *ngIf="!data.editMode">
+        <span class="right-column" *ngIf="data.editMode">{{email}}</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3 left-column">Пароль:</div>
+      <div class="col-sm-9">
+        <input #passwordInput type="password" required minlength="3" [(ngModel)]="password" class="form-control">
+      </div>
+    </div>
+
+    <div class="row col-sm-9 col-sm-offset-3 checkbox admin-permission">
+      <label>
+        <input type="checkbox" [checked]="isAdmin()" (click)="changeAdminState()"> Права администратора
+      </label>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="actions">
+    <button class="btn btn-default action-item" (click)="close(false)">Закрыть</button>
+    <span class="action-item">&nbsp;</span>
+    <button class="btn btn-default action-item" [disabled]="loading" (click)="save(emailWrapper.firstElementChild, passwordInput)">
+      <span *ngIf="!loading">Сохранить</span>
+      <bk-spinner [display]="loading" [size]="20"></bk-spinner>
+    </button>
+  </span>
+</mat-dialog-actions>

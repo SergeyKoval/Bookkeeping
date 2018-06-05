@@ -4,6 +4,7 @@ import by.bk.entity.user.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,4 +23,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     User getUserAccounts(String login);
     @Query(value = "{_id: ?0}", fields = "{email: 0, categories: 1}")
     User getUserCategories(String login);
+    @Query(value = "{}", fields = "{email: 1, roles: 1}")
+    List<User> getAllUsers();
 }

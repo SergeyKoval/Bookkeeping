@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * @author Sergey Koval
  */
-@Target(ElementType.METHOD)
+@Target(value = {ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("hasAuthority(T(by.bk.entity.user.UserPermission).ADMIN.name())")
 public @interface RoleAdmin {

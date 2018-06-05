@@ -67,6 +67,7 @@ import { AuthenticationService } from './common/service/authentication.service';
 import { AuthenticationInterceptor } from './authentication.interceptor';
 import { AccountCategoryDialogComponent } from './settings/account-category-dialog/account-category-dialog.component';
 import { UsersComponent } from './users/users.component';
+import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +114,8 @@ import { UsersComponent } from './users/users.component';
     CurrencySortPipe,
     BalanceDialogComponent,
     AccountCategoryDialogComponent,
-    UsersComponent
+    UsersComponent,
+    UserDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -144,7 +146,8 @@ import { UsersComponent } from './users/users.component';
     LoadingDialogComponent,
     AlternativeCurrenciesDialogComponent,
     AccountCategoryDialogComponent,
-    BalanceDialogComponent
+    BalanceDialogComponent,
+    UserDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

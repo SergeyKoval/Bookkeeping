@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { Observable } from 'rxjs/index';
+
 import { AuthenticationService } from '../../common/service/authentication.service';
 import { ProfileService } from '../../common/service/profile.service';
 
@@ -15,7 +17,7 @@ export class HeaderComponent {
     private _profileService: ProfileService
   ) {}
 
-  public isAdmin(): boolean {
+  public isAdmin(): Observable<boolean> {
     return this._profileService.canActivate(null, null);
   }
 

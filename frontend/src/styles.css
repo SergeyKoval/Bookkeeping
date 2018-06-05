@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+@media (min-width: 768px) and (max-width: 992px) {}
+@media (min-width: 992px) and (max-width: 1200px) {}
+
 .history-add-edit-dialog mat-dialog-container {
   overflow: visible !important;
 }

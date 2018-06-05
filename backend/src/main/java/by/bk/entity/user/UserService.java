@@ -449,6 +449,37 @@ public class UserService implements UserAPI, UserDetailsService {
         return updateUser(query, update);
     }
 
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.getAllUsers();
+    }
+
+    @Override
+    public SimpleResponse addUser(String email, String password, List<UserPermission> roles) {
+        if (userRepository.existsById(email)) {
+            return SimpleResponse.fail("ALREADY_EXIST");
+        }
+
+        userRepository.save(new User(email, passwordEncoder.encode(password), roles));
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse editUser(String email, String password, List<UserPermission> roles) {
+        Query query = Query.query(Criteria.where("email").is(email));
+        Update update = new Update().set("roles", roles);
+        if (StringUtils.isNotBlank(password)) {
+            update.set("password", passwordEncoder.encode(password));
+        }
+        return updateUser(query, update);
+    }
+
+    @Override
+    public SimpleResponse deleteUser(String email) {
+        userRepository.deleteById(email);
+        return SimpleResponse.success();
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
-import { Subject ,  ReplaySubject ,  Observable } from 'rxjs';
+import { Subject, ReplaySubject, Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/internal/operators';
 
@@ -16,6 +16,7 @@ import { AlertType } from '../model/alert/AlertType';
 
 @Injectable()
 export class ProfileService implements CanActivate {
+  private _observableProfile: Observable<Profile>;
   private _authenticatedProfile: Profile;
   private _userCurrencies: Map<String, CurrencyDetail> = new Map();
   private _categoryIcon: Map<string, string> = new Map();
@@ -34,12 +35,20 @@ export class ProfileService implements CanActivate {
     @Inject(HOST) private _host: string
   ) {}
 
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this._authenticatedProfile.roles.indexOf('ADMIN') > -1;
+  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    if (this._authenticatedProfile) {
+      return of(this._authenticatedProfile.roles.indexOf('ADMIN') > -1);
+    }
+
+    const result: Subject<boolean> = new Subject<boolean>();
+    this._observableProfile.subscribe(profile => result.next(profile.roles.indexOf('ADMIN') > -1));
+
+    return result.asObservable();
   }
 
   public loadFullProfile(): Observable<Profile> {
-    return this.getUserProfile()
+    this._observableProfile = this.getUserProfile();
+    return this._observableProfile
       .pipe(
         tap(profile => {
           profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);

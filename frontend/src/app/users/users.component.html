@@ -1,3 +1,42 @@
-<p>
-  users works!
-</p>
+<div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
+  <div class="panel-body">
+    <div class="page-title text-center">
+      <button type="button" class="btn btn-default pull-left" (click)="addUser()">Добавить пользователя</button>
+      <span class="page-title-text">Пользователи и их права</span>
+    </div>
+
+    <div class="table">
+      <div class="row header">
+        <div class="col-md-4 col-sm-5">Мэил</div>
+        <div class="col-md-4 col-sm-3">Роли</div>
+        <div class="col-md-4 col-sm-4 text-center">Действия</div>
+      </div>
+
+      <div *ngFor="let user of users; let lastUser = last">
+        <div class="row">
+          <div class="col-md-4 col-sm-5">{{user.email}}</div>
+          <div class="col-md-4 col-sm-3">
+            <span class="label label-primary" *ngIf="isUser(user)">Пользователь</span>
+            <span class="label label-primary admin-label" *ngIf="isAdmin(user)">Администратор</span>
+          </div>
+          <div class="col-md-4 col-sm-4 text-center" *ngIf="!isCurrentUser(user)">
+            <span class="action glyphicon glyphicon-pencil" (click)="editUser(user)"
+                  popover="Редактировать пользователя" popoverPlacement="left"
+                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+            </span>
+            <span class="action glyphicon glyphicon-remove" (click)="deleteUser(user)"
+                  popover="Удалить пользователя" popoverPlacement="left"
+                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+            </span>
+          </div>
+        </div>
+
+        <hr *ngIf="!lastUser">
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="100"></bk-spinner>
+</ng-template>

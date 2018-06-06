@@ -6,7 +6,8 @@
     <div class="row" *ngFor="let currency of currencies | currencySort">
       <div class="input-group">
         <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></span>
-        <input type="text" [value]="getCurrencyValue(currency)" (blur)="setCurrencyValue(currency, $event.target.value)" class="form-control" bkCurrencyValue="2" [skipDecimalZeros]="true">
+        <input type="text" [(ngModel)]="this.data.subAccountBalance[currency.name]" class="form-control"
+               bkCurrencyValue="2" [skipDecimalZeros]="true" [patchModelValueToFixedSize]="true">
       </div>
     </div>
   </div>

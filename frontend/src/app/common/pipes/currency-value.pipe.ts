@@ -14,6 +14,6 @@ export class CurrencyValuePipe implements PipeTransform {
         stringValue = stringValue.slice(0, -1);
       }
     }
-    return stringValue.replace(/\B(?=(\d{3})+(?!\d).)/g, '\'');
+    return stringValue.replace(stringValue.includes('.') ? /\B(?=(\d{3})+(?!\d).)/g : /\B(?=(\d{3})+(?!\d)$)/g, '\'');
   }
 }

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input, OnInit, Optional } from '@angular/core';
+import { Directive, DoCheck, ElementRef, HostListener, Input, Optional } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 import { CurrencyValuePipe } from '../pipes/currency-value.pipe';
@@ -7,35 +7,41 @@ import { CurrencyUtils } from '../utils/currency-utils';
 @Directive({
   selector: '[bkCurrencyValue]'
 })
-export class CurrencyValueDirective implements OnInit {
+export class CurrencyValueDirective implements DoCheck {
   @Input()
   public bkCurrencyValue: number;
   @Input()
   public skipDecimalZeros: boolean;
+  @Input()
+  public patchModelValueToFixedSize: boolean;
 
-  private _element: HTMLInputElement;
+  private _ELEMENT: HTMLInputElement;
+  private _INITIAL_LOAD_DONE: boolean = false;
 
   public constructor(
     @Optional() private _ngControl: NgControl,
     private _elementRef: ElementRef,
     private _currencyValuePipe: CurrencyValuePipe
   ) {
-    this._element = this._elementRef.nativeElement;
+    this._ELEMENT = this._elementRef.nativeElement;
   }
 
-  public ngOnInit(): void {
-    const value: string = this._element.value;
-    if (value) {
-      this._element.value = this._currencyValuePipe.transform(Number(value), this.bkCurrencyValue, this.skipDecimalZeros);
+  public ngDoCheck(): void {
+    const value: string = this._ELEMENT.value;
+    if (value && !this._INITIAL_LOAD_DONE) {
+      this._ELEMENT.value = this._currencyValuePipe.transform(Number(value), this.bkCurrencyValue, this.skipDecimalZeros);
+      this._INITIAL_LOAD_DONE = true;
     }
   }
 
   @HostListener('blur', ['$event.target.value'])
   private onBlur(value: string): void {
+    this._INITIAL_LOAD_DONE = true;
     const numberValue: number = CurrencyUtils.convertValue(value);
     if (this._ngControl) {
-      this._ngControl.control.patchValue(numberValue);
+      const ngControlValue: number = this.patchModelValueToFixedSize ? Number(numberValue.toFixed(this.bkCurrencyValue)) : numberValue;
+      this._ngControl.control.patchValue(ngControlValue);
     }
-    this._element.value = this._currencyValuePipe.transform(numberValue, this.bkCurrencyValue, this.skipDecimalZeros);
+    this._ELEMENT.value = this._currencyValuePipe.transform(numberValue, this.bkCurrencyValue, this.skipDecimalZeros);
   }
 }

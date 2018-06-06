@@ -11,7 +11,7 @@
     <groupId>by.bk</groupId>
     <artifactId>bookkeeper-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.3-SNAPSHOT</version>
+    <version>1.0</version>
 
     <modules>
         <module>frontend</module>

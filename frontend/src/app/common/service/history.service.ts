@@ -16,10 +16,42 @@ export class HistoryService {
     @Inject(HOST) private _host: string
   ) {}
 
-  public loadHistoryItems(ownerId: number, page: number, limit: number): Observable<HistoryType[]> {
-    const url: string = `${this._host}/history?_sort=date&_order=DESC&ownerId=${ownerId}&_limit=${limit}&_page=${page}`;
-    return this._http.get<HistoryType[]>(url, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})}).pipe(delay(1500));
+  public loadHistoryItems(page: number, pageLimit: number): Observable<HistoryType[]> {
+    return this._http.post<HistoryType[]>('/api/history/page-portion', {page: page, limit: pageLimit});
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public addHistoryItem(historyItem: HistoryType): Observable<HttpResponse<Object>> {
     return this.getLastHistoryItemForDay(historyItem.date, historyItem.ownerId)

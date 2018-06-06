@@ -2,6 +2,7 @@ package by.bk.controller;
 
 import by.bk.security.JwtTokenUtil;
 import by.bk.security.model.LoginRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +34,9 @@ public class AuthenticationController {
 
     @PostMapping("/generate-token")
     public Map<String, String> register(@RequestBody LoginRequest loginRequest) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        String email = StringUtils.lowerCase(loginRequest.getEmail());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword());
         authenticationManager.authenticate(authenticationToken);
-        return Collections.singletonMap("token", tokenUtil.generateToken(loginRequest.getEmail()));
+        return Collections.singletonMap("token", tokenUtil.generateToken(email));
     }
 }

@@ -23,6 +23,10 @@
   line-height: 15px;
 }
 
+.summary-balance-title {
+  padding-right: 0;
+}
+
 .summary-balance-item {
   margin: 0;
 }

@@ -25,6 +25,7 @@
 
 .summary-balance-title {
   padding-right: 0;
+  white-space: nowrap;
 }
 
 .summary-balance-item {

@@ -1,7 +1,7 @@
 type HistoryType = {
-  id?: number,
-  ownerId: number,
-  date: number,
+  year: number,
+  month: number,
+  day: number,
   order?: number,
   type: string,
   category?: string,

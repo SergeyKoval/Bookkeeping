@@ -52,7 +52,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public ngOnInit(): void {
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', DateUtils.getUTCDate());
-    this.selectedDate = DateUtils.getDateFromUTC(this.historyItem.date);
+    // this.selectedDate = DateUtils.getDateFromUTC(this.historyItem.date);
     this.alternativeCurrencyLoading = !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate);
     if (this.alternativeCurrencyLoading) {
       this.loadAlternativeCurrencies();
@@ -86,7 +86,7 @@ export class HistoryEditDialogComponent implements OnInit {
         this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);
       }
       this.selectedDate = date;
-      this.historyItem.date = DateUtils.getUTCDateByDay(this.selectedDate);
+      // this.historyItem.date = DateUtils.getUTCDateByDay(this.selectedDate);
     }
   }
 
@@ -175,33 +175,34 @@ export class HistoryEditDialogComponent implements OnInit {
 
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
     const balance: HistoryBalanceType = originalItem.balance;
-    return this.initNewHistoryItem(historyType, originalItem.date, balance.value, balance.currency, balance.newCurrency,
-      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
+    // return this.initNewHistoryItem(historyType, originalItem.date, balance.value, balance.currency, balance.newCurrency,
+    //   balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
+    return null;
   }
 
   private initNewHistoryItem(historyType: string, historyDate: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
 
     const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
-    const result: HistoryType = {
-      ownerId: this._authenticationService.authenticatedProfile.id,
-      type: historyType,
-      date: historyDate,
-      description: historyDescription,
-      balance: {
-        value: balanceValue,
-        account: balanceAccount,
-        subAccount: balanceSubAccount,
-        currency: currencyName,
-        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.getCurrencyHistoryConversions(currencyName, this.selectedDate)
-      }
-    };
-
-    if (historyType === 'exchange') {
-      result.balance.newCurrency = balanceNewCurrency || this._authenticationService.defaultCurrency.name;
-    }
-
-    return result;
+    // const result: HistoryType = {
+    //   type: historyType,
+    //   date: historyDate,
+    //   description: historyDescription,
+    //   balance: {
+    //     value: balanceValue,
+    //     account: balanceAccount,
+    //     subAccount: balanceSubAccount,
+    //     currency: currencyName,
+    //     alternativeCurrency: balanceAlternativeCurrency || this._currencyService.getCurrencyHistoryConversions(currencyName, this.selectedDate)
+    //   }
+    // };
+    //
+    // if (historyType === 'exchange') {
+    //   result.balance.newCurrency = balanceNewCurrency || this._authenticationService.defaultCurrency.name;
+    // }
+    //
+    // return result;
+    return null;
   }
 
   private commonValidation(balance: HistoryBalanceType): boolean {

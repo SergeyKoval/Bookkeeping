@@ -54,20 +54,21 @@ export class HistoryService {
 
 
   public addHistoryItem(historyItem: HistoryType): Observable<HttpResponse<Object>> {
-    return this.getLastHistoryItemForDay(historyItem.date, historyItem.ownerId)
-      .pipe(
-        tap((historyTypes: HistoryType[]) => {
-          // TODO: order number will e set on backend
-          const orderNumber: number = historyTypes.length > 0 ? historyTypes[0].order + 1 : 0;
-          historyItem.order = orderNumber;
-        }),
-        switchMap(() => this._http.post(`${this._host}/history`, historyItem, {headers: new HttpHeaders({'Content-Type': 'application/json'}), observe: 'response'})),
-        delay(1500)
-      );
+    // return this.getLastHistoryItemForDay(historyItem.date)
+    //   .pipe(
+    //     tap((historyTypes: HistoryType[]) => {
+    //       TODO: order number will e set on backend
+          // const orderNumber: number = historyTypes.length > 0 ? historyTypes[0].order + 1 : 0;
+          // historyItem.order = orderNumber;
+        // }),
+        // switchMap(() => this._http.post(`${this._host}/history`, historyItem, {headers: new HttpHeaders({'Content-Type': 'application/json'}), observe: 'response'})),
+        // delay(1500)
+      // );
+    return null;
   }
 
   public deleteHistoryItem(historyItem: HistoryType): Observable<HttpResponse<Object>> {
-    return this._http.delete(`${this._host}/history/${historyItem.id}`, {observe: 'response'}).pipe(delay(1500));
+    return this._http.delete(`${this._host}/history`, {observe: 'response'}).pipe(delay(1500));
   }
 
   public chooseBudgetBalanceBasedOnCurrency(historyItem: HistoryType, budgetCategory: BudgetCategory): BudgetBalance {
@@ -123,8 +124,8 @@ export class HistoryService {
     });
   }
 
-  private getLastHistoryItemForDay(date: number, ownerId: number): Observable<HistoryType[]> {
-    const url: string = `${this._host}/history?_sort=order&_order=DESC&ownerId=${ownerId}&date=${date}&_limit=1&_page=1`;
+  private getLastHistoryItemForDay(date: number): Observable<HistoryType[]> {
+    const url: string = `${this._host}/history?_sort=order&_order=DESC&date=${date}&_limit=1&_page=1`;
     return this._http.get<HistoryType[]>(url, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})});
   }
 }

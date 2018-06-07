@@ -17,14 +17,13 @@ export class HistoryGroupPipe implements PipeTransform {
     const historyGroupsMap: Map<string, HistoryGroup> = new Map();
 
     items.forEach((item: HistoryType) => {
-      const itemDate: Date = new Date();
-      itemDate.setTime(item.date);
-      const itemDateString: string = DateUtils.convertDateToString(itemDate);
+      const itemDateString: string = DateUtils.convertDateToString(item.year, item.month, item.day);
       if (!historyGroupsMap.has(itemDateString)) {
-        historyGroupsMap.set(itemDateString, new HistoryGroup(item.date, itemDateString, DateUtils.getDayOfWeek(itemDate), []));
+        const date: Date = new Date(item.year, item.month - 1, item.day);
+        historyGroupsMap.set(itemDateString, new HistoryGroup(date, itemDateString, DateUtils.getDayOfWeek(date), []));
       }
       const historyGroup: HistoryGroup = historyGroupsMap.get(itemDateString);
-      const historyItem: HistoryItem = new HistoryItem(item, item.id, item.order, item.type, item.category, item.subCategory, item.description, item.balance, item.goal);
+      const historyItem: HistoryItem = new HistoryItem(item, item.order, item.type, item.category, item.subCategory, item.description, item.balance, item.goal);
 
       switch (item.type) {
         case 'expense':
@@ -45,7 +44,7 @@ export class HistoryGroupPipe implements PipeTransform {
       historyGroups.push(historyGroup);
       historyGroup.historyItems.sort((firstItem: HistoryItem, secondItem: HistoryItem) => secondItem.order - firstItem.order);
     });
-    historyGroups.sort((firstGroup: HistoryGroup, secondGroup: HistoryGroup) => secondGroup.date - firstGroup.date);
+    historyGroups.sort((firstGroup: HistoryGroup, secondGroup: HistoryGroup) => secondGroup.date.getMilliseconds() - firstGroup.date.getMilliseconds());
     return historyGroups;
   }
 }

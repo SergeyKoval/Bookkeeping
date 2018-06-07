@@ -16,14 +16,17 @@
 
 .expense {
   color: #cc0000;
+  white-space: nowrap;
 }
 
 .income {
   color: #009900;
+  white-space: nowrap;
 }
 
 .transfer {
   color: #0099ff;
+  white-space: nowrap;
 }
 
 .description {
@@ -47,6 +50,7 @@
 .glyphicon {
   color: #999;
   cursor: pointer;
+  padding-right: 5px;
 }
 
 .glyphicon:hover {
@@ -87,4 +91,21 @@
 
 .transfer-exchange-row {
   display: flex;
+}
+
+.icon {
+  padding-right: 3px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .sm-small-left-padding {
+    padding-left: 5px;
+  }
+  .sm-no-left-padding {
+    padding-left: 0;
+  }
 }

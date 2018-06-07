@@ -23,7 +23,7 @@ public class HistoryService implements HistoryAPI {
     public List<HistoryItem> getPagePortion(String login, int page, int limit) {
         Query query = Query.query(Criteria.where("user").is(login))
                 .with(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day")))
-                .skip(page * limit)
+                .skip((page -1) * limit)
                 .limit(limit);
 
         return mongoTemplate.find(query, HistoryItem.class);

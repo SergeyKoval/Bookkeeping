@@ -8,6 +8,10 @@
   overflow: visible !important;
 }
 
+.history-add-edit-dialog {
+  max-width: none !important;
+}
+
 .init-form {
   background: #f5f5f5;
   padding: 20px;

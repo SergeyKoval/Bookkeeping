@@ -48,8 +48,8 @@ export class InputGroupComponent {
   }
 
   public disableAlternativeCurrencies(balanceValue: string): boolean {
-    return this.alternativeCurrencyLoading || balanceValue === '' || CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(balanceValue)
-      || CurrencyUtils.LAST_SYMBOL_PATTERN.test(balanceValue) ? true : null;
+    return this.alternativeCurrencyLoading || balanceValue === '' || balanceValue === '0'
+      || CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(balanceValue) || CurrencyUtils.LAST_SYMBOL_PATTERN.test(balanceValue) ? true : null;
   }
 
   public checkValueValidation(balanceValue: string): string {

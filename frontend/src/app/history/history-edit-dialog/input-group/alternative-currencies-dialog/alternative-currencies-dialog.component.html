@@ -1,12 +1,11 @@
-<h2 mat-dialog-title align="center">Альтернативные валюты</h2>
 <mat-dialog-content>
   <p class="text-center description">Указанные курсы будут использоваться при приведении операции к другим валютам</p>
   <div class="table">
     <div class="row">
       <strong>
-        <div class="col-md-1"></div>
-        <div class="col-md-6 text-center">Курс обмена</div>
-        <div class="col-md-5 text-center">Сумма в валюте</div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6 text-center">Курс обмена</div>
+        <div class="col-sm-5 text-center">Сумма в валюте</div>
       </strong>
     </div>
     <div class="row form-inline" *ngFor="let currency of data.balance.alternativeCurrency | mapKeys">
@@ -15,7 +14,7 @@
           <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
           <input type="text" [(ngModel)]="data.balance.alternativeCurrency[currency]" class="form-control" bkCurrencyValue="4" [skipDecimalZeros]="true">
         </div>
-        <input type="text" [value]="getAmountValue(currency)" (blur)="calculateCurrencyValue(currency, amount)" class="form-control" #amount>
+        <input type="text" [value]="getAmountValue(currency)" (blur)="calculateCurrencyValue(currency, amount)" class="form-control last" #amount>
       </div>
     </div>
   </div>

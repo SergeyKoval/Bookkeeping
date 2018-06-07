@@ -8,7 +8,7 @@
 }
 
 .form-row {
-  margin-top: 13px;
+  margin-top: 10px;
 }
 
 .dropdown-menu {
@@ -29,6 +29,7 @@ ul.nav-tabs li {
 
 #history-add-edit-dialog {
   overflow: visible !important;
+  padding: 0 20px;
 }
 
 .history-actions {

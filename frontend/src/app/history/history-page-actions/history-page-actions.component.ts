@@ -26,7 +26,7 @@ export class HistoryPageActionsComponent implements OnInit {
 
   public addHistoryItem(): void {
     this._dialog.open(HistoryEditDialogComponent, {
-      width: '850px',
+      width: '720px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',
       data: {

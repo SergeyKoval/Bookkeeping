@@ -98,24 +98,41 @@ export class CurrencyService {
     this._currenciesIndicatorMap.clear();
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   public get currenciesUpdate$(): Observable<string> {
     return this._currenciesUpdate$$.asObservable();
   }
+
+  public isCurrencyHistoryLoaded(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): boolean {
+    if (this._currenciesIndicatorMap.has(currency)) {
+      const currencyIndicator: Map<number, Map<number, boolean>> = this._currenciesIndicatorMap.get(currency);
+      if (currencyIndicator.has(date.year)) {
+        const yearIndicator: Map<number, boolean> = currencyIndicator.get(date.year);
+        if (yearIndicator.has(date.month)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public convertToCurrency(value: number, currentCurrency: string, convertedCurrency: CurrencyDetail, date: IMyDate = DateUtils.getDateFromUTC()): number {
     if (convertedCurrency.name === currentCurrency) {
@@ -144,20 +161,6 @@ export class CurrencyService {
     }
 
     return this._todayConversions.get(currency);
-  }
-
-  public isCurrencyHistoryLoaded(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): boolean {
-    if (this._currenciesIndicatorMap.has(currency)) {
-      const currencyIndicator: Map<number, Map<number, boolean>> = this._currenciesIndicatorMap.get(currency);
-      if (currencyIndicator.has(date.year)) {
-        const yearIndicator: Map<number, boolean> = currencyIndicator.get(date.year);
-        if (yearIndicator.has(date.month)) {
-          return true;
-        }
-      }
-    }
-
-    return false;
   }
 
   public getCurrencyHistoryConversions(currencyName: string, date: IMyDate): {[key: string]: number} {

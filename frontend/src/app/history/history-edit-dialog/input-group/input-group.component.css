@@ -17,3 +17,12 @@ ul.nav-tabs li {
 .validation-fail {
   border-color: red;
 }
+
+.currencies {
+  min-width: 60px;
+}
+
+.alternative-currencies {
+  margin-left: 0 !important;
+  border-left: 0 !important;
+}

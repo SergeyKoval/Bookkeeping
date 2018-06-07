@@ -7,10 +7,10 @@
     <strong>{{errors}}</strong>
   </div>
   <div class="row">
-    <div class="col-md-4 left-column">
+    <div class="col-sm-4 left-column">
       <my-date-picker [selDate]="selectedDate" [options]="datePickerOptions" (dateChanged)="onDateChanged($event)" locale="ru"></my-date-picker>
     </div>
-    <div class="col-md-8 right-column">
+    <div class="col-sm-8 right-column">
       <ul class="nav nav-tabs nav-justified">
         <li role="presentation" [ngClass]="{'active': isTypeSelected('expense')}" (click)="onChangeSelectedType('expense')"><a>Расход</a></li>
         <li role="presentation" [ngClass]="{'active': isTypeSelected('income')}" (click)="onChangeSelectedType('income')"><a>Доход</a></li>
@@ -50,8 +50,8 @@
       </div>
     </div>
   </div>
-  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
-                      [historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
+  <!--<bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"-->
+                      <!--[historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>-->
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="history-actions">

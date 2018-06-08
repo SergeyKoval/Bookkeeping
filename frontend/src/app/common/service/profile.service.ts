@@ -106,6 +106,11 @@ export class ProfileService implements CanActivate {
         }));
   }
 
+  public quiteReloadAccounts(): void {
+    this._loadingService.accounts$$.next(true);
+    this.reloadAccountsInProfile().subscribe(() => this._loadingService.accounts$$.next(false));
+  }
+
   public reloadCategoriesInProfile(): Observable<Profile> {
     this._categoryIcon.clear();
     return this.getUserProfile()
@@ -344,21 +349,6 @@ export class ProfileService implements CanActivate {
     });
 
     return result;
-  }
-
-  public reloadAccounts(): void {
-    this._loadingService.accounts$$.next(true);
-    this._http.get<FinAccount[]>(`${this._host}/profiles/${this.authenticatedProfile.id}/accounts`)
-      .pipe(
-        delay(3000),
-        tap(() => this._loadingService.accounts$$.next(false))
-      ).subscribe((accounts: FinAccount[]) => {
-        this._accountIcon.clear();
-        accounts.forEach((account: FinAccount) => {
-          account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
-        });
-        this._accounts$$.next(accounts);
-      });
   }
 
   public getAccountIcon(account: string, subAccount: string): string {

@@ -36,15 +36,24 @@ export class HistoryComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this._historyService.loadHistoryItems(1, HistoryComponent.PAGE_LIMIT)
-      .subscribe((historyItems: HistoryType[]) => {
-        if (historyItems.length < HistoryComponent.PAGE_LIMIT) {
-          this.disableMoreButton = true;
-        }
-        this.historyItems = historyItems;
-        this.loading = false;
-      });
+    this.init(1, HistoryComponent.PAGE_LIMIT);
   }
+
+  public loadMoreItems(numberOfNewItems: number): void {
+    this.init(1, this.historyItems.length + numberOfNewItems);
+  }
+
+  private init(page: number, limit: number): void {
+    this.loading = true;
+    this._historyService.loadHistoryItems(page, limit).subscribe((historyItems: HistoryType[]) => {
+      if (historyItems.length < limit) {
+        this.disableMoreButton = true;
+      }
+      this.historyItems = historyItems;
+      this.loading = false;
+    });
+  }
+
 
 
 
@@ -78,13 +87,7 @@ export class HistoryComponent implements OnInit {
     // });
   }
 
-  public loadMoreItems(numberOfNewItems: number): void {
-    // if (numberOfNewItems === HistoryComponent.PAGE_LIMIT) {
-    //   this.showMoreHistoryItems();
-    // } else {
-    //   this.reloadItems(numberOfNewItems);
-    // }
-  }
+
 
   public deleteHistoryItem(historyItem: HistoryItem): void {
     // const itemsLimit: number = this.historyItems.length;
@@ -133,17 +136,5 @@ export class HistoryComponent implements OnInit {
   //     });
   // }
 
-  // private reloadItems(numberOfNewItems: number): void {
-  //   this.loading = true;
-  //   const limit: number = this.historyItems.length + numberOfNewItems;
-  //   const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, limit)
-  //     .subscribe((historyItems: HistoryType[]) => {
-  //       if (historyItems.length < limit) {
-  //         this.disableMoreButton = true;
-  //       }
-  //       this.historyItems = historyItems;
-  //       subscription.unsubscribe();
-  //       this.loading = false;
-  //     });
-  // }
+
 }

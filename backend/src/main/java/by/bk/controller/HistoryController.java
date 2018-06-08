@@ -1,6 +1,7 @@
 package by.bk.controller;
 
 import by.bk.controller.model.request.HistoryPageRequest;
+import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,10 @@ public class HistoryController extends BaseAPIController {
     @PostMapping("/page-portion")
     public List<HistoryItem> getPagePortion(@RequestBody HistoryPageRequest request, Principal principal) {
         return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit());
+    }
+
+    @PostMapping("/add")
+    public SimpleResponse addHistoryItem(Principal principal) {
+        return SimpleResponse.success();
     }
 }

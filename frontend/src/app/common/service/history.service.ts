@@ -20,52 +20,44 @@ export class HistoryService {
     return this._http.post<HistoryType[]>('/api/history/page-portion', {page: page, limit: pageLimit});
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public addHistoryItem(historyItem: HistoryType): Observable<HttpResponse<Object>> {
-    // return this.getLastHistoryItemForDay(historyItem.date)
-    //   .pipe(
-    //     tap((historyTypes: HistoryType[]) => {
-    //       TODO: order number will e set on backend
-          // const orderNumber: number = historyTypes.length > 0 ? historyTypes[0].order + 1 : 0;
-          // historyItem.order = orderNumber;
-        // }),
-        // switchMap(() => this._http.post(`${this._host}/history`, historyItem, {headers: new HttpHeaders({'Content-Type': 'application/json'}), observe: 'response'})),
-        // delay(1500)
-      // );
-    return null;
+  public addHistoryItem(historyItem: HistoryType): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/history/add', historyItem);
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public deleteHistoryItem(historyItem: HistoryType): Observable<HttpResponse<Object>> {
     return this._http.delete(`${this._host}/history`, {observe: 'response'}).pipe(delay(1500));

@@ -14,6 +14,7 @@ import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { Alert } from '../../common/model/alert/Alert';
+import { filter, tap } from 'rxjs/internal/operators';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -96,6 +97,40 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
+  public save(): void {
+    let validationResult: boolean;
+    switch (this.historyItem.type) {
+      case 'expense':
+      case 'income':
+        validationResult = this.validateExpenseOrIncome();
+        break;
+      case 'transfer':
+        validationResult = this.validateTransfer();
+        break;
+      case 'exchange':
+        validationResult = this.validateExchange();
+        break;
+    }
+
+    if (validationResult) {
+      const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
+      this._historyService.addHistoryItem(this.historyItem)
+        .pipe(
+          tap(simpleResponse => {
+            if (simpleResponse.status === 'FAIL') {
+              this.errors = 'Ошибка при добавлении';
+              mdDialogRef.close();
+            }
+          }),
+          filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
+        ).subscribe((response: SimpleResponse) => {
+          this._authenticationService.quiteReloadAccounts();
+          mdDialogRef.close();
+          this.close(true);
+      });
+    }
+  }
+
   private initNewHistoryItem(historyType: string, historyDate: Date, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
 
@@ -131,6 +166,45 @@ export class HistoryEditDialogComponent implements OnInit {
       }
     });
   }
+
+  private validateExpenseOrIncome(): boolean {
+    const balance: HistoryBalanceType = this.historyItem.balance;
+    if (!this.commonValidation(balance)) {
+      return false;
+    }
+
+    if (!this.selectedCategory || this.selectedCategory.length < 2) {
+      this.errors = 'Категория не выбрана';
+      return false;
+    }
+    this.historyItem.category = this.selectedCategory[0].title;
+    this.historyItem.subCategory = this.selectedCategory[1].title;
+
+    return true;
+  }
+
+  private commonValidation(balance: HistoryBalanceType): boolean {
+    if (!balance.value || balance.value < 0.01) {
+      this.errors = 'Сумма указана неверно';
+      return false;
+    }
+
+    if (!this.selectedAccount || this.selectedAccount.length < 2) {
+      this.errors = 'Счет не выбран';
+      return false;
+    }
+    balance.account = this.selectedAccount[0].title;
+    balance.subAccount = this.selectedAccount[1].title;
+
+    return true;
+  }
+
+
+
+
+
+
+
 
 
 
@@ -179,33 +253,7 @@ export class HistoryEditDialogComponent implements OnInit {
     this.historyItem.balance.newCurrency = currency.name;
   }
 
-  public save(): void {
-    let validationResult: boolean;
-    switch (this.historyItem.type) {
-      case 'expense':
-      case 'income':
-        validationResult = this.validateExpenseOrIncome();
-        break;
-      case 'transfer':
-        validationResult = this.validateTransfer();
-        break;
-      case 'exchange':
-        validationResult = this.validateExchange();
-        break;
-    }
 
-    if (validationResult) {
-      const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
-      this._historyService.addHistoryItem(this.historyItem).subscribe((response: HttpResponse<Object>) => {
-        const alert: Alert = response.ok ? new Alert(AlertType.SUCCESS, 'Операция успешно добавлена') : new Alert(AlertType.WARNING, 'При добавлении возникла ошибка', null, 10);
-        this._alertService.addAlertObject(alert);
-        this._authenticationService.reloadAccounts();
-
-        mdDialogRef.close();
-        this.close(true);
-      });
-    }
-  }
 
   public close(refreshHistoryItems: boolean): void {
     this._dialogRef.close(refreshHistoryItems);
@@ -240,37 +288,9 @@ export class HistoryEditDialogComponent implements OnInit {
 
 
 
-  private commonValidation(balance: HistoryBalanceType): boolean {
-    if (!balance.value || balance.value < 0.01) {
-      this.errors = 'Сумма указана неверно';
-      return false;
-    }
 
-    if (!this.selectedAccount || this.selectedAccount.length < 2) {
-      this.errors = 'Счет не выбран';
-      return false;
-    }
-    balance.account = this.selectedAccount[0].title;
-    balance.subAccount = this.selectedAccount[1].title;
 
-    return true;
-  }
 
-  private validateExpenseOrIncome(): boolean {
-    const balance: HistoryBalanceType = this.historyItem.balance;
-    if (!this.commonValidation(balance)) {
-      return false;
-    }
-
-    if (!this.selectedCategory || this.selectedCategory.length < 2) {
-      this.errors = 'Категория не выбрана';
-      return false;
-    }
-    this.historyItem.category = this.selectedCategory[0].title;
-    this.historyItem.subCategory = this.selectedCategory[1].title;
-
-    return true;
-  }
 
   private validateTransfer(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;

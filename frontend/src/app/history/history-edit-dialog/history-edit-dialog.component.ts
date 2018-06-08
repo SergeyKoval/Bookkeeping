@@ -3,6 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Subscription } from 'rxjs';
+import { filter, tap } from 'rxjs/internal/operators';
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
 
 import { HistoryService } from '../../common/service/history.service';
@@ -14,7 +15,6 @@ import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { Alert } from '../../common/model/alert/Alert';
-import { filter, tap } from 'rxjs/internal/operators';
 
 @Component({
   selector: 'bk-history-edit-dialog',

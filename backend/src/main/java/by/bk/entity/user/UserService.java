@@ -3,6 +3,8 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.history.Balance;
+import by.bk.entity.history.HistoryType;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
 import by.bk.security.model.JwtUser;
@@ -478,6 +480,39 @@ public class UserService implements UserAPI, UserDetailsService {
     public SimpleResponse deleteUser(String email) {
         userRepository.deleteById(email);
         return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse updateUserBalance(String login, HistoryType type, Balance historyBalance) {
+//        db.users.updateOne({"_id" : "skoval@gmail.com"},
+//            {$inc: {"accounts.$[par].subAccounts.$[sub].balance.BYN": NumberInt(10)}},
+//            {arrayFilters: [{"par.title":"Новый2"}, {"sub.title": "не пустой1"}]})
+
+        String accountTitle = historyBalance.getAccount();
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
+
+        String currency = historyBalance.getCurrency();
+        String subAccountTitle = historyBalance.getSubAccount();
+        List<SubAccount> subAccounts = account.getSubAccounts();
+        SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
+        if (!subAccount.getBalance().containsKey(Currency.valueOf(currency))) {
+            LOG.error(StringUtils.join("Trying to update ", login, " balance, but requested currency ", currency, " is missed"));
+            return SimpleResponse.fail("CURRENCY_MISSED");
+        }
+
+        Update update = null;
+        Query query = Query.query(Criteria.where("email").is(login));
+        switch (type) {
+            case expense:
+                historyBalance.setValue(historyBalance.getValue() * -1);
+            case income:
+                String updateQuery = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance.", currency);
+                update = new Update().inc(updateQuery, historyBalance.getValue());
+                break;
+        }
+
+        return updateUser(query, update);
     }
 
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {

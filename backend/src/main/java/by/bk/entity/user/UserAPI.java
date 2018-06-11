@@ -3,6 +3,8 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.history.Balance;
+import by.bk.entity.history.HistoryType;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
@@ -48,4 +50,6 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse addUser(String email, String password, List<UserPermission> roles);
     SimpleResponse editUser(String email, String password, List<UserPermission> roles);
     SimpleResponse deleteUser(String email);
+
+    SimpleResponse updateUserBalance(String login, HistoryType type, Balance historyBalance);
 }

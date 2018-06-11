@@ -28,7 +28,7 @@ public class HistoryController extends BaseAPIController {
     }
 
     @PostMapping("/add")
-    public SimpleResponse addHistoryItem(Principal principal) {
-        return SimpleResponse.success();
+    public SimpleResponse addHistoryItem(@RequestBody HistoryItem historyItem, Principal principal) {
+        return historyAPI.addHistoryItem(principal.getName(), historyItem);
     }
 }

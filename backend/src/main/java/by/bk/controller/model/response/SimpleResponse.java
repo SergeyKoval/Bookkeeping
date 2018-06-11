@@ -1,5 +1,6 @@
 package by.bk.controller.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,5 +33,10 @@ public class SimpleResponse {
 
     public static SimpleResponse fail() {
         return new SimpleResponse(Status.FAIL, ERROR);
+    }
+
+    @JsonIgnore
+    public boolean isSuccess() {
+        return Status.SUCCESS.equals(status);
     }
 }

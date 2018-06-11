@@ -3,6 +3,7 @@ package by.bk.entity.history;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "history")
 @Getter
 @Setter
+@ToString
 public class HistoryItem {
     @Id
     private String id;
@@ -20,7 +22,7 @@ public class HistoryItem {
     private int year;
     private int month;
     private int day;
-    private int order;
+    private Integer order;
     private HistoryType type;
     private String category;
     private String subCategory;

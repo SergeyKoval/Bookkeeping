@@ -118,7 +118,11 @@ export class HistoryEditDialogComponent implements OnInit {
         .pipe(
           tap(simpleResponse => {
             if (simpleResponse.status === 'FAIL') {
-              this.errors = 'Ошибка при добавлении';
+              if (simpleResponse.message === 'CURRENCY_MISSED') {
+                this.errors = 'Выбранная валюта отсутсвует для выбранного субсчета';
+              } else {
+                this.errors = 'Ошибка при добавлении';
+              }
               mdDialogRef.close();
             }
           }),

@@ -4,5 +4,5 @@ package by.bk.entity.history;
  * @author Sergey Koval
  */
 public enum HistoryType {
-    expense, income
+    expense, income, transfer, exchange
 }

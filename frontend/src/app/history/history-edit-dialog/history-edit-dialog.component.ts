@@ -52,12 +52,13 @@ export class HistoryEditDialogComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', new Date(Date.now()));
+    const today = new Date(Date.now());
+    this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
     this.selectedDate = {year: this.historyItem.year, month: this.historyItem.month, day: this.historyItem.day};
 
     this.alternativeCurrencyLoading = !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate);
     if (this.alternativeCurrencyLoading) {
-      this.loadAlternativeCurrencies();
+      this.loadAlternativeCurrencies(this.selectedDate);
     }
 
     const profile: Profile = this._authenticationService.authenticatedProfile;
@@ -84,9 +85,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
         this.alternativeCurrencyLoading = true;
         this.historyItem.balance.alternativeCurrency = {};
-        this._currencyService.loadCurrenciesForMonth({month: date.month, year: date.year, currencies: this._authenticationService.getProfileCurrencies()})
-          .subscribe(() => this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date));
-        this.loadAlternativeCurrencies();
+        this.loadAlternativeCurrencies(date);
       } else {
         this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);
       }
@@ -97,21 +96,65 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
+  public changeCurrency(currency: CurrencyDetail): void {
+    this.historyItem.balance.currency = currency.name;
+    if (this.historyItem.type === 'expense' || this.historyItem.type === 'income') {
+      if (!this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate)) {
+        this.alternativeCurrencyLoading = true;
+        this.historyItem.balance.alternativeCurrency = {};
+        this.loadAlternativeCurrencies(this.selectedDate);
+      } else {
+        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, this.selectedDate);
+      }
+    }
+  }
+
+  public onChangeSelectedType(type: string): void {
+    if (!this.isTypeSelected(type)) {
+      if (this.selectedCategory) {
+        this.selectedCategory.length = 0;
+      }
+      if (this.selectedToAccount) {
+        this.selectedToAccount.length = 0;
+      }
+
+      this.historyItem = this.initNewHistoryItemFromExisting(type, this.historyItem);
+      this.categories = this._authenticationService.transformCategories(this._allCategories, this.historyItem.type);
+    }
+  }
+
+  public isTypeSelected(type: string): boolean {
+    return this.historyItem.type === type;
+  }
+
   public save(): void {
     let validationResult: boolean;
     switch (this.historyItem.type) {
       case 'expense':
       case 'income':
+        this.historyItem.balance.accountTo = null;
+        this.historyItem.balance.subAccountTo = null;
+        this.historyItem.balance.newCurrency = null;
+        this.historyItem.balance.newValue = null;
         validationResult = this.validateExpenseOrIncome();
         break;
       case 'transfer':
+        this.historyItem.balance.alternativeCurrency = null;
+        this.historyItem.balance.newCurrency = null;
+        this.historyItem.balance.newValue = null;
+        this.historyItem.category = null;
+        this.historyItem.subCategory = null;
         validationResult = this.validateTransfer();
         break;
       case 'exchange':
+        this.historyItem.balance.alternativeCurrency = null;
+        this.historyItem.category = null;
+        this.historyItem.subCategory = null;
         validationResult = this.validateExchange();
         break;
     }
 
+    console.log(this.historyItem);
     if (validationResult) {
       const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
       this._historyService.addHistoryItem(this.historyItem)
@@ -135,15 +178,19 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
-  private initNewHistoryItem(historyType: string, historyDate: Date, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
+  public close(refreshHistoryItems: boolean): void {
+    this._dialogRef.close(refreshHistoryItems);
+  }
+
+  private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
 
     const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
     const result: HistoryType = {
       type: historyType,
-      year: historyDate.getFullYear(),
-      month: historyDate.getMonth() + 1,
-      day: historyDate.getDate(),
+      year: year,
+      month: month,
+      day: day,
       description: historyDescription,
       balance: {
         value: balanceValue,
@@ -159,16 +206,6 @@ export class HistoryEditDialogComponent implements OnInit {
     }
 
     return result;
-  }
-
-  private loadAlternativeCurrencies(): void {
-    const subscription: Subscription = this._currencyService.currenciesUpdate$.subscribe((currency: string) => {
-      if (currency === this.historyItem.balance.currency && this._currencyService.isCurrencyHistoryLoaded(currency, this.selectedDate)) {
-        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(currency, this.selectedDate);
-        this.alternativeCurrencyLoading = false;
-        subscription.unsubscribe();
-      }
-    });
   }
 
   private validateExpenseOrIncome(): boolean {
@@ -203,98 +240,19 @@ export class HistoryEditDialogComponent implements OnInit {
     return true;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public onChangeSelectedType(type: string): void {
-    if (!this.isTypeSelected(type)) {
-      if (this.selectedCategory) {
-        this.selectedCategory.length = 0;
-      }
-      if (this.selectedToAccount) {
-        this.selectedToAccount.length = 0;
-      }
-
-      this.historyItem = this.initNewHistoryItemFromExisting(type, this.historyItem);
-      this.categories = this._authenticationService.transformCategories(this._allCategories, this.historyItem.type);
-    }
-  }
-
-  public changeCurrency(currency: CurrencyDetail): void {
-    this.historyItem.balance.currency = currency.name;
-    if (this.historyItem.type === 'expense' || this.historyItem.type === 'income') {
-      if (!this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate)) {
-        this.alternativeCurrencyLoading = true;
-        this.historyItem.balance.alternativeCurrency = {};
-        this.loadAlternativeCurrencies();
-      } else {
-        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, this.selectedDate);
-      }
-    }
-  }
-
-  public changeNewCurrency(currency: CurrencyDetail): void {
-    this.historyItem.balance.newCurrency = currency.name;
-  }
-
-
-
-  public close(refreshHistoryItems: boolean): void {
-    this._dialogRef.close(refreshHistoryItems);
-  }
-
-  public isTypeSelected(type: string): boolean {
-    return this.historyItem.type === type;
-  }
-
-  public getAccountPlaceholder(): string {
-    if (this.isTypeSelected('transfer')) {
-      return 'Со счета';
-    }
-
-    return 'Счет';
-  }
-
-  public showGoalContainer(): boolean {
-    return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
-  }
-
-  public onSelectedGoalStatusChange(status: boolean): void {
-    this._goalStatusChange = status;
+  private loadAlternativeCurrencies(date: IMyDate): void {
+    this._currencyService.loadCurrenciesForMonth({month: date.month, year: date.year, currencies: this._authenticationService.getProfileCurrencies()})
+      .subscribe(() => {
+        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);
+        this.alternativeCurrencyLoading = false;
+      });
   }
 
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
     const balance: HistoryBalanceType = originalItem.balance;
-    // return this.initNewHistoryItem(historyType, originalItem.date, balance.value, balance.currency, balance.newCurrency,
-    //   balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
-    return null;
+    return this.initNewHistoryItem(historyType, originalItem.year, originalItem.month, originalItem.day,
+      balance.value, balance.currency, balance.newCurrency, balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description);
   }
-
-
-
-
-
-
 
   private validateTransfer(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;
@@ -319,6 +277,57 @@ export class HistoryEditDialogComponent implements OnInit {
     return true;
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public changeNewCurrency(currency: CurrencyDetail): void {
+    this.historyItem.balance.newCurrency = currency.name;
+  }
+
+  public getAccountPlaceholder(): string {
+    if (this.isTypeSelected('transfer')) {
+      return 'Со счета';
+    }
+
+    return 'Счет';
+  }
+
+  public showGoalContainer(): boolean {
+    return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
+  }
+
+  public onSelectedGoalStatusChange(status: boolean): void {
+    this._goalStatusChange = status;
+  }
+
+
+
   private validateExchange(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;
     if (!this.commonValidation(balance)) {
@@ -337,6 +346,4 @@ export class HistoryEditDialogComponent implements OnInit {
 
     return true;
   }
-
-
 }

@@ -496,10 +496,6 @@ public class UserService implements UserAPI, UserDetailsService {
         String subAccountTitle = historyBalance.getSubAccount();
         List<SubAccount> subAccounts = account.getSubAccounts();
         SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
-        if (!subAccount.getBalance().containsKey(Currency.valueOf(currency))) {
-            LOG.error(StringUtils.join("Trying to update ", login, " balance, but requested currency ", currency, " is missed"));
-            return SimpleResponse.fail("CURRENCY_MISSED");
-        }
 
         Update update = null;
         Query query = Query.query(Criteria.where("email").is(login));
@@ -509,6 +505,20 @@ public class UserService implements UserAPI, UserDetailsService {
             case income:
                 String updateQuery = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance.", currency);
                 update = new Update().inc(updateQuery, historyBalance.getValue());
+                break;
+            case transfer:
+                Account accountTo = chooseItem(accounts, historyBalance.getAccountTo(), getAccountError(login, historyBalance.getAccountTo()));
+                List<SubAccount> subAccountsTo = accountTo.getSubAccounts();
+                SubAccount subAccountTo = chooseItem(subAccountsTo, historyBalance.getSubAccountTo(), getSubAccountError(login, historyBalance.getAccountTo(), historyBalance.getSubAccountTo()));
+
+                String updateQueryFrom = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance.", currency);
+                String updateQueryTo = StringUtils.join("accounts.", accounts.indexOf(accountTo), ".subAccounts.", subAccountsTo.indexOf(subAccountTo), ".balance.", currency);
+                update = new Update().inc(updateQueryFrom, historyBalance.getValue() * -1).inc(updateQueryTo, historyBalance.getValue());
+                break;
+            case exchange:
+                String updateQueryOld = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance.", currency);
+                String updateQueryNew = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance.", historyBalance.getNewCurrency());
+                update = new Update().inc(updateQueryOld, historyBalance.getValue() * -1).inc(updateQueryNew, historyBalance.getNewValue());
                 break;
         }
 

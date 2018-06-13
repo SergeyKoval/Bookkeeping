@@ -21,6 +21,8 @@ export class InputGroupComponent {
   public inputValue: number;
   @Input()
   public alternativeCurrencyLoading: boolean;
+  @Input()
+  public placeholder: string;
 
   @Output()
   public chooseCurrency: EventEmitter<CurrencyDetail> = new EventEmitter();
@@ -80,13 +82,5 @@ export class InputGroupComponent {
 
   public calculateValue(balanceValue: string): number {
     return CurrencyUtils.convertValue(balanceValue);
-  }
-
-  public getValuePlaceholder(): string {
-    if (this.historyItem.type === 'exchange') {
-      return 'Было';
-    }
-
-    return 'Сумма';
   }
 }

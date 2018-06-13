@@ -14,8 +14,12 @@ import java.util.Map;
 @ToString
 public class Balance {
     private Double value;
+    private Double newValue;
     private String account;
+    private String accountTo;
     private String subAccount;
+    private String subAccountTo;
     private String currency;
+    private String newCurrency;
     private Map<String, Double> alternativeCurrency;
 }

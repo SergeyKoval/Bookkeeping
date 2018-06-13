@@ -41,6 +41,10 @@
   padding-right: 5px;
 }
 
+.negative-value {
+  color: red;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .col-sm-5 {
     padding-left: 0;

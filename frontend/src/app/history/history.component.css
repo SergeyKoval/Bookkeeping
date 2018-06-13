@@ -62,9 +62,8 @@
 }
 
 .transfer-exchange-icon {
-  padding-top: 3px;
-  padding-left: 10px;
   padding-right: 10px;
+  top: 3px;
 }
 
 .no-right-padding {
@@ -89,10 +88,6 @@
   float: left;
 }
 
-.transfer-exchange-row {
-  display: flex;
-}
-
 .icon {
   padding-right: 3px;
 }
@@ -101,11 +96,44 @@
   cursor: pointer;
 }
 
+.transfer-from {
+  padding-right: 10px;
+}
+
+.transfer-to {
+  white-space: nowrap;
+}
+
+.no-left-padding {
+  padding-left: 0;
+}
+
+.exchange-value {
+  padding-left: 10px;
+}
+
+.exchange-account {
+  min-width: 117px;
+}
+
+.exchange-from {
+  padding-right: 7px;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .sm-small-left-padding {
     padding-left: 5px;
   }
   .sm-no-left-padding {
     padding-left: 0;
+  }
+  .exchange-account {
+    min-width: 70px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .exchange-account {
+    min-width: 95px;
   }
 }

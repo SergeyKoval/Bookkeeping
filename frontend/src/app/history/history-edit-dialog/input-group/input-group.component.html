@@ -12,7 +12,7 @@
     </ul>
   </div>
 
-  <input type="text" [ngClass]="['form-control', checkValueValidation(balanceValue.value)]" [placeholder]="getValuePlaceholder()"
+  <input type="text" [ngClass]="['form-control', checkValueValidation(balanceValue.value)]" [placeholder]="placeholder"
          [ngModelOptions]="{standalone: true}" [(ngModel)]="inputValue" (blur)="blurInput()" bkCurrencyValue="2" [skipDecimalZeros]="true" #balanceValue>
   <span class="input-group-addon" *ngIf="showCalculation(balanceValue.value)">= {{calculateValue(balanceValue.value) | currencyValue:2:true}}</span>
   <span class="input-group-btn" *ngIf="showAlternativeCurrenciesButton()">

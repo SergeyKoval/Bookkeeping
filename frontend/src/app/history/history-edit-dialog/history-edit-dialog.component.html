@@ -19,7 +19,7 @@
       </ul>
 
       <div class="form-row">
-        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
+        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" [placeholder]="!isTypeSelected('exchange') ? 'Сумма' : 'Было'"
                         [currencies]="currencies" [selectedCurrency]="historyItem.balance.currency" (chooseCurrency)="changeCurrency($event)"
                         [inputValue]="historyItem.balance.value" (changeInputValue)="historyItem.balance.value = $event">
         </bk-input-group>
@@ -29,7 +29,7 @@
         <bk-select [placeholder]="getAccountPlaceholder()" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
       </div>
       <div class="form-row" *ngIf="isTypeSelected('exchange')">
-        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
+        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" placeholder="Стало"
                         [currencies]="currencies" [selectedCurrency]="historyItem.balance.newCurrency" (chooseCurrency)="changeNewCurrency($event)"
                         [inputValue]="historyItem.balance.newValue" (changeInputValue)="historyItem.balance.newValue = $event">
         </bk-input-group>
@@ -42,7 +42,7 @@
         <bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>
       </div>
       <div class="form-row" *ngIf="isTypeSelected('exchange')">
-        <bk-select placeholder="Со счета" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
+        <bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
       </div>
 
       <div class="form-row">

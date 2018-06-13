@@ -5,7 +5,7 @@
     <div class="table">
       <div class="row header">
         <div class="col-sm-2">Дата</div>
-        <div class="col-sm-2 sm-no-left-padding">Сумма</div>
+        <div class="col-sm-2">Сумма</div>
         <div class="col-sm-3 sm-small-left-padding">Категория</div>
         <div class="col-sm-3">Комментарий</div>
         <div class="col-sm-2 text-center sm-small-left-padding">Действия</div>
@@ -13,18 +13,41 @@
 
       <div *ngFor="let historyGroup of historyItems | historyGroup; let lastGroup = last">
         <div class="row history-line" *ngFor="let historyItem of historyGroup.historyItems; let firstItem = first">
-          <div class="col-sm-4 sm-small-left-padding">
+          <div class="col-sm-2 sm-small-left-padding" *ngIf="firstItem">
             <div [ngClass]="['no-left-right-padding', historyItem.goal ? 'col-sm-5' : 'col-sm-6']">
-              <span *ngIf="firstItem">
+              <span>
                 {{historyGroup.dateString}}
                 <div class="footnote">{{historyGroup.dayOfWeek}}</div>
               </span>
             </div>
             <div *ngIf="historyItem.goal" class="glyphicon glyphicon-screenshot goal-icon col-sm-1 no-left-right-padding"
-                  popover="{{historyItem.goal}}" popoverPlacement="top"
-                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+                 popover="{{historyItem.goal}}" popoverPlacement="top"
+                 [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
             </div>
-            <div class="col-sm-6 no-right-padding sm-small-left-padding" *ngIf="historyItem.type !== 'exchange'">
+          </div>
+
+          <!--exchange middle-->
+          <div [ngClass]="{'col-sm-8 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type === 'exchange'">
+            <span class="float-left exchange-account">
+              <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
+              <span class="description">{{historyItem.balance.account}}</span>
+              <div class="footnote">{{historyItem.balance.subAccount}}</div>
+            </span>
+            <span class="float-left exchange-value">
+              <span class="description exchange-from">
+                <strong><bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></strong> {{historyItem.balance.value | currencyValue}}
+              </span>
+              <span class="glyphicon glyphicon-transfer transfer-exchange-icon"></span>
+              <span class="description">
+                <strong><bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol></strong> {{historyItem.balance.newValue | currencyValue}}
+              </span>
+              <div class="footnote">{{historyItem.description}}</div>
+            </span>
+          </div>
+
+          <!--not exchange, second column-->
+          <div [ngClass]="{'col-sm-2 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type !== 'exchange'">
+            <div class="col-sm-6 no-left-padding no-right-padding">
               <div [ngClass]="historyItem.type">
                 {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
               </div>
@@ -32,45 +55,35 @@
               <div class="footnote clickable" *ngIf="historyItem.type !== 'transfer' && accountTitle.isToggleState()" (click)="accountTitle.changeToggleState()">{{historyItem.balance.account}}</div>
               <div class="footnote clickable" *ngIf="historyItem.type !== 'transfer'" (click)="accountTitle.changeToggleState()">{{historyItem.balance.subAccount}}</div>
             </div>
-            <div class="col-sm-6 no-right-padding" *ngIf="historyItem.type === 'exchange'">
-              <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
-              <span class="description">{{historyItem.balance.account}}</span>
-              <div class="footnote">{{historyItem.balance.subAccount}}</div>
-            </div>
           </div>
+
+          <!--expense or income third column-->
           <div class="col-sm-3 sm-small-left-padding" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">
             <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'category'">
             <span class="description">{{historyItem.category}}</span>
             <div class="footnote">{{historyItem.subCategory}}</div>
           </div>
-          <div class="col-sm-6" *ngIf="historyItem.type === 'transfer' || historyItem.type === 'exchange'">
-            <div class="transfer-exchange-row" *ngIf="historyItem.type === 'transfer'">
-              <div class="float-left">
-                <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
-                <span class="description">{{historyItem.balance.subAccount}} ({{historyItem.balance.account}})</span>
-              </div>
-              <span class="glyphicon glyphicon-random transfer-exchange-icon float-left"></span>
-              <div class="float-left">
-                <img class="icon" *ngIf="historyItem.additionalIcon" [src]="historyItem.additionalIcon | assetImage:'account'">
-                <span class="description">{{historyItem.balance.subAccountTo}} ({{historyItem.balance.accountTo}})</span>
-              </div>
-            </div>
-            <div class="transfer-exchange-row" *ngIf="historyItem.type === 'exchange'">
-              <div class="float-left">
-                <span class="description">
-                  <strong><bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol></strong> {{historyItem.balance.value | currencyValue}}
+
+          <!--transfer third column-->
+          <div class="col-sm-6 sm-small-left-padding no-right-padding" *ngIf="historyItem.type === 'transfer'">
+            <div class="transfer-exchange-row">
+                <span class="transfer-from">
+                  <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
+                  <span class="description">{{historyItem.balance.subAccount}} ({{historyItem.balance.account}})</span>
                 </span>
-              </div>
-              <span class="glyphicon glyphicon-transfer transfer-exchange-icon float-left"></span>
-              <div class="float-left">
-                <span class="description">
-                  <strong><bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol></strong> {{historyItem.balance.newValue | currencyValue}}
+                <span class="transfer-to">
+                  <span class="glyphicon glyphicon-random transfer-exchange-icon"></span>
+                  <img class="icon" *ngIf="historyItem.additionalIcon" [src]="historyItem.additionalIcon | assetImage:'account'">
+                  <span class="description">{{historyItem.balance.subAccountTo}} ({{historyItem.balance.accountTo}})</span>
                 </span>
-              </div>
             </div>
             <div class="footnote">{{historyItem.description}}</div>
           </div>
+
+          <!--expense or income forth column-->
           <div class="col-sm-3 description" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">{{historyItem.description}}</div>
+
+          <!--last column-->
           <div class="col-sm-2 text-center">
             <span class="glyphicon glyphicon-pencil" (click)="editHistoryItem(historyItem)"
                   popover="Редактировать" popoverPlacement="top"

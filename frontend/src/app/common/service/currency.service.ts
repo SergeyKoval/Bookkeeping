@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable,  Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators';
 import { IMyDate } from 'mydatepicker';
 
@@ -13,7 +13,6 @@ export class CurrencyService {
   private _todayConversions: Map<String, CurrencyHistory> = new Map();
   private _currencies: Map<string, Map<number, Map<number, CurrencyHistory[]>>> = new Map();
   private _currenciesIndicatorMap: Map<string, Map<number, Map<number, boolean>>> = new Map();
-  private _currenciesUpdate$$: Subject<string> = new Subject();
 
   public constructor(
     private _http: HttpClient,
@@ -79,11 +78,6 @@ export class CurrencyService {
             currencyMonths.set(request.month, currencyHistories);
             indicatorMonths.set(request.month, true);
           });
-        }),
-        tap((currencyHistories: CurrencyHistory[]) => {
-          request.currencies.forEach(currency => {
-            this._currenciesUpdate$$.next(currency);
-          });
         })
       );
   }
@@ -96,10 +90,6 @@ export class CurrencyService {
     this._todayConversions.clear();
     this._currencies.clear();
     this._currenciesIndicatorMap.clear();
-  }
-
-  public get currenciesUpdate$(): Observable<string> {
-    return this._currenciesUpdate$$.asObservable();
   }
 
   public isCurrencyHistoryLoaded(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): boolean {

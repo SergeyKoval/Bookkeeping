@@ -19,7 +19,7 @@ import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-d
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public static readonly PAGE_LIMIT: number = 20;
+  public static readonly PAGE_LIMIT: number = 10;
 
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;

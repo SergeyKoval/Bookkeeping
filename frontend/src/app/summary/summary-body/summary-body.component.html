@@ -5,7 +5,7 @@
           <div class="clearfix">
             <div class="col-lg-7 col-md-6"><strong><em>{{account.title}}</em></strong></div>
             <div class="col-lg-5 col-md-6">
-              <div class="row" *ngFor="let balanceItem of account | summaryBodyAccount:conversionCurrency | summaryBalanceOrdering">
+              <div class="row" *ngFor="let balanceItem of account | summaryBodyAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'negative-value': balanceItem.value < 0}">
                 <div class="col-lg-3 col-sm-7 col-md-5">
                   <strong>
                     <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
@@ -25,7 +25,7 @@
             <strong><em>{{subAccount.title}}</em></strong>
           </div>
           <div class="col-lg-5 col-md-6">
-            <div class="row" *ngFor="let balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering">
+            <div *ngFor="let balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'row': true, 'negative-value': balanceItem.value < 0}">
               <div class="col-lg-3 col-sm-7 col-md-5">
                 <strong>
                   <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>

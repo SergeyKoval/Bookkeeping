@@ -26,7 +26,7 @@
       </div>
 
       <div class="form-row" *ngIf="!isTypeSelected('exchange')">
-        <bk-select [placeholder]="getAccountPlaceholder()" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
+        <bk-select [placeholder]="this.isTypeSelected('transfer') ? 'Со счета' : 'Счет'" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
       </div>
       <div class="form-row" *ngIf="isTypeSelected('exchange')">
         <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" placeholder="Стало"

@@ -1,20 +1,16 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/index';
 import { filter, tap } from 'rxjs/internal/operators';
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
 
 import { HistoryService } from '../../common/service/history.service';
 import { CurrencyService } from '../../common/service/currency.service';
-import { DateUtils } from '../../common/utils/date-utils';
 import { ProfileService } from '../../common/service/profile.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
-import { AlertType } from '../../common/model/alert/AlertType';
-import { Alert } from '../../common/model/alert/Alert';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -154,28 +150,16 @@ export class HistoryEditDialogComponent implements OnInit {
         break;
     }
 
-    console.log(this.historyItem);
     if (validationResult) {
-      const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Добавление...');
-      this._historyService.addHistoryItem(this.historyItem)
-        .pipe(
-          tap(simpleResponse => {
-            if (simpleResponse.status === 'FAIL') {
-              if (simpleResponse.message === 'CURRENCY_MISSED') {
-                this.errors = 'Выбранная валюта отсутсвует для выбранного субсчета';
-              } else {
-                this.errors = 'Ошибка при добавлении';
-              }
-              mdDialogRef.close();
-            }
-          }),
-          filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
-        ).subscribe((response: SimpleResponse) => {
-          this._authenticationService.quiteReloadAccounts();
-          mdDialogRef.close();
-          this.close(true);
-      });
+      const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
+      this.processSaveResult(mdDialogRef, this.data.editMode
+        ? this._historyService.editHistoryItem(this.historyItem)
+        : this._historyService.addHistoryItem(this.historyItem));
     }
+  }
+
+  public changeNewCurrency(currency: CurrencyDetail): void {
+    this.historyItem.balance.newCurrency = currency.name;
   }
 
   public close(refreshHistoryItems: boolean): void {
@@ -277,57 +261,6 @@ export class HistoryEditDialogComponent implements OnInit {
     return true;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public changeNewCurrency(currency: CurrencyDetail): void {
-    this.historyItem.balance.newCurrency = currency.name;
-  }
-
-  public getAccountPlaceholder(): string {
-    if (this.isTypeSelected('transfer')) {
-      return 'Со счета';
-    }
-
-    return 'Счет';
-  }
-
-  public showGoalContainer(): boolean {
-    return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
-  }
-
-  public onSelectedGoalStatusChange(status: boolean): void {
-    this._goalStatusChange = status;
-  }
-
-
-
   private validateExchange(): boolean {
     const balance: HistoryBalanceType = this.historyItem.balance;
     if (!this.commonValidation(balance)) {
@@ -346,4 +279,28 @@ export class HistoryEditDialogComponent implements OnInit {
 
     return true;
   }
+
+  private processSaveResult(mdDialogRef: MatDialogRef<LoadingDialogComponent>, result: Observable<SimpleResponse>): void {
+    result.pipe(
+      tap(simpleResponse => {
+        if (simpleResponse.status === 'FAIL') {
+          this.errors = 'Ошибка при сохранении';
+          mdDialogRef.close();
+        }
+      }),
+      filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
+    ).subscribe((response: SimpleResponse) => {
+      this._authenticationService.quiteReloadAccounts();
+      mdDialogRef.close();
+      this.close(true);
+    });
+  }
+
+  // public showGoalContainer(): boolean {
+  //   return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
+  // }
+
+  // public onSelectedGoalStatusChange(status: boolean): void {
+  //   this._goalStatusChange = status;
+  // }
 }

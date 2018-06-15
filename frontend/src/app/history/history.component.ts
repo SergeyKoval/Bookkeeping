@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 
-import { Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 
 import { HistoryService } from '../common/service/history.service';
@@ -43,6 +41,41 @@ export class HistoryComponent implements OnInit {
     this.init(1, this.historyItems.length + numberOfNewItems);
   }
 
+  public editHistoryItem(historyItem: HistoryItem): void {
+    this._dialog.open(HistoryEditDialogComponent, {
+      width: '720px',
+      position: {top: 'top'},
+      panelClass: 'history-add-edit-dialog',
+      data: {
+        'historyItem': historyItem.cloneOriginalItem(),
+        'editMode': true
+      },
+    }).afterClosed()
+      .pipe(filter((result: boolean) => result === true))
+      .subscribe(() => this.loadMoreItems(0));
+  }
+
+  public deleteHistoryItem(historyItem: HistoryItem): void {
+    this._confirmDialogService.openConfirmDialog('Подтверждение', 'Точно удалить?')
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => this.loading = true),
+        switchMap(() => this._historyService.deleteHistoryItem(historyItem.originalItem.id)),
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при удалении');
+            this.loadMoreItems(0);
+          }
+        }),
+        filter(simpleResponse => simpleResponse.status === 'SUCCESS')
+      ).subscribe(() => {
+        this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена');
+        this._authenticationService.quiteReloadAccounts();
+        this.loadMoreItems(-1);
+      });
+  }
+
   private init(page: number, limit: number): void {
     this.loading = true;
     this._historyService.loadHistoryItems(page, limit).subscribe((historyItems: HistoryType[]) => {
@@ -53,88 +86,4 @@ export class HistoryComponent implements OnInit {
       this.loading = false;
     });
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public addHistoryItem(): void {
-
-  }
-
-  public editHistoryItem(historyItem: HistoryItem): void {
-    // this._dialog.open(HistoryEditDialogComponent, {
-    //   width: '1000px',
-    //   position: {top: 'top'},
-    //   data: {
-    //     'historyItem': historyItem.cloneOriginalItem(),
-    //     'editMode': true
-    //   },
-    // });
-  }
-
-
-
-  public deleteHistoryItem(historyItem: HistoryItem): void {
-    // const itemsLimit: number = this.historyItems.length;
-    // const subscription: Subscription = this._confirmDialogService.openConfirmDialog('Подтверждение', 'Точно удалить?')
-    //   .afterClosed()
-    //   .pipe(
-    //     filter((result: boolean) => result === true),
-    //     tap(() => this.loading = true),
-    //     switchMap(() => this.historyItems),
-    //     filter((historyType: HistoryType) => historyType.id === historyItem.id),
-    //     switchMap((historyType: HistoryType) => this._historyService.deleteHistoryItem(historyType)),
-    //     tap((response: HttpResponse<Object>) => {
-    //       if (!response.ok) {
-    //         this._alertService.addAlert(AlertType.WARNING, 'Возникла ошибка при удалении записи.');
-    //         this.loading = false;
-    //       } else {
-    //         this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена.');
-    //       }
-    //     }),
-    //     filter((response: HttpResponse<Object>) => response.ok),
-    //     tap(() => this._authenticationService.reloadAccounts()),
-    //     switchMap(() => this._historyService.loadHistoryItems(this.authenticatedProfileId, 1, itemsLimit))
-    //   ).subscribe((historyItems: HistoryType[]) => {
-    //     if (historyItems.length < itemsLimit) {
-    //       this.disableMoreButton = true;
-    //     }
-    //
-    //     this.historyItems = historyItems;
-    //     this.loading = false;
-    //     subscription.unsubscribe();
-    //   });
-  }
-
-  // private showMoreHistoryItems(): void {
-  //   this.loadingMoreIndicator = true;
-  //   const pageNumber: number = Math.ceil(this.historyItems.length / HistoryComponent.PAGE_LIMIT) + 1;
-  //
-  //   const subscription: Subscription = this._historyService.loadHistoryItems(this.authenticatedProfileId, pageNumber, HistoryComponent.PAGE_LIMIT)
-  //     .subscribe((historyItems: HistoryType[]) => {
-  //       if (historyItems.length < HistoryComponent.PAGE_LIMIT) {
-  //         this.disableMoreButton = true;
-  //       }
-  //       this.historyItems = this.historyItems.concat(historyItems);
-  //       subscription.unsubscribe();
-  //       this.loadingMoreIndicator = false;
-  //     });
-  // }
-
-
 }

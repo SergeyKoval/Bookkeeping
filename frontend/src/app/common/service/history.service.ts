@@ -24,44 +24,49 @@ export class HistoryService {
     return this._http.post<SimpleResponse>('/api/history/add', historyItem);
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public deleteHistoryItem(historyItem: HistoryType): Observable<HttpResponse<Object>> {
-    return this._http.delete(`${this._host}/history`, {observe: 'response'}).pipe(delay(1500));
+  public editHistoryItem(historyItem: HistoryType): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/history/edit', historyItem);
   }
+
+  public deleteHistoryItem(historyItemId: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/history/delete', {id: historyItemId});
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public chooseBudgetBalanceBasedOnCurrency(historyItem: HistoryType, budgetCategory: BudgetCategory): BudgetBalance {
     const historyItemCurrency: string = historyItem.balance.currency;

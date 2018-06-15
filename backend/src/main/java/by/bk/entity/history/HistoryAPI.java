@@ -10,4 +10,6 @@ import java.util.List;
 public interface HistoryAPI {
     List<HistoryItem> getPagePortion(String login, int page, int limit);
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem);
+    SimpleResponse editHistoryItem(String login, HistoryItem historyItem);
+    SimpleResponse deleteHistoryItem(String login, String historyItemId);
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Sergey Koval
@@ -60,6 +61,51 @@ public class HistoryService implements HistoryAPI {
         if (!response.isSuccess()) {
             LOG.error(StringUtils.join("Error updating user balance based on the history item ", savedHistoryItem, " for user ", login));
             historyRepository.delete(savedHistoryItem);
+        }
+
+        return response;
+    }
+
+    @Override
+    public SimpleResponse editHistoryItem(String login, HistoryItem historyItem) {
+        Optional<HistoryItem> originalHistoryItem = historyRepository.findById(historyItem.getId());
+
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse deleteHistoryItem(String login, String historyItemId) {
+        HistoryItem originalHistoryItem = historyRepository.findById(historyItemId).get();
+        HistoryType type = originalHistoryItem.getType();
+        Balance balance = originalHistoryItem.getBalance();
+
+        switch (type) {
+            case income:
+            case expense:
+                balance.setValue(balance.getValue() * -1);
+                break;
+            case transfer:
+                String account = balance.getAccountTo();
+                String subAccount = balance.getSubAccountTo();
+                balance.setAccountTo(balance.getAccount());
+                balance.setSubAccountTo(balance.getSubAccount());
+                balance.setAccount(account);
+                balance.setSubAccount(subAccount);
+                break;
+            case exchange:
+                String currency = balance.getNewCurrency();
+                Double value = balance.getNewValue();
+                balance.setNewCurrency(balance.getCurrency());
+                balance.setNewValue(balance.getValue());
+                balance.setCurrency(currency);
+                balance.setValue(value);
+                break;
+        }
+
+        SimpleResponse response = userAPI.updateUserBalance(login, type, balance);
+        if (response.isSuccess()) {
+            historyRepository.deleteById(historyItemId);
         }
 
         return response;

@@ -8,7 +8,8 @@ type HistoryType = {
   subCategory?: string,
   balance: HistoryBalanceType,
   goal?: string,
-  description?: string
+  description?: string,
+  id?: string
 };
 
 type HistoryBalanceType = {

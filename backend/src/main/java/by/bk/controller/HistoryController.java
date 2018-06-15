@@ -31,4 +31,14 @@ public class HistoryController extends BaseAPIController {
     public SimpleResponse addHistoryItem(@RequestBody HistoryItem historyItem, Principal principal) {
         return historyAPI.addHistoryItem(principal.getName(), historyItem);
     }
+
+    @PostMapping("/edit")
+    public SimpleResponse editHistoryItem(@RequestBody HistoryItem historyItem, Principal principal) {
+        return historyAPI.editHistoryItem(principal.getName(), historyItem);
+    }
+
+    @PostMapping("/delete")
+    public SimpleResponse deleteHistoryItem(@RequestBody HistoryItem historyItem, Principal principal) {
+        return historyAPI.deleteHistoryItem(principal.getName(), historyItem.getId());
+    }
 }

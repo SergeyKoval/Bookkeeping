@@ -106,7 +106,7 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public onChangeSelectedType(type: string): void {
-    if (!this.isTypeSelected(type)) {
+    if (!this.isTypeSelected(type) && !this.data.editMode) {
       if (this.selectedCategory) {
         this.selectedCategory.length = 0;
       }

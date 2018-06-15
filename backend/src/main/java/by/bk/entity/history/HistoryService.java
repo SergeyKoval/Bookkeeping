@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Sergey Koval
@@ -68,8 +67,19 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public SimpleResponse editHistoryItem(String login, HistoryItem historyItem) {
-        Optional<HistoryItem> originalHistoryItem = historyRepository.findById(historyItem.getId());
+        HistoryItem originalHistoryItem = historyRepository.findById(historyItem.getId()).get();
+        SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
+        if (response.isSuccess()) {
+            historyItem.setUser(login);
+            historyItem = historyRepository.save(historyItem);
+            response = userAPI.updateUserBalance(login, historyItem.getType(), historyItem.getBalance());
 
+            if (!response.isSuccess()) {
+                LOG.error(StringUtils.join("Error on second updating balance for changing history item. Step 1 success update, which need to be reverted: ", originalHistoryItem));
+                historyRepository.save(originalHistoryItem);
+                userAPI.updateUserBalance(login, historyItem.getType(), originalHistoryItem.getBalance());
+            }
+        }
 
         return SimpleResponse.success();
     }
@@ -77,9 +87,15 @@ public class HistoryService implements HistoryAPI {
     @Override
     public SimpleResponse deleteHistoryItem(String login, String historyItemId) {
         HistoryItem originalHistoryItem = historyRepository.findById(historyItemId).get();
-        HistoryType type = originalHistoryItem.getType();
-        Balance balance = originalHistoryItem.getBalance();
+        SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.getBalance());
+        if (response.isSuccess()) {
+            historyRepository.deleteById(historyItemId);
+        }
 
+        return response;
+    }
+
+    private SimpleResponse revertBalanceChange(String login, HistoryType type, Balance balance) {
         switch (type) {
             case income:
             case expense:
@@ -103,11 +119,6 @@ public class HistoryService implements HistoryAPI {
                 break;
         }
 
-        SimpleResponse response = userAPI.updateUserBalance(login, type, balance);
-        if (response.isSuccess()) {
-            historyRepository.deleteById(historyItemId);
-        }
-
-        return response;
+        return userAPI.updateUserBalance(login, type, balance);
     }
 }

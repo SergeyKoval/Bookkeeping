@@ -10,8 +10,8 @@
 
 label {
   position: absolute;
-  -webkit-transform: translateY(6px);
-  transform: translateY(6px);
+  -webkit-transform: translateY(-35px);;
+  transform: translateY(-35px);;
   left: 13px;
   color: #777;
   -webkit-transition: all 0.25s ease;
@@ -26,9 +26,9 @@ label .req {
   font-weight: bold;
 }
 
-label.active {
-  -webkit-transform: translateY(50px);
-  transform: translateY(50px);
+label.active, input:-webkit-autofill + label {
+  -webkit-transform: translateY(10px);
+  transform: translateY(10px);
   left: 2px;
   font-size: 14px;
 }

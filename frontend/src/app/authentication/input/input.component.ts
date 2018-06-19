@@ -15,7 +15,7 @@ export class InputComponent {
   public submitted: boolean;
 
   public isInvalidValue(): boolean {
-    return (!this.input.pristine || this.submitted) && this.input.invalid;
+    return this.submitted && this.input.invalid;
   }
 
   public isEditing(): boolean {

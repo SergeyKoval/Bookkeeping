@@ -14,7 +14,7 @@ import { BalanceDialogComponent } from '../accounts/balance-dialog/balance-dialo
   styleUrls: ['./account-category-dialog.component.css']
 })
 export class AccountCategoryDialogComponent implements OnInit {
-  public accountIcons: string[] = ['kwallet.gif', 'Money.gif', 'home.gif', 'other_exp.gif'];
+  public accountIcons: string[] = ['payok.gif', 'avtokarta.gif', 'alfa.gif', 'belagro.gif', 'belarusbank.gif', 'belgazprom1.gif', 'parents.gif', 'collega.gif', 'rabotnik.gif', 'kwallet.gif', 'Money.gif', 'other_exp.gif'];
   public categoryIcons: string[] = ['avto.gif', 'deti.gif', 'home.gif'];
   public title: string;
   public errorMessage: string;

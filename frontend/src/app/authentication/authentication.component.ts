@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,7 +22,10 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   public errorMessage: string;
   public loading: boolean = false;
   public applicationLoading: boolean = false;
+  public alwaysEditing: boolean;
 
+  @ViewChild('formRef')
+  private _FORM_REF: HTMLFormElement;
   private _AUTHENTICATION_LOADING_SUBSCRIPTION: Subscription;
   private _APPLICATION_LOADING_SUBSCRIPTION: Subscription;
   private _AUTHENTICATION_ERROR_SUBSCRIPTION: Subscription;
@@ -40,6 +43,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._authenticationService.authentication$$.subscribe((value: boolean) => this.loading = value);
     this._APPLICATION_LOADING_SUBSCRIPTION = this._authenticationService.applicationLoading$$.subscribe((value: boolean) => this.applicationLoading = value);
     this._AUTHENTICATION_ERROR_SUBSCRIPTION = this._authenticationService.errorMessage$.subscribe(value => this.errorMessage = value);
+    this.alwaysEditing = navigator.platform === 'iPad';
   }
 
   public ngOnDestroy(): void {
@@ -55,8 +59,16 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   }
 
   public authenticate(): void {
-    this.submitted = true;
+    let formElement: HTMLCollection = this._FORM_REF.nativeElement.getElementsByTagName('input');
+    let emailElement: HTMLInputElement = <HTMLInputElement> formElement.item(0);
+    let passwordElement: HTMLInputElement = <HTMLInputElement> formElement.item(1);
+    if (this.authenticationForm.get('email').value === '' && this.authenticationForm.get('password').value === ''
+        && emailElement.value.length > 0 && passwordElement.value.length > 0) {
+      this.authenticationForm.get('email').setValue(emailElement.value);
+      this.authenticationForm.get('password').setValue(passwordElement.value);
+    }
 
+    this.submitted = true;
     if (!this.authenticationForm.valid) {
       return;
     }

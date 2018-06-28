@@ -1,9 +1,9 @@
 <h1>Бухгалтерия</h1>
 
 <div *ngIf="!applicationLoading; else applicationLoadingIndicator">
-  <form [formGroup]="authenticationForm">
-    <bk-authentication-input [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
-    <bk-authentication-input [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
+  <form #formRef [formGroup]="authenticationForm">
+    <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
+    <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
 
     <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!loading; else loadingIndicator">Войти</button>
   </form>

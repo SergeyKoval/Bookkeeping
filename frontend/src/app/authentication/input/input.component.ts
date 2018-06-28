@@ -13,12 +13,14 @@ export class InputComponent {
   public type: string;
   @Input()
   public submitted: boolean;
+  @Input()
+  public alwaysEditing: boolean;
 
   public isInvalidValue(): boolean {
     return this.submitted && this.input.invalid;
   }
 
   public isEditing(): boolean {
-    return this.input.dirty && this.input.value.length > 0;
+    return this.alwaysEditing || (this.input.dirty && this.input.value.length > 0);
   }
 }

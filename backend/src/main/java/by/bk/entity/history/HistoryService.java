@@ -1,6 +1,9 @@
 package by.bk.entity.history;
 
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.entity.currency.Currency;
+import by.bk.entity.currency.CurrencyDetail;
+import by.bk.entity.currency.CurrencyRepository;
 import by.bk.entity.user.UserAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -12,8 +15,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Sergey Koval
@@ -24,6 +30,8 @@ public class HistoryService implements HistoryAPI {
 
     @Autowired
     private HistoryRepository historyRepository;
+    @Autowired
+    private CurrencyRepository currencyRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
@@ -41,6 +49,7 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public SimpleResponse addHistoryItem(String login, HistoryItem historyItem) {
+        addUnusedCurrencyConversions(historyItem);
         int order = 1 + historyRepository.getAllDayHistoryItemsWithOrder(login, historyItem.getYear(), historyItem.getMonth(), historyItem.getDay())
                 .stream()
                 .max(Comparator.comparingInt(HistoryItem::getOrder))
@@ -110,7 +119,7 @@ public class HistoryService implements HistoryAPI {
                 balance.setSubAccount(subAccount);
                 break;
             case exchange:
-                String currency = balance.getNewCurrency();
+                Currency currency = balance.getNewCurrency();
                 Double value = balance.getNewValue();
                 balance.setNewCurrency(balance.getCurrency());
                 balance.setNewValue(balance.getValue());
@@ -120,5 +129,25 @@ public class HistoryService implements HistoryAPI {
         }
 
         return userAPI.updateUserBalance(login, type, balance);
+    }
+
+    private void addUnusedCurrencyConversions(HistoryItem historyItem) {
+        Balance balance = historyItem.getBalance();
+        Map<Currency, Double> alternativeCurrency = balance.getAlternativeCurrency();
+        if (alternativeCurrency != null && alternativeCurrency.size() < Currency.values().length) {
+            Set<Currency> missedCurrencies = Arrays.stream(Currency.values())
+                    .filter(currency -> !currency.equals(balance.getCurrency()))
+                    .filter(currency -> !alternativeCurrency.containsKey(currency))
+                    .collect(Collectors.toSet());
+            List<CurrencyDetail> currencyDetails = currencyRepository.getByYearAndMonthAndDayAndNameIn(historyItem.getYear(), historyItem.getMonth(), historyItem.getDay(), missedCurrencies);
+            if (currencyDetails.isEmpty()) {
+                LocalDate today = LocalDate.now();
+                currencyDetails = currencyRepository.getByYearAndMonthAndDayAndNameIn(today.getYear(), today.getMonth().getValue(), today.getDayOfMonth(), missedCurrencies);
+            }
+            currencyDetails.forEach(currencyDetail -> {
+                Double alternativeValue = balance.getValue() / currencyDetail.getConversions().get(balance.getCurrency());
+                alternativeCurrency.put(currencyDetail.getName(), new BigDecimal(alternativeValue).setScale(2, RoundingMode.HALF_UP).doubleValue());
+            });
+        }
     }
 }

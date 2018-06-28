@@ -12,9 +12,9 @@
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
-          <input type="text" [(ngModel)]="data.balance.alternativeCurrency[currency]" class="form-control middle-column" bkCurrencyValue="4" [skipDecimalZeros]="true">
+          <input type="text" disabled [value]="getCurrencyConversion(currency)" class="form-control middle-column">
         </div>
-        <input type="text" [value]="getAmountValue(currency)" (blur)="calculateCurrencyValue(currency, amount)" class="form-control last-column" #amount>
+        <input type="text" [value]="data.balance.alternativeCurrency[currency]" (blur)="blurValueInCurrency(currency, amount)" class="form-control last-column" #amount bkCurrencyValue="2" [skipDecimalZeros]="true">
       </div>
     </div>
   </div>

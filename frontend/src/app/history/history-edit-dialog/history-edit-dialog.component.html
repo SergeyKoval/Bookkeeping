@@ -21,7 +21,7 @@
       <div class="form-row">
         <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" [placeholder]="!isTypeSelected('exchange') ? 'Сумма' : 'Было'"
                         [currencies]="currencies" [selectedCurrency]="historyItem.balance.currency" (chooseCurrency)="changeCurrency($event)"
-                        [inputValue]="historyItem.balance.value" (changeInputValue)="historyItem.balance.value = $event">
+                        [inputValue]="historyItem.balance.value" (changeInputValue)="changeBalanceValue($event)">
         </bk-input-group>
       </div>
 

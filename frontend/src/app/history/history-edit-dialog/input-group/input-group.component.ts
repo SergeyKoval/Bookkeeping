@@ -35,8 +35,9 @@ export class InputGroupComponent {
   ) { }
 
   public blurInput(): void {
-    if (this.inputValue && this.inputValue > 0.1) {}
-    this.changeInputValue.next(this.inputValue);
+    if (this.inputValue && this.inputValue > 0.01) {
+      this.changeInputValue.next(this.inputValue);
+    }
   }
 
   public changeCurrency(currency: CurrencyDetail): void {

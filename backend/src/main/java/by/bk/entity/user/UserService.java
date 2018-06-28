@@ -492,7 +492,7 @@ public class UserService implements UserAPI, UserDetailsService {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
-        String currency = historyBalance.getCurrency();
+        Currency currency = historyBalance.getCurrency();
         String subAccountTitle = historyBalance.getSubAccount();
         List<SubAccount> subAccounts = account.getSubAccounts();
         SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));

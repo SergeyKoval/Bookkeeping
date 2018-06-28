@@ -43,6 +43,7 @@ export class HistoryEditDialogComponent implements OnInit {
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
     private _authenticationService: ProfileService,
+    private _profileService: ProfileService,
     private _loadingService: LoadingService,
     private _alertService: AlertService
   ) {}
@@ -80,10 +81,9 @@ export class HistoryEditDialogComponent implements OnInit {
         && !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, date)) {
 
         this.alternativeCurrencyLoading = true;
-        this.historyItem.balance.alternativeCurrency = {};
         this.loadAlternativeCurrencies(date);
       } else {
-        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);
+        this.updateAlternativeCurrencies();
       }
       this.selectedDate = date;
       this.historyItem.year = date.year;
@@ -93,14 +93,15 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public changeCurrency(currency: CurrencyDetail): void {
-    this.historyItem.balance.currency = currency.name;
-    if (this.historyItem.type === 'expense' || this.historyItem.type === 'income') {
-      if (!this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate)) {
-        this.alternativeCurrencyLoading = true;
-        this.historyItem.balance.alternativeCurrency = {};
-        this.loadAlternativeCurrencies(this.selectedDate);
-      } else {
-        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, this.selectedDate);
+    if (this.historyItem.balance.currency !== currency.name) {
+      this.historyItem.balance.currency = currency.name;
+      if (this.historyItem.type === 'expense' || this.historyItem.type === 'income') {
+        if (!this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate)) {
+          this.alternativeCurrencyLoading = true;
+          this.loadAlternativeCurrencies(this.selectedDate);
+        } else {
+          this.updateAlternativeCurrencies();
+        }
       }
     }
   }
@@ -162,6 +163,13 @@ export class HistoryEditDialogComponent implements OnInit {
     this.historyItem.balance.newCurrency = currency.name;
   }
 
+  public changeBalanceValue(newBalanceValue: number): void {
+    if (newBalanceValue !== this.historyItem.balance.value) {
+      this.historyItem.balance.value = newBalanceValue;
+      this.updateAlternativeCurrencies();
+    }
+  }
+
   public close(refreshHistoryItems: boolean): void {
     this._dialogRef.close(refreshHistoryItems);
   }
@@ -181,7 +189,7 @@ export class HistoryEditDialogComponent implements OnInit {
         account: balanceAccount,
         subAccount: balanceSubAccount,
         currency: currencyName,
-        alternativeCurrency: balanceAlternativeCurrency || this._currencyService.getCurrencyHistoryConversions(currencyName, this.selectedDate)
+        alternativeCurrency: balanceAlternativeCurrency
       }
     };
 
@@ -227,8 +235,19 @@ export class HistoryEditDialogComponent implements OnInit {
   private loadAlternativeCurrencies(date: IMyDate): void {
     this._currencyService.loadCurrenciesForMonth({month: date.month, year: date.year, currencies: this._authenticationService.getProfileCurrencies()})
       .subscribe(() => {
-        this.historyItem.balance.alternativeCurrency = this._currencyService.getCurrencyHistoryConversions(this.historyItem.balance.currency, date);
+        this.updateAlternativeCurrencies();
         this.alternativeCurrencyLoading = false;
+      });
+  }
+
+  private updateAlternativeCurrencies(): void {
+    const balance: HistoryBalanceType = this.historyItem.balance;
+    balance.alternativeCurrency = {};
+    this._profileService.authenticatedProfile.currencies
+      .filter(currency => currency.name !== balance.currency)
+      .forEach(currency => {
+        const alternativeValue: number = this._currencyService.convertToCurrency(balance.value, balance.currency, currency, this.selectedDate);
+        balance.alternativeCurrency[currency.name] = Number(alternativeValue.toFixed(2));
       });
   }
 

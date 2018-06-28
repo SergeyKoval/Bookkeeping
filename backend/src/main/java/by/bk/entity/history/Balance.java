@@ -1,5 +1,6 @@
 package by.bk.entity.history;
 
+import by.bk.entity.currency.Currency;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +20,7 @@ public class Balance {
     private String accountTo;
     private String subAccount;
     private String subAccountTo;
-    private String currency;
-    private String newCurrency;
-    private Map<String, Double> alternativeCurrency;
+    private Currency currency;
+    private Currency newCurrency;
+    private Map<Currency, Double> alternativeCurrency;
 }

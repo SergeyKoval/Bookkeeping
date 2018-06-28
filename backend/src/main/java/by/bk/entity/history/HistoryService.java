@@ -39,7 +39,7 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public List<HistoryItem> getPagePortion(String login, int page, int limit) {
-        Query query = Query.query(Criteria.where("user").is(login))
+        Query query = Query.query(Criteria.where("user").is(login).and("archived").is(false))
                 .with(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day")))
                 .skip((page -1) * limit)
                 .limit(limit);

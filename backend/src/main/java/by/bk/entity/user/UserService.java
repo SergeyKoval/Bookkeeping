@@ -4,6 +4,7 @@ import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.history.Balance;
+import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
@@ -99,7 +100,10 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet("currencies", newCurrency);
-        return updateUser(query, update);
+        SimpleResponse result = updateUser(query, update);
+
+        archiveHistoryItems(login, currency, false);
+        return result;
     }
 
     @Override
@@ -108,7 +112,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Optional<UserCurrency> currencyItem = currencies.stream().filter(userCurrency -> userCurrency.getName().equals(currency)).findFirst();
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().pull("currencies", currencyItem.get());
+        Update update = new Update().pull("currencies", currencyItem.get()).unset("accounts.$[].subAccounts.$[].balance." + currency.name());
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - removing currency. Number of updated items " + updateResult.getModifiedCount());
@@ -125,6 +129,7 @@ public class UserService implements UserAPI, UserDetailsService {
             }
         }
 
+        archiveHistoryItems(login, currency, true);
         return SimpleResponse.success();
     }
 
@@ -575,5 +580,12 @@ public class UserService implements UserAPI, UserDetailsService {
 
     private Supplier<String> getSubAccountError(String login, String accountTitle, String subAccountTitle) {
         return () -> StringUtils.join("Sub account ", subAccountTitle, " for account ", accountTitle, " is missed for user ", login);
+    }
+
+    private void archiveHistoryItems(String login, Currency currency, boolean archive) {
+        Query historyQuery = Query.query(Criteria.where("user").is(login)
+                .orOperator(Criteria.where("balance.currency").is(currency), Criteria.where("balance.newCurrency").is(currency)));
+        Update historyUpdate = new Update().set("archived", archive);
+        mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
     }
 }

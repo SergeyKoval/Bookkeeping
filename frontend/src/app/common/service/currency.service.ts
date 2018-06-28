@@ -106,33 +106,16 @@ export class CurrencyService {
     return false;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   public convertToCurrency(value: number, currentCurrency: string, convertedCurrency: CurrencyDetail, date: IMyDate = DateUtils.getDateFromUTC()): number {
     if (convertedCurrency.name === currentCurrency) {
       return value;
     }
 
-    return this.getCurrencyHistory(currentCurrency, date).conversions[convertedCurrency.name] * value;
+    const currencyHistory: CurrencyHistory = this.getCurrencyHistory(currentCurrency, date);
+    return currencyHistory ? (currencyHistory.conversions[convertedCurrency.name]  * value) : 0;
   }
 
-  public getCurrencyHistory(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): CurrencyHistory {
+  private getCurrencyHistory(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): CurrencyHistory {
     if (!this.isCurrencyHistoryLoaded(currency, date)) {
       return this._todayConversions.get(currency);
     }
@@ -151,10 +134,5 @@ export class CurrencyService {
     }
 
     return this._todayConversions.get(currency);
-  }
-
-  public getCurrencyHistoryConversions(currencyName: string, date: IMyDate): {[key: string]: number} {
-    const currencyHistory: CurrencyHistory = this.getCurrencyHistory(currencyName, date);
-    return currencyHistory ? currencyHistory.conversions : {};
   }
 }

@@ -30,9 +30,10 @@ public class HistoryItem {
     private String subCategory;
     private String description;
     private Balance balance;
+    private boolean archived;
 
     @JsonIgnore
-    public Balance cloneBalance() {
+    Balance cloneBalance() {
         Balance clonedBalance = new Balance();
         clonedBalance.setValue(balance.getValue());
         clonedBalance.setNewValue(balance.getNewValue());

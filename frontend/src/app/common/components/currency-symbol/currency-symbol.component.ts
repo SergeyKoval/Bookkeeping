@@ -9,7 +9,8 @@ import { ProfileService } from '../../service/profile.service';
 export class CurrencySymbolComponent {
   @Input()
   public set currencyName(currencyName: string) {
-    this.currencyCode = this._authenticationService.getCurrencyDetails(currencyName).symbol;
+    const currencyDetails = this._authenticationService.getCurrencyDetails(currencyName);
+    this.currencyCode = currencyDetails ? currencyDetails.symbol : currencyName;
   }
 
   public currencyCode: string;

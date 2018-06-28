@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Subject, ReplaySubject, Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/internal/operators';
 
 import { LoadingService } from 'app/common/service/loading.service';
-import { HOST } from '../config/config';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
 import { CurrencyService } from './currency.service';
 import { AlertService } from './alert.service';
@@ -31,8 +30,7 @@ export class ProfileService implements CanActivate {
     private _loadingService: LoadingService,
     private _currencyService: CurrencyService,
     private _assetImagePipe: AssetImagePipe,
-    private _http: HttpClient,
-    @Inject(HOST) private _host: string
+    private _http: HttpClient
   ) {}
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -256,51 +254,6 @@ export class ProfileService implements CanActivate {
     return this._http.get<Profile>('/api/profile/full');
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  public reloadProfile(clearCurrencies: boolean = true): Observable<CurrencyHistory[]> {
-    if (clearCurrencies) {
-      this._userCurrencies.clear();
-      this._currencyService.clearCurrencies();
-    }
-    this._categoryIcon.clear();
-    this._accountIcon.clear();
-
-    return this.getUserProfile()
-      .pipe(
-        tap(profile => {
-          if (clearCurrencies) {
-            profile.currencies.sort((first: CurrencyDetail, second: CurrencyDetail) => first.order - second.order);
-            profile.currencies.forEach((currency: CurrencyDetail) => this._userCurrencies.set(currency.name, currency));
-            this.authenticatedProfile.currencies = profile.currencies;
-          }
-
-          profile.categories.forEach((category: Category) => this._categoryIcon.set(category.title, category.icon));
-          profile.accounts.forEach((account: FinAccount) => {
-            account.subAccounts.forEach((subAccount: SubAccount) => this._accountIcon.set(`${account.title}-${subAccount.title}`, subAccount.icon));
-          });
-
-          this.authenticatedProfile.accounts = profile.accounts;
-          this.authenticatedProfile.categories = profile.categories;
-          this._accounts$$.next(profile.accounts);
-        }),
-        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this.getProfileCurrencies())));
-  }
-
   public get authenticatedProfile(): Profile {
     return this._authenticatedProfile;
   }
@@ -375,9 +328,9 @@ export class ProfileService implements CanActivate {
 
   public sortSummaryBalanceItems(items: BalanceItem[]): BalanceItem[] {
     items.sort((firstItem: BalanceItem, secondItem: BalanceItem) => {
-      const firstItemOrder: number = this.getCurrencyDetails(firstItem.currency).order;
-      const secondItemOrder: number = this.getCurrencyDetails(secondItem.currency).order;
-      return firstItemOrder - secondItemOrder;
+      const firstCurrency: CurrencyDetail = this.getCurrencyDetails(firstItem.currency);
+      const secondCurrency: CurrencyDetail = this.getCurrencyDetails(secondItem.currency);
+      return (firstCurrency ? firstCurrency.order : Number.MAX_VALUE) - (secondCurrency ? secondCurrency.order : Number.MAX_VALUE);
     });
     return items;
   }

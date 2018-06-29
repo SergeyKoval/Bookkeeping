@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/internal/operators';
@@ -35,10 +35,16 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
     private _currencyService: CurrencyService,
-    private _router: Router
+    private _router: Router,
+    private _route: ActivatedRoute
   ) {}
 
   public ngOnInit(): void {
+    this._route.queryParams.subscribe(value => {
+      if (value.expiredSession === 'true') {
+        this.errorMessage = 'Сессия устарела';
+      }
+    });
     this.authenticationForm = this._authenticationService.initAuthenticationForm();
     this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._authenticationService.authentication$$.subscribe((value: boolean) => this.loading = value);
     this._APPLICATION_LOADING_SUBSCRIPTION = this._authenticationService.applicationLoading$$.subscribe((value: boolean) => this.applicationLoading = value);

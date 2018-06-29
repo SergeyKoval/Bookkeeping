@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog } from '@angular/material';
 
 import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
-import { CurrencyService } from '../../../common/service/currency.service';
+import { DialogService } from '../../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-input-group',
@@ -29,10 +28,7 @@ export class InputGroupComponent {
   @Output()
   public changeInputValue: EventEmitter<number> = new EventEmitter();
 
-  public constructor(
-    private _dialog: MatDialog,
-    private _currencyService: CurrencyService
-  ) { }
+  public constructor(private _dialogService: DialogService) { }
 
   public blurInput(): void {
     if (this.inputValue && this.inputValue > 0.01) {
@@ -65,7 +61,7 @@ export class InputGroupComponent {
 
   public openCurrenciesPopup(balanceValue: string): void {
     if (!this.alternativeCurrencyLoading && CurrencyUtils.convertValue(balanceValue) > 0) {
-      this._dialog.open(AlternativeCurrenciesDialogComponent, {
+      this._dialogService.openDialog(AlternativeCurrenciesDialogComponent, {
         disableClose: true,
         width: '470px',
         data: {

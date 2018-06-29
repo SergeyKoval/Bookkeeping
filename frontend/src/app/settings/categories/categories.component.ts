@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -10,6 +9,7 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
+import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-categories',
@@ -21,8 +21,8 @@ export class CategoriesComponent implements OnInit {
   public profile: Profile;
 
   public constructor(
+    private _dialogService: DialogService,
     private _profileService: ProfileService,
-    private _dialog: MatDialog,
     private _alertService: AlertService,
     private _confirmDialogService: ConfirmDialogService
   ) {}
@@ -132,7 +132,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   private openCategoryDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
+    const dialogResult: Observable<boolean> = this._dialogService.openDialog(AccountCategoryDialogComponent, {
       width: '550px',
       position: {top: 'top'},
       data: dialogData

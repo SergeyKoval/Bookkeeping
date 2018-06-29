@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 
 import { Observable } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -12,6 +11,7 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
+import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-accounts',
@@ -27,7 +27,7 @@ export class AccountsComponent implements OnInit {
   public constructor(
     private _loadingService: LoadingService,
     private _profileService: ProfileService,
-    private _dialog: MatDialog,
+    private _dialogService: DialogService,
     private _alertService: AlertService,
     private _confirmDialogService: ConfirmDialogService
   ) { }
@@ -84,7 +84,7 @@ export class AccountsComponent implements OnInit {
   }
 
   public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {
-    this._dialog.open(BalanceDialogComponent, {
+    this._dialogService.openDialog(BalanceDialogComponent, {
       position: {top: 'top'},
       width: '350px',
       data: {'subAccountBalance': Object.assign({}, subAccount.balance)}
@@ -172,7 +172,7 @@ export class AccountsComponent implements OnInit {
   }
 
   private openAccountDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
+    const dialogResult: Observable<boolean> = this._dialogService.openDialog(AccountCategoryDialogComponent, {
       width: '550px',
       position: {top: 'top'},
       data: dialogData

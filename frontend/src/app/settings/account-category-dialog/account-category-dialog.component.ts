@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Observable } from 'rxjs/index';
 import { filter } from 'rxjs/operators';
@@ -7,6 +7,7 @@ import { isNullOrUndefined } from 'util';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { BalanceDialogComponent } from '../accounts/balance-dialog/balance-dialog.component';
+import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-account-category-dialog',
@@ -24,7 +25,7 @@ export class AccountCategoryDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, parentTitle: string, title: string, icon: string, balance: {[currency: string]: number}, subCategoryType: string},
     private _dialogRef: MatDialogRef<AccountCategoryDialogComponent>,
     private _profileService: ProfileService,
-    private _dialog: MatDialog
+    private _dialogService: DialogService
   ) { }
 
   public ngOnInit(): void {
@@ -40,7 +41,7 @@ export class AccountCategoryDialogComponent implements OnInit {
   }
 
   public editSubAccountBalance(): void {
-    this._dialog.open(BalanceDialogComponent, {
+    this._dialogService.openDialog(BalanceDialogComponent, {
       position: {top: 'top'},
       width: '350px',
       data: {'subAccountBalance': Object.assign({}, this.data.balance)}

@@ -10,6 +10,7 @@ import { HistoryItem } from '../common/model/history/HistoryItem';
 import { AlertService } from '../common/service/alert.service';
 import { AlertType } from '../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
+import { DialogService } from '../common/service/dialog.service';
 
 @Component({
   selector: 'bk-history',
@@ -26,6 +27,7 @@ export class HistoryComponent implements OnInit {
   public historyItems: HistoryType[] = [];
 
   public constructor(
+    private _dialogService: DialogService,
     private _historyService: HistoryService,
     private _authenticationService: ProfileService,
     private _confirmDialogService: ConfirmDialogService,
@@ -42,14 +44,14 @@ export class HistoryComponent implements OnInit {
   }
 
   public editHistoryItem(historyItem: HistoryItem): void {
-    this._dialog.open(HistoryEditDialogComponent, {
+    this._dialogService.openDialog(HistoryEditDialogComponent, {
       width: '720px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',
       data: {
         'historyItem': historyItem.cloneOriginalItem(),
         'editMode': true
-      },
+      }
     }).afterClosed()
       .pipe(filter((result: boolean) => result === true))
       .subscribe(() => this.loadMoreItems(0));

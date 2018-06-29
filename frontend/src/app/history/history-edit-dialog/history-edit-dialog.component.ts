@@ -37,7 +37,6 @@ export class HistoryEditDialogComponent implements OnInit {
   private _goalStatusChange: boolean = false;
 
   public constructor(
-    public dialogRef: MatDialogRef<HistoryEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
     private _dialogRef: MatDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,

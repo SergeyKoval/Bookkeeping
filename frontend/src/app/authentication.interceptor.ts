@@ -3,12 +3,17 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 
 import { Observable, of } from 'rxjs/index';
 import { catchError} from 'rxjs/internal/operators';
+
 import { AuthenticationService } from './common/service/authentication.service';
+import { DialogService } from './common/service/dialog.service';
 
 @Injectable()
 export class AuthenticationInterceptor implements HttpInterceptor {
 
-  public constructor(private _authenticationService: AuthenticationService) {}
+  public constructor(
+    private _authenticationService: AuthenticationService,
+    private _dialogService: DialogService
+  ) {}
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(catchError(err => {
@@ -18,7 +23,8 @@ export class AuthenticationInterceptor implements HttpInterceptor {
         }
       } else {
         console.log(err);
-        this._authenticationService.exit();
+        this._dialogService.closeAllDialogs();
+        this._authenticationService.exit(true);
       }
 
       return of(err);

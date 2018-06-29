@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, NavigationExtras, Router, RouterStateSnapshot } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
@@ -73,13 +73,14 @@ export class AuthenticationService implements CanActivate {
     return result.asObservable();
   }
 
-  public exit(): void {
+  public exit(expiredSession: boolean = false): void {
     this._profileService.initialDataLoaded = false;
     this._localStorageService.remove(AuthenticationService.TOKEN);
     this._profileService.clearProfile();
     this._authentication$$.next(false);
     this._applicationLoading$$.next(false);
-    this._router.navigate(['/authentication']);
+    const navigationExtras: NavigationExtras = expiredSession ? {queryParams: {expiredSession: true}} : {};
+    this._router.navigate(['/authentication'], navigationExtras);
   }
 
   public addErrorMessage(message: string): void {

@@ -130,7 +130,7 @@ export class ProfileService implements CanActivate {
     this._userCurrencies.clear();
     this._categoryIcon.clear();
     this._accountIcon.clear();
-    this._accounts$$.next(null);
+    this._accounts$$.next([]);
   }
 
   public updatePassword(profile:{oldPassword: string, newPassword: string}): Observable<SimpleResponse> {

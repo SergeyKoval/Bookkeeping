@@ -15,7 +15,16 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     private _dialogService: DialogService
   ) {}
 
+  // tslint:disable-next-line:no-any
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (!req.url.endsWith('/token/generate-token') && !this._authenticationService.validateToken()) {
+      return of();
+    }
+
+    if (!req.url.endsWith('/token/refresh-token')) {
+      this._authenticationService.refreshTokenIfRequired();
+    }
+
     return next.handle(req).pipe(catchError(err => {
       if (err.url.endsWith('/token/generate-token') && err.status === 401) {
         if (err.error === 'BAD CREDENTIALS') {

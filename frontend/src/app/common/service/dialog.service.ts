@@ -6,16 +6,16 @@ import { MatDialogConfig } from '@angular/material/dialog/typings/dialog-config'
 @Injectable({
   providedIn: 'root'
 })
+/* tslint:disable:no-any */
 export class DialogService {
   private _OPENED_DIALOGS: MatDialogRef<any, any>[] = [];
 
   public constructor(private _dialog: MatDialog) {}
-
   public openDialog<T, D = any, R = any>(componentRef: ComponentType<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> {
-    let matDialogRef: MatDialogRef<T, R> = this._dialog.open(componentRef, config);
+    const matDialogRef: MatDialogRef<T, R> = this._dialog.open(componentRef, config);
     this._OPENED_DIALOGS.push(matDialogRef);
     matDialogRef.afterClosed().subscribe(() => {
-      this._OPENED_DIALOGS.forEach(dialog => {
+      this._OPENED_DIALOGS.forEach((dialog: any) => {
         if (!dialog._overlayRef.hostElement) {
           this._OPENED_DIALOGS.splice(this._OPENED_DIALOGS.indexOf(dialog), 1);
         }

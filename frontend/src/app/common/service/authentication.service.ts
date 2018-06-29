@@ -6,7 +6,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, Subject } from 'rxjs/index';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { isNullOrUndefined } from "util";
+import { isNullOrUndefined } from 'util';
 import { tap } from 'rxjs/internal/operators';
 import { switchMap } from 'rxjs/operators';
 
@@ -48,10 +48,30 @@ export class AuthenticationService implements CanActivate {
       .pipe(tap((response: HttpResponse<{token: string}>) => this._localStorageService.set(AuthenticationService.TOKEN, response.body.token)));
   }
 
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  public refreshTokenIfRequired(): void {
+    const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
+    if (!isNullOrUndefined(token)) {
+      const now: Date = new Date();
+      const tokenExpirationDate: Date = this._jwtHelper.getTokenExpirationDate(token);
+      if ((tokenExpirationDate.getTime() - now.getTime()) < 300000) {
+        this._http.post<{token: string}>('/token/refresh-token', {'token': token})
+          .subscribe((response: {token: string}) => this._localStorageService.set(AuthenticationService.TOKEN, response.token));
+      }
+    }
+  }
+
+  public validateToken(): boolean {
     const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
     if (isNullOrUndefined(token) || this._jwtHelper.isTokenExpired(token)) {
       this.exit();
+      return false;
+    }
+
+    return true;
+  }
+
+  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    if (!this.validateToken()) {
       return false;
     }
 
@@ -59,7 +79,7 @@ export class AuthenticationService implements CanActivate {
       return true;
     }
 
-    let authenticationCheck$$: Subject<boolean> = this._loadingService.authenticationCheck$$;
+    const authenticationCheck$$: Subject<boolean> = this._loadingService.authenticationCheck$$;
     authenticationCheck$$.next(true);
     const result: Subject<boolean> = new Subject<boolean>();
     this._profileService.loadFullProfile()

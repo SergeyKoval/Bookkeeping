@@ -126,7 +126,7 @@ import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
       config: {
         tokenGetter: () => {return localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`)},
         whitelistedDomains: ['localhost:8080', 'localhost:3000'],
-        blacklistedRoutes: [/token\/.*/]
+        blacklistedRoutes: [/token\/generate-token.*/]
       }
     }),
     BrowserAnimationsModule,

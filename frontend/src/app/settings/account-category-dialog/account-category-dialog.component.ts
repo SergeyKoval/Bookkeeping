@@ -15,8 +15,10 @@ import { DialogService } from '../../common/service/dialog.service';
   styleUrls: ['./account-category-dialog.component.css']
 })
 export class AccountCategoryDialogComponent implements OnInit {
-  public accountIcons: string[] = ['payok.gif', 'avtokarta.gif', 'alfa.gif', 'belagro.gif', 'belarusbank.gif', 'belgazprom1.gif', 'parents.gif', 'collega.gif', 'rabotnik.gif', 'kwallet.gif', 'Money.gif', 'other_exp.gif'];
-  public categoryIcons: string[] = ['twinpalm.gif', 'eating.gif', 'shopping.gif', 'health.gif', 'rock-and-roll.gif', 'income.gif', 'kredit.gif', 'avto.gif', 'deti.gif', 'home.gif'];
+  public accountIcons: string[] = ['payok.gif', 'avtokarta.gif', 'alfa.gif', 'belagro.gif', 'belarusbank.gif', 'belgazprom1.gif'
+    , 'parents.gif', 'collega.gif', 'rabotnik.gif', 'kwallet.gif', 'Money.gif', 'other_exp.gif'];
+  public categoryIcons: string[] = ['twinpalm.gif', 'eating.gif', 'shopping.gif', 'health.gif', 'rock-and-roll.gif', 'income.gif'
+    , 'kredit.gif', 'avto.gif', 'deti.gif', 'home.gif', 'plane.gif'];
   public title: string;
   public errorMessage: string;
   public loading: boolean;

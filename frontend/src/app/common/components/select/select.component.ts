@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 import { FocusDirective } from '../../directives/focus.directive';
 
@@ -25,6 +25,15 @@ export class SelectComponent implements OnInit {
   private originalItem: SelectItem[];
   @ViewChild(FocusDirective)
   private searchInput: FocusDirective;
+
+  public constructor(private _elementRef: ElementRef) {}
+
+  @HostListener('document:click', ['$event'])
+  public onClick(event: MouseEvent): void {
+    if (this.opened && !this.isDescendant(this._elementRef.nativeElement, event.target as HTMLElement)) {
+      this.closeSelect();
+    }
+  }
 
   public ngOnInit(): void {
     if (!this.selectedItems || this.selectedItems.length === 0) {
@@ -120,5 +129,19 @@ export class SelectComponent implements OnInit {
       });
       this.displayItems = searchItems;
     }
+  }
+
+  private isDescendant(target: HTMLElement, element: HTMLElement): boolean {
+    while (target !== element) {
+      if (element === null) {
+        return true;
+      }
+      if (element === document.body) {
+        return false;
+      }
+      element = element.parentElement;
+    }
+
+    return true;
   }
 }

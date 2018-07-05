@@ -1,6 +1,6 @@
-<div [ngClass]="{'dropdown': true, 'open': opened}" [style.width.px]="width" (click)="focusInput()" (clickOutside)="closeSelect()" bkClickOutside>
+<div [ngClass]="{'dropdown': true, 'open': opened}" [style.width.px]="width" (click)="focusInput()">
   <input type="text" class="form-control" [value]="searchValue" (input)="search($event.target.value)" [placeholder]="placeholder" *ngIf="opened" bkFocus>
-  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" (click)="openSelect()" *ngIf="!opened">
+  <button class="btn btn-default dropdown-toggle" [style.display]="opened ? 'none' : 'block'" type="button" data-toggle="dropdown" (click)="openSelect()">
     <span class="selected-title text-muted" *ngIf="!isItemSelected()">{{placeholder}}</span>
     <span class="selected-title" *ngIf="isItemSelected()">
       <img class="icon" *ngIf="selectedItemIcon()" [src]="selectedItemIcon()">
@@ -8,7 +8,7 @@
     </span>
     <span class="caret"></span>
   </button>
-  <ul class="dropdown-menu">
+  <ul class="dropdown-menu" [style.display]="opened ? 'block' : 'none'">
     <li class="crumbs" *ngIf="isItemSelected()">
       <span class="crumb-item clickable" (click)="switchToRootLevel()">Все</span>
       <span class="crumb-delimiter"> > </span>

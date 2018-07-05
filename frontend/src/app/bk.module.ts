@@ -46,7 +46,6 @@ import { GoalsContainerComponent } from './history/history-edit-dialog/goals-con
 import { CurrencyValueDirective } from './common/directives/currency-value.directive';
 import { SelectComponent } from './common/components/select/select.component';
 import { FocusDirective } from './common/directives/focus.directive';
-import { ClickOutsideDirective } from './common/directives/click-outside.directive';
 import { AssetImagePipe } from './common/pipes/asset-image.pipe';
 import { LoadingDialogComponent } from './common/components/loading-dialog/loading-dialog.component';
 import { MapKeysPipe } from './common/pipes/map-keys.pipe';
@@ -97,7 +96,6 @@ import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
     CurrencyValueDirective,
     SelectComponent,
     FocusDirective,
-    ClickOutsideDirective,
     AssetImagePipe,
     LoadingDialogComponent,
     AlternativeCurrenciesDialogComponent,

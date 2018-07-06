@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 
 import { FocusDirective } from '../../directives/focus.directive';
 
@@ -7,7 +7,7 @@ import { FocusDirective } from '../../directives/focus.directive';
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.css']
 })
-export class SelectComponent implements OnInit {
+export class SelectComponent {
   @Input()
   public width: number;
   @Input()
@@ -30,12 +30,12 @@ export class SelectComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   public onClick(event: MouseEvent): void {
-    if (this.opened && !this.isDescendant(this._elementRef.nativeElement, event.target as HTMLElement)) {
+    if (this.opened && !SelectComponent.isDescendant(this._elementRef.nativeElement, event.target as HTMLElement)) {
       this.closeSelect();
     }
   }
 
-  public ngOnInit(): void {
+  public init(): void {
     if (!this.selectedItems || this.selectedItems.length === 0) {
       this.switchToRootLevel();
     } else {
@@ -59,12 +59,13 @@ export class SelectComponent implements OnInit {
     }
     this.selectedItemsChange.emit(this.selectedItems);
     this.closeSelect();
-    this.ngOnInit();
+    this.init();
   }
 
   public openSelect(): void {
     this.searchValue = '';
     this.opened = true;
+    this.init();
   }
 
   public closeSelect(): void {
@@ -72,7 +73,7 @@ export class SelectComponent implements OnInit {
       this.selectedItems = this.originalItem;
     }
     this.opened = false;
-    this.ngOnInit();
+    this.init();
   }
 
   public isItemSelected(): boolean {
@@ -103,7 +104,7 @@ export class SelectComponent implements OnInit {
     this.searchValue = inputValue;
     const value: string = inputValue.toLowerCase();
     if (value === '') {
-      this.ngOnInit();
+      this.init();
       return;
     }
 
@@ -131,7 +132,7 @@ export class SelectComponent implements OnInit {
     }
   }
 
-  private isDescendant(target: HTMLElement, element: HTMLElement): boolean {
+  private static isDescendant(target: HTMLElement, element: HTMLElement): boolean {
     while (target !== element) {
       if (element === null) {
         return true;

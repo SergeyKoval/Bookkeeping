@@ -48,7 +48,7 @@ export class HistoryEditDialogComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    const today = new Date(Date.now());
+    const today: Date = new Date(Date.now());
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
     this.selectedDate = {year: this.historyItem.year, month: this.historyItem.month, day: this.historyItem.day};
 
@@ -178,17 +178,17 @@ export class HistoryEditDialogComponent implements OnInit {
 
     const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
     const result: HistoryType = {
-      type: historyType,
-      year: year,
-      month: month,
-      day: day,
-      description: historyDescription,
-      balance: {
-        value: balanceValue,
-        account: balanceAccount,
-        subAccount: balanceSubAccount,
-        currency: currencyName,
-        alternativeCurrency: balanceAlternativeCurrency
+      'type': historyType,
+      'year': year,
+      'month': month,
+      'day': day,
+      'description': historyDescription,
+      'balance': {
+        'value': balanceValue,
+        'account': balanceAccount,
+        'subAccount': balanceSubAccount,
+        'currency': currencyName,
+        'alternativeCurrency': balanceAlternativeCurrency
       }
     };
 

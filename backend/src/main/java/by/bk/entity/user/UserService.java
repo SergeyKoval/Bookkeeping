@@ -219,7 +219,14 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().pull("accounts", account);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login)
+                    .orOperator(Criteria.where("balance.account").is(title), Criteria.where("balance.accountTo").is(title)));
+            archiveHistoryItems(historyQuery);
+        }
+
+        return response;
     }
 
     @Override
@@ -343,7 +350,15 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().pull(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), subAccount);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).orOperator(
+                    Criteria.where("balance.account").is(accountTitle).and("balance.subAccount").is(subAccountTitle),
+                    Criteria.where("balance.accountTo").is(accountTitle).and("balance.subAccountTo").is(subAccountTitle)));
+            archiveHistoryItems(historyQuery);
+        }
+
+        return response;
     }
 
     @Override
@@ -394,7 +409,13 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().pull("categories", category);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).and("category").is(categoryTitle));
+            archiveHistoryItems(historyQuery);
+        }
+
+        return response;
     }
 
     @Override
@@ -468,7 +489,16 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().pull(StringUtils.join("categories.", categories.indexOf(category), ".subCategories"), subCategory);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login)
+                    .and("category").is(categoryTitle)
+                    .and("subCategory").is(subCategoryTitle)
+                    .and("type").is(subCategoryType.name()));
+            archiveHistoryItems(historyQuery);
+        }
+
+        return response;
     }
 
     @Override
@@ -624,5 +654,10 @@ public class UserService implements UserAPI, UserDetailsService {
                 .orOperator(Criteria.where("balance.currency").is(currency), Criteria.where("balance.newCurrency").is(currency)));
         Update historyUpdate = new Update().set("archived", archive);
         mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+    }
+
+    private void archiveHistoryItems(Query query) {
+        Update historyUpdate = new Update().set("archived", true);
+        mongoTemplate.updateMulti(query, historyUpdate, HistoryItem.class);
     }
 }

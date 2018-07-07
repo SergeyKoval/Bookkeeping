@@ -198,7 +198,18 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().set(StringUtils.join("accounts.", accounts.indexOf(account), ".title"), newTitle);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).and("balance.account").is(oldTitle));
+            Update historyUpdate = Update.update("balance.account", newTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+
+            historyQuery = Query.query(Criteria.where("user").is(login).and("balance.accountTo").is(oldTitle));
+            historyUpdate = Update.update("balance.accountTo", newTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+        }
+
+        return response;
     }
 
     @Override
@@ -277,7 +288,18 @@ public class UserService implements UserAPI, UserDetailsService {
         SubAccount newSubAccount = new SubAccount(newSubAccountTitle, subAccount.getOrder(), icon, balance);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount)), newSubAccount);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).and("balance.account").is(accountTitle).and("balance.subAccount").is(oldSubAccountTitle));
+            Update historyUpdate = Update.update("balance.subAccount", newSubAccountTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+
+            historyQuery = Query.query(Criteria.where("user").is(login).and("balance.accountTo").is(accountTitle).and("balance.subAccountTo").is(oldSubAccountTitle));;
+            historyUpdate = Update.update("balance.subAccountTo", newSubAccountTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+        }
+
+        return response;
     }
 
     @Override
@@ -355,7 +377,14 @@ public class UserService implements UserAPI, UserDetailsService {
         Update update = new Update()
                 .set(StringUtils.join("categories.", categories.indexOf(category), ".title"), newCategoryTitle)
                 .set(StringUtils.join("categories.", categories.indexOf(category), ".icon"), icon);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).and("category").is(oldCategoryTitle));
+            Update historyUpdate = Update.update("category", newCategoryTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+        }
+
+        return response;
     }
 
     @Override
@@ -419,7 +448,14 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = Update.update(StringUtils.join("categories.", categories.indexOf(category), ".subCategories.", subCategories.indexOf(subCategory)), subCategory);
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).and("category").is(categoryTitle).and("subCategory").is(oldSubCategoryTitle).and("type").is(subCategoryType.name()));
+            Update historyUpdate = Update.update("subCategory", newSubCategoryTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+        }
+
+        return response;
     }
 
     @Override

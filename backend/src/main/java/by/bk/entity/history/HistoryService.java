@@ -5,6 +5,9 @@ import by.bk.entity.currency.Currency;
 import by.bk.entity.currency.CurrencyDetail;
 import by.bk.entity.currency.CurrencyRepository;
 import by.bk.entity.user.UserAPI;
+import by.bk.entity.user.UserRepository;
+import by.bk.entity.user.model.UserCurrency;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +39,8 @@ public class HistoryService implements HistoryAPI {
     private MongoTemplate mongoTemplate;
     @Autowired
     private UserAPI userAPI;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<HistoryItem> getPagePortion(String login, int page, int limit) {
@@ -43,6 +48,10 @@ public class HistoryService implements HistoryAPI {
                 .with(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day")))
                 .skip((page -1) * limit)
                 .limit(limit);
+
+        List<Currency> usedCurrencies = userRepository.getUserCurrencies(login).getCurrencies().stream().map(UserCurrency::getName).collect(Collectors.toList());
+        Collection<Currency> projectCurrencies = CollectionUtils.disjunction(Arrays.asList(Currency.values()), usedCurrencies);
+        projectCurrencies.forEach(currency -> query.fields().exclude(StringUtils.join("balance.alternativeCurrency.", currency.name())));
 
         return mongoTemplate.find(query, HistoryItem.class);
     }

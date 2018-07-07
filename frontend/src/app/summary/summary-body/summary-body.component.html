@@ -3,7 +3,7 @@
     <div class="panel-heading" (click)="changeOpenState(account)">
       <h4 class="panel-title">
           <div class="clearfix">
-            <div class="col-lg-7 col-md-6"><strong><em>{{account.title}}</em></strong></div>
+            <div class="col-lg-7 col-md-6"><strong>{{account.title}}</strong></div>
             <div class="col-lg-5 col-md-6">
               <div class="row" *ngFor="let balanceItem of account | summaryBodyAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'negative-value': balanceItem.value < 0}">
                 <div class="col-lg-3 col-sm-7 col-md-5">
@@ -22,7 +22,7 @@
         <div class="row summary-balance-item" >
           <div class="col-lg-7 col-md-6 summary-balance-title">
             <img class="icon" *ngIf="subAccount.icon" [src]="subAccount.icon | assetImage:'account'">
-            <strong><em>{{subAccount.title}}</em></strong>
+            <strong>{{subAccount.title}}</strong>
           </div>
           <div class="col-lg-5 col-md-6">
             <div *ngFor="let balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'row': true, 'negative-value': balanceItem.value < 0}">

@@ -520,6 +520,7 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public SimpleResponse deleteUser(String email) {
         userRepository.deleteById(email);
+        mongoTemplate.remove(Query.query(Criteria.where("user").is(email)), HistoryItem.class);
         return SimpleResponse.success();
     }
 

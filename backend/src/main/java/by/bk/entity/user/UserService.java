@@ -101,6 +101,9 @@ public class UserService implements UserAPI, UserDetailsService {
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet("currencies", newCurrency);
         SimpleResponse result = updateUser(query, update);
+        if (result.isSuccess() && currencies.isEmpty()) {
+            markCurrencyAsDefault(login, currency);
+        }
 
         archiveHistoryItems(login, currency, false);
         return result;

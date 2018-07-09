@@ -119,6 +119,10 @@ export class CurrenciesComponent implements OnInit {
     return this._profileService.getProfileCurrencies().length > 1;
   }
 
+  public isNotLastUsed(currencyIndex: number): boolean {
+    return this._profileService.getProfileCurrencies().length > currencyIndex + 1;
+  }
+
   private moveCurrency(result: Observable<SimpleResponse>): void {
     result
       .pipe(

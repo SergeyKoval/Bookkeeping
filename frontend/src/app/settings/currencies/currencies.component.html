@@ -32,6 +32,7 @@
             popover="Сдвинуть вниз" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="moveCurrencyDown(defaultCurrency.name)">
       </span>
+      <span class="empty-action" *ngIf="!(isCurrencyUsed(defaultCurrency.name) && !lastCurrency && isMoveAvailable())">&nbsp;</span>
       <span class="action glyphicon glyphicon-arrow-up" *ngIf="isCurrencyUsed(defaultCurrency.name) && !firstCurrency && isMoveAvailable()"
             popover="Сдвинуть вверх" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="moveCurrencyUp(defaultCurrency.name)">

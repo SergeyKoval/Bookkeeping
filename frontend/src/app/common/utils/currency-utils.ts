@@ -7,7 +7,7 @@ export class CurrencyUtils {
   public static LAST_SYMBOL_PATTERN: RegExp = new RegExp('[\\+\\-\\*\\/\\.\\,\']$');
 
   public static convertValue(value: string): number {
-    value = value.replace(/\'/g, '').replace(',', '.');
+    value = value.replace(/\'/g, '').replace(/\,/g, '.');
     if (value.length === 0 || CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(value)) {
       return 0;
     }

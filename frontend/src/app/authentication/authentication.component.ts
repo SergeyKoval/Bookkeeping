@@ -65,9 +65,9 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   }
 
   public authenticate(): void {
-    let formElement: HTMLCollection = this._FORM_REF.nativeElement.getElementsByTagName('input');
-    let emailElement: HTMLInputElement = <HTMLInputElement> formElement.item(0);
-    let passwordElement: HTMLInputElement = <HTMLInputElement> formElement.item(1);
+    const formElement: HTMLCollection = this._FORM_REF.nativeElement.getElementsByTagName('input');
+    const emailElement: HTMLInputElement = formElement.item(0) as HTMLInputElement;
+    const passwordElement: HTMLInputElement = formElement.item(1) as HTMLInputElement;
     if (this.authenticationForm.get('email').value === '' && this.authenticationForm.get('password').value === ''
         && emailElement.value.length > 0 && passwordElement.value.length > 0) {
       this.authenticationForm.get('email').setValue(emailElement.value);

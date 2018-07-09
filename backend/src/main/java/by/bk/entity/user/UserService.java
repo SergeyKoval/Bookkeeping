@@ -119,7 +119,7 @@ public class UserService implements UserAPI, UserDetailsService {
             return SimpleResponse.fail();
         }
 
-        if (currencyItem.get().isDefaultCurrency()) {
+        if (currencyItem.get().isDefaultCurrency() && currencies.size() > 1) {
             Optional<UserCurrency> newDefaultCurrency = currencies.stream().filter(userCurrency -> !userCurrency.getName().equals(currency)).findFirst();
             Update newDefaultUpdate = new Update().set(StringUtils.join("currencies.", currencies.indexOf(newDefaultCurrency.get()), ".defaultCurrency"), true);
             UpdateResult newDefaultUpdateResult = mongoTemplate.updateFirst(query, newDefaultUpdate, User.class);

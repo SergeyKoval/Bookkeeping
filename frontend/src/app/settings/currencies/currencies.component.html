@@ -23,16 +23,16 @@
             popover="Использовать" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="useCurrencyForProfile(defaultCurrency.name)">
       </span>
-      <span class="action glyphicon glyphicon-star" *ngIf="!isCurrencyDefault(defaultCurrency.name)"
+      <span class="action glyphicon glyphicon-star" *ngIf="!isCurrencyDefault(defaultCurrency.name) && isCurrencyUsed(defaultCurrency.name)"
             popover="По умолчанию" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="markCurrencyAsDefault(defaultCurrency.name)">
       </span>
       <span class="empty-action" *ngIf="isCurrencyDefault(defaultCurrency.name)">&nbsp;</span>
-      <span class="action glyphicon glyphicon-arrow-down" *ngIf="isCurrencyUsed(defaultCurrency.name) && !lastCurrency"
+      <span class="action glyphicon glyphicon-arrow-down" *ngIf="isCurrencyUsed(defaultCurrency.name) && !lastCurrency && isMoveAvailable()"
             popover="Сдвинуть вниз" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="moveCurrencyDown(defaultCurrency.name)">
       </span>
-      <span class="action glyphicon glyphicon-arrow-up" *ngIf="isCurrencyUsed(defaultCurrency.name) && !firstCurrency"
+      <span class="action glyphicon glyphicon-arrow-up" *ngIf="isCurrencyUsed(defaultCurrency.name) && !firstCurrency && isMoveAvailable()"
             popover="Сдвинуть вверх" popoverPlacement="left"
             [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="moveCurrencyUp(defaultCurrency.name)">
       </span>

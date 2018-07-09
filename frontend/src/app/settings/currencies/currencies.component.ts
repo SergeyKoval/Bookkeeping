@@ -115,6 +115,10 @@ export class CurrenciesComponent implements OnInit {
     this.moveCurrency(this._profileService.moveCurrencyUp(currencyName));
   }
 
+  public isMoveAvailable(): boolean {
+    return this._profileService.getProfileCurrencies().length > 1;
+  }
+
   private moveCurrency(result: Observable<SimpleResponse>): void {
     result
       .pipe(

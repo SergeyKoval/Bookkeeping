@@ -19,6 +19,11 @@
   white-space: nowrap;
 }
 
+.balance {
+  color: #666666;
+  white-space: nowrap;
+}
+
 .income {
   color: #009900;
   white-space: nowrap;

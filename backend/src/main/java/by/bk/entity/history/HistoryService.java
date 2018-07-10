@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -59,15 +61,7 @@ public class HistoryService implements HistoryAPI {
     @Override
     public SimpleResponse addHistoryItem(String login, HistoryItem historyItem) {
         addUnusedCurrencyConversions(historyItem);
-        int order = 1 + historyRepository.getAllDayHistoryItemsWithOrder(login, historyItem.getYear(), historyItem.getMonth(), historyItem.getDay())
-                .stream()
-                .max(Comparator.comparingInt(HistoryItem::getOrder))
-                .map(HistoryItem::getOrder)
-                .orElse(0);
-
-        historyItem.setOrder(order);
-        historyItem.setUser(login);
-        HistoryItem savedHistoryItem = historyRepository.save(historyItem);
+        HistoryItem savedHistoryItem = saveHistoryItem(login, historyItem);
 
         if (StringUtils.isBlank(savedHistoryItem.getId())) {
             LOG.error(StringUtils.join("Error adding history item ", savedHistoryItem, " for user ", login));
@@ -81,6 +75,24 @@ public class HistoryService implements HistoryAPI {
         }
 
         return response;
+    }
+
+    @Override
+    public HistoryItem addBalanceHistoryItem(String login, Currency currency, String accountTitle, String subAccountTitle, Supplier<Double> value) {
+        LocalDateTime now = LocalDateTime.now();
+        Balance historyBalance = new Balance();
+        historyBalance.setAccount(accountTitle);
+        historyBalance.setSubAccount(subAccountTitle);
+        historyBalance.setValue(value.get());
+        historyBalance.setCurrency(currency);
+
+        HistoryItem historyItem = new HistoryItem();
+        historyItem.setType(HistoryType.balance);
+        historyItem.setYear(now.getYear());
+        historyItem.setMonth(now.getMonthValue());
+        historyItem.setDay(now.getDayOfMonth());
+        historyItem.setBalance(historyBalance);
+        return saveHistoryItem(login, historyItem);
     }
 
     @Override
@@ -158,5 +170,17 @@ public class HistoryService implements HistoryAPI {
                 alternativeCurrency.put(currencyDetail.getName(), new BigDecimal(alternativeValue).setScale(2, RoundingMode.HALF_UP).doubleValue());
             });
         }
+    }
+
+    private HistoryItem saveHistoryItem(String login, HistoryItem historyItem) {
+        int order = 1 + historyRepository.getAllDayHistoryItemsWithOrder(login, historyItem.getYear(), historyItem.getMonth(), historyItem.getDay())
+                .stream()
+                .max(Comparator.comparingInt(HistoryItem::getOrder))
+                .map(HistoryItem::getOrder)
+                .orElse(0);
+
+        historyItem.setOrder(order);
+        historyItem.setUser(login);
+        return historyRepository.save(historyItem);
     }
 }

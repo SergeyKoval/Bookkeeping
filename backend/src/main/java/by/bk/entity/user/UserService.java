@@ -3,13 +3,13 @@ package by.bk.entity.user;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.history.*;
 import by.bk.entity.history.Balance;
-import by.bk.entity.history.HistoryItem;
-import by.bk.entity.history.HistoryType;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
 import by.bk.security.model.JwtUser;
 import com.mongodb.client.result.UpdateResult;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,12 @@ import java.util.function.Supplier;
 @Service
 public class UserService implements UserAPI, UserDetailsService {
     private static final Log LOG = LogFactory.getLog(UserService.class);
+    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00");
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private HistoryService historyService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -227,6 +231,10 @@ public class UserService implements UserAPI, UserDetailsService {
             Query historyQuery = Query.query(Criteria.where("user").is(login)
                     .orOperator(Criteria.where("balance.account").is(title), Criteria.where("balance.accountTo").is(title)));
             archiveHistoryItems(historyQuery);
+
+            account.getSubAccounts().forEach(subAccount -> subAccount.getBalance().forEach((currency, value) -> {
+                historyService.addBalanceHistoryItem(login, currency, title, subAccount.getTitle(), () -> value * -1);
+            }));
         }
 
         return response;
@@ -266,7 +274,15 @@ public class UserService implements UserAPI, UserDetailsService {
                 .orElse(0);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance));
-        return updateUser(query, update);
+        SimpleResponse response = updateUser(query, update);
+
+        if (response.isSuccess()) {
+            balance.forEach((currency, value) -> {
+                historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value);
+            });
+        }
+
+        return response;
     }
 
     @Override
@@ -280,7 +296,13 @@ public class UserService implements UserAPI, UserDetailsService {
         balance.entrySet().removeIf(entry -> entry.getValue() == 0);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance"), balance);
-        return updateUser(query, update);
+
+        SimpleResponse response = updateUser(query, update);
+        if (response.isSuccess()) {
+            addBalanceHistoryItemOnBalanceEdit(login, accountTitle, subAccountTitle, subAccount, balance);
+        }
+
+        return response;
     }
 
     @Override
@@ -300,6 +322,8 @@ public class UserService implements UserAPI, UserDetailsService {
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount)), newSubAccount);
         SimpleResponse response = updateUser(query, update);
         if (response.isSuccess()) {
+            addBalanceHistoryItemOnBalanceEdit(login, accountTitle, newSubAccountTitle, subAccount, balance);
+
             Query historyQuery = Query.query(Criteria.where("user").is(login).and("balance.account").is(accountTitle).and("balance.subAccount").is(oldSubAccountTitle));
             Update historyUpdate = Update.update("balance.subAccount", newSubAccountTitle);
             mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
@@ -359,6 +383,7 @@ public class UserService implements UserAPI, UserDetailsService {
                     Criteria.where("balance.account").is(accountTitle).and("balance.subAccount").is(subAccountTitle),
                     Criteria.where("balance.accountTo").is(accountTitle).and("balance.subAccountTo").is(subAccountTitle)));
             archiveHistoryItems(historyQuery);
+            subAccount.getBalance().forEach((currency, value) -> historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value * -1));
         }
 
         return response;
@@ -662,5 +687,20 @@ public class UserService implements UserAPI, UserDetailsService {
     private void archiveHistoryItems(Query query) {
         Update historyUpdate = new Update().set("archived", true);
         mongoTemplate.updateMulti(query, historyUpdate, HistoryItem.class);
+    }
+
+    private void addBalanceHistoryItemOnBalanceEdit(String login, String accountTitle, String subAccountTitle, SubAccount subAccount, Map<Currency, Double> balance) {
+        subAccount.getBalance().forEach((currency, value) -> {
+            Double currencyValue = !balance.containsKey(currency) ? value * -1 : Double.parseDouble(CURRENCY_FORMAT.format(balance.get(currency) - value));
+            if (currencyValue != 0) {
+                historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> currencyValue);
+            }
+        });
+
+        CollectionUtils.disjunction(subAccount.getBalance().keySet(), balance.keySet()).forEach(currency -> {
+            if (balance.containsKey(currency)) {
+                historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> balance.get(currency));
+            }
+        });
     }
 }

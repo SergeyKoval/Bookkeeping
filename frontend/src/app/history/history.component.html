@@ -51,9 +51,11 @@
               <div [ngClass]="historyItem.type">
                 {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
               </div>
-              <bk-template-variable #accountTitle [toggleState]="false"></bk-template-variable>
-              <div class="footnote clickable" *ngIf="historyItem.type !== 'transfer' && accountTitle.isToggleState()" (click)="accountTitle.changeToggleState()">{{historyItem.balance.account}}</div>
-              <div class="footnote clickable" *ngIf="historyItem.type !== 'transfer'" (click)="accountTitle.changeToggleState()">{{historyItem.balance.subAccount}}</div>
+              <span *ngIf="historyItem.type !== 'balance'">
+                <bk-template-variable #accountTitle [toggleState]="false"></bk-template-variable>
+                <div class="footnote clickable" *ngIf="historyItem.type !== 'transfer' && accountTitle.isToggleState()" (click)="accountTitle.changeToggleState()">{{historyItem.balance.account}}</div>
+                <div class="footnote clickable" *ngIf="historyItem.type !== 'transfer'" (click)="accountTitle.changeToggleState()">{{historyItem.balance.subAccount}}</div>
+              </span>
             </div>
           </div>
 
@@ -62,6 +64,13 @@
             <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'category'">
             <span class="description">{{historyItem.category}}</span>
             <div class="footnote">{{historyItem.subCategory}}</div>
+          </div>
+
+          <!--balance third column-->
+          <div class="col-sm-6 sm-small-left-padding no-right-padding" *ngIf="historyItem.type === 'balance'">
+            <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
+            <span class="description">{{historyItem.balance.account}} >> {{historyItem.balance.subAccount}}</span>
+            <div class="footnote">Изменение остатков</div>
           </div>
 
           <!--transfer third column-->
@@ -84,7 +93,7 @@
           <div class="col-sm-3 description" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">{{historyItem.description}}</div>
 
           <!--last column-->
-          <div class="col-sm-2 text-center">
+          <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
             <span class="glyphicon glyphicon-pencil" (click)="editHistoryItem(historyItem)"
                   popover="Редактировать" popoverPlacement="top"
                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">

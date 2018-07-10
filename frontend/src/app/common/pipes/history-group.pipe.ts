@@ -32,6 +32,7 @@ export class HistoryGroupPipe implements PipeTransform {
           break;
         case 'transfer':
           historyItem.additionalIcon = this._authenticationService.getAccountIcon(item.balance.accountTo, item.balance.subAccountTo);
+        case 'balance':
         case  'exchange':
           historyItem.icon = this._authenticationService.getAccountIcon(item.balance.account, item.balance.subAccount);
           break;

@@ -1,25 +1,33 @@
 import { Injectable } from '@angular/core';
 
-import { Subject ,  Observable } from 'rxjs';
+declare var $: any; // tslint:disable-line:no-any
 
-import { Alert } from '../model/alert/Alert';
 import { AlertType } from '../model/alert/AlertType';
 
 @Injectable()
 export class AlertService {
-  private _alerts: Subject<Alert> = new Subject();
 
   public constructor() {}
 
-  public get alerts(): Observable<Alert> {
-    return this._alerts;
+  public addAlert(type: AlertType, message: string, title?: string): void {
+    $.notify({
+      'title': title,
+      'message': message
+    }, {
+      'z_index': 999,
+      'offset': {'x': AlertService.calculateHorizontalOffset(), 'y': 55},
+      'type': type
+    });
   }
 
-  public addAlert(type: AlertType, message: string, title?: string, timeoutSeconds?: number): void {
-    this.addAlertObject(new Alert(type, message, title, timeoutSeconds));
-  }
-
-  public addAlertObject(alert: Alert): void {
-    this._alerts.next(alert);
+  private static calculateHorizontalOffset(): number {
+    const viewWidth: number = window.innerWidth;
+    if (viewWidth > 1200) {
+      return (window.innerWidth - 1170) / 2 + 15;
+    } else if (viewWidth > 992) {
+      return (window.innerWidth - 970) / 2 + 15;
+    } else {
+      return (window.innerWidth - 750) / 2 + 15;
+    }
   }
 }

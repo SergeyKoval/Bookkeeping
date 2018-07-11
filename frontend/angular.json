@@ -19,7 +19,7 @@
             "index": "src/index.html",
             "polyfills": "src/polyfills.ts",
             "assets": [
-              "src/favicon.ico",
+              "src/favicon.png",
               "src/assets"
             ],
             "styles": [
@@ -76,7 +76,7 @@
             ],
             "scripts": [],
             "assets": [
-              "src/favicon.ico",
+              "src/favicon.png",
               "src/assets"
             ]
           }

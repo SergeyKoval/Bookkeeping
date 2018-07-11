@@ -5,7 +5,6 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/internal/operators';
 
-import { Alert } from '../common/model/alert/Alert';
 import { AlertService } from '../common/service/alert.service';
 import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
@@ -16,7 +15,6 @@ import { LoadingService } from '../common/service/loading.service';
   styleUrls: ['./bk.component.css']
 })
 export class BookkeepingRootComponent implements OnInit, OnDestroy {
-  public alerts: Alert[] = [];
   public authenticationCheckIndicator: boolean = false;
 
   private subscription: Subscription;
@@ -32,11 +30,6 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this.subscription = this._alertService.alerts.subscribe((alert: Alert) => {
-      alert.initAutoClose(this.close.bind(this));
-      this.alerts.push(alert);
-    });
-
     this.authenticationCheckSubscription = this._loadingService.authenticationCheck$$.subscribe(value => {
       this.authenticationCheckIndicator = value;
     });
@@ -45,7 +38,7 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
       .pipe(
         filter(event => event instanceof NavigationEnd),
         map(value => {
-          let child = this._activatedRoute.firstChild;
+          let child: ActivatedRoute = this._activatedRoute.firstChild;
           while (child) {
             if (child.firstChild) {
               child = child.firstChild;
@@ -62,10 +55,6 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  public close(alertToClose: Alert): void {
-    this.alerts = this.alerts.filter((alert: Alert) => alert !== alertToClose);
   }
 
   public isInitialDataLoaded(): boolean {

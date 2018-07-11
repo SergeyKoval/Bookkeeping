@@ -69,7 +69,7 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(HttpMethod.GET, "/*.html", "/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js", "/**/*.gif", "/**/*.woff", "/**/*.woff2", "/**/*.ttf");
+        web.ignoring().antMatchers(HttpMethod.GET, "/*.html", "/favicon.png", "/**/*.html", "/**/*.css", "/**/*.js", "/**/*.gif", "/**/*.woff", "/**/*.woff2", "/**/*.ttf");
     }
 
     @Bean

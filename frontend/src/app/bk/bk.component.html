@@ -4,11 +4,6 @@
     <bk-summary></bk-summary>
 
     <div id="details" class="col-sm-8">
-      <div [ngClass]="['alert alert-dismissable fade in', 'alert-' + alert.style]" *ngFor="let alert of alerts">
-        <span class="close" aria-label="close" (click)="close(alert)">&times;</span>
-        <strong *ngIf="alert.title">{{alert.title}}</strong> {{alert.message}}
-      </div>
-
       <router-outlet></router-outlet>
     </div>
   </div>

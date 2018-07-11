@@ -34,7 +34,7 @@ export class CurrencyConversionComponent implements OnInit {
       this.selectedCurrency = currency;
       this.currencyConversion.emit(currency);
     } else {
-      this._alertService.addAlert(AlertType.WARNING, 'Альтернативные валюты еще не загружены. Попробуйте немного позже.', 'Ошибка', 3);
+      this._alertService.addAlert(AlertType.WARNING, 'Альтернативные валюты еще не загружены. Попробуйте немного позже.');
     }
   }
 }

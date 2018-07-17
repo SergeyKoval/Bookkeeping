@@ -7,6 +7,10 @@
   line-height: 34px;
 }
 
+.category-separator {
+  border-width: initial;
+}
+
 hr {
   margin-top: 5px;
   margin-bottom: 5px;

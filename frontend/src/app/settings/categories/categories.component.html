@@ -10,7 +10,7 @@
 
 <div class="table" *ngIf="!loading; else loadingIndicator">
   <div *ngFor="let category of profile.categories; let lastCategory = last; let firstCategory = first;">
-    <hr *ngIf="firstCategory" />
+    <hr class="category-separator" *ngIf="firstCategory" />
     <div class="row">
       <div class="col-sm-8">
         <span *ngIf="hasSubcategories(category) && !category.opened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="category.opened = !category.opened"></span>
@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <hr/>
+    <hr class="category-separator"/>
   </div>
 </div>
 

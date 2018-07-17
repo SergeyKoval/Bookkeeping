@@ -39,6 +39,10 @@ hr {
   padding-right: 5px;
 }
 
+.category-separator {
+  border-width: initial;
+}
+
 .tree-icon {
   padding-left: 5px;
 }

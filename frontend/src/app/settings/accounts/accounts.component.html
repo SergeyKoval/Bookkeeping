@@ -5,7 +5,7 @@
 
 <div class="table" *ngIf="!loading; else loadingIndicator">
   <div *ngFor="let account of profile.accounts; let lastAccount = last; let firstAccount = first;">
-    <hr *ngIf="firstAccount" />
+    <hr class="category-separator" *ngIf="firstAccount" />
     <div class="row">
       <div class="col-sm-8">
         <span *ngIf="hasSubAccounts(account) && !account.settingsOpened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="account.settingsOpened = !account.settingsOpened"></span>
@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <hr/>
+    <hr class="category-separator"/>
   </div>
 </div>
 

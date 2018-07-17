@@ -19,10 +19,12 @@
     <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
       <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType | goalSort: selectedGoal" >
         <div [ngClass]="{'goal-popover-container': true, 'col-md-11 no-right-padding': isSelectedGoal(goalItem), 'col-md-12 selectable-goal': !isSelectedGoal(goalItem)}">
-          <span [ngClass]="{'glyphicon glyphicon-ok status-icon': true, 'goal-done': goalItem.done}"
-                [popover]="goalItem.done ? 'Выполнено' : 'Не выполнено'" popoverPlacement="top"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="changeGoalStatus(goalItem)">
-          </span>
+          <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
+                      [text]="goalItem.done ? 'Выполнено' : 'Не выполнено'" placement="top" (click)="changeGoalStatus(goalItem)"></bk-popover>
+          <!--<span [ngClass]="{'glyphicon glyphicon-ok status-icon': true, 'goal-done': goalItem.done}"-->
+                <!--[popover]="goalItem.done ? 'Выполнено' : 'Не выполнено'" popoverPlacement="top"-->
+                <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="changeGoalStatus(goalItem)">-->
+          <!--</span>-->
           <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
             <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
                  [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
@@ -34,10 +36,7 @@
           </div>
         </div>
         <div class="col-md-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
-          <span class="glyphicon glyphicon-remove"
-                popover="Не учитывать" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" (click)="uncheckGoal()">
-          </span>
+          <bk-popover glyphiconClass="remove" text="Не учитывать" placement="left" (click)="uncheckGoal()"></bk-popover>
         </div>
       </div>
     </div>

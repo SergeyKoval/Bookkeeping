@@ -20,14 +20,8 @@
             <span class="label label-primary admin-label" *ngIf="isAdmin(user)">Администратор</span>
           </div>
           <div class="col-md-4 col-sm-4 text-center" *ngIf="!isCurrentUser(user)">
-            <span class="action glyphicon glyphicon-pencil" (click)="editUser(user)"
-                  popover="Редактировать пользователя" popoverPlacement="left"
-                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-            </span>
-            <span class="action glyphicon glyphicon-remove" (click)="deleteUser(user)"
-                  popover="Удалить пользователя" popoverPlacement="left"
-                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-            </span>
+            <bk-popover glyphiconClass="pencil" text="Редактировать пользователя" placement="left" (click)="editUser(user)"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить пользователя" placement="left" (click)="deleteUser(user)"></bk-popover>
           </div>
         </div>
 

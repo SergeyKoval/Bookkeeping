@@ -19,27 +19,12 @@
         <span (click)="category.opened = !category.opened">{{category.title}}</span>
       </div>
       <div class="col-sm-4 text-right">
-        <span class="action glyphicon glyphicon-plus" (click)="addSubCategory(category)"
-              popover="Добавить подкатегорию" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
-        <span class="action glyphicon glyphicon-pencil" (click)="editCategory(category)"
-              popover="Редактировать категорию" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
-        <span class="action glyphicon glyphicon-remove" (click)="deleteCategory(category)"
-              popover="Удалить категорию" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
-        <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastCategory" (click)="moveCategoryDown(category)"
-              popover="Переместить ниже" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
+        <bk-popover glyphiconClass="plus" text="Добавить подкатегорию" placement="left" (click)="addSubCategory(category)"></bk-popover>
+        <bk-popover glyphiconClass="pencil" text="Редактировать категорию" placement="left" (click)="editCategory(category)"></bk-popover>
+        <bk-popover glyphiconClass="remove" text="Удалить категорию" placement="left" (click)="deleteCategory(category)"></bk-popover>
+        <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveCategoryDown(category)" *ngIf="!lastCategory"></bk-popover>
         <span *ngIf="lastCategory" class="empty-action">&nbsp;</span>
-        <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstCategory" (click)="moveCategoryUp(category)"
-              popover="Переместить выше" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
+        <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveCategoryUp(category)" *ngIf="!firstCategory"></bk-popover>
         <span *ngIf="firstCategory" class="empty-action">&nbsp;</span>
       </div>
     </div>
@@ -48,23 +33,11 @@
         <hr/>
         <div [ngClass]="{'col-sm-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
         <div class="col-sm-4 text-right">
-          <span class="action glyphicon glyphicon-pencil" (click)="editSubCategory(category, subCategory)"
-                popover="Редактировать" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-          <span class="action glyphicon glyphicon-remove" (click)="deleteSubCategory(category, subCategory)"
-                popover="Удалить" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-          <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastSubCategory" (click)="moveSubCategoryDown(category, subCategory)"
-                popover="Переместить ниже" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
+          <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editSubCategory(category, subCategory)"></bk-popover>
+          <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="deleteSubCategory(category, subCategory)"></bk-popover>
+          <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubCategoryDown(category, subCategory)"></bk-popover>
           <span *ngIf="lastSubCategory" class="empty-action">&nbsp;</span>
-          <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstSubCategory" (click)="moveSubCategoryUp(category, subCategory)"
-                popover="Переместить выше" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
+          <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubCategoryUp(category, subCategory)"></bk-popover>
           <span *ngIf="firstSubCategory" class="empty-action">&nbsp;</span>
         </div>
       </div>

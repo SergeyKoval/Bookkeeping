@@ -27,14 +27,8 @@ hr {
   margin-bottom: 0;
 }
 
-.glyphicon {
-  cursor: pointer;
-  color: #999;
+:host ::ng-deep bk-popover .action {
   padding-right: 5px;
-}
-
-.glyphicon:hover {
-  color: #5e5e5e;
 }
 
 .row {

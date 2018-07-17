@@ -26,14 +26,8 @@ hr {
   margin-bottom: 5px;
 }
 
-.action {
-  cursor: pointer;
-  color: #999;
+:host ::ng-deep bk-popover .action{
   padding-left: 5px;
-}
-
-.action:hover {
-  color: #5e5e5e;
 }
 
 .empty-action {

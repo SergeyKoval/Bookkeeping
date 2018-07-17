@@ -13,27 +13,12 @@
         <span class="account-title" (click)="account.settingsOpened = !account.settingsOpened">{{account.title}}</span>
       </div>
       <div class="col-sm-4 text-right">
-        <span class="action glyphicon glyphicon-plus" (click)="addSubAccount(account)"
-              popover="Добавить субсчет" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
-        <span class="action glyphicon glyphicon-pencil" (click)="editAccount(account)"
-              popover="Редактировать счет" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
-        <span class="action glyphicon glyphicon-remove" (click)="deleteAccount(account)"
-              popover="Удалить cчет" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
-        <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastAccount" (click)="moveAccountDown(account)"
-              popover="Переместить ниже" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
+        <bk-popover glyphiconClass="plus" text="Добавить субсчет" placement="left" (click)="addSubAccount(account)"></bk-popover>
+        <bk-popover glyphiconClass="pencil" text="Редактировать счет" placement="left" (click)="editAccount(account)"></bk-popover>
+        <bk-popover glyphiconClass="remove" text="Удалить cчет" placement="left" (click)="deleteAccount(account)"></bk-popover>
+        <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveAccountDown(account)" *ngIf="!lastAccount"></bk-popover>
         <span *ngIf="lastAccount" class="empty-action">&nbsp;</span>
-        <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstAccount" (click)="moveAccountUp(account)"
-              popover="Переместить выше" popoverPlacement="left"
-              [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-        </span>
+        <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveAccountUp(account)" *ngIf="!firstAccount"></bk-popover>
         <span *ngIf="firstAccount" class="empty-action">&nbsp;</span>
       </div>
     </div>
@@ -45,27 +30,12 @@
           <span>{{subAccount.title}}</span>
         </div>
         <div class="col-sm-4 text-right">
-          <span class="action glyphicon glyphicon-piggy-bank" (click)="editSubAccountBalance(account, subAccount)"
-                popover="Редактировать остатки" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-          <span class="action glyphicon glyphicon-pencil" (click)="editSubAccount(account, subAccount)"
-                popover="Редактировать" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-          <span class="action glyphicon glyphicon-remove" (click)="deleteSubAccount(account, subAccount)"
-                popover="Удалить" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
-          <span class="action glyphicon glyphicon-arrow-down" *ngIf="!lastSubAccount" (click)="moveSubAccountDown(account, subAccount)"
-                popover="Переместить ниже" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
+          <bk-popover glyphiconClass="piggy-bank" text="Редактировать остатки" placement="left" (click)="editSubAccountBalance(account, subAccount)"></bk-popover>
+          <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editSubAccount(account, subAccount)"></bk-popover>
+          <bk-popover glyphiconClass="remove" text="Редактировать" placement="left" (click)="deleteSubAccount(account, subAccount)"></bk-popover>
+          <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubAccountDown(account, subAccount)" *ngIf="!lastSubAccount"></bk-popover>
           <span *ngIf="lastSubAccount" class="empty-action">&nbsp;</span>
-          <span class="action glyphicon glyphicon-arrow-up" *ngIf="!firstSubAccount" (click)="moveSubAccountUp(account, subAccount)"
-                popover="Переместить выше" popoverPlacement="left"
-                [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-          </span>
+          <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubAccountUp(account, subAccount)" *ngIf="!firstSubAccount"></bk-popover>
           <span *ngIf="firstSubAccount" class="empty-action">&nbsp;</span>
         </div>
       </div>

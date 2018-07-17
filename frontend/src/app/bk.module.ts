@@ -67,6 +67,7 @@ import { AuthenticationInterceptor } from './authentication.interceptor';
 import { AccountCategoryDialogComponent } from './settings/account-category-dialog/account-category-dialog.component';
 import { UsersComponent } from './users/users.component';
 import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
+import { PopoverComponent } from './common/components/popover/popover.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +114,8 @@ import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
     BalanceDialogComponent,
     AccountCategoryDialogComponent,
     UsersComponent,
-    UserDialogComponent
+    UserDialogComponent,
+    PopoverComponent
   ],
   imports: [
     BrowserModule,

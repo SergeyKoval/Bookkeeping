@@ -52,17 +52,11 @@
   margin: 5px 0;
 }
 
-.glyphicon {
-  color: #999;
-  cursor: pointer;
+:host ::ng-deep bk-popover .glyphicon {
   padding-right: 5px;
 }
 
-.glyphicon:hover {
-  color: #5e5e5e;
-}
-
-.goal-icon {
+:host ::ng-deep bk-popover .goal-icon {
   padding-top: 9px;
 }
 

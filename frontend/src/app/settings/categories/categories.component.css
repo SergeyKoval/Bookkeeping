@@ -35,7 +35,7 @@ hr {
   color: #5e5e5e;
 }
 
-.action {
+:host ::ng-deep bk-popover .action {
   padding-right: 5px;
 }
 

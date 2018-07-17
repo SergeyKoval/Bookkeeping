@@ -29,7 +29,7 @@ hr {
   padding-left: 9px;
 }
 
-.action {
+:host ::ng-deep bk-popover .action {
   padding-right: 5px;
 }
 

@@ -20,10 +20,11 @@
                 <div class="footnote">{{historyGroup.dayOfWeek}}</div>
               </span>
             </div>
-            <div *ngIf="historyItem.goal" class="glyphicon glyphicon-screenshot goal-icon col-sm-1 no-left-right-padding"
-                 popover="{{historyItem.goal}}" popoverPlacement="top"
-                 [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-            </div>
+            <bk-popover spanClass="goal-icon col-sm-1 no-left-right-padding" glyphiconClass="screenshot" [text]="historyItem.goal" placement="top" *ngIf="historyItem.goal"></bk-popover>
+            <!--<div *ngIf="historyItem.goal" class="glyphicon glyphicon-screenshot goal-icon col-sm-1 no-left-right-padding"-->
+                 <!--popover="{{historyItem.goal}}" popoverPlacement="top"-->
+                 <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">-->
+            <!--</div>-->
           </div>
 
           <!--exchange middle-->
@@ -94,14 +95,8 @@
 
           <!--last column-->
           <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
-            <span class="glyphicon glyphicon-pencil" (click)="editHistoryItem(historyItem)"
-                  popover="Редактировать" popoverPlacement="top"
-                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-            </span>
-            <span class="glyphicon glyphicon-remove" (click)="deleteHistoryItem(historyItem)"
-                  popover="Удалить" popoverPlacement="top"
-                  [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
-            </span>
+            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="top" (click)="editHistoryItem(historyItem)"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить" placement="top" (click)="deleteHistoryItem(historyItem)"></bk-popover>
           </div>
         </div>
         <hr *ngIf="!lastGroup">

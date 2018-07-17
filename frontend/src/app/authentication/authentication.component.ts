@@ -10,6 +10,7 @@ import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
 import { CurrencyService } from '../common/service/currency.service';
 import { AuthenticationService } from '../common/service/authentication.service';
+import { BrowserUtils } from '../common/utils/browser-utils';
 
 @Component({
   selector: 'bk-authentication',
@@ -49,7 +50,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._authenticationService.authentication$$.subscribe((value: boolean) => this.loading = value);
     this._APPLICATION_LOADING_SUBSCRIPTION = this._authenticationService.applicationLoading$$.subscribe((value: boolean) => this.applicationLoading = value);
     this._AUTHENTICATION_ERROR_SUBSCRIPTION = this._authenticationService.errorMessage$.subscribe(value => this.errorMessage = value);
-    this.alwaysEditing = navigator.platform === 'iPad';
+    this.alwaysEditing = BrowserUtils.isMobileOrTablet();
   }
 
   public ngOnDestroy(): void {

@@ -23,6 +23,8 @@ ul.nav-tabs li {
 }
 
 .alternative-currencies {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   margin-left: 0 !important;
   border-left: 0 !important;
 }

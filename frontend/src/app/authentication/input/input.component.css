@@ -26,7 +26,14 @@ label .req {
   font-weight: bold;
 }
 
-label.active, input:-webkit-autofill + label {
+label.active {
+  -webkit-transform: translateY(10px);
+  transform: translateY(10px);
+  left: 2px;
+  font-size: 14px;
+}
+
+input:-webkit-autofill + label {
   -webkit-transform: translateY(10px);
   transform: translateY(10px);
   left: 2px;

@@ -31,8 +31,8 @@
         </div>
         <div class="col-sm-4 text-right">
           <bk-popover glyphiconClass="piggy-bank" text="Редактировать остатки" placement="left" (click)="editSubAccountBalance(account, subAccount)"></bk-popover>
-          <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editSubAccount(account, subAccount)"></bk-popover>
-          <bk-popover glyphiconClass="remove" text="Редактировать" placement="left" (click)="deleteSubAccount(account, subAccount)"></bk-popover>
+          <bk-popover glyphiconClass="pencil" text="Редактировать субсчет" placement="left" (click)="editSubAccount(account, subAccount)"></bk-popover>
+          <bk-popover glyphiconClass="remove" text="Удалить субсчет" placement="left" (click)="deleteSubAccount(account, subAccount)"></bk-popover>
           <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubAccountDown(account, subAccount)" *ngIf="!lastSubAccount"></bk-popover>
           <span *ngIf="lastSubAccount" class="empty-action">&nbsp;</span>
           <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubAccountUp(account, subAccount)" *ngIf="!firstSubAccount"></bk-popover>

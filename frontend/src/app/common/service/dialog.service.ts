@@ -11,6 +11,7 @@ export class DialogService {
   private _OPENED_DIALOGS: MatDialogRef<any, any>[] = [];
 
   public constructor(private _dialog: MatDialog) {}
+
   public openDialog<T, D = any, R = any>(componentRef: ComponentType<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> {
     const matDialogRef: MatDialogRef<T, R> = this._dialog.open(componentRef, config);
     this._OPENED_DIALOGS.push(matDialogRef);
@@ -28,7 +29,7 @@ export class DialogService {
   public closeAllDialogs(): void {
     this._OPENED_DIALOGS.forEach(dialog => {
       dialog.close();
-      this._OPENED_DIALOGS.splice(this._OPENED_DIALOGS.indexOf(dialog), 1);
     });
+    this._OPENED_DIALOGS = [];
   }
 }

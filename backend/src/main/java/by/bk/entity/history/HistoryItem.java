@@ -43,7 +43,9 @@ public class HistoryItem {
         clonedBalance.setSubAccountTo(balance.getSubAccountTo());
         clonedBalance.setCurrency(balance.getCurrency());
         clonedBalance.setNewCurrency(balance.getNewCurrency());
-        clonedBalance.setAlternativeCurrency(new HashMap<>(balance.getAlternativeCurrency()));
+        if (balance.getAlternativeCurrency() != null) {
+            clonedBalance.setAlternativeCurrency(new HashMap<>(balance.getAlternativeCurrency()));
+        }
 
         return clonedBalance;
     }

@@ -45,7 +45,10 @@ export class AuthenticationService implements CanActivate {
   public authenticate(credentials: {email: string, password: string}): Observable<HttpResponse<{token: string}>> {
     this._authentication$$.next(true);
     return this._http.post<{token: string}>('/token/generate-token', credentials, { observe: 'response' })
-      .pipe(tap((response: HttpResponse<{token: string}>) => this._localStorageService.set(AuthenticationService.TOKEN, response.body.token)));
+      .pipe(
+        tap((response: HttpResponse<{token: string}>) => this._localStorageService.set(AuthenticationService.TOKEN, response.body.token)),
+        tap(() => this.startAuthenticationExpirationJob())
+      );
   }
 
   public refreshTokenIfRequired(): void {
@@ -88,6 +91,7 @@ export class AuthenticationService implements CanActivate {
         authenticationCheck$$.next(false);
         result.next(true);
         this._profileService.initialDataLoaded = true;
+        this.startAuthenticationExpirationJob();
     });
 
     return result.asObservable();
@@ -120,5 +124,13 @@ export class AuthenticationService implements CanActivate {
 
   public get applicationLoading$$(): Subject<boolean> {
     return this._applicationLoading$$;
+  }
+
+  private startAuthenticationExpirationJob(): void {
+    if (this.validateToken()) {
+      setTimeout(this.startAuthenticationExpirationJob.bind(this), 30000);
+    } else {
+      console.log('Authentication expiration job execute logoff');
+    }
   }
 }

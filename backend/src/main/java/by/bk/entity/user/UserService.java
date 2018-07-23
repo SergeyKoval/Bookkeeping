@@ -109,7 +109,6 @@ public class UserService implements UserAPI, UserDetailsService {
             markCurrencyAsDefault(login, currency);
         }
 
-        archiveHistoryItems(login, currency, false);
         return result;
     }
 

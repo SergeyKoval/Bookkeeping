@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DateUtils } from '../common/utils/date-utils';
 
 @Component({
   selector: 'bk-budget',
@@ -6,11 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./budget.component.css']
 })
 export class BudgetComponent implements OnInit {
+  public loading: boolean;
+  public selectedMonth: number;
+  public selectedYear: number;
+  public months: string[] = DateUtils.MONTHS;
 
   public items: SelectItem[];
   public items2: SelectItem[];
   public selectedItem: SelectItem[];
   public selectedItem2: SelectItem[];
+
+  public constructor() {}
 
   public ngOnInit(): void {
     this.items = [

@@ -1,3 +1,187 @@
-<p>
-  budget works!
-</p>
+<div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
+  <div class="panel-body">
+    <div class="btn-group" role="group">
+        <span class="btn btn-default left-button" type="button">Запланировать</span>
+        <span class="btn btn-default left-button" type="button">Закрыть месяц</span>
+    </div>
+
+    <div class="input-group right-button-group">
+      <span class="input-group-btn">
+        <span type="button" class="btn btn-default dropdown-toggle month-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <strong>Сентябрь</strong> <span class="caret month-dropdown-caret"></span>
+        </span>
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li><a href="#">Январь</a></li>
+          <li><a href="#">Февраль</a></li>
+          <li><a href="#">Март</a></li>
+        </ul>
+        <span class="btn btn-default glyphicon glyphicon-menu-left button-icon" type="button"></span>
+      </span>
+      <span class="input-group-addon year-aria">2018</span>
+
+      <span class="input-group-btn float-left">
+        <span class="btn btn-default glyphicon glyphicon-menu-right button-icon" type="button"></span>
+      </span>
+    </div>
+
+
+    <div class="panel panel-default budget-panel">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-sm-4 type-and-goal" style="height: 40px;">
+              <span class="type income">Доход</span>
+              <span class="full-width">
+                <span class="badge badge-income"><span class="black">Цели:</span> 3 <span class="black">из</span> 10</span>
+              </span>
+          </div>
+          <div class="col-sm-8 no-right-padding">
+            <div class="row">
+              <span class="header-expected">15'385.25</span>
+              <span class="header-from">из</span>
+              <span class="text-right header-current">15'385.25</span>
+              <span class="header-currency">Byn</span>
+            </div>
+            <div class="row">
+              <span class="header-expected">300</span>
+              <span class="header-from">из</span>
+              <span class="text-right header-current">0</span>
+              <span class="header-currency">$</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0"></span></div>
+      <div class="row body-row">
+        <span class="glyphicon glyphicon-chevron-down expand-icon vertical-middle"></span>
+        <div class="progress category-progress" style="height: 40px;">
+            <div class="progress-bar progress-bar-success " style="width: 90%;"></div>
+            <span class="category-title full-height"><span class="vertical-middle">Автомобиль</span></span>
+            <span class="category-value">15 из 7'398.15 <strong>Byn</strong></span>
+            <span class="category-value" style="top: 20px;">20 из 30215 <strong>$</strong></span>
+        </div>
+        <span class="glyphicon glyphicon-pencil edit-button vertical-middle float-left"></span>
+        <span class="glyphicon glyphicon-remove delete-button vertical-middle"></span>
+      </div>
+      <div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0; height: 5px;"></span></div>
+      <div>
+        <div class="row body-row">
+          <span class="glyphicon glyphicon-ok done-icon"></span>
+          <span class="glyphicon glyphicon-log-in move-icon"></span>
+          <div class="progress goal-progress">
+            <div class="progress-bar progress-bar-success" style="width: 30%;"></div>
+            <span class="goal-title">Каско</span>
+            <span class="category-value">15 из 7'398.15 <strong>Byn</strong></span>
+          </div>
+          <span class="glyphicon glyphicon-pencil edit-button float-left"></span>
+          <span class="glyphicon glyphicon-remove delete-button"></span>
+        </div>
+
+
+
+
+
+
+
+        <!--<div class="row" style="display: flex;padding-top: 5px;">-->
+          <!--<span class="glyphicon glyphicon-ok" style="float: left;padding-left: 24px;"></span>-->
+          <!--<span class="glyphicon glyphicon-log-in" style="float: left; padding-left: 5px;"></span>-->
+          <!--<div class="progress" style="float: left; width: 100%; margin-left: 7px; margin-right: 10px;">-->
+            <!--<div class="progress-bar progress-bar-success " style="width: 30%;"></div>-->
+            <!--<span style="position: absolute; left: 5px;">Каско</span>-->
+            <!--<span style="position: absolute; right: 5px;">15 из 7'398.15 <strong>Byn</strong></span>-->
+          <!--</div>-->
+          <!--<span class="glyphicon glyphicon-pencil" style="float: left;"></span>-->
+          <!--<span class="glyphicon glyphicon-remove" style="float: left; padding-left: 5px; padding-right: 5px;"></span>-->
+        <!--</div>-->
+      </div>
+      <!--<div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0; height: 5px;"></span></div>-->
+      <!--<div class="row" style="display: flex;">-->
+        <!--<span class="glyphicon glyphicon-chevron-right" style="float: left; padding-left: 5px;"></span>-->
+        <!--<div class="progress" style="float: left; width: 100%; margin-left: 5px; margin-right: 10px;">-->
+
+        <!--</div>-->
+        <!--<span class="glyphicon glyphicon-pencil" style="float: left;"></span>-->
+        <!--<span class="glyphicon glyphicon-remove" style="float: left; padding-left: 5px; padding-right: 5px;"></span>-->
+      <!--</div>-->
+      <div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0"></span></div>
+    </div>
+
+    <!--<div class="panel panel-default limits" style="margin-bottom: 0">-->
+      <!--<div class="panel-heading" style="cursor: pointer;background-color: #f5f5f5;">-->
+        <!--<div class="table" style="margin-bottom: 0;">-->
+          <!--<div class="row">-->
+            <!--<div class="col-sm-4 type-and-goal" style="height: 40px; padding-left: 0;">-->
+              <!--<span class="type expense" style="float: left;font-weight: bold;">Расход</span>-->
+              <!--<span style="width: 100%;">-->
+                <!--<span class="badge badge-income" style="background-color: #e04703;float: right;"><span style="color: black">Цели:</span> 3 <span style="color: black">из</span> 10</span>-->
+              <!--</span>-->
+            <!--</div>-->
+            <!--<div class="col-sm-8" style="padding-right: 0;">-->
+              <!--<div class="row" style="width: 100%;">-->
+                <!--<span style="font-weight: bold; position: absolute;right: 150px;width: 30px;">BYN</span>-->
+                <!--<span style="float: right;">15'385.25 <strong>из</strong> 15'385.25</span>-->
+              <!--</div>-->
+              <!--<div class="row" style="width: 100%;">-->
+                <!--<span style="font-weight: bold; position: absolute;right: 150px;width: 30px;">$</span>-->
+                <!--<span style="float: right;">0 <strong>из</strong> 300</span>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+
+      <!--<div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0"></span></div>-->
+      <!--<div class="row" style="display: flex;">-->
+        <!--<span class="tree-icon glyphicon glyphicon-chevron-down" style="float: left; padding-left: 5px; margin-top: 12.5px;"></span>-->
+        <!--<div class="progress" style="float: left; width: 100%; margin-left: 5px; margin-right: 10px;height: 40px;">-->
+          <!--<div class="progress-bar progress-bar-success " style="width: 90%;"></div>-->
+          <!--<span style="font-weight: bold; position: absolute; left: 5px; top: 10px;">Автомобиль</span>-->
+          <!--<span style="position: absolute; right: 5px;">15 из 7'398.15 <strong>Byn</strong></span>-->
+          <!--<span style="position: absolute; right: 5px;top: 20px;">20 из 30215 <strong>$</strong></span>-->
+        <!--</div>-->
+        <!--<span class="tree-icon glyphicon glyphicon-pencil" style="float: left; margin-top: 12.5px;"></span>-->
+        <!--<span class="tree-icon glyphicon glyphicon-remove" style="float: left; padding-left: 5px; padding-right: 5px; margin-top: 12.5px;"></span>-->
+      <!--</div>-->
+      <!--<div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0; height: 5px;"></span></div>-->
+      <!--<div>-->
+        <!--<div class="row" style="display: flex;">-->
+          <!--<span class="tree-icon glyphicon glyphicon-ok" style="float: left;padding-left: 24px;"></span>-->
+          <!--<span class="tree-icon glyphicon glyphicon-log-in" style="float: left; padding-left: 5px;"></span>-->
+          <!--<div class="progress" style="float: left; width: 100%; margin-left: 7px; margin-right: 10px;">-->
+            <!--<div class="progress-bar progress-bar-success " style="width: 30%;"></div>-->
+            <!--<span style="position: absolute; left: 5px;">Каско</span>-->
+            <!--<span style="position: absolute; right: 5px;">15 из 7'398.15 <strong>Byn</strong></span>-->
+          <!--</div>-->
+          <!--<span class="tree-icon glyphicon glyphicon-pencil" style="float: left;"></span>-->
+          <!--<span class="tree-icon glyphicon glyphicon-remove" style="float: left; padding-left: 5px; padding-right: 5px;"></span>-->
+        <!--</div>-->
+        <!--<div class="row" style="display: flex; padding-top: 5px;">-->
+          <!--<span class="tree-icon glyphicon glyphicon-ok" style="float: left;padding-left: 24px;"></span>-->
+          <!--<span class="tree-icon glyphicon glyphicon-log-in" style="float: left; padding-left: 5px;"></span>-->
+          <!--<div class="progress" style="float: left; width: 100%; margin-left: 7px; margin-right: 10px;">-->
+            <!--<div class="progress-bar progress-bar-success " style="width: 30%;"></div>-->
+            <!--<span style="position: absolute; left: 5px;">Каско</span>-->
+            <!--<span style="position: absolute; right: 5px;">15 из 7'398.15 <strong>Byn</strong></span>-->
+          <!--</div>-->
+          <!--<span class="tree-icon glyphicon glyphicon-pencil" style="float: left;"></span>-->
+          <!--<span class="tree-icon glyphicon glyphicon-remove" style="float: left; padding-left: 5px; padding-right: 5px;"></span>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0; height: 5px;"></span></div>-->
+      <!--<div class="row" style="display: flex;">-->
+        <!--<span class="tree-icon glyphicon glyphicon-chevron-right" style="float: left; padding-left: 5px;"></span>-->
+        <!--<div class="progress" style="float: left; width: 100%; margin-left: 5px; margin-right: 10px;">-->
+
+        <!--</div>-->
+        <!--<span class="tree-icon glyphicon glyphicon-pencil" style="float: left;"></span>-->
+        <!--<span class="tree-icon glyphicon glyphicon-remove" style="float: left; padding-left: 5px; padding-right: 5px;"></span>-->
+      <!--</div>-->
+      <!--<div style="margin-left: 25px; margin-right: 48px;position: relative;"><span class="day-percent-top" style="width: 10%;display: block;margin-top:0"></span></div>-->
+    <!--</div>-->
+  </div>
+</div>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="100"></bk-spinner>
+</ng-template>

@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
 
 import { HOST } from '../config/config';
 
@@ -14,11 +13,7 @@ export class BudgetService {
     @Inject(HOST) private _host: string
   ) { }
 
-  public loadBudget(ownerId: number, year: number, month: number, type: string): Observable<Budget> {
-    return this._http.get(`${this._host}/budget?ownerId=${ownerId}&year=${year}&month=${month}&type=${type}`, {headers: new HttpHeaders({'Cache-Control': 'no-cache'})})
-      .pipe(
-        delay(1500),
-        map((response: Budget[]) => response[0])
-      );
+  public loadBudget(year: number, month: number): Observable<Budget> {
+    return this._http.post<Budget>('/api/budget', {'year': year, 'month': month});
   }
 }

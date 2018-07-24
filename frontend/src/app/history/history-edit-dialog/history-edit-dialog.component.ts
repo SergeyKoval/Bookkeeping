@@ -245,7 +245,7 @@ export class HistoryEditDialogComponent implements OnInit {
     this._profileService.authenticatedProfile.currencies
       .filter(currency => currency.name !== balance.currency)
       .forEach(currency => {
-        const alternativeValue: number = this._currencyService.convertToCurrency(balance.value, balance.currency, currency, this.selectedDate);
+        const alternativeValue: number = this._currencyService.convertToCurrency(balance.value, balance.currency, currency.name, this.selectedDate);
         balance.alternativeCurrency[currency.name] = Number(alternativeValue.toFixed(2));
       });
   }

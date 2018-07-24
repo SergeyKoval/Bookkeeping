@@ -1,0 +1,14 @@
+.month-progress-container {
+  margin-left: 45px;
+  margin-right: 48px;
+  position: relative;
+}
+
+.day-percent {
+  display: block;
+  border-right: 2px dotted #adadad;
+}
+
+.not-current-month {
+  display: block;
+}

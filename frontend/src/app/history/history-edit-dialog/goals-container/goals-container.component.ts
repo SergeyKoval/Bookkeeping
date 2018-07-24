@@ -80,7 +80,7 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   public changeGoalStatus(goalItem: BudgetGoal): void {
-    if (goalItem.name === this.historyItem.goal) {
+    if (goalItem.title === this.historyItem.goal) {
       this.selectedGoal.done = !this.selectedGoal.done;
       this._selectedGoalChangeStatus = !this._selectedGoalChangeStatus;
       this.statusChange.next(this._selectedGoalChangeStatus);
@@ -88,11 +88,11 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   public chooseGoal(goalItem: BudgetGoal): void {
-    if (goalItem.name !== this.historyItem.goal) {
+    if (goalItem.title !== this.historyItem.goal) {
       this.revertSelectedGoalOriginalStatus();
 
       this.selectedGoal = goalItem;
-      this.historyItem.goal = goalItem.name;
+      this.historyItem.goal = goalItem.title;
     }
   }
 
@@ -107,7 +107,7 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   public isSelectedGoal(goal: BudgetGoal): boolean {
-    return goal.name === this.historyItem.goal;
+    return goal.title === this.historyItem.goal;
   }
 
   public chooseGoalFilterType(type: GoalFilterType): void {
@@ -131,45 +131,45 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   private loadBudget(selectedDate: IMyDate): void {
-    this.categoryLoading = true;
-    this._budgetCategory = null;
-    const ownerId: number = this._authenticationService.authenticatedProfile.id;
-
-    if (!this.editMode || (this.editMode && this._originallySelectedBudget)) {
-      this.historyItem.goal = null;
-    }
-
-    if (this.editMode && this._originallySelectedBudget && selectedDate.year === this._originallySelectedBudget.year
-       && selectedDate.month === this._originallySelectedBudget.month && this.historyItem.type === this._originallySelectedBudget.type) {
-
-      this._budgetCategory = this._originallySelectedBudget.budgetCategories.filter((budgetCategory: BudgetCategory) => budgetCategory.category === this._selectedCategory)[0];
-      this.categoryLoading = false;
-    } else {
-      this._budgetService.loadBudget(ownerId, selectedDate.year, selectedDate.month, this.historyItem.type)
-        .subscribe((budget: Budget) => {
-          if (budget) {
-            this._budgetCategory = budget.budgetCategories.filter((budgetCategory: BudgetCategory) => budgetCategory.category === this._selectedCategory)[0];
-          }
-
-          if (this._budgetCategory && this.editMode && !this._originallySelectedBudget && selectedDate.year === budget.year
-            && selectedDate.month === budget.month && this.historyItem.type === budget.type) {
-
-            this._originallySelectedBudget = budget;
-            const budgetBalance: BudgetBalance = this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this._budgetCategory);
-            budgetBalance.value = budgetBalance.value - this.convertValueToCurrency(budgetBalance.currency);
-            if (this.budgetCategory.goals) {
-              this.selectedGoal = this.budgetCategory.goals.filter((goal: BudgetGoal) => goal.name === this.historyItem.goal)[0];
-              if (this.selectedGoal) {
-                this.selectedGoal.balance.value = this.selectedGoal.balance.value - this.convertValueToCurrency(this.selectedGoal.balance.currency);
-              }
-            } else {
-              this.selectedGoal = null;
-            }
-          }
-
-          this.categoryLoading = false;
-        });
-    }
+    // this.categoryLoading = true;
+    // this._budgetCategory = null;
+    // const ownerId: number = this._authenticationService.authenticatedProfile.id;
+    //
+    // if (!this.editMode || (this.editMode && this._originallySelectedBudget)) {
+    //   this.historyItem.goal = null;
+    // }
+    //
+    // if (this.editMode && this._originallySelectedBudget && selectedDate.year === this._originallySelectedBudget.year
+    //    && selectedDate.month === this._originallySelectedBudget.month && this.historyItem.type === this._originallySelectedBudget.type) {
+    //
+    //   this._budgetCategory = this._originallySelectedBudget.budgetCategories.filter((budgetCategory: BudgetCategory) => budgetCategory.category === this._selectedCategory)[0];
+    //   this.categoryLoading = false;
+    // } else {
+    //   this._budgetService.loadBudget(ownerId, selectedDate.year, selectedDate.month, this.historyItem.type)
+    //     .subscribe((budget: Budget) => {
+    //       if (budget) {
+    //         this._budgetCategory = budget.budgetCategories.filter((budgetCategory: BudgetCategory) => budgetCategory.category === this._selectedCategory)[0];
+    //       }
+    //
+    //       if (this._budgetCategory && this.editMode && !this._originallySelectedBudget && selectedDate.year === budget.year
+    //         && selectedDate.month === budget.month && this.historyItem.type === budget.type) {
+    //
+    //         this._originallySelectedBudget = budget;
+    //         const budgetBalance: BudgetBalance = this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this._budgetCategory);
+    //         budgetBalance.value = budgetBalance.value - this.convertValueToCurrency(budgetBalance.currency);
+    //         if (this.budgetCategory.goals) {
+    //           this.selectedGoal = this.budgetCategory.goals.filter((goal: BudgetGoal) => goal.name === this.historyItem.goal)[0];
+    //           if (this.selectedGoal) {
+    //             this.selectedGoal.balance.value = this.selectedGoal.balance.value - this.convertValueToCurrency(this.selectedGoal.balance.currency);
+    //           }
+    //         } else {
+    //           this.selectedGoal = null;
+    //         }
+    //       }
+    //
+    //       this.categoryLoading = false;
+    //     });
+    // }
   }
 
   private convertValueToCurrency(resultCurrency: string): number {

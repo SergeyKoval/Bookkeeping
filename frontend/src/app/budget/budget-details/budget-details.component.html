@@ -1,0 +1,74 @@
+<div class="panel panel-default budget-panel">
+  <div class="panel-heading" (click)="budgetDetails.opened = !budgetDetails.opened">
+    <div class="row">
+      <div class="col-sm-4 type-and-goal" [style.height.px]="getNumberOfCurrencies(budgetDetails.balance) * 20">
+        <span class="type income" *ngIf="type === 'income'">Доход</span>
+        <span class="type expense" *ngIf="type === 'expense'">Расход</span>
+        <span class="full-width" *ngIf="hasGoals">
+          <span class="badge badge-income" [ngClass]="{'badge-income': type === 'income', 'badge-expense': type === 'expense'}">
+            <span class="black">Цели:</span> {{goalsDone}} <span class="black">из</span> {{goalsCount}}
+          </span>
+        </span>
+      </div>
+      <div class="col-sm-8 no-right-padding">
+        <div class="row" *ngFor="let currency of budgetDetails.balance | mapKeys">
+          <span class="header-expected">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
+          <span class="header-from">из</span>
+          <span class="text-right header-current">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
+          <span class="header-currency"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="budgetDetails.opened">
+    <div class="text-center" *ngIf="budgetDetails.categories.length === 0">Нету запланированных категорий</div>
+    <div *ngIf="budgetDetails.categories.length > 0">
+      <div *ngFor="let category of budgetDetails.categories; let firstCategory = first; let lastCategory = last;">
+        <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(category)"></bk-template-variable>
+        <bk-month-progress [height]="10" *ngIf="firstCategory" [progress]="monthProgress"></bk-month-progress>
+        <div class="row body-row">
+          <span class="no-goals" *ngIf="category.goals.length === 0"></span>
+          <span class="glyphicon glyphicon-chevron-down expand-icon vertical-middle" *ngIf="category.goals.length > 0 && category.opened" (click)="category.opened = !category.opened"></span>
+          <span class="glyphicon glyphicon-chevron-right expand-icon vertical-middle" *ngIf="category.goals.length > 0 && !category.opened" (click)="category.opened = !category.opened"></span>
+          <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'"></span>
+
+          <div class="progress category-progress" [style.height.px]="getNumberOfCurrencies(category.balance) * 20">
+            <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
+            <span class="category-title full-height"><span class="vertical-middle">{{category.title}}</span></span>
+            <span class="category-value" *ngFor="let currency of category.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
+          {{category.balance[currency].value | currencyValue:2:true}} из {{category.balance[currency].completeValue | currencyValue:2:true}}
+          <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+        </span>
+          </div>
+          <span class="glyphicon glyphicon-pencil edit-button vertical-middle float-left"></span>
+          <span class="glyphicon glyphicon-remove delete-button vertical-middle"></span>
+        </div>
+
+        <div *ngIf="category.opened">
+          <div *ngFor="let goal of category.goals; let firstGoal = first; let lastGoal = last;">
+            <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goal)"></bk-template-variable>
+            <bk-month-progress [height]="5" *ngIf="firstGoal" [progress]="monthProgress"></bk-month-progress>
+            <div class="row body-row">
+              <span class="glyphicon glyphicon-ok done-icon" [ngClass]="{'done': goal.done}"></span>
+              <span class="glyphicon glyphicon-log-in move-icon"></span>
+              <div class="progress goal-progress">
+                <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
+                <span class="goal-title">{{goal.title}}</span>
+                <span class="category-value">
+                {{goal.balance.value | currencyValue:2:true}} из {{goal.balance.completeValue | currencyValue:2:true}}
+                <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
+              </span>
+              </div>
+              <span class="glyphicon glyphicon-pencil edit-button float-left"></span>
+              <span class="glyphicon glyphicon-remove delete-button"></span>
+            </div>
+            <bk-month-progress [height]="5" *ngIf="!lastGoal" [progress]="monthProgress"></bk-month-progress>
+          </div>
+        </div>
+        <bk-month-progress [height]="category.opened ? 5 : 10" *ngIf="!lastCategory" [progress]="monthProgress"></bk-month-progress>
+        <bk-month-progress [height]="10" *ngIf="lastCategory" [progress]="monthProgress"></bk-month-progress>
+      </div>
+    </div>
+  </div>
+</div>

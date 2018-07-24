@@ -68,21 +68,21 @@ export class HistoryService {
 
 
 
-  public chooseBudgetBalanceBasedOnCurrency(historyItem: HistoryType, budgetCategory: BudgetCategory): BudgetBalance {
-    const historyItemCurrency: string = historyItem.balance.currency;
-    let budgetBalances: BudgetBalance[] = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === historyItemCurrency);
-    if (budgetBalances.length === 1) {
-      return budgetBalances[0];
-    }
-
-    const defaultCurrency: string = this._authenticationService.defaultCurrency.name;
-    budgetBalances = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
-    if (budgetBalances.length === 1) {
-      return budgetBalances[0];
-    }
-
-    return budgetCategory.balance[0];
-  }
+  // public chooseBudgetBalanceBasedOnCurrency(historyItem: HistoryType, budgetCategory: BudgetCategory): BudgetBalance {
+  //   const historyItemCurrency: string = historyItem.balance.currency;
+  //   let budgetBalances: BudgetBalance[] = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === historyItemCurrency);
+  //   if (budgetBalances.length === 1) {
+  //     return budgetBalances[0];
+  //   }
+  //
+  //   const defaultCurrency: string = this._authenticationService.defaultCurrency.name;
+  //   budgetBalances = budgetCategory.balance.filter((budgetBalance: BudgetBalance) => budgetBalance.currency === defaultCurrency);
+  //   if (budgetBalances.length === 1) {
+  //     return budgetBalances[0];
+  //   }
+  //
+  //   return budgetCategory.balance[0];
+  // }
 
   public static filterGoals(goals: BudgetGoal[], filterType: GoalFilterType): BudgetGoal[] {
     if (!goals) {

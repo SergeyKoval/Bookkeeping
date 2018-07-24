@@ -26,7 +26,7 @@ export abstract class BaseSummaryPipe {
           balanceItems.push({currency: currency.name, value: 0});
         }
 
-        balanceItems[0].value += currencyService.convertToCurrency(balanceValue, key, currency);
+        balanceItems[0].value += currencyService.convertToCurrency(balanceValue, key, currency.name);
       }
     });
 

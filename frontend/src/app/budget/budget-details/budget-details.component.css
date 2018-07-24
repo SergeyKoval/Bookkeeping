@@ -1,0 +1,191 @@
+.row {
+  margin: 0;
+}
+
+.glyphicon {
+  cursor: pointer;
+  color: #999;
+}
+
+.done {
+  color: #5cb85c;
+}
+
+.glyphicon:hover {
+  color: #5e5e5e;
+}
+
+/*main tables header*/
+
+.budget-panel {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.budget-panel .panel-heading {
+  cursor: pointer;
+  background-color: #f5f5f5;
+  padding: 5px 10px;
+}
+
+.budget-panel .type-and-goal {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  padding-left: 0;
+}
+
+.income {
+  float: left;
+  font-weight: bold;
+  color: #009900;
+}
+
+.expense {
+  color: #dd0000;
+  float: left;
+  font-weight: bold;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.budget-panel .badge-income {
+  background-color: #009900;
+  float: right;
+}
+
+.budget-panel .badge-expense {
+  background-color: #dd0000;
+  float: right;
+}
+
+.black {
+  color: black;
+}
+
+.no-right-padding {
+  padding-right: 0;
+}
+
+.header-currency {
+  font-weight: bold;
+  float: right;
+  width: 30px;
+}
+
+.header-current {
+  float: right;
+  width: 70px;
+}
+
+.header-from {
+  float: right;
+  width: 15px;
+  margin: 0 7px;
+  font-weight: bold;
+}
+
+.header-expected {
+  float: right;
+  width: 70px;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.budget-panel .panel-heading {
+  cursor: pointer;
+}
+
+/*Main tables*/
+
+.no-goals {
+  margin-right: 19px;
+}
+
+.body-row {
+  display: flex;
+}
+
+.expand-icon {
+  float: left;
+  padding-left: 5px;
+}
+
+.category-progress {
+  float: left;
+  width: 100%;
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+.category-title {
+  font-weight: bold;
+  position: absolute;
+  left: 5px;
+}
+
+.category-value {
+  position: absolute;
+  right: 5px;
+}
+
+.vertical-middle {
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.delete-button {
+  padding-left: 5px;
+  padding-right: 5px;
+  float: left;
+}
+
+.done-icon {
+  float: left;
+  padding-left: 45px;
+}
+
+.move-icon {
+  float: left;
+  padding-left: 5px;
+}
+
+.category-icon-wrapper {
+  padding-left: 5px;
+}
+
+.goal-progress {
+  float: left;
+  width: 100%;
+  margin-left: 7px;
+  margin-right: 10px;
+}
+
+.goal-title {
+  position: absolute;
+  left: 5px;
+}
+
+.progress {
+  position: relative;
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .budget-panel .type-and-goal {
+    padding-right: 0;
+  }
+}

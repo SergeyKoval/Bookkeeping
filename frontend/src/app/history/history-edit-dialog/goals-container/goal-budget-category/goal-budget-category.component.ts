@@ -52,7 +52,8 @@ export class GoalBudgetCategoryComponent {
   }
 
   public getBudgetBalance(): BudgetBalance {
-    return this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this.budgetCategory);
+    return null;
+    // return this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this.budgetCategory);
   }
 
   public getPercentBeforeAction(budgetBalance: BudgetBalance): number {

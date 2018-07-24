@@ -17,7 +17,7 @@ export class SummaryBodySubAccountPipe implements PipeTransform {
 
     const balanceItem: BalanceItem = {currency: currency.name, value: 0};
     Object.entries(balance).forEach(([balanceCurrency, balanceValue]) => {
-      balanceItem.value += this._currencyService.convertToCurrency(balanceValue, balanceCurrency, currency);
+      balanceItem.value += this._currencyService.convertToCurrency(balanceValue, balanceCurrency, currency.name);
     });
     return [balanceItem];
   }

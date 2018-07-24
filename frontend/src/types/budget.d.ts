@@ -1,28 +1,36 @@
 type Budget = {
-  id: number,
-  ownerId: number,
   year: number,
   month: number,
-  type: string,
-  balance: BudgetBalance[],
-  budgetCategories: BudgetCategory[]
+  expense: BudgetDetails,
+  income: BudgetDetails
+};
+
+type BudgetDetails = {
+  opened: boolean,
+  balance: {[currency: string]: BudgetBalance}
+  categories: BudgetCategory[]
 };
 
 type BudgetCategory = {
-  order: number,
-  category: string,
-  balance: BudgetBalance[],
-  goals: BudgetGoal[]
+  title: string,
+  balance: {[currency: string]: BudgetBalance},
+  goals: BudgetGoal[],
+  opened: boolean
 };
 
 type BudgetBalance = {
-  currency: string,
   value: number,
   completeValue: number
+  currency?: string,
 };
 
 type BudgetGoal = {
-  name: string,
   done: boolean,
+  title: string,
   balance: BudgetBalance
+};
+
+type MonthProgress = {
+  currentMonth: boolean,
+  monthPercent: number
 };

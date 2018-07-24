@@ -68,6 +68,8 @@ import { AccountCategoryDialogComponent } from './settings/account-category-dial
 import { UsersComponent } from './users/users.component';
 import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
 import { PopoverComponent } from './common/components/popover/popover.component';
+import { BudgetDetailsComponent } from './budget/budget-details/budget-details.component';
+import { MonthProgressComponent } from './budget/budget-details/month-progress/month-progress.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +117,9 @@ import { PopoverComponent } from './common/components/popover/popover.component'
     AccountCategoryDialogComponent,
     UsersComponent,
     UserDialogComponent,
-    PopoverComponent
+    PopoverComponent,
+    BudgetDetailsComponent,
+    MonthProgressComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 type Budget = {
+  id: string,
   year: number,
   month: number,
   expense: BudgetDetails,

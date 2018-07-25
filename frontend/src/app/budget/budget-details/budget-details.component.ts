@@ -1,7 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+
+import { filter, tap } from 'rxjs/internal/operators';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CurrencyService } from '../../common/service/currency.service';
+import { BudgetService } from '../../common/service/budget.service';
+import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
+import { LoadingService } from '../../common/service/loading.service';
+import { AlertService } from '../../common/service/alert.service';
+import { AlertType } from '../../common/model/alert/AlertType';
 
 @Component({
   selector: 'bk-budget-details',
@@ -10,22 +18,27 @@ import { CurrencyService } from '../../common/service/currency.service';
 })
 export class BudgetDetailsComponent implements OnInit {
   @Input()
-  public budgetDetails: BudgetDetails;
+  public budget: Budget;
   @Input()
   public type: string;
   @Input()
   public monthProgress: MonthProgress;
 
+  public budgetDetails: BudgetDetails;
   public hasGoals: boolean = false;
   public goalsCount: number = 0;
   public goalsDone: number = 0;
 
   public constructor(
     private _profileService: ProfileService,
-    private _currencyService: CurrencyService
+    private _currencyService: CurrencyService,
+    private _budgetService: BudgetService,
+    private _loadingService: LoadingService,
+    private _alertService: AlertService
   ) {}
 
   public ngOnInit(): void {
+    this.budgetDetails = this.budget[this.type];
     this.budgetDetails.categories.forEach(category => {
       if (category.goals && category.goals.length > 0) {
         this.hasGoals = true;
@@ -107,5 +120,23 @@ export class BudgetDetailsComponent implements OnInit {
         return percent < 90 ? 'progress-bar-success' : 'progress-bar-warning';
       }
     }
+  }
+
+  public clickGoalDone(category: BudgetCategory, goal: BudgetGoal): void {
+    const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Изменение статуса цели...');
+    this._budgetService.changeGoalDoneStatus(this.budget.id, this.type, category.title, goal.title, !goal.done)
+      .pipe(
+        tap(simpleResponse => {
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при изменении статуса цели');
+            mdDialogRef.close();
+          }
+        }),
+        filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
+      ).subscribe(() => {
+        goal.done = !goal.done;
+        mdDialogRef.close();
+        this._alertService.addAlert(AlertType.SUCCESS, 'Статус цели изменен');
+      });
   }
 }

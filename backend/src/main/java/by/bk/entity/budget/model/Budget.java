@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Budget {
     @Id
-    @JsonIgnore
     private String id;
     @JsonIgnore
     private String user;

@@ -17,7 +17,7 @@ export class HistoryService {
   ) {}
 
   public loadHistoryItems(page: number, pageLimit: number): Observable<HistoryType[]> {
-    return this._http.post<HistoryType[]>('/api/history/page-portion', {page: page, limit: pageLimit});
+    return this._http.post<HistoryType[]>('/api/history/page-portion', {'page': page, 'limit': pageLimit});
   }
 
   public addHistoryItem(historyItem: HistoryType): Observable<SimpleResponse> {

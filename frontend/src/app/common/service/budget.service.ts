@@ -16,4 +16,8 @@ export class BudgetService {
   public loadBudget(year: number, month: number): Observable<Budget> {
     return this._http.post<Budget>('/api/budget', {'year': year, 'month': month});
   }
+
+  public changeGoalDoneStatus(budgetId: string, type: string, category: string, goal: string, newDoneStatus: boolean): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/changeGoalDoneStatus', {'budgetId': budgetId, 'type': type, 'category': category, 'goal': goal, 'doneStatus': newDoneStatus});
+  }
 }

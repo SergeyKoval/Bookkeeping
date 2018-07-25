@@ -22,8 +22,8 @@
     </div>
 
     <div *ngIf="!loading; else loadingIndicator">
-      <bk-budget-details [budgetDetails]="budget.income" [type]="'income'" [monthProgress]="monthProgress"></bk-budget-details>
-      <bk-budget-details [budgetDetails]="budget.expense" [type]="'expense'" [monthProgress]="monthProgress"></bk-budget-details>
+      <bk-budget-details [budget]="budget" [type]="'income'" [monthProgress]="monthProgress"></bk-budget-details>
+      <bk-budget-details [budget]="budget" [type]="'expense'" [monthProgress]="monthProgress"></bk-budget-details>
     </div>
   </div>
 </div>

@@ -37,9 +37,9 @@
             <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
             <span class="category-title full-height"><span class="vertical-middle">{{category.title}}</span></span>
             <span class="category-value" *ngFor="let currency of category.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
-          {{category.balance[currency].value | currencyValue:2:true}} из {{category.balance[currency].completeValue | currencyValue:2:true}}
-          <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
-        </span>
+              {{category.balance[currency].value | currencyValue:2:true}} из {{category.balance[currency].completeValue | currencyValue:2:true}}
+              <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+            </span>
           </div>
           <span class="glyphicon glyphicon-pencil edit-button vertical-middle float-left"></span>
           <span class="glyphicon glyphicon-remove delete-button vertical-middle"></span>
@@ -50,7 +50,8 @@
             <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goal)"></bk-template-variable>
             <bk-month-progress [height]="5" *ngIf="firstGoal" [progress]="monthProgress"></bk-month-progress>
             <div class="row body-row">
-              <span class="glyphicon glyphicon-ok done-icon" [ngClass]="{'done': goal.done}"></span>
+              <bk-popover class="done-icon" glyphiconClass="ok" [conditionalClass]="{'done': goal.done}" placement="left"
+                          [text]="goal.done ? 'Пометить невыполненным' : 'Пометить выполненным'" (click)="clickGoalDone(category, goal)"></bk-popover>
               <span class="glyphicon glyphicon-log-in move-icon"></span>
               <div class="progress goal-progress">
                 <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>

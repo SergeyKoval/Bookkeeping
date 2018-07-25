@@ -13,6 +13,7 @@ import { switchMap } from 'rxjs/operators';
 import { LoadingService } from './loading.service';
 import { ProfileService } from './profile.service';
 import { CurrencyService } from './currency.service';
+import { DialogService } from './dialog.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,8 @@ export class AuthenticationService implements CanActivate {
     private _router: Router,
     private _http: HttpClient,
     private _localStorageService: LocalStorageService,
-    private _jwtHelper: JwtHelperService
+    private _jwtHelper: JwtHelperService,
+    private _dialogService: DialogService
   ) {}
 
   public initAuthenticationForm(): FormGroup {
@@ -130,6 +132,7 @@ export class AuthenticationService implements CanActivate {
     if (this.validateToken()) {
       setTimeout(this.startAuthenticationExpirationJob.bind(this), 30000);
     } else {
+      this._dialogService.closeAllDialogs();
       console.log('Authentication expiration job execute logoff');
     }
   }

@@ -1,5 +1,5 @@
 <div class="panel panel-default budget-panel">
-  <div class="panel-heading" (click)="budgetDetails.opened = !budgetDetails.opened">
+  <div class="panel-heading" (click)="toggleBudgetDetails()">
     <div class="row">
       <div class="col-sm-4 type-and-goal" [style.height.px]="getNumberOfCurrencies(budgetDetails.balance) * 20">
         <span class="type income" *ngIf="type === 'income'">Доход</span>

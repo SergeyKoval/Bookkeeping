@@ -20,4 +20,8 @@ export class BudgetService {
   public changeGoalDoneStatus(budgetId: string, type: string, category: string, goal: string, newDoneStatus: boolean): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/budget/changeGoalDoneStatus', {'budgetId': budgetId, 'type': type, 'category': category, 'goal': goal, 'doneStatus': newDoneStatus});
   }
+
+  public toggleBudgetDetails(budgetId: string, type: string, opened: boolean): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/toggleBudgetDetails', {'budgetId': budgetId, 'type': type, 'opened': opened});
+  }
 }

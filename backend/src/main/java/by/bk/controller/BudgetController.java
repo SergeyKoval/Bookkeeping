@@ -37,4 +37,14 @@ public class BudgetController extends BaseAPIController {
             return SimpleResponse.fail();
         }
     }
+
+    @PostMapping("/toggleBudgetDetails")
+    public SimpleResponse toggleBudgetDetails(@RequestBody BudgetRequest budgetRequest, Principal principal) {
+        try {
+            return budgetAPI.toggleBudgetDetails(principal.getName(), budgetRequest.getBudgetId(), budgetRequest.getType(), budgetRequest.isOpened());
+        } catch (BudgetProcessException e) {
+            LOG.error(e);
+            return SimpleResponse.fail();
+        }
+    }
 }

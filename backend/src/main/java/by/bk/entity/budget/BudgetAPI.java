@@ -10,5 +10,5 @@ import by.bk.entity.history.HistoryType;
 public interface BudgetAPI {
     Budget getMonthBudget(String login, int year, int month);
     SimpleResponse changeGoalDoneStatus(String login, String budgetId, HistoryType type, String categoryTitle, String goalTitle, boolean doneStatus);
-
+    SimpleResponse toggleBudgetDetails(String login, String budgetId, HistoryType type, boolean opened);
 }

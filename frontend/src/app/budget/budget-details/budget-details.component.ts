@@ -139,4 +139,13 @@ export class BudgetDetailsComponent implements OnInit {
         this._alertService.addAlert(AlertType.SUCCESS, 'Статус цели изменен');
       });
   }
+
+  public toggleBudgetDetails(): void {
+    this.budgetDetails.opened = !this.budgetDetails.opened;
+    this._budgetService.toggleBudgetDetails(this.budget.id, this.type, this.budgetDetails.opened).subscribe(simpleResponse => {
+      if (simpleResponse.status === 'FAIL') {
+        this._alertService.addAlert(AlertType.WARNING, 'Ошибка при отправке данных на сервер');
+      }
+    });
+  }
 }

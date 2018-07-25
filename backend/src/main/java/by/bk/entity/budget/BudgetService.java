@@ -62,6 +62,16 @@ public class BudgetService implements BudgetAPI {
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
+    @Override
+    public SimpleResponse toggleBudgetDetails(String login, String budgetId, HistoryType type, boolean opened) {
+        validateAndGetBudget(login, budgetId);
+        Query query = Query.query(Criteria.where("id").is(budgetId));
+        Update update = Update.update(StringUtils.join(type.name(), ".opened"), opened);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
     private Budget initEmptyMonthBudget(String login, int year, int month) {
         Budget budget = new Budget(login, year, month);
         return budgetRepository.save(budget);

@@ -1,0 +1,117 @@
+#budget-plan-dialog {
+  overflow: visible !important;
+  padding: 0 20px;
+}
+
+.dropdown-menu li, .nav-tabs li {
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.caret {
+  float: right;
+  margin-top: 8px;
+}
+
+.full-width-dropdown {
+  width: 360px;
+  left: 15px;
+}
+
+.currency-dropdown[aria-expanded="true"] {
+  border-right-width: 2px;
+  width: 80px;
+}
+
+.currency-dropdown[aria-expanded="false"] .caret {
+  margin-right: 2px;
+}
+
+.currency-dropdown[aria-expanded="false"] {
+  border-right-width: 0;
+}
+
+.currency-dropdown {
+  width: 80px;
+  margin-right: 0;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.currency-dropdown.multiple-currencies {
+  margin-top: -1px;
+}
+
+.currency-dropdown-menu {
+  min-width: 80px;
+}
+
+.currency-dropdown-menu.multiple-currencies {
+  left: 76px;
+}
+
+.input-group-btn .glyphicon {
+  top:0;
+}
+
+.float-left {
+  float: left;
+}
+
+.month-dropdown {
+  width: 150px;
+  margin-top: -1px;
+}
+
+.input-group-btn .month-dropdown {
+  margin-right: -2px;
+}
+
+.month-dropdown-menu {
+  left: 0;
+  min-width: 150px;
+  width: 150px;
+}
+
+.input-group-btn .decrease-year {
+  margin-right: -2px;
+}
+
+.increase-year {
+  top: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.year-aria {
+  width: 140px;
+  border-right-width: 0;
+}
+
+
+.footer-action-item {
+  float: right;
+}
+
+.table {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.row {
+  padding-bottom: 10px;
+}
+
+.vertical-middle {
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+}
+
+.glyphicon {
+  cursor: pointer;
+  color: #5e5e5e;
+}

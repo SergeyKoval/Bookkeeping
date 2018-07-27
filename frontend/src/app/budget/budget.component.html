@@ -1,13 +1,13 @@
 <div class="panel panel-default">
   <div class="panel-body">
     <div class="btn-group" role="group">
-        <span class="btn btn-default left-button" [ngClass]="{'disabled': loading}" type="button">Запланировать</span>
+        <span class="btn btn-default left-button" [ngClass]="{'disabled': loading}" type="button" (click)="openPlanDialog()">Запланировать</span>
         <span class="btn btn-default left-button" [ngClass]="{'disabled': loading}" type="button">Закрыть месяц</span>
     </div>
 
     <div class="input-group right-button-group">
       <span class="input-group-btn">
-        <span type="button" class="btn btn-default dropdown-toggle month-dropdown disabled" [ngClass]="{'disabled': loading}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span type="button" class="btn btn-default dropdown-toggle month-dropdown" [ngClass]="{'disabled': loading}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <strong>{{getSelectedMonth()}}</strong> <span class="caret month-dropdown-caret"></span>
         </span>
         <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">

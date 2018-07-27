@@ -70,7 +70,7 @@ import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
 import { PopoverComponent } from './common/components/popover/popover.component';
 import { BudgetDetailsComponent } from './budget/budget-details/budget-details.component';
 import { MonthProgressComponent } from './budget/budget-details/month-progress/month-progress.component';
-// import { PlanBudgetDialogComponent } from './budget/plan-budget-dialog/plan-budget-dialog.component';
+import { PlanBudgetDialogComponent } from './budget/plan-budget-dialog/plan-budget-dialog.component';
 import { InputCalculatorComponent } from './common/components/input-calculator/input-calculator.component';
 
 @NgModule({
@@ -122,7 +122,7 @@ import { InputCalculatorComponent } from './common/components/input-calculator/i
     PopoverComponent,
     BudgetDetailsComponent,
     MonthProgressComponent,
-    // PlanBudgetDialogComponent,
+    PlanBudgetDialogComponent,
     InputCalculatorComponent
   ],
   imports: [
@@ -156,7 +156,7 @@ import { InputCalculatorComponent } from './common/components/input-calculator/i
     AccountCategoryDialogComponent,
     BalanceDialogComponent,
     UserDialogComponent,
-    // PlanBudgetDialogComponent
+    PlanBudgetDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

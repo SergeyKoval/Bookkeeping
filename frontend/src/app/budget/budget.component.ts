@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { DateUtils } from '../common/utils/date-utils';
 import { BudgetService } from '../common/service/budget.service';
+import { DialogService } from '../common/service/dialog.service';
+import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dialog.component';
 
 @Component({
   selector: 'bk-budget',
@@ -16,7 +18,10 @@ export class BudgetComponent implements OnInit {
   public budget: Budget;
   public monthProgress: MonthProgress;
 
-  public constructor(private _budgetService: BudgetService) {}
+  public constructor(
+    private _budgetService: BudgetService,
+    private _dialogService: DialogService
+  ) {}
 
   public ngOnInit(): void {
     const now: Date = new Date();
@@ -49,6 +54,22 @@ export class BudgetComponent implements OnInit {
       this.selectedYear++;
       this.selectedMonth = 0;
       this.loadBudget();
+    }
+  }
+
+  public openPlanDialog(): void {
+    if (!this.loading) {
+      this._dialogService.openDialog(PlanBudgetDialogComponent, {
+        width: '400px',
+        position: {top: 'top'},
+        data: {
+          'editMode': false,
+          'type': 'category'
+        }
+      }).afterClosed()
+        .subscribe(() => {
+          this.loading = false;
+        });
     }
   }
 

@@ -1,0 +1,163 @@
+<h2 mat-dialog-title align="center" #title>
+  <span *ngIf="data.editMode">Редактировать запланированное</span>
+  <span *ngIf="!data.editMode">Запланировать</span>
+</h2>
+<mat-dialog-content id="budget-plan-dialog">
+  <ul class="nav nav-tabs nav-justified">
+    <li role="presentation" class="active"><a>Категория</a></li>
+    <li role="presentation"><a>Цель</a></li>
+    <li role="presentation"><a>Лимит</a></li>
+  </ul>
+
+  <!--Category-->
+  <div>
+    <div class="table">
+      <div class="row">
+        <div class="col-sm-12">
+          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Тип<span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li><a>Доход</a></li>
+            <li><a>Расход</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Категория<span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li><a>Дети</a></li>
+            <li><a>Автомобиль</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div  class="col-sm-12">
+          <div class="input-group">
+            <div class="input-group-btn">
+              <span class="btn btn-default glyphicon glyphicon-plus" type="button"></span>
+              <span class="btn btn-default glyphicon glyphicon-minus" type="button"></span>
+              <span type="button" class="btn btn-default dropdown-toggle currency-dropdown multiple-currencies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="float-left">Валюта</span> <span class="caret"></span>
+              </span>
+              <ul class="dropdown-menu currency-dropdown-menu multiple-currencies">
+                <li><a href="#">Byn</a></li>
+                <li><a href="#">$</a></li>
+              </ul>
+            </div>
+            <bk-input-calculator position="right" placeholder="Сумма"></bk-input-calculator>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Goal-->
+  <div>
+    <div class="table">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="input-group right-button-group">
+            <span class="input-group-btn">
+              <span type="button" class="btn btn-default dropdown-toggle month-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="float-left">Июль</span> <span class="caret"></span>
+              </span>
+              <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
+                <li><a>Август</a></li>
+              </ul>
+              <span class="btn btn-default glyphicon glyphicon-menu-left decrease-year" type="button"></span>
+            </span>
+            <span class="input-group-addon year-aria">2018</span>
+            <span class="btn btn-default glyphicon glyphicon-menu-right increase-year" type="button"></span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Тип<span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li><a>Доход</a></li>
+            <li><a>Расход</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Категория<span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li><a>Дети</a></li>
+            <li><a>Автомобиль</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div  class="col-sm-12">
+          <div class="input-group">
+            <div class="input-group-btn">
+              <span type="button" class="btn btn-default dropdown-toggle currency-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="float-left">Валюта</span> <span class="caret"></span>
+              </span>
+              <ul class="dropdown-menu currency-dropdown-menu">
+                <li><a href="#">Byn</a></li>
+                <li><a href="#">$</a></li>
+              </ul>
+            </div>
+            <bk-input-calculator position="right" placeholder="Сумма"></bk-input-calculator>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--limit-->
+  <div>
+    <div class="table">
+      <div class="row">
+        <div class="col-sm-12">
+          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Тип<span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li><a>Доход</a></li>
+            <li><a>Расход</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div  class="col-sm-12">
+          <div class="input-group">
+            <div class="input-group-btn">
+              <span class="btn btn-default glyphicon glyphicon-plus" type="button"></span>
+              <span class="btn btn-default glyphicon glyphicon-minus" type="button"></span>
+              <span type="button" class="btn btn-default dropdown-toggle currency-dropdown multiple-currencies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="float-left">Валюта</span> <span class="caret"></span>
+              </span>
+              <ul class="dropdown-menu currency-dropdown-menu multiple-currencies">
+                <li><a href="#">Byn</a></li>
+                <li><a href="#">$</a></li>
+              </ul>
+            </div>
+            <bk-input-calculator position="right" placeholder="Сумма"></bk-input-calculator>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="full-width">
+    <a class="btn btn-default footer-action-item" (click)="close(false)">Закрыть</a>
+    <span class="footer-action-item">&nbsp;</span>
+    <a class="btn btn-default footer-action-item" (click)="save()">Сохранить</a>
+  </span>
+</mat-dialog-actions>

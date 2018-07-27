@@ -22,7 +22,8 @@
 }
 
 .month-dropdown-caret {
-  margin-left: 5px;
+  float: right;
+  margin-top: 8px;
 }
 
 .button-icon {
@@ -47,8 +48,12 @@
     width: 50px;
   }
 
-  .month-dropdown {
+  .month-dropdown, .month-dropdown-menu {
     width: 95px;
+  }
+
+  .month-dropdown-menu {
+    min-width: 95px;
   }
 
   .left-button, .month-dropdown {

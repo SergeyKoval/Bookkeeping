@@ -11,6 +11,7 @@ import { ProfileService } from '../../common/service/profile.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
+import { AlertType } from '../../common/model/alert/AlertType';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -310,6 +311,7 @@ export class HistoryEditDialogComponent implements OnInit {
     ).subscribe((response: SimpleResponse) => {
       this._authenticationService.quiteReloadAccounts();
       mdDialogRef.close();
+      this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно учтена');
       this.close(true);
     });
   }

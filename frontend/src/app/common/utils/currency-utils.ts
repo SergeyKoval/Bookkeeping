@@ -13,7 +13,8 @@ export class CurrencyUtils {
     }
 
     if (CurrencyUtils.CALCULATION_PATTERN.test(value)) {
-      return !CurrencyUtils.LAST_SYMBOL_PATTERN.test(value) ? eval(value).toFixed(2) : 0; // tslint:disable-line:no-eval
+      const calculatedValue: number = !CurrencyUtils.LAST_SYMBOL_PATTERN.test(value) ? eval(value) : 0;  // tslint:disable-line:no-eval
+      return isFinite(calculatedValue) ? Number(calculatedValue.toFixed(2)) : 0;
     } else {
       return Number(value);
     }

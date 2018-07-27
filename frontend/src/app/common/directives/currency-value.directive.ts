@@ -27,7 +27,11 @@ export class CurrencyValueDirective implements DoCheck {
   }
 
   public ngDoCheck(): void {
-    const value: string = this._ELEMENT.value;
+    let value: string = this._ELEMENT.value;
+    if (CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(value)) {
+      value = this._ELEMENT.value = value.substring(0, value.length - 1);
+    }
+
     if (value && !this._INITIAL_LOAD_DONE) {
       this._ELEMENT.value = this._currencyValuePipe.transform(Number(value), this.bkCurrencyValue, this.skipDecimalZeros);
       this._INITIAL_LOAD_DONE = true;

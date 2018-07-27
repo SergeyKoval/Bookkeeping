@@ -1,0 +1,22 @@
+.no-left-radius {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.no-right-radius {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.validation-success {
+  border-color: #0fbd0f;
+}
+
+.validation-fail {
+  border-color: red;
+}
+
+.input-group {
+  width: 100%;
+  border-radius: 4px;
+}

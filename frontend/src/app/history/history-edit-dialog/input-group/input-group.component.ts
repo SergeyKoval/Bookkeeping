@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
@@ -9,7 +9,7 @@ import { DialogService } from '../../../common/service/dialog.service';
   templateUrl: './input-group.component.html',
   styleUrls: ['./input-group.component.css']
 })
-export class InputGroupComponent {
+export class InputGroupComponent implements OnInit {
   @Input()
   public selectedCurrency: string;
   @Input()
@@ -28,12 +28,20 @@ export class InputGroupComponent {
   @Output()
   public changeInputValue: EventEmitter<number> = new EventEmitter();
 
-  public constructor(private _dialogService: DialogService) { }
+  public enableCurrencies: boolean;
 
-  public blurInput(): void {
-    if (this.inputValue && this.inputValue > 0.01) {
-      this.changeInputValue.next(this.inputValue);
-    }
+  public constructor(private _dialogService: DialogService) {}
+
+  public ngOnInit(): void {
+    this.enableCurrencies = this.inputValue && this.inputValue > 0;
+  }
+
+  public changeValue(value: number): void {
+    this.changeInputValue.next(value);
+  }
+
+  public changeValueValidation(validation: boolean): void {
+    this.enableCurrencies = validation;
   }
 
   public changeCurrency(currency: CurrencyDetail): void {
@@ -46,9 +54,8 @@ export class InputGroupComponent {
     return this.historyItem.type === 'expense' || this.historyItem.type === 'income';
   }
 
-  public disableAlternativeCurrencies(balanceValue: string): boolean {
-    return this.alternativeCurrencyLoading || balanceValue === '' || balanceValue === '0'
-      || CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(balanceValue) || CurrencyUtils.LAST_SYMBOL_PATTERN.test(balanceValue) ? true : null;
+  public disableAlternativeCurrencies(): boolean {
+    return this.alternativeCurrencyLoading || !this.enableCurrencies ? true : null;
   }
 
   public checkValueValidation(balanceValue: string): string {
@@ -59,8 +66,8 @@ export class InputGroupComponent {
     return CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(balanceValue) || CurrencyUtils.LAST_SYMBOL_PATTERN.test(balanceValue) ? 'validation-fail' : 'validation-success';
   }
 
-  public openCurrenciesPopup(balanceValue: string): void {
-    if (!this.alternativeCurrencyLoading && CurrencyUtils.convertValue(balanceValue) > 0) {
+  public openCurrenciesPopup(): void {
+    if (!this.alternativeCurrencyLoading && this.enableCurrencies && this.inputValue > 0) {
       this._dialogService.openDialog(AlternativeCurrenciesDialogComponent, {
         disableClose: true,
         width: '470px',

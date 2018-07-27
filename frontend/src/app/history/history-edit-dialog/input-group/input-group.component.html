@@ -12,11 +12,10 @@
     </ul>
   </div>
 
-  <input type="text" [ngClass]="['form-control', checkValueValidation(balanceValue.value)]" [placeholder]="placeholder"
-         [ngModelOptions]="{standalone: true}" [(ngModel)]="inputValue" (blur)="blurInput()" bkCurrencyValue="2" [skipDecimalZeros]="true" #balanceValue>
-  <span class="input-group-addon" *ngIf="showCalculation(balanceValue.value)">= {{calculateValue(balanceValue.value) | currencyValue:2:true}}</span>
+  <bk-input-calculator position="middle" [placeholder]="placeholder" [value]="inputValue"
+                       (changeInputValue)="changeValue($event)" (validInputValue)="changeValueValidation($event)"></bk-input-calculator>
   <span class="input-group-btn" *ngIf="showAlternativeCurrenciesButton()">
-    <span class="btn btn-default alternative-currencies" type="button" [attr.disabled]="disableAlternativeCurrencies(balanceValue.value)" (click)="openCurrenciesPopup(balanceValue.value)">
+    <span class="btn btn-default alternative-currencies" type="button" [attr.disabled]="disableAlternativeCurrencies()" (click)="openCurrenciesPopup()">
       <span *ngIf="!alternativeCurrencyLoading">Валюты</span>
       <bk-spinner [display]="alternativeCurrencyLoading" [size]="20"></bk-spinner>
     </span>

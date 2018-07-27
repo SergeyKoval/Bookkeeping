@@ -5,6 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CurrencyValuePipe implements PipeTransform {
   public transform(value: number, fixedSize?: number, skipDecimalZeros?: boolean): string {
+    if (!value) {
+      return null;
+    }
+
     let stringValue: string = fixedSize || fixedSize === 0 ? Number(value).toFixed(fixedSize) : value.toString();
     if (skipDecimalZeros && stringValue.includes('.')) {
       while (stringValue.endsWith('0')) {

@@ -1,7 +1,7 @@
 <div class="input-group">
   <bk-template-variable #showCalculator [value]="showCalculation()"></bk-template-variable>
   <input type="text" [ngClass]="getInputClass(showCalculator.value)" [placeholder]="placeholder"
-         (input)="changeInput($event.data)" (blur)="blurOrEnterClick()" (keyup.enter)="blurOrEnterClick()" #inputValue>
+         (input)="changeInput()" (blur)="blurOrEnterClick()" (keyup.enter)="blurOrEnterClick()" #inputValue>
   <span class="input-group-addon" [ngClass]="{'no-right-radius': this.position === 'left' || this.position === 'middle'}" *ngIf="showCalculator.value">
     = {{calculateValue() | currencyValue:floatingPoint:skipDecimalZeros}}
   </span>

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SimpleResponse {
+    private static final String ALREADY_EXIST = "ALREADY_EXIST";
     private static final String ERROR = "ERROR";
     private enum Status {
         SUCCESS, FAIL
@@ -29,6 +30,10 @@ public class SimpleResponse {
 
     public static SimpleResponse fail(String message) {
         return new SimpleResponse(Status.FAIL, message);
+    }
+
+    public static SimpleResponse alreadyExistsFail() {
+        return new SimpleResponse(Status.FAIL, ALREADY_EXIST);
     }
 
     public static SimpleResponse fail() {

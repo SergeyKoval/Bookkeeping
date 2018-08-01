@@ -60,15 +60,19 @@ export class BudgetComponent implements OnInit {
   public openPlanDialog(): void {
     if (!this.loading) {
       this._dialogService.openDialog(PlanBudgetDialogComponent, {
+        panelClass: 'budget-plan-dialog',
         width: '400px',
         position: {top: 'top'},
         data: {
           'editMode': false,
-          'type': 'category'
+          'type': 'category',
+          'budget': this.budget
         }
       }).afterClosed()
-        .subscribe(() => {
-          this.loading = false;
+        .subscribe(refreshBudget => {
+          if (refreshBudget === true) {
+            this.loadBudget();
+          }
         });
     }
   }
@@ -85,7 +89,7 @@ export class BudgetComponent implements OnInit {
   private updateMonthProgress(): void {
     const now: Date = new Date();
     const currentMonth: boolean = now.getFullYear() === this.selectedYear && now.getMonth() === this.selectedMonth;
-    const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(this.selectedYear, this.selectedMonth) * 100) : 0;
+    const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(this.selectedYear, this.selectedMonth + 1) * 100) : 0;
     this.monthProgress = {'currentMonth': currentMonth, 'monthPercent': monthPercent};
   }
 }

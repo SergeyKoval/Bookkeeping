@@ -97,7 +97,7 @@ public class UserService implements UserAPI, UserDetailsService {
     public SimpleResponse includeCurrency(String login, Currency currency) {
         List<UserCurrency> currencies = userRepository.getUserCurrencies(login).getCurrencies();
         if (currencies.stream().anyMatch(userCurrency -> userCurrency.getName().equals(currency))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
         Optional<UserCurrency> maxOrder = currencies.stream().max(Comparator.comparingInt(UserCurrency::getOrder));
         UserCurrency newCurrency = new UserCurrency(currency, false, maxOrder.map(UserCurrency::getOrder).orElse(0) + 1);
@@ -181,7 +181,7 @@ public class UserService implements UserAPI, UserDetailsService {
     public SimpleResponse addAccount(String login, String title) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         if (accounts.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), title))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         int order = 1 + accounts.stream()
@@ -198,7 +198,7 @@ public class UserService implements UserAPI, UserDetailsService {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, oldTitle, getAccountError(login, oldTitle));
         if (accounts.stream().anyMatch(userAccount -> StringUtils.equals(userAccount.getTitle(), newTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         Query query = Query.query(Criteria.where("email").is(login));
@@ -262,7 +262,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         List<SubAccount> subAccounts = account.getSubAccounts();
         if (subAccounts.stream().anyMatch(subAccount -> StringUtils.equals(subAccount.getTitle(), subAccountTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         balance.entrySet().removeIf(entry -> entry.getValue() == 0);
@@ -310,7 +310,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         List<SubAccount> subAccounts = account.getSubAccounts();
         if (!StringUtils.equals(oldSubAccountTitle, newSubAccountTitle) && subAccounts.stream().anyMatch(subAccount -> StringUtils.equals(subAccount.getTitle(), newSubAccountTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
         SubAccount subAccount = chooseItem(subAccounts, oldSubAccountTitle, getSubAccountError(login, accountTitle, oldSubAccountTitle));
 
@@ -391,7 +391,7 @@ public class UserService implements UserAPI, UserDetailsService {
     public SimpleResponse addCategory(String login, String categoryTitle, String icon) {
         List<Category> categories = userRepository.getUserCategories(login).getCategories();
         if (categories.stream().anyMatch(userCategory -> StringUtils.equals(userCategory.getTitle(), categoryTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         int order = 1 + categories.stream()
@@ -408,7 +408,7 @@ public class UserService implements UserAPI, UserDetailsService {
         List<Category> categories = userRepository.getUserCategories(login).getCategories();
         Category category = chooseItem(categories, oldCategoryTitle, getAccountError(login, oldCategoryTitle));
         if (!StringUtils.equals(oldCategoryTitle, newCategoryTitle) && categories.stream().anyMatch(userCategory -> StringUtils.equals(userCategory.getTitle(), newCategoryTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
         if (StringUtils.equals(oldCategoryTitle, newCategoryTitle) && StringUtils.equals(category.getIcon(), icon)) {
             return SimpleResponse.success();
@@ -468,7 +468,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         List<SubCategory> subCategories = category.getSubCategories();
         if (subCategories.stream().anyMatch(subCategory -> subCategoryType.equals(subCategory.getType()) && StringUtils.equals(subCategory.getTitle(), subCategoryTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         int order = 1 + subCategories.stream()
@@ -487,7 +487,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         List<SubCategory> subCategories = category.getSubCategories();
         if (!StringUtils.equals(oldSubCategoryTitle, newSubCategoryTitle) && subCategories.stream().anyMatch(subCategory -> subCategoryType.equals(subCategory.getType()) && StringUtils.equals(subCategory.getTitle(), newSubCategoryTitle))) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         SubCategory subCategory = chooseSubCategory(subCategories, oldSubCategoryTitle, subCategoryType, getSubAccountError(login, categoryTitle, oldSubCategoryTitle));
@@ -556,7 +556,7 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public SimpleResponse addUser(String email, String password, List<UserPermission> roles) {
         if (userRepository.existsById(email)) {
-            return SimpleResponse.fail("ALREADY_EXIST");
+            return SimpleResponse.alreadyExistsFail();
         }
 
         userRepository.save(new User(email, passwordEncoder.encode(password), roles));

@@ -20,8 +20,8 @@ type BudgetCategory = {
 };
 
 type BudgetBalance = {
-  value: number,
-  completeValue: number
+  value?: number,
+  completeValue?: number
   currency?: string,
 };
 

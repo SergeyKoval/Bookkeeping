@@ -5,8 +5,8 @@ package by.bk.entity.currency;
  */
 public enum Currency {
     BYN("Byn"),
-    USD("&#x24;"),
-    EUR("&euro;"),
+    USD("&#36;"),
+    EUR("&#8364;"),
     RUB("&#8381;");
 
     private final String symbol;

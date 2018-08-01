@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CurrencyValuePipe implements PipeTransform {
   public transform(value: number, fixedSize?: number, skipDecimalZeros?: boolean): string {
-    if (!value) {
+    if (!value && value !== 0) {
       return null;
     }
 

@@ -24,4 +24,12 @@ export class BudgetService {
   public toggleBudgetDetails(budgetId: string, type: string, opened: boolean): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/budget/toggleBudgetDetails', {'budgetId': budgetId, 'type': type, 'opened': opened});
   }
+
+  public addBudgetCategory(budgetId: string, budgetType: string, categoryTitle: string, currencyBalance: BudgetBalance[]): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/addBudgetCategory', {'budgetId': budgetId, 'budgetType': budgetType, 'categoryTitle': categoryTitle, 'currencyBalance': currencyBalance});
+  }
+
+  public editBudgetCategory(budgetId: string, budgetType: string, categoryTitle: string, currencyBalance: BudgetBalance[]): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/editBudgetCategory', {'budgetId': budgetId, 'budgetType': budgetType, 'categoryTitle': categoryTitle, 'currencyBalance': currencyBalance});
+  }
 }

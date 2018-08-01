@@ -4,11 +4,11 @@
 @media (min-width: 768px) and (max-width: 992px) {}
 @media (min-width: 992px) and (max-width: 1200px) {}
 
-.history-add-edit-dialog mat-dialog-container {
+.history-add-edit-dialog mat-dialog-container, .budget-plan-dialog mat-dialog-container {
   overflow: visible !important;
 }
 
-.history-add-edit-dialog {
+.history-add-edit-dialog, .budget-plan-dialog {
   max-width: none !important;
 }
 

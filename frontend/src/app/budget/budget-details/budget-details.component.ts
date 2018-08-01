@@ -10,6 +10,8 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
+import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
+import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-budget-details',
@@ -34,7 +36,8 @@ export class BudgetDetailsComponent implements OnInit {
     private _currencyService: CurrencyService,
     private _budgetService: BudgetService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _dialogService: DialogService
   ) {}
 
   public ngOnInit(): void {
@@ -147,5 +150,23 @@ export class BudgetDetailsComponent implements OnInit {
         this._alertService.addAlert(AlertType.WARNING, 'Ошибка при отправке данных на сервер');
       }
     });
+  }
+
+  public openCategoryEditDialog(category: BudgetCategory): void {
+    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+      panelClass: 'budget-plan-dialog',
+      width: '400px',
+      position: {top: 'top'},
+      data: {
+        'editMode': true,
+        'type': 'category',
+        'budgetType': this.type,
+        'category': category,
+        'budget': this.budget
+      }
+    }).afterClosed()
+      .subscribe(() => {
+        // this.loading = false;
+      });
   }
 }

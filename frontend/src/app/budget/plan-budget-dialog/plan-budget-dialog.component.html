@@ -4,60 +4,66 @@
 </h2>
 <mat-dialog-content id="budget-plan-dialog">
   <ul class="nav nav-tabs nav-justified">
-    <li role="presentation" class="active"><a>Категория</a></li>
-    <li role="presentation"><a>Цель</a></li>
-    <li role="presentation"><a>Лимит</a></li>
+    <li role="presentation" [ngClass]="{'active': data.type === 'category', 'disabled': data.editMode}" (click)="onChangeSelectedType('category')"><a>Категория</a></li>
+    <li role="presentation" [ngClass]="{'active': data.type === 'goal', 'disabled': data.editMode}" (click)="onChangeSelectedType('goal')"><a>Цель</a></li>
+    <li role="presentation" [ngClass]="{'active': data.type === 'limit', 'disabled': data.editMode}" (click)="onChangeSelectedType('limit')"><a>Лимит</a></li>
   </ul>
 
-  <!--Category-->
-  <div>
-    <div class="table">
-      <div class="row">
-        <div class="col-sm-12">
-          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Тип<span class="caret"></span>
-          </span>
-          <ul class="dropdown-menu full-width-dropdown">
-            <li><a>Доход</a></li>
-            <li><a>Расход</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-12">
-          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Категория<span class="caret"></span>
-          </span>
-          <ul class="dropdown-menu full-width-dropdown">
-            <li><a>Дети</a></li>
-            <li><a>Автомобиль</a></li>
-          </ul>
-        </div>
-      </div>
+  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errors}}</strong>
+  </div>
 
-      <div class="row">
-        <div  class="col-sm-12">
-          <div class="input-group">
-            <div class="input-group-btn">
-              <span class="btn btn-default glyphicon glyphicon-plus" type="button"></span>
-              <span class="btn btn-default glyphicon glyphicon-minus" type="button"></span>
-              <span type="button" class="btn btn-default dropdown-toggle currency-dropdown multiple-currencies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="float-left">Валюта</span> <span class="caret"></span>
+  <div class="table">
+    <div class="row">
+      <div class="col-sm-12">
+        <span type="button" class="btn btn-default dropdown-toggle full-width" [ngClass]="{'disabled': data.editMode}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span [ngClass]="budgetType">{{getBudgetTypeName(budgetType)}}</span><span class="caret"></span>
+        </span>
+        <ul class="dropdown-menu full-width-dropdown">
+          <li><a class="text-center income" (click)="changeBudgetType('income')">{{getBudgetTypeName('income')}}</a></li>
+          <li><a class="text-center expense" (click)="changeBudgetType('expense')">{{getBudgetTypeName('expense')}}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!--Category-->
+    <div class="row" *ngIf="data.type === 'category'">
+      <div class="col-sm-12">
+        <span type="button" class="btn btn-default dropdown-toggle full-width" [ngClass]="{'disabled': data.editMode || !budgetType || typeCategories.length === 0}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span [ngClass]="categoryTitle ? budgetType : ''">{{categoryTitle ? categoryTitle : (typeCategories.length === 0 ? 'Нету доступных категорий' : 'Категория')}}</span><span class="caret"></span>
+        </span>
+        <ul class="dropdown-menu full-width-dropdown">
+          <li *ngFor="let category of typeCategories"><a class="text-center" (click)="changeCategory(category)" [ngClass]="budgetType">{{category.title}}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row" *ngFor="let balance of currencyBalance">
+      <div  class="col-sm-12">
+        <div class="input-group" *ngIf="data.type !== 'goal'">
+          <div class="input-group-btn">
+            <span class="btn btn-default glyphicon glyphicon-plus" type="button" (click)="addCurrency()"></span>
+            <span class="btn btn-default glyphicon glyphicon-minus" type="button" (click)="removeCurrency(balance)"></span>
+            <span type="button" class="btn btn-default dropdown-toggle currency-dropdown multiple-currencies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="float-left">
+                <bk-currency-symbol class="currency-selected-value" *ngIf="balance.currency" [currencyName]="balance.currency"></bk-currency-symbol>
+                <span *ngIf="!balance.currency">Валюта</span>
               </span>
-              <ul class="dropdown-menu currency-dropdown-menu multiple-currencies">
-                <li><a href="#">Byn</a></li>
-                <li><a href="#">$</a></li>
-              </ul>
-            </div>
-            <bk-input-calculator position="right" placeholder="Сумма"></bk-input-calculator>
+              <span class="caret">
+            </span>
+            </span>
+            <ul class="dropdown-menu currency-dropdown-menu multiple-currencies">
+              <li *ngFor="let currency of currencies" (click)="balance.currency = currency.name"><a><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></a></li>
+            </ul>
           </div>
+          <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" (changeInputValue)="balance.completeValue = $event"></bk-input-calculator>
         </div>
       </div>
     </div>
   </div>
 
   <!--Goal-->
-  <div>
+  <div *ngIf="data.type === 'goal'">
     <div class="table">
       <div class="row">
         <div class="col-sm-12">
@@ -119,7 +125,7 @@
   </div>
 
   <!--limit-->
-  <div>
+  <div *ngIf="data.type === 'limit'">
     <div class="table">
       <div class="row">
         <div class="col-sm-12">

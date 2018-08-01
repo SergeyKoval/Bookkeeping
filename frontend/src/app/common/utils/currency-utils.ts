@@ -5,6 +5,7 @@ export class CurrencyUtils {
   public static CALCULATION_PATTERN: RegExp = new RegExp('[\\+\\-\\*\\/]');
   public static ILLEGAL_CALCULATION_SYMBOLS_PATTERN: RegExp = new RegExp('[^0-9\\+\\-\\*\\/\\.\\,\']');
   public static LAST_SYMBOL_PATTERN: RegExp = new RegExp('[\\+\\-\\*\\/\\.\\,\']$');
+  public static HTML_SYMBOL_NUMBER_PATTERN: RegExp = new RegExp('&#(\\d+);');
 
   public static convertValue(value: string): number {
     value = value.replace(/\'/g, '').replace(/\,/g, '.');
@@ -26,5 +27,14 @@ export class CurrencyUtils {
     }
 
     return Math.round(((value || 0) * alternativeCurrencies[resultCurrency]) * 100) / 100 ;
+  }
+
+  public static convertCodeToSymbol(htmlCode: string): string {
+    if (!CurrencyUtils.HTML_SYMBOL_NUMBER_PATTERN.test(htmlCode)) {
+      return htmlCode;
+    }
+
+    const htmlCodeNumber: number = Number(CurrencyUtils.HTML_SYMBOL_NUMBER_PATTERN.exec(htmlCode)[1]);
+    return String.fromCharCode(htmlCodeNumber);
   }
 }

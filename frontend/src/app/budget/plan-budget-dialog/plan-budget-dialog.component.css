@@ -41,6 +41,10 @@
   padding-right: 6px;
 }
 
+.currency-selected-value {
+  padding-left: 17px;
+}
+
 .currency-dropdown.multiple-currencies {
   margin-top: -1px;
 }
@@ -114,4 +118,21 @@
 .glyphicon {
   cursor: pointer;
   color: #5e5e5e;
+}
+
+.income {
+  color: #009900;
+}
+
+.expense {
+  color: #dd0000;
+}
+
+.error {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+#budget-plan-dialog {
+  overflow: visible !important;
 }

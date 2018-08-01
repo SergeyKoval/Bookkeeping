@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
-import { Subject, ReplaySubject, Observable, of } from 'rxjs';
+import { Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/internal/operators';
 

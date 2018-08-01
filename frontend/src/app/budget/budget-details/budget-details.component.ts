@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 import { filter, tap } from 'rxjs/internal/operators';
+import { Subject } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CurrencyService } from '../../common/service/currency.service';
@@ -25,6 +26,9 @@ export class BudgetDetailsComponent implements OnInit {
   public type: string;
   @Input()
   public monthProgress: MonthProgress;
+
+  @Output()
+  public updateBudget: Subject<boolean> = new Subject();
 
   public budgetDetails: BudgetDetails;
   public hasGoals: boolean = false;
@@ -165,8 +169,8 @@ export class BudgetDetailsComponent implements OnInit {
         'budget': this.budget
       }
     }).afterClosed()
-      .subscribe(() => {
-        // this.loading = false;
+      .subscribe(refreshBudget => {
+        this.updateBudget.next(refreshBudget);
       });
   }
 }

@@ -23,7 +23,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   public currencies: CurrencyDetail[];
   public categories: Category[];
   public typeCategories: Category[] = [];
-  public currencyBalance: BudgetBalance[] = [];
+  public currencyBalance: BudgetBalance[] = [{}];
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, budgetType: string, category: BudgetCategory, budget: Budget},
@@ -42,7 +42,7 @@ export class PlanBudgetDialogComponent implements OnInit {
         this.categoryTitle = this.data.category.title;
         of(this.data.category.balance).pipe(
           map(categoryBalance => Object.keys(categoryBalance).map(currency => {
-            const currencyBalanceItem: BudgetBalance = categoryBalance[currency];
+            const currencyBalanceItem: BudgetBalance = Object.assign({}, categoryBalance[currency]);
             currencyBalanceItem.currency = currency;
             return currencyBalanceItem;
         }))).subscribe(value => this.currencyBalance = value);
@@ -122,15 +122,6 @@ export class PlanBudgetDialogComponent implements OnInit {
         // result = this.validateLimit();
         break;
     }
-    //
-    // if (result === true) {
-    //   const loadingDialog: MatDialogRef<LoadingDialogComponent> =
-    //   if (this.data.editMode) {
-    //
-    //   } else {
-    //     this._budgetService.addBudgetPlan(this.data.type, )
-    //   }
-    // }
   }
 
   private validateCategory(): boolean {
@@ -169,7 +160,24 @@ export class PlanBudgetDialogComponent implements OnInit {
       return false;
     }).length === 0;
 
-    return balanceValidation;
+    if (balanceValidation && this.data.editMode) {
+      const balanceMap: {} = this.currencyBalance.reduce((resultMap, balance) => {
+        resultMap[balance.currency] = balance;
+        return resultMap;
+      }, {});
+      const budgetBalance: BudgetBalance = this.data.category.balance;
+      Object.keys(budgetBalance).forEach(currency => {
+        if (!this.errors) {
+          const usedValue: number = budgetBalance[currency].value;
+          const planCurrency: BudgetBalance = balanceMap[currency];
+          if (usedValue > 0 && (!planCurrency || planCurrency.completeValue < usedValue)) {
+            this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} = ${usedValue}`;
+          }
+        }
+      });
+    }
+
+    return balanceValidation && !this.errors;
   }
 
   private validateGoal(): boolean {

@@ -1,11 +1,9 @@
 package by.bk.entity.budget;
 
 import by.bk.controller.model.response.SimpleResponse;
-import by.bk.entity.budget.exception.BudgetMissedException;
-import by.bk.entity.budget.exception.CategoryMissedException;
-import by.bk.entity.budget.exception.GoalMissedException;
-import by.bk.entity.budget.exception.UnsupportedBudgetTypeException;
+import by.bk.entity.budget.exception.*;
 import by.bk.entity.budget.model.*;
+import by.bk.entity.currency.Currency;
 import by.bk.entity.history.HistoryType;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +16,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Sergey Koval
@@ -43,10 +44,7 @@ public class BudgetService implements BudgetAPI {
     public SimpleResponse changeGoalDoneStatus(String login, String budgetId, HistoryType type, String categoryTitle, String goalTitle, boolean doneStatus) {
         Budget budget = validateAndGetBudget(login, budgetId);
         BudgetDetails budgetDetails = chooseBudgetDetails(budget, type);
-        BudgetCategory category = budgetDetails.getCategories().stream()
-                .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), categoryTitle))
-                .findFirst()
-                .orElseThrow(() -> new CategoryMissedException(login, budgetId, categoryTitle));
+        BudgetCategory category = chooseBudgetCategory(budgetDetails, categoryTitle, login, budgetId);
         BudgetGoal goal = category.getGoals().stream()
                 .filter(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))
                 .findFirst()
@@ -94,6 +92,45 @@ public class BudgetService implements BudgetAPI {
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
+    @Override
+    public SimpleResponse editBudgetCategory(String login, String budgetId, HistoryType type, String categoryTitle, List<CurrencyBalanceValue> currencyBalances) {
+        BudgetDetails budgetDetails = chooseBudgetDetails(validateAndGetBudget(login, budgetId), type);
+        BudgetCategory category = chooseBudgetCategory(budgetDetails, categoryTitle, login, budgetId);
+
+        Map<Currency, CurrencyBalanceValue> updateBalances = currencyBalances.stream().collect(Collectors.toMap(CurrencyBalanceValue::getCurrency, currencyBalanceValue -> currencyBalanceValue));
+        category.getBalance().forEach((currency, balanceValue) -> {
+            Double usedValue = balanceValue.getValue();
+            if (usedValue > 0 && (!updateBalances.containsKey(currency) || updateBalances.get(currency).getCompleteValue() < usedValue)) {
+                LOG.error("Trying to update category with complete currency value less then already used.");
+                throw new InvalidBudgetPlanningException(login, budgetId, categoryTitle, currency, usedValue, updateBalances.get(currency).getCompleteValue());
+            }
+        });
+
+        Map<Currency, Double> budgetPlan = new HashMap<>();
+        Map<Currency, BalanceValue> categoryPlan = new HashMap<>();
+        category.getBalance().forEach((currency, balanceValue) -> budgetPlan.put(currency, balanceValue.getCompleteValue() * -1));
+
+        currencyBalances.forEach(currencyBalance -> {
+            Currency currency = currencyBalance.getCurrency();
+            Double newCompleteValue = currencyBalance.getCompleteValue();
+
+            budgetPlan.compute(currency, (budgetPlanCurrency, value) -> value == null ? newCompleteValue : value + newCompleteValue);
+            BalanceValue balanceValue = category.getBalance().get(currency);
+            categoryPlan.put(currency, new BalanceValue(balanceValue != null ? balanceValue.getValue() : 0, newCompleteValue));
+        });
+
+        Query query = Query.query(Criteria.where("id").is(budgetId));
+        Update update = Update.update(StringUtils.join(type.name(), ".categories.", budgetDetails.getCategories().indexOf(category), ".balance"), categoryPlan);
+        budgetPlan.forEach((currency, value) -> {
+            String preffix = StringUtils.join( type.name(), ".balance.", currency);
+            update.inc(preffix + ".value", 0d);
+            update.inc(preffix + ".completeValue", value);
+        });
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
     private Budget initEmptyMonthBudget(String login, int year, int month) {
         Budget budget = new Budget(login, year, month);
         return budgetRepository.save(budget);
@@ -123,5 +160,12 @@ public class BudgetService implements BudgetAPI {
             default:
                 throw new UnsupportedBudgetTypeException(budget.getUser(), budget.getId(), type.name());
         }
+    }
+
+    private BudgetCategory chooseBudgetCategory(BudgetDetails budgetDetails, String categoryTitle, String login, String budgetId) {
+        return budgetDetails.getCategories().stream()
+                .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), categoryTitle))
+                .findFirst()
+                .orElseThrow(() -> new CategoryMissedException(login, budgetId, categoryTitle));
     }
 }

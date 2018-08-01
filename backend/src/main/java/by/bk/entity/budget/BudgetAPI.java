@@ -16,4 +16,5 @@ public interface BudgetAPI {
     SimpleResponse toggleBudgetDetails(String login, String budgetId, HistoryType type, boolean opened);
 
     SimpleResponse addBudgetCategory(String login, String budgetId, HistoryType type, String categoryTitle, List<CurrencyBalanceValue> currencyBalances);
+    SimpleResponse editBudgetCategory(String login, String budgetId, HistoryType type, String categoryTitle, List<CurrencyBalanceValue> currencyBalances);
 }

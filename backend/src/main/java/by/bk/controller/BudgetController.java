@@ -46,4 +46,9 @@ public class BudgetController extends BaseAPIController {
     public SimpleResponse addBudgetCategory(@RequestBody BudgetCategoryRequest request, Principal principal) {
         return budgetAPI.addBudgetCategory(principal.getName(), request.getBudgetId(), request.getBudgetType(), request.getCategoryTitle(), request.getCurrencyBalance());
     }
+
+    @PostMapping("/editBudgetCategory")
+    public SimpleResponse editBudgetCategory(@RequestBody BudgetCategoryRequest request, Principal principal) {
+        return budgetAPI.editBudgetCategory(principal.getName(), request.getBudgetId(), request.getBudgetType(), request.getCategoryTitle(), request.getCurrencyBalance());
+    }
 }

@@ -27,7 +27,7 @@ export class BudgetComponent implements OnInit {
     const now: Date = new Date();
     this.selectedYear = now.getFullYear();
     this.selectedMonth = now.getMonth();
-    this.loadBudget();
+    this.loadBudget(true);
   }
 
   public getSelectedMonth(): string {
@@ -37,7 +37,7 @@ export class BudgetComponent implements OnInit {
   public chooseMonth(monthIndex: number): void {
     if (this.selectedMonth !== monthIndex) {
       this.selectedMonth = monthIndex;
-      this.loadBudget();
+      this.loadBudget(true);
     }
   }
 
@@ -45,7 +45,7 @@ export class BudgetComponent implements OnInit {
     if (!this.loading) {
       this.selectedYear--;
       this.selectedMonth = 11;
-      this.loadBudget();
+      this.loadBudget(true);
     }
   }
 
@@ -53,7 +53,7 @@ export class BudgetComponent implements OnInit {
     if (!this.loading) {
       this.selectedYear++;
       this.selectedMonth = 0;
-      this.loadBudget();
+      this.loadBudget(true);
     }
   }
 
@@ -71,19 +71,21 @@ export class BudgetComponent implements OnInit {
       }).afterClosed()
         .subscribe(refreshBudget => {
           if (refreshBudget === true) {
-            this.loadBudget();
+            this.loadBudget(true);
           }
         });
     }
   }
 
-  private loadBudget(): void {
-    this.loading = true;
-    this.updateMonthProgress();
-    this._budgetService.loadBudget(this.selectedYear, this.selectedMonth + 1).subscribe((budget: Budget) => {
-      this.budget = budget;
-      this.loading = false;
-    });
+  public loadBudget(refresh: boolean): void {
+    if (refresh === true) {
+      this.loading = true;
+      this.updateMonthProgress();
+      this._budgetService.loadBudget(this.selectedYear, this.selectedMonth + 1).subscribe((budget: Budget) => {
+        this.budget = budget;
+        this.loading = false;
+      });
+    }
   }
 
   private updateMonthProgress(): void {

@@ -17,8 +17,8 @@
 }
 
 .full-width-dropdown {
-  width: 360px;
-  left: 15px;
+  width: 260px;
+  left: 100px;
 }
 
 .currency-dropdown[aria-expanded="true"] {
@@ -120,17 +120,37 @@
   color: #5e5e5e;
 }
 
+.btn.text-left {
+  text-align: left;
+}
+
 .income {
   color: #009900;
+  text-align: left;
 }
 
 .expense {
   color: #dd0000;
+  text-align: left;
 }
 
 .error {
   margin-top: 10px;
   margin-bottom: 0;
+}
+
+.dropdown-addon {
+  width: 100px;
+}
+
+.dropdown-with-addon {
+  width: 260px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.icon {
+  padding-right: 5px;
 }
 
 #budget-plan-dialog {

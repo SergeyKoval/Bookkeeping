@@ -100,6 +100,10 @@ export class PlanBudgetDialogComponent implements OnInit {
     this._dialogRef.close(refreshBudget);
   }
 
+  public getCategoryIcon(title: string): string {
+    return this._profileService.getCategoryIcon(title);
+  }
+
   public save(): void {
     let loadingDialog: MatDialogRef<LoadingDialogComponent>;
     this.errors = null;

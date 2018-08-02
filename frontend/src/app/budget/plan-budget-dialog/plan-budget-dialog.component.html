@@ -16,25 +16,38 @@
   <div class="table">
     <div class="row">
       <div class="col-sm-12">
-        <span type="button" class="btn btn-default dropdown-toggle full-width" [ngClass]="{'disabled': data.editMode}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span [ngClass]="budgetType">{{getBudgetTypeName(budgetType)}}</span><span class="caret"></span>
-        </span>
-        <ul class="dropdown-menu full-width-dropdown">
-          <li><a class="text-center income" (click)="changeBudgetType('income')">{{getBudgetTypeName('income')}}</a></li>
-          <li><a class="text-center expense" (click)="changeBudgetType('expense')">{{getBudgetTypeName('expense')}}</a></li>
-        </ul>
+        <div class="input-group">
+          <span class="input-group-addon dropdown-addon">Тип:</span>
+          <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" [ngClass]="{'disabled': data.editMode, 'text-left': budgetType}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span [ngClass]="budgetType">{{getBudgetTypeName(budgetType)}}</span><span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li><a class="income" (click)="changeBudgetType('income')">{{getBudgetTypeName('income')}}</a></li>
+            <li><a class="expense" (click)="changeBudgetType('expense')">{{getBudgetTypeName('expense')}}</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 
     <!--Category-->
     <div class="row" *ngIf="data.type === 'category'">
       <div class="col-sm-12">
-        <span type="button" class="btn btn-default dropdown-toggle full-width" [ngClass]="{'disabled': data.editMode || !budgetType || typeCategories.length === 0}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span [ngClass]="categoryTitle ? budgetType : ''">{{categoryTitle ? categoryTitle : (typeCategories.length === 0 ? 'Нету доступных категорий' : 'Категория')}}</span><span class="caret"></span>
-        </span>
-        <ul class="dropdown-menu full-width-dropdown">
-          <li *ngFor="let category of typeCategories"><a class="text-center" (click)="changeCategory(category)" [ngClass]="budgetType">{{category.title}}</a></li>
-        </ul>
+        <div class="input-group">
+          <span class="input-group-addon dropdown-addon">Категория:</span>
+          <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                [ngClass]="{'disabled': data.editMode || !budgetType || typeCategories.length === 0, 'text-left': categoryTitle}">
+            <img *ngIf="categoryTitle" class="icon" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
+            <span [ngClass]="categoryTitle ? budgetType : ''">{{categoryTitle ? categoryTitle : (typeCategories.length === 0 ? 'Нету доступных категорий' : 'Категория')}}</span>
+            <span class="caret"></span>
+          </span>
+          <ul class="dropdown-menu full-width-dropdown">
+            <li *ngFor="let category of typeCategories">
+              <a class="text-center" (click)="changeCategory(category)" [ngClass]="budgetType">
+                <img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'">{{category.title}}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 

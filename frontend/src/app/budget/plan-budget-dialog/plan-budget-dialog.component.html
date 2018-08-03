@@ -14,6 +14,25 @@
   </div>
 
   <div class="table">
+    <!--Goal-->
+    <div class="row" *ngIf="data.type === 'goal'">
+      <div class="col-sm-12">
+        <div class="input-group right-button-group">
+            <span class="input-group-btn">
+              <span type="button" class="btn btn-default dropdown-toggle month-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="float-left">Июль</span> <span class="caret"></span>
+              </span>
+              <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
+                <li><a>Август</a></li>
+              </ul>
+              <span class="btn btn-default glyphicon glyphicon-menu-left decrease-year" type="button"></span>
+            </span>
+          <span class="input-group-addon year-aria">2018</span>
+          <span class="btn btn-default glyphicon glyphicon-menu-right increase-year" type="button"></span>
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-sm-12">
         <div class="input-group">
@@ -29,8 +48,8 @@
       </div>
     </div>
 
-    <!--Category-->
-    <div class="row" *ngIf="data.type === 'category'">
+    <!--Category or goal-->
+    <div class="row" *ngIf="data.type !== 'limit'">
       <div class="col-sm-12">
         <div class="input-group">
           <span class="input-group-addon dropdown-addon">Категория:</span>
@@ -51,123 +70,35 @@
       </div>
     </div>
 
+    <!--Goal-->
+    <div class="row" *ngIf="data.type === 'goal'">
+      <div class="col-sm-12">
+        <div class="input-group full-width">
+          <span class="input-group-addon dropdown-addon" id="basic-addon1">Название:</span>
+          <input type="text" class="form-control" placeholder="Название цели" aria-describedby="basic-addon1">
+        </div>
+      </div>
+    </div>
+
     <div class="row" *ngFor="let balance of currencyBalance">
       <div  class="col-sm-12">
-        <div class="input-group" *ngIf="data.type !== 'goal'">
+        <div class="input-group">
           <div class="input-group-btn">
-            <span class="btn btn-default glyphicon glyphicon-plus" type="button" (click)="addCurrency()"></span>
-            <span class="btn btn-default glyphicon glyphicon-minus" type="button" (click)="removeCurrency(balance)"></span>
-            <span type="button" class="btn btn-default dropdown-toggle currency-dropdown multiple-currencies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="btn btn-default glyphicon glyphicon-plus" type="button" (click)="addCurrency()"  *ngIf="data.type !== 'goal'"></span>
+            <span class="btn btn-default glyphicon glyphicon-minus" type="button" (click)="removeCurrency(balance)"  *ngIf="data.type !== 'goal'"></span>
+            <span type="button" [ngClass]="{'single-currency': data.type === 'goal', 'multiple-currencies': data.type !== 'goal'}" class="btn btn-default dropdown-toggle currency-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="float-left">
-                <bk-currency-symbol class="currency-selected-value" *ngIf="balance.currency" [currencyName]="balance.currency"></bk-currency-symbol>
+                <bk-currency-symbol [ngClass]="{'currency-selected-value': data.type !== 'goal'}" *ngIf="balance.currency" [currencyName]="balance.currency"></bk-currency-symbol>
                 <span *ngIf="!balance.currency">Валюта</span>
               </span>
               <span class="caret">
             </span>
             </span>
-            <ul class="dropdown-menu currency-dropdown-menu multiple-currencies">
+            <ul [ngClass]="{'single-currency': data.type === 'goal', 'multiple-currencies': data.type !== 'goal'}" class="dropdown-menu currency-dropdown-menu">
               <li *ngFor="let currency of currencies" (click)="balance.currency = currency.name"><a><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></a></li>
             </ul>
           </div>
           <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" (changeInputValue)="balance.completeValue = $event"></bk-input-calculator>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--Goal-->
-  <div *ngIf="data.type === 'goal'">
-    <div class="table">
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="input-group right-button-group">
-            <span class="input-group-btn">
-              <span type="button" class="btn btn-default dropdown-toggle month-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="float-left">Июль</span> <span class="caret"></span>
-              </span>
-              <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
-                <li><a>Август</a></li>
-              </ul>
-              <span class="btn btn-default glyphicon glyphicon-menu-left decrease-year" type="button"></span>
-            </span>
-            <span class="input-group-addon year-aria">2018</span>
-            <span class="btn btn-default glyphicon glyphicon-menu-right increase-year" type="button"></span>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-12">
-          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Тип<span class="caret"></span>
-          </span>
-          <ul class="dropdown-menu full-width-dropdown">
-            <li><a>Доход</a></li>
-            <li><a>Расход</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-12">
-          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Категория<span class="caret"></span>
-          </span>
-          <ul class="dropdown-menu full-width-dropdown">
-            <li><a>Дети</a></li>
-            <li><a>Автомобиль</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="row">
-        <div  class="col-sm-12">
-          <div class="input-group">
-            <div class="input-group-btn">
-              <span type="button" class="btn btn-default dropdown-toggle currency-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="float-left">Валюта</span> <span class="caret"></span>
-              </span>
-              <ul class="dropdown-menu currency-dropdown-menu">
-                <li><a href="#">Byn</a></li>
-                <li><a href="#">$</a></li>
-              </ul>
-            </div>
-            <bk-input-calculator position="right" placeholder="Сумма"></bk-input-calculator>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--limit-->
-  <div *ngIf="data.type === 'limit'">
-    <div class="table">
-      <div class="row">
-        <div class="col-sm-12">
-          <span type="button" class="btn btn-default dropdown-toggle full-width" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Тип<span class="caret"></span>
-          </span>
-          <ul class="dropdown-menu full-width-dropdown">
-            <li><a>Доход</a></li>
-            <li><a>Расход</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="row">
-        <div  class="col-sm-12">
-          <div class="input-group">
-            <div class="input-group-btn">
-              <span class="btn btn-default glyphicon glyphicon-plus" type="button"></span>
-              <span class="btn btn-default glyphicon glyphicon-minus" type="button"></span>
-              <span type="button" class="btn btn-default dropdown-toggle currency-dropdown multiple-currencies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="float-left">Валюта</span> <span class="caret"></span>
-              </span>
-              <ul class="dropdown-menu currency-dropdown-menu multiple-currencies">
-                <li><a href="#">Byn</a></li>
-                <li><a href="#">$</a></li>
-              </ul>
-            </div>
-            <bk-input-calculator position="right" placeholder="Сумма"></bk-input-calculator>
-          </div>
         </div>
       </div>
     </div>

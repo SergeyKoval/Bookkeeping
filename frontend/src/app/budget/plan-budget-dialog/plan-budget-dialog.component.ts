@@ -20,6 +20,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   public errors: string;
   public budgetType: string;
   public categoryTitle: string;
+  public goalTitle: string;
   public currencies: CurrencyDetail[];
   public categories: Category[];
   public typeCategories: Category[] = [];
@@ -53,7 +54,12 @@ export class PlanBudgetDialogComponent implements OnInit {
   public onChangeSelectedType(type: string): void {
     if (!this.data.editMode && type !== this.data.type) {
       this.data.type = type;
-
+      this.budgetType = null;
+      this.categoryTitle = null;
+      this.goalTitle = null;
+      this.errors = null;
+      this.currencyBalance = [{}];
+      this.typeCategories = [];
     }
   }
 
@@ -61,6 +67,10 @@ export class PlanBudgetDialogComponent implements OnInit {
     if (!this.data.editMode && this.budgetType !== type) {
       this.budgetType = type;
       this.categoryTitle = null;
+      this.goalTitle = null;
+      this.errors = null;
+      this.currencyBalance = [{}];
+
       this.typeCategories = this.categories
         .filter(category => category.subCategories.filter(subCategory => subCategory.type === this.budgetType).length > 0)
         .filter(category => this.data.type !== 'category' || !this.data.budget[this.budgetType].categories.map(budgetCategory => budgetCategory.title).includes(category.title));

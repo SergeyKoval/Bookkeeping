@@ -21,24 +21,28 @@
   left: 100px;
 }
 
-.currency-dropdown[aria-expanded="true"] {
+.currency-dropdown.multiple-currencies[aria-expanded="true"] {
   border-right-width: 2px;
   width: 80px;
 }
 
-.currency-dropdown[aria-expanded="false"] .caret {
+.currency-dropdown.multiple-currencies[aria-expanded="false"] .caret {
   margin-right: 2px;
 }
 
-.currency-dropdown[aria-expanded="false"] {
+.currency-dropdown.multiple-currencies[aria-expanded="false"] {
   border-right-width: 0;
 }
 
-.currency-dropdown {
+.currency-dropdown.multiple-currencies {
   width: 80px;
   margin-right: 0;
   padding-left: 6px;
   padding-right: 6px;
+}
+
+.single-currency {
+  width: 100px;
 }
 
 .currency-selected-value {

@@ -173,4 +173,8 @@ export class BudgetDetailsComponent implements OnInit {
         this.updateBudget.next(refreshBudget);
       });
   }
+
+  public showRemoveButton(balance: {[currency: string]: BudgetBalance}): boolean {
+    return Object.values(balance).filter(budgetBalance => budgetBalance.value > 0).length === 0;
+  }
 }

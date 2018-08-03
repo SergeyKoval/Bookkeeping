@@ -42,7 +42,8 @@
             </span>
           </div>
           <span class="glyphicon glyphicon-pencil edit-button vertical-middle float-left" (click)="openCategoryEditDialog(category)"></span>
-          <span class="glyphicon glyphicon-remove delete-button vertical-middle"></span>
+          <span class="no-remove-button" *ngIf="!showRemoveButton(category.balance)"></span>
+          <span class="glyphicon glyphicon-remove delete-button vertical-middle" *ngIf="showRemoveButton(category.balance)"></span>
         </div>
 
         <div *ngIf="category.opened">

@@ -16,10 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -80,8 +77,7 @@ public class BudgetService implements BudgetAPI {
         currencyBalances.forEach(currencyBalance -> category.getBalance().put(currencyBalance.getCurrency(), new BalanceValue(0d, currencyBalance.getCompleteValue())));
 
         Query query = Query.query(Criteria.where("id").is(budgetId));
-        Update update = new Update()
-                .addToSet(type.name() + ".categories").value(category);
+        Update update = new Update().addToSet(type.name() + ".categories").value(category);
         currencyBalances.forEach(currencyBalance -> {
             String preffix = StringUtils.join( type.name(), ".balance.", currencyBalance.getCurrency());
             update.inc(preffix + ".value", 0d);
@@ -128,6 +124,50 @@ public class BudgetService implements BudgetAPI {
         });
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
 
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    @Override
+    public SimpleResponse addBudgetGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, CurrencyBalanceValue balance) {
+        Budget budget = StringUtils.isNotBlank(budgetId) ? validateAndGetBudget(login, budgetId) : getMonthBudget(login, year, month);
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, type);
+        Optional<BudgetCategory> optionalCategory = budgetDetails.getCategories().stream()
+                .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), categoryTitle))
+                .findFirst();
+
+        balance.setValue(0d);
+        Currency currency = balance.getCurrency();
+        Double balanceCompleteValue = balance.getCompleteValue();
+
+        BudgetGoal goal = new BudgetGoal();
+        goal.setTitle(goalTitle);
+        goal.setBalance(balance);
+
+        Update update = new Update();
+        if (!optionalCategory.isPresent()) {
+            BudgetCategory category = new BudgetCategory();
+            category.setTitle(categoryTitle);
+            category.getBalance().put(currency, new BalanceValue(0d, balanceCompleteValue));
+            category.getGoals().add(goal);
+
+            update.addToSet(type.name() + ".categories").value(category);
+        } else {
+            BudgetCategory category = optionalCategory.get();
+            if (category.getGoals().stream().anyMatch(budgetGoal -> StringUtils.equals(goalTitle, budgetGoal.getTitle()))) {
+                return SimpleResponse.alreadyExistsFail();
+            }
+
+            String categoryQuery = StringUtils.join(type.name(), ".categories.", budgetDetails.getCategories().indexOf(category));
+            String categoryBalanceQuery = StringUtils.join(categoryQuery, ".balance.", currency.name());
+            update.addToSet(categoryQuery + ".goals").value(goal)
+                    .inc(categoryBalanceQuery + ".value", 0d)
+                    .inc(categoryBalanceQuery + ".completeValue", balanceCompleteValue);
+        }
+
+        String balanceQuery = StringUtils.join(type.name(), ".balance.", currency.name());
+        Query query = Query.query(Criteria.where("id").is(budget.getId()));
+        update.inc(balanceQuery + ".value", 0d).inc(balanceQuery + ".completeValue", balanceCompleteValue);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 

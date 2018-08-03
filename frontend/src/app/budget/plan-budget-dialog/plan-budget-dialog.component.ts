@@ -10,6 +10,7 @@ import { LoadingService } from '../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
+import { DateUtils } from '../../common/utils/date-utils';
 
 @Component({
   selector: 'bk-plan-budget-dialog',
@@ -17,14 +18,19 @@ import { CurrencyUtils } from '../../common/utils/currency-utils';
   styleUrls: ['./plan-budget-dialog.component.css']
 })
 export class PlanBudgetDialogComponent implements OnInit {
+  public months: string[] = DateUtils.MONTHS;
+  public currencies: CurrencyDetail[];
   public errors: string;
+
+  public selectedMonth: number;
+  public selectedYear: number;
+  public goalTitle: string;
   public budgetType: string;
   public categoryTitle: string;
-  public goalTitle: string;
-  public currencies: CurrencyDetail[];
-  public categories: Category[];
   public typeCategories: Category[] = [];
   public currencyBalance: BudgetBalance[] = [{}];
+
+  private _CATEGORIES: Category[];
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, budgetType: string, category: BudgetCategory, budget: Budget},
@@ -35,7 +41,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.categories = this._profileService.authenticatedProfile.categories;
+    this._CATEGORIES = this._profileService.authenticatedProfile.categories;
     this.currencies = this._profileService.authenticatedProfile.currencies;
     if (this.data.editMode) {
       this.budgetType = this.data.budgetType;
@@ -51,6 +57,30 @@ export class PlanBudgetDialogComponent implements OnInit {
     }
   }
 
+  public chooseMonth(monthIndex: number): void {
+    if (!this.data.editMode && this.selectedMonth !== monthIndex) {
+      this.selectedMonth = monthIndex;
+    }
+  }
+
+  public getSelectedMonth(): string {
+    return this.months[this.selectedMonth];
+  }
+
+  public decreaseYear(): void {
+    if (!this.data.editMode) {
+      this.selectedYear--;
+      this.selectedMonth = 11;
+    }
+  }
+
+  public increaseYear(): void {
+    if (!this.data.editMode) {
+      this.selectedYear++;
+      this.selectedMonth = 0;
+    }
+  }
+
   public onChangeSelectedType(type: string): void {
     if (!this.data.editMode && type !== this.data.type) {
       this.data.type = type;
@@ -60,6 +90,11 @@ export class PlanBudgetDialogComponent implements OnInit {
       this.errors = null;
       this.currencyBalance = [{}];
       this.typeCategories = [];
+      if (this.data.type === 'goal') {
+        const now: Date = new Date();
+        this.selectedMonth = now.getMonth();
+        this.selectedYear = now.getFullYear();
+      }
     }
   }
 
@@ -68,10 +103,9 @@ export class PlanBudgetDialogComponent implements OnInit {
       this.budgetType = type;
       this.categoryTitle = null;
       this.goalTitle = null;
-      this.errors = null;
       this.currencyBalance = [{}];
 
-      this.typeCategories = this.categories
+      this.typeCategories = this._CATEGORIES
         .filter(category => category.subCategories.filter(subCategory => subCategory.type === this.budgetType).length > 0)
         .filter(category => this.data.type !== 'category' || !this.data.budget[this.budgetType].categories.map(budgetCategory => budgetCategory.title).includes(category.title));
     }
@@ -130,7 +164,15 @@ export class PlanBudgetDialogComponent implements OnInit {
         }
         break;
       case 'goal':
-        // result = this.validateGoal();
+        if (this.validateGoal() === true) {
+          loadingDialog = this.openLoadingFrame();
+          if (this.data.editMode) {
+            // this.processResult(loadingDialog, this._budgetService.editBudgetCategory(this.data.budget.id, this.budgetType, this.categoryTitle, this.currencyBalance));
+          } else {
+            this.processResult(loadingDialog, this._budgetService.addBudgetGoal(this.isSelectedMonth() ? this.data.budget.id : null, this.selectedYear,
+              this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.goalTitle, this.currencyBalance[0]));
+          }
+        }
         break;
       case 'limit':
         // result = this.validateLimit();
@@ -160,20 +202,7 @@ export class PlanBudgetDialogComponent implements OnInit {
       this.errors = `Валюта ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} задана более одного раза`;
     });
 
-    const balanceValidation: boolean = !this.errors && this.currencyBalance.filter(balance => {
-      if (!balance.currency && !this.errors) {
-        this.errors = 'Валюта не выбрана';
-        return true;
-      }
-
-      if ((!balance.completeValue || balance.completeValue <= 0) && !this.errors) {
-        this.errors = `Лимит для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(balance.currency).symbol)} не задан`;
-        return true;
-      }
-
-      return false;
-    }).length === 0;
-
+    const balanceValidation: boolean = this.validateBalance();
     if (balanceValidation && this.data.editMode) {
       const balanceMap: {} = this.currencyBalance.reduce((resultMap, balance) => {
         resultMap[balance.currency] = balance;
@@ -195,7 +224,41 @@ export class PlanBudgetDialogComponent implements OnInit {
   }
 
   private validateGoal(): boolean {
-    return false;
+    const now: Date = new Date();
+    if (this.selectedYear < now.getFullYear() || (this.selectedYear === now.getFullYear() && this.selectedMonth < now.getMonth())) {
+      this.errors = 'Цель для завершенного месяца';
+      return false;
+    }
+
+    if (!this.budgetType) {
+      this.errors = 'Тип не выбран';
+      return false;
+    }
+
+    if (!this.categoryTitle) {
+      this.errors = 'Категория не выбрана';
+      return false;
+    }
+
+    if (!this.goalTitle) {
+      this.errors = 'Название не задано';
+      return false;
+    }
+
+    if (this.isSelectedMonth()) {
+      const budgetSelectedCategory: BudgetCategory = this.data.budget[this.budgetType].categories.filter((category: BudgetCategory) => category.title === this.categoryTitle)[0];
+      if (budgetSelectedCategory && budgetSelectedCategory.goals.filter(goal => goal.title === this.goalTitle).length > 0) {
+        this.errors = 'Цель с таким названием уже существует';
+        return false;
+      }
+    }
+
+    const balanceValidation: boolean = this.validateBalance();
+    if (balanceValidation && this.data.editMode) {
+
+    }
+
+    return balanceValidation;
   }
 
   private validateLimit(): boolean {
@@ -216,5 +279,26 @@ export class PlanBudgetDialogComponent implements OnInit {
       }),
       filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
     ).subscribe(() => this._dialogRef.close(true));
+  }
+
+  private validateBalance(): boolean {
+    return !this.errors && this.currencyBalance.filter(balance => {
+      if (!balance.currency && !this.errors) {
+        this.errors = 'Валюта не выбрана';
+        return true;
+      }
+
+      if ((!balance.completeValue || balance.completeValue <= 0) && !this.errors) {
+        this.errors = `Лимит для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(balance.currency).symbol)} не задан`;
+        return true;
+      }
+
+      return false;
+    }).length === 0;
+  }
+
+  private isSelectedMonth(): boolean {
+    const budget: Budget = this.data.budget;
+    return budget.year === this.selectedYear && budget.month === this.selectedMonth + 1;
   }
 }

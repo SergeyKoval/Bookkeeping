@@ -49,7 +49,7 @@ export class BudgetComponent implements OnInit {
     }
   }
 
-  public increaseMonth(): void {
+  public increaseYear(): void {
     if (!this.loading) {
       this.selectedYear++;
       this.selectedMonth = 0;

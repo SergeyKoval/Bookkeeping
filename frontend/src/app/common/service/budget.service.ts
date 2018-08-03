@@ -26,10 +26,32 @@ export class BudgetService {
   }
 
   public addBudgetCategory(budgetId: string, budgetType: string, categoryTitle: string, currencyBalance: BudgetBalance[]): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/budget/addBudgetCategory', {'budgetId': budgetId, 'budgetType': budgetType, 'categoryTitle': categoryTitle, 'currencyBalance': currencyBalance});
+    return this._http.post<SimpleResponse>('/api/budget/addBudgetCategory', {
+      'budgetId': budgetId,
+      'budgetType': budgetType,
+      'categoryTitle': categoryTitle,
+      'currencyBalance': currencyBalance
+    });
   }
 
   public editBudgetCategory(budgetId: string, budgetType: string, categoryTitle: string, currencyBalance: BudgetBalance[]): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/budget/editBudgetCategory', {'budgetId': budgetId, 'budgetType': budgetType, 'categoryTitle': categoryTitle, 'currencyBalance': currencyBalance});
+    return this._http.post<SimpleResponse>('/api/budget/editBudgetCategory', {
+      'budgetId': budgetId,
+      'budgetType': budgetType,
+      'categoryTitle': categoryTitle,
+      'currencyBalance': currencyBalance
+    });
+  }
+
+  public addBudgetGoal(budgetId: string, year: number, month: number, budgetType: string, categoryTitle: string, goalTitle: string, budgetBalance: BudgetBalance): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/addBudgetGoal', {
+      'budgetId': budgetId,
+      'year': year,
+      'month': month,
+      'type': budgetType,
+      'category': categoryTitle,
+      'goal': goalTitle,
+      'balance': budgetBalance
+    });
   }
 }

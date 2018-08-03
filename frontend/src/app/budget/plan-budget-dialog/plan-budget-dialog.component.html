@@ -14,25 +14,26 @@
   </div>
 
   <div class="table">
-    <!--Goal-->
+    <!--Goal month and year-->
     <div class="row" *ngIf="data.type === 'goal'">
       <div class="col-sm-12">
         <div class="input-group right-button-group">
             <span class="input-group-btn">
               <span type="button" class="btn btn-default dropdown-toggle month-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="float-left">Июль</span> <span class="caret"></span>
+                <span class="float-left">{{getSelectedMonth()}}</span> <span class="caret"></span>
               </span>
               <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
-                <li><a>Август</a></li>
+                <li *ngFor="let month of months; let monthIndex = index"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
               </ul>
-              <span class="btn btn-default glyphicon glyphicon-menu-left decrease-year" type="button"></span>
+              <span class="btn btn-default glyphicon glyphicon-menu-left decrease-year" type="button" (click)="decreaseYear()"></span>
             </span>
-          <span class="input-group-addon year-aria">2018</span>
-          <span class="btn btn-default glyphicon glyphicon-menu-right increase-year" type="button"></span>
+          <span class="input-group-addon year-aria">{{selectedYear}}</span>
+          <span class="btn btn-default glyphicon glyphicon-menu-right increase-year" type="button" (click)="increaseYear()"></span>
         </div>
       </div>
     </div>
 
+    <!--All type-->
     <div class="row">
       <div class="col-sm-12">
         <div class="input-group">
@@ -48,7 +49,7 @@
       </div>
     </div>
 
-    <!--Category or goal-->
+    <!--Category or goal category-->
     <div class="row" *ngIf="data.type !== 'limit'">
       <div class="col-sm-12">
         <div class="input-group">
@@ -70,16 +71,17 @@
       </div>
     </div>
 
-    <!--Goal-->
+    <!--Goal title-->
     <div class="row" *ngIf="data.type === 'goal'">
       <div class="col-sm-12">
         <div class="input-group full-width">
           <span class="input-group-addon dropdown-addon" id="basic-addon1">Название:</span>
-          <input type="text" class="form-control" placeholder="Название цели" aria-describedby="basic-addon1">
+          <input type="text" class="form-control" placeholder="Название цели" aria-describedby="basic-addon1" [(ngModel)]="goalTitle">
         </div>
       </div>
     </div>
 
+    <!--All balance-->
     <div class="row" *ngFor="let balance of currencyBalance">
       <div  class="col-sm-12">
         <div class="input-group">

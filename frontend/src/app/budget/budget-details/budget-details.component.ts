@@ -31,9 +31,9 @@ export class BudgetDetailsComponent implements OnInit {
   public updateBudget: Subject<boolean> = new Subject();
 
   public budgetDetails: BudgetDetails;
-  public hasGoals: boolean = false;
-  public goalsCount: number = 0;
-  public goalsDone: number = 0;
+  public hasGoals: boolean;
+  public goalsCount: number;
+  public goalsDone: number;
 
   public constructor(
     private _profileService: ProfileService,
@@ -46,17 +46,7 @@ export class BudgetDetailsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.budgetDetails = this.budget[this.type];
-    this.budgetDetails.categories.forEach(category => {
-      if (category.goals && category.goals.length > 0) {
-        this.hasGoals = true;
-        this.goalsCount = this.goalsCount + category.goals.length;
-        category.goals.forEach(goal => {
-          if (goal.done) {
-            this.goalsDone++;
-          }
-        });
-      }
-    });
+    this.calculateGoalCounts();
   }
 
   public getNumberOfCurrencies(balance: {[currency: string]: BudgetBalance}): number {
@@ -142,6 +132,7 @@ export class BudgetDetailsComponent implements OnInit {
         filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
       ).subscribe(() => {
         goal.done = !goal.done;
+        this.calculateGoalCounts();
         mdDialogRef.close();
         this._alertService.addAlert(AlertType.SUCCESS, 'Статус цели изменен');
       });
@@ -176,5 +167,23 @@ export class BudgetDetailsComponent implements OnInit {
 
   public showRemoveButton(balance: {[currency: string]: BudgetBalance}): boolean {
     return Object.values(balance).filter(budgetBalance => budgetBalance.value > 0).length === 0;
+  }
+
+  private calculateGoalCounts(): void {
+    this.goalsDone = 0;
+    this.goalsCount = 0;
+    this.hasGoals = false;
+
+    this.budgetDetails.categories.forEach(category => {
+      if (category.goals && category.goals.length > 0) {
+        this.hasGoals = true;
+        this.goalsCount = this.goalsCount + category.goals.length;
+        category.goals.forEach(goal => {
+          if (goal.done) {
+            this.goalsDone++;
+          }
+        });
+      }
+    });
   }
 }

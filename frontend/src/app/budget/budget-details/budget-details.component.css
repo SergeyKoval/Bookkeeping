@@ -185,15 +185,11 @@
 }
 
 .no-remove-button {
-  width: 28px;
+  min-width: 24px;
 }
 
 @media (min-width: 768px) and (max-width: 992px) {
   .budget-panel .type-and-goal {
     padding-right: 0;
-  }
-
-  .no-remove-button {
-    width: 30px;
   }
 }

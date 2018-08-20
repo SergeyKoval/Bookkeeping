@@ -63,7 +63,8 @@
               </span>
               </div>
               <span class="glyphicon glyphicon-pencil edit-button float-left"></span>
-              <span class="glyphicon glyphicon-remove delete-button"></span>
+              <span class="no-remove-button" *ngIf="goal.balance.value !== 0"></span>
+              <span class="glyphicon glyphicon-remove delete-button" *ngIf="goal.balance.value === 0"></span>
             </div>
             <bk-month-progress [height]="5" *ngIf="!lastGoal" [progress]="monthProgress"></bk-month-progress>
           </div>

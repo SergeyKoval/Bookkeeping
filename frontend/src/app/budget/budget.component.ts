@@ -82,6 +82,10 @@ export class BudgetComponent implements OnInit {
       this.loading = true;
       this.updateMonthProgress();
       this._budgetService.loadBudget(this.selectedYear, this.selectedMonth + 1).subscribe((budget: Budget) => {
+        if (this.budget && this.budget.year === budget.year && this.budget.month === budget.month) {
+          this.setOpenedCategories('income', budget);
+          this.setOpenedCategories('expense', budget);
+        }
         this.budget = budget;
         this.loading = false;
       });
@@ -93,5 +97,16 @@ export class BudgetComponent implements OnInit {
     const currentMonth: boolean = now.getFullYear() === this.selectedYear && now.getMonth() === this.selectedMonth;
     const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(this.selectedYear, this.selectedMonth + 1) * 100) : 0;
     this.monthProgress = {'currentMonth': currentMonth, 'monthPercent': monthPercent};
+  }
+
+  private setOpenedCategories(type: string, budget: Budget): void {
+    this.budget[type].categories
+      .filter(category => category.opened)
+      .forEach(category => {
+        const budgetCategory: BudgetCategory = budget[type].categories.filter(updatedCategory => updatedCategory.title === category.title)[0];
+        if (budgetCategory) {
+          budgetCategory.opened = category.opened;
+        }
+      });
   }
 }

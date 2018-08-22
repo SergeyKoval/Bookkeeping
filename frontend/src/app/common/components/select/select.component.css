@@ -18,6 +18,9 @@
 .dropdown-menu {
   width: 100%;
   min-width: 50px;
+  max-height: 310px;
+  height: auto;
+  overflow-x: hidden;
 }
 
 .show-child-group {

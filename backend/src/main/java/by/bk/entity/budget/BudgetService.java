@@ -1,5 +1,6 @@
 package by.bk.entity.budget;
 
+import by.bk.controller.exception.ItemAlreadyExistsException;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.exception.*;
 import by.bk.entity.budget.model.*;
@@ -42,10 +43,7 @@ public class BudgetService implements BudgetAPI {
         Budget budget = validateAndGetBudget(login, budgetId);
         BudgetDetails budgetDetails = chooseBudgetDetails(budget, type);
         BudgetCategory category = chooseBudgetCategory(budgetDetails, categoryTitle, login, budgetId);
-        BudgetGoal goal = category.getGoals().stream()
-                .filter(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))
-                .findFirst()
-                .orElseThrow(() -> new GoalMissedException(login, budgetId, categoryTitle, goalTitle));
+        BudgetGoal goal = chooseBudgetGoal(category, goalTitle, login, budgetId);
         goal.setDone(doneStatus);
 
         Query query = Query.query(Criteria.where("id").is(budgetId));
@@ -171,6 +169,106 @@ public class BudgetService implements BudgetAPI {
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
+    @Override
+    public SimpleResponse editBudgetGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String originalGoalTitle, String goalTitle, CurrencyBalanceValue balance, boolean changeGoalStatus) {
+        Budget budget = validateAndGetBudget(login, budgetId);
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, type);
+        BudgetCategory category = chooseBudgetCategory(budgetDetails, categoryTitle, login, budgetId);
+        BudgetGoal originalGoal = chooseBudgetGoal(category, originalGoalTitle, login, budgetId);
+
+        String categoryQuery = StringUtils.join(type.name(), ".categories.", budgetDetails.getCategories().indexOf(category));
+
+        Update update = new Update();
+//      If month and year was not changed
+        if (budget.getYear().equals(year) && budget.getMonth().equals(month)) {
+            editBudgetGoalSameMonth(update, budgetDetails, originalGoalTitle, goalTitle, category, balance, originalGoal, type, categoryQuery, changeGoalStatus);
+        } else {
+            CurrencyBalanceValue originalGoalBalance = originalGoal.getBalance();
+            SimpleResponse simpleResponse = addBudgetGoal(login, null, year, month, type, categoryTitle, goalTitle, balance);
+            if (!simpleResponse.isSuccess()) {
+                LOG.error("Fail status on adding goal to another budget");
+                return simpleResponse;
+            }
+//          If whole category will not be removed - remove goal
+            if (!(category.getBalance().get(originalGoalBalance.getCurrency()).getCompleteValue().equals(originalGoalBalance.getCompleteValue()) && category.getBalance().size() == 1)) {
+                update.pull(categoryQuery + ".goals", originalGoal);
+            }
+            changeOriginalBudgetAndCategoryBalances(update, budgetDetails, category, originalGoalBalance, categoryQuery, type);
+        }
+
+        Query query = Query.query(Criteria.where("id").is(budgetId));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {
+        if (!StringUtils.equals(originalGoalTitle, goalTitle) && category.getGoals().stream().anyMatch(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))) {
+            throw new ItemAlreadyExistsException();
+        }
+
+        CurrencyBalanceValue originalGoalBalance = originalGoal.getBalance();
+        Currency originalGoalBalanceCurrency = originalGoalBalance.getCurrency();
+        Double balanceCompleteValue = balance.getCompleteValue();
+        Double originalCurrencyChange = originalGoalBalance.getCompleteValue() * -1;
+        Currency balanceCurrency = balance.getCurrency();
+
+        String budgetBalanceQuery = type.name() + ".balance.";
+        String categoryBalanceQuery = categoryQuery + ".balance.";
+        String goalQuery = categoryQuery + ".goals." + category.getGoals().indexOf(originalGoal);
+        String goalBalanceQuery = goalQuery + ".balance.";
+
+//      If currency was not changed
+        if (balanceCurrency.equals(originalGoalBalanceCurrency)) {
+            originalCurrencyChange += balanceCompleteValue;
+            update.inc(budgetBalanceQuery + originalGoalBalanceCurrency + ".completeValue", originalCurrencyChange);
+            update.inc(categoryBalanceQuery + originalGoalBalanceCurrency + ".completeValue", originalCurrencyChange);
+        } else {
+            changeOriginalBudgetAndCategoryBalances(update, budgetDetails, category, originalGoalBalance, categoryQuery, type);
+            update.inc(budgetBalanceQuery + balanceCurrency + ".value", 0d);
+            update.inc(budgetBalanceQuery + balanceCurrency + ".completeValue", balanceCompleteValue);
+            update.inc(categoryBalanceQuery + balanceCurrency + ".value", 0d);
+            update.inc(categoryBalanceQuery + balanceCurrency + ".completeValue", balanceCompleteValue);
+        }
+
+        update.set(goalBalanceQuery + "completeValue", balanceCompleteValue);
+        update.set(goalBalanceQuery + "currency", balanceCurrency);
+        update.set(goalQuery + ".title", goalTitle);
+        if (changeGoalStatus) {
+            update.set(goalQuery + ".done", !originalGoal.isDone());
+        }
+    }
+
+    private void changeOriginalBudgetAndCategoryBalances(Update update,BudgetDetails budgetDetails, BudgetCategory category, CurrencyBalanceValue originalGoalBalance, String categoryQuery, HistoryType type) {
+        Currency currency = originalGoalBalance.getCurrency();
+        Double completeValue = originalGoalBalance.getCompleteValue();
+        Double originalCurrencyChange = completeValue * -1;
+
+        String categoryBalanceQuery = categoryQuery + ".balance.";
+        String categoryBalanceCurrencyQuery = categoryBalanceQuery + currency;
+        String budgetBalanceQuery = type.name() + ".balance.";
+        String budgetBalanceCurrencyQuery = budgetBalanceQuery + currency;
+
+//      If category complete value = original balance complete value in similar currency
+        if (category.getBalance().get(currency).getCompleteValue().equals(completeValue)) {
+//          If this is the only currency for the category - remove category
+            if (category.getBalance().size() == 1) {
+                update.pull(type.name() + ".categories", category);
+            } else {
+                update.unset(categoryBalanceCurrencyQuery);
+            }
+
+//          If budget complete value = original balance complete value in similar currency
+            if (budgetDetails.getBalance().get(currency).getCompleteValue().equals(completeValue)) {
+                update.unset(budgetBalanceCurrencyQuery);
+            } else {
+                update.inc(budgetBalanceCurrencyQuery + ".completeValue", originalCurrencyChange);
+            }
+        } else {
+            update.inc(categoryBalanceCurrencyQuery + ".completeValue", originalCurrencyChange);
+            update.inc(budgetBalanceCurrencyQuery + ".completeValue", originalCurrencyChange);
+        }
+    }
+
     private Budget initEmptyMonthBudget(String login, int year, int month) {
         Budget budget = new Budget(login, year, month);
         return budgetRepository.save(budget);
@@ -207,5 +305,12 @@ public class BudgetService implements BudgetAPI {
                 .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), categoryTitle))
                 .findFirst()
                 .orElseThrow(() -> new CategoryMissedException(login, budgetId, categoryTitle));
+    }
+
+    private BudgetGoal chooseBudgetGoal(BudgetCategory budgetCategory, String goalTitle, String login, String budgetId) {
+        return budgetCategory.getGoals().stream()
+                .filter(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))
+                .findFirst()
+                .orElseThrow(() -> new GoalMissedException(login, budgetId, budgetCategory.getTitle(), goalTitle));
     }
 }

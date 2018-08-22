@@ -165,6 +165,25 @@ export class BudgetDetailsComponent implements OnInit {
       });
   }
 
+  public openGoalEditDialog(category: BudgetCategory, goal: BudgetGoal): void {
+    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+      panelClass: 'budget-plan-dialog',
+      width: '400px',
+      position: {top: 'top'},
+      data: {
+        'editMode': true,
+        'type': 'goal',
+        'budgetType': this.type,
+        'category': category,
+        'goal': goal,
+        'budget': this.budget
+      }
+    }).afterClosed()
+      .subscribe(refreshBudget => {
+        this.updateBudget.next(refreshBudget);
+      });
+  }
+
   public showRemoveButton(balance: {[currency: string]: BudgetBalance}): boolean {
     return Object.values(balance).filter(budgetBalance => budgetBalance.value > 0).length === 0;
   }

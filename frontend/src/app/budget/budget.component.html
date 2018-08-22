@@ -11,7 +11,7 @@
           <strong>{{getSelectedMonth()}}</strong> <span class="caret month-dropdown-caret"></span>
         </span>
         <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
-          <li *ngFor="let month of months; let monthIndex = index"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
+          <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
         </ul>
         <span class="btn btn-default glyphicon glyphicon-menu-left button-icon" [ngClass]="{'disabled': loading}" type="button" (click)="decreaseYear()"></span>
       </span>

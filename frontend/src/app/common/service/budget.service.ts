@@ -54,4 +54,19 @@ export class BudgetService {
       'balance': budgetBalance
     });
   }
+
+  public editBudgetGoal(budgetId: string, year: number, month: number, budgetType: string, categoryTitle: string, originalGoalTitle: string, goalTitle: string,
+                        budgetBalance: BudgetBalance, changeGoalState: boolean): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/editBudgetGoal', {
+      'budgetId': budgetId,
+      'year': year,
+      'month': month,
+      'type': budgetType,
+      'category': categoryTitle,
+      'goal': goalTitle,
+      'originalGoal': originalGoalTitle,
+      'balance': budgetBalance,
+      'changeGoalState': changeGoalState
+    });
+  }
 }

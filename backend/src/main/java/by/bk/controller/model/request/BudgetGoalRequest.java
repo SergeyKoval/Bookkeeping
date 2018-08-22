@@ -15,6 +15,8 @@ public class BudgetGoalRequest {
     private HistoryType type;
     private String category;
     private String goal;
+    private String originalGoal;
     private boolean doneStatus;
     private CurrencyBalanceValue balance;
+    private boolean changeGoalState;
 }

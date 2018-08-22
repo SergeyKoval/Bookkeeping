@@ -56,4 +56,9 @@ public class BudgetController extends BaseAPIController {
     public SimpleResponse addBudgetGoal(@RequestBody BudgetGoalRequest request, Principal principal) {
         return budgetAPI.addBudgetGoal(principal.getName(), request.getBudgetId(), request.getYear(), request.getMonth(), request.getType(), request.getCategory(), request.getGoal(), request.getBalance());
     }
+
+    @PostMapping("/editBudgetGoal")
+    public SimpleResponse editBudgetGoal(@RequestBody BudgetGoalRequest request, Principal principal) {
+        return budgetAPI.editBudgetGoal(principal.getName(), request.getBudgetId(), request.getYear(), request.getMonth(), request.getType(), request.getCategory(), request.getOriginalGoal(), request.getGoal(), request.getBalance(), request.isChangeGoalState());
+    }
 }

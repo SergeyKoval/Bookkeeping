@@ -41,9 +41,9 @@
               <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
             </span>
           </div>
-          <span class="glyphicon glyphicon-pencil edit-button vertical-middle float-left" (click)="openCategoryEditDialog(category)"></span>
+          <bk-popover class="edit-button vertical-middle float-left" glyphiconClass="pencil" placement="left" text="Редактировать категорию" (click)="openCategoryEditDialog(category)"></bk-popover>
           <span class="no-remove-button" *ngIf="!showRemoveButton(category.balance)"></span>
-          <span class="glyphicon glyphicon-remove delete-button vertical-middle" *ngIf="showRemoveButton(category.balance)"></span>
+          <bk-popover class="delete-button vertical-middle" glyphiconClass="remove" placement="left" text="Удалить категорию" *ngIf="showRemoveButton(category.balance)"></bk-popover>
         </div>
 
         <div *ngIf="category.opened">
@@ -62,9 +62,9 @@
                 <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
               </span>
               </div>
-              <span class="glyphicon glyphicon-pencil edit-button float-left"></span>
+              <bk-popover class="edit-button float-left" glyphiconClass="pencil" placement="left" text="Редактировать цель" (click)="openGoalEditDialog(category, goal)"></bk-popover>
               <span class="no-remove-button" *ngIf="goal.balance.value !== 0"></span>
-              <span class="glyphicon glyphicon-remove delete-button" *ngIf="goal.balance.value === 0"></span>
+              <bk-popover class="delete-button" glyphiconClass="remove" placement="left" text="Удалить цель" *ngIf="goal.balance.value === 0"></bk-popover>
             </div>
             <bk-month-progress [height]="5" *ngIf="!lastGoal" [progress]="monthProgress"></bk-month-progress>
           </div>

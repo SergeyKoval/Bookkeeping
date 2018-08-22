@@ -11,6 +11,7 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { DateUtils } from '../../common/utils/date-utils';
+import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'bk-plan-budget-dialog',
@@ -22,6 +23,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   public currencies: CurrencyDetail[];
   public errors: string;
 
+  public changeGoalMonthAvailable: boolean = true;
   public selectedMonth: number;
   public selectedYear: number;
   public goalTitle: string;
@@ -33,20 +35,29 @@ export class PlanBudgetDialogComponent implements OnInit {
   private _CATEGORIES: Category[];
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, budgetType: string, category: BudgetCategory, budget: Budget},
+    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, budgetType: string, category: BudgetCategory, budget: Budget, goal: BudgetGoal},
     private _dialogRef: MatDialogRef<PlanBudgetDialogComponent>,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
-    private _budgetService: BudgetService
+    private _budgetService: BudgetService,
+    private _confirmDialogService: ConfirmDialogService
   ) {}
 
   public ngOnInit(): void {
     this._CATEGORIES = this._profileService.authenticatedProfile.categories;
     this.currencies = this._profileService.authenticatedProfile.currencies;
+    this.selectedMonth = this.data.budget.month - 1;
+    this.selectedYear = this.data.budget.year;
+
     if (this.data.editMode) {
       this.budgetType = this.data.budgetType;
-      if (this.data.category) {
-        this.categoryTitle = this.data.category.title;
+      this.categoryTitle = this.data.category.title;
+
+      if (this.data.goal) {
+        this.goalTitle = this.data.goal.title;
+        this.changeGoalMonthAvailable = this.data.goal.balance.value === 0;
+        this.currencyBalance = [Object.assign({}, this.data.goal.balance)];
+      } else {
         of(this.data.category.balance).pipe(
           map(categoryBalance => Object.keys(categoryBalance).map(currency => {
             const currencyBalanceItem: BudgetBalance = Object.assign({}, categoryBalance[currency]);
@@ -58,7 +69,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   }
 
   public chooseMonth(monthIndex: number): void {
-    if (!this.data.editMode && this.selectedMonth !== monthIndex) {
+    if (this.selectedMonth !== monthIndex && this.changeGoalMonthAvailable) {
       this.selectedMonth = monthIndex;
     }
   }
@@ -68,14 +79,14 @@ export class PlanBudgetDialogComponent implements OnInit {
   }
 
   public decreaseYear(): void {
-    if (!this.data.editMode) {
+    if (this.changeGoalMonthAvailable) {
       this.selectedYear--;
       this.selectedMonth = 11;
     }
   }
 
   public increaseYear(): void {
-    if (!this.data.editMode) {
+    if (this.changeGoalMonthAvailable) {
       this.selectedYear++;
       this.selectedMonth = 0;
     }
@@ -90,11 +101,6 @@ export class PlanBudgetDialogComponent implements OnInit {
       this.errors = null;
       this.currencyBalance = [{}];
       this.typeCategories = [];
-      if (this.data.type === 'goal') {
-        const now: Date = new Date();
-        this.selectedMonth = now.getMonth();
-        this.selectedYear = now.getFullYear();
-      }
     }
   }
 
@@ -167,7 +173,18 @@ export class PlanBudgetDialogComponent implements OnInit {
         if (this.validateGoal() === true) {
           loadingDialog = this.openLoadingFrame();
           if (this.data.editMode) {
-            // this.processResult(loadingDialog, this._budgetService.editBudgetCategory(this.data.budget.id, this.budgetType, this.categoryTitle, this.currencyBalance));
+            if (this.currencyBalance[0].value === this.currencyBalance[0].completeValue && !this.data.goal.done) {
+              this._confirmDialogService.openConfirmDialog('Изменение статуса цели', 'Цель выполнена?')
+                .afterClosed()
+                .subscribe((result: boolean) => this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
+                  this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], result)));
+            } else {
+              const changeGoalState: boolean = this.data.goal.done
+                && this.currencyBalance[0].value < this.currencyBalance[0].completeValue
+                && this.currencyBalance[0].completeValue !== this.data.goal.balance.completeValue;
+              this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
+                this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], changeGoalState));
+            }
           } else {
             this.processResult(loadingDialog, this._budgetService.addBudgetGoal(this.isSelectedMonth() ? this.data.budget.id : null, this.selectedYear,
               this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.goalTitle, this.currencyBalance[0]));
@@ -247,15 +264,23 @@ export class PlanBudgetDialogComponent implements OnInit {
 
     if (this.isSelectedMonth()) {
       const budgetSelectedCategory: BudgetCategory = this.data.budget[this.budgetType].categories.filter((category: BudgetCategory) => category.title === this.categoryTitle)[0];
-      if (budgetSelectedCategory && budgetSelectedCategory.goals.filter(goal => goal.title === this.goalTitle).length > 0) {
-        this.errors = 'Цель с таким названием уже существует';
-        return false;
+      if (budgetSelectedCategory) {
+        const goalNameExists: boolean = budgetSelectedCategory.goals.filter(goal => goal.title === this.goalTitle).length > 0;
+        if ((!this.data.editMode && goalNameExists) || (this.data.editMode && goalNameExists && this.goalTitle !== this.data.goal.title)) {
+          this.errors = 'Цель с таким названием уже существует';
+          return false;
+        }
       }
     }
 
     const balanceValidation: boolean = this.validateBalance();
     if (balanceValidation && this.data.editMode) {
-
+      const budgetBalance: BudgetBalance = this.currencyBalance[0];
+      const dataBalance: BudgetBalance = this.data.goal.balance;
+      if (budgetBalance.value > budgetBalance.completeValue && budgetBalance.completeValue !== dataBalance.completeValue && budgetBalance.currency === dataBalance.currency) {
+        this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(budgetBalance.currency).symbol)} = ${budgetBalance.value}`;
+        return false;
+      }
     }
 
     return balanceValidation;

@@ -160,3 +160,11 @@
 #budget-plan-dialog {
   overflow: visible !important;
 }
+
+.btn.disabled {
+  cursor: not-allowed;
+}
+
+.selected {
+  background-color: #f5f5f5a3;
+}

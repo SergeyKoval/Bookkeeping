@@ -39,6 +39,10 @@
   border-right-width: 0;
 }
 
+.selected {
+  background-color: #f5f5f5a3;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .right-button-group {
     width: 222px;

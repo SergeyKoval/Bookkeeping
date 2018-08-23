@@ -69,4 +69,12 @@ export class BudgetService {
       'changeGoalState': changeGoalState
     });
   }
+
+  public updateBudgetLimit(budgetId: string, budgetType: string, budgetBalance: BudgetBalance[]): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/updateBudgetLimit', {
+      'budgetId': budgetId,
+      'type': budgetType,
+      'balance': budgetBalance
+    });
+  }
 }

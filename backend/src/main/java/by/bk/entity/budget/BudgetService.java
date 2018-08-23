@@ -201,6 +201,28 @@ public class BudgetService implements BudgetAPI {
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
+    @Override
+    public SimpleResponse updateBudgetLimit(String login, String budgetId, HistoryType type, List<CurrencyBalanceValue> currencyBalances) {
+        Budget budget = validateAndGetBudget(login, budgetId);
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, type);
+
+        Map<Currency, CurrencyBalanceValue> balances = currencyBalances.stream().collect(Collectors.toMap(CurrencyBalanceValue::getCurrency, currencyBalanceValue -> currencyBalanceValue));
+        Map<Currency, Double> minBalance = budgetDetails.getCategories().stream()
+                .map(BudgetCategory::getBalance)
+                .flatMap(balance -> balance.keySet().stream().map(currency -> new CurrencyBalanceValue(currency, balance.get(currency))))
+                .collect(Collectors.toMap(CurrencyBalanceValue::getCurrency, CurrencyBalanceValue::getCompleteValue, (oldValue, newValue) -> oldValue + newValue));
+        if (minBalance.keySet().stream().anyMatch(currency -> !balances.containsKey(currency) || balances.get(currency).getCompleteValue() < minBalance.get(currency))) {
+            LOG.warn("Some balance value is less then minimum sum of categories values.");
+            return SimpleResponse.fail();
+        }
+
+        Query query = Query.query(Criteria.where("id").is(budgetId));
+        Update update = new Update();
+        currencyBalances.forEach(balance -> update.set(type.name() + ".balance." + balance.getCurrency() + ".completeValue", balance.getCompleteValue()));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {
         if (!StringUtils.equals(originalGoalTitle, goalTitle) && category.getGoals().stream().anyMatch(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))) {
             throw new ItemAlreadyExistsException();

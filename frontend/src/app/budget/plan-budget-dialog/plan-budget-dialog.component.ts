@@ -107,13 +107,23 @@ export class PlanBudgetDialogComponent implements OnInit {
   public changeBudgetType(type: string): void {
     if (!this.data.editMode && this.budgetType !== type) {
       this.budgetType = type;
-      this.categoryTitle = null;
-      this.goalTitle = null;
-      this.currencyBalance = [{}];
 
-      this.typeCategories = this._CATEGORIES
-        .filter(category => category.subCategories.filter(subCategory => subCategory.type === this.budgetType).length > 0)
-        .filter(category => this.data.type !== 'category' || !this.data.budget[this.budgetType].categories.map(budgetCategory => budgetCategory.title).includes(category.title));
+      if (this.data.type === 'limit') {
+        of(this.data.budget[this.budgetType].balance).pipe(
+          map(categoryBalance => Object.keys(categoryBalance).map(currency => {
+            const currencyBalanceItem: BudgetBalance = Object.assign({}, categoryBalance[currency]);
+            currencyBalanceItem.currency = currency;
+            return currencyBalanceItem;
+          }))).subscribe(value => this.currencyBalance = value.length > 0 ? value : [{}]);
+      } else {
+        this.categoryTitle = null;
+        this.goalTitle = null;
+        this.currencyBalance = [{}];
+
+        this.typeCategories = this._CATEGORIES
+          .filter(category => category.subCategories.filter(subCategory => subCategory.type === this.budgetType).length > 0)
+          .filter(category => this.data.type !== 'category' || !this.data.budget[this.budgetType].categories.map(budgetCategory => budgetCategory.title).includes(category.title));
+      }
     }
   }
 
@@ -192,7 +202,10 @@ export class PlanBudgetDialogComponent implements OnInit {
         }
         break;
       case 'limit':
-        // result = this.validateLimit();
+        if (this.validateLimit() === true) {
+          loadingDialog = this.openLoadingFrame();
+          this.processResult(loadingDialog, this._budgetService.updateBudgetLimit(this.data.budget.id, this.budgetType, this.currencyBalance));
+        }
         break;
     }
   }
@@ -208,17 +221,7 @@ export class PlanBudgetDialogComponent implements OnInit {
       return false;
     }
 
-    from(this.currencyBalance).pipe(
-      map(balance => balance.currency),
-      scan(([ dupes, uniques ], currency: string) => [uniques.has(currency) ? dupes.add(currency) : dupes, uniques.add(currency)], [new Set<string>(), new Set<string>()]),
-      map(([ dupes ]) => dupes),
-      filter(set => set.size > 0),
-      distinct(),
-      map(set => set.values().next().value)
-    ).subscribe(currency => {
-      this.errors = `Валюта ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} задана более одного раза`;
-    });
-
+    this.validateDuplicateCurrencies();
     const balanceValidation: boolean = this.validateBalance();
     if (balanceValidation && this.data.editMode) {
       const balanceMap: {} = this.currencyBalance.reduce((resultMap, balance) => {
@@ -287,7 +290,52 @@ export class PlanBudgetDialogComponent implements OnInit {
   }
 
   private validateLimit(): boolean {
-    return false;
+    if (!this.budgetType) {
+      this.errors = 'Тип не выбран';
+      return false;
+    }
+
+    this.validateDuplicateCurrencies();
+    const balanceValidation: boolean = this.validateBalance();
+    if (balanceValidation) {
+      const balanceMap: {} = this.currencyBalance.reduce((resultMap, balance) => {
+        resultMap[balance.currency] = balance;
+        return resultMap;
+      }, {});
+
+      const minimumBalanceMap: Map<string, number> = new Map<string, number>();
+      this.data.budget[this.budgetType].categories.forEach((category: BudgetCategory) => {
+        const categoryBalance: {[currency: string]: BudgetBalance} = category.balance;
+        Object.keys(categoryBalance).forEach(currency => {
+          const completeValue: number = categoryBalance[currency].completeValue;
+          minimumBalanceMap.set(currency, minimumBalanceMap.has(currency) ? (minimumBalanceMap.get(currency) + completeValue) : completeValue);
+        });
+      });
+
+      minimumBalanceMap.forEach((minimumValue, currency) => {
+        if (!this.errors) {
+          const planedValue: BudgetBalance = balanceMap[currency];
+          if (!planedValue || planedValue.completeValue < minimumValue) {
+            this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} = ${minimumValue}`;
+          }
+        }
+      });
+    }
+
+    return balanceValidation && !this.errors;
+  }
+
+  private validateDuplicateCurrencies(): void {
+    from(this.currencyBalance).pipe(
+      map(balance => balance.currency),
+      scan(([ dupes, uniques ], currency: string) => [uniques.has(currency) ? dupes.add(currency) : dupes, uniques.add(currency)], [new Set<string>(), new Set<string>()]),
+      map(([ dupes ]) => dupes),
+      filter(set => set.size > 0),
+      distinct(),
+      map(set => set.values().next().value)
+    ).subscribe(currency => {
+      this.errors = `Валюта ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} задана более одного раза`;
+    });
   }
 
   private openLoadingFrame(): MatDialogRef<LoadingDialogComponent> {

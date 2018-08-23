@@ -18,4 +18,9 @@ public class CurrencyBalanceValue extends BalanceValue {
         super(value, completeValue);
         this.currency = currency;
     }
+
+    public CurrencyBalanceValue(Currency currency, BalanceValue balanceValue) {
+        super(balanceValue.getValue(), balanceValue.getCompleteValue());
+        this.currency = currency;
+    }
 }

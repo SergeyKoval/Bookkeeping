@@ -122,7 +122,7 @@ public class BudgetService implements BudgetAPI {
         });
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
 
-        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+        return updateResult.getMatchedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     @Override
@@ -198,7 +198,7 @@ public class BudgetService implements BudgetAPI {
 
         Query query = Query.query(Criteria.where("id").is(budgetId));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
-        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+        return updateResult.getMatchedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     @Override
@@ -220,7 +220,7 @@ public class BudgetService implements BudgetAPI {
         Update update = new Update();
         currencyBalances.forEach(balance -> update.set(type.name() + ".balance." + balance.getCurrency() + ".completeValue", balance.getCompleteValue()));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
-        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+        return updateResult.getMatchedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {

@@ -65,7 +65,7 @@ export class BudgetComponent implements OnInit {
         position: {top: 'top'},
         data: {
           'editMode': false,
-          'type': 'category',
+          'type': 'goal',
           'budget': this.budget
         }
       }).afterClosed()

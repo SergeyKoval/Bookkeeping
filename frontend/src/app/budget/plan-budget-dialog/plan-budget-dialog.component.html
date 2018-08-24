@@ -4,8 +4,8 @@
 </h2>
 <mat-dialog-content id="budget-plan-dialog">
   <ul class="nav nav-tabs nav-justified">
-    <li role="presentation" [ngClass]="{'active': data.type === 'category', 'disabled': data.editMode}" (click)="onChangeSelectedType('category')"><a>Категория</a></li>
     <li role="presentation" [ngClass]="{'active': data.type === 'goal', 'disabled': data.editMode}" (click)="onChangeSelectedType('goal')"><a>Цель</a></li>
+    <li role="presentation" [ngClass]="{'active': data.type === 'category', 'disabled': data.editMode}" (click)="onChangeSelectedType('category')"><a>Категория</a></li>
     <li role="presentation" [ngClass]="{'active': data.type === 'limit', 'disabled': data.editMode}" (click)="onChangeSelectedType('limit')"><a>Лимит</a></li>
   </ul>
 

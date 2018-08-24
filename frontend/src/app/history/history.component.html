@@ -5,7 +5,7 @@
     <div class="table">
       <div class="row header">
         <div class="col-sm-2">Дата</div>
-        <div class="col-sm-2">Сумма</div>
+        <div class="col-sm-2 sm-small-left-padding">Сумма</div>
         <div class="col-sm-3 sm-small-left-padding">Категория</div>
         <div class="col-sm-3">Комментарий</div>
         <div class="col-sm-2 text-center sm-small-left-padding">Действия</div>
@@ -48,7 +48,7 @@
 
           <!--not exchange, second column-->
           <div [ngClass]="{'col-sm-2 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type !== 'exchange'">
-            <div class="col-sm-6 no-left-padding no-right-padding">
+            <div class="no-left-padding no-right-padding">
               <div [ngClass]="historyItem.type">
                 {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
               </div>

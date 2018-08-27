@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
-import { filter, tap } from 'rxjs/internal/operators';
-import { Subject } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/internal/operators';
+import { Observable, Subject } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CurrencyService } from '../../common/service/currency.service';
@@ -13,6 +13,7 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
 import { DialogService } from '../../common/service/dialog.service';
+import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'bk-budget-details',
@@ -41,7 +42,8 @@ export class BudgetDetailsComponent implements OnInit {
     private _budgetService: BudgetService,
     private _loadingService: LoadingService,
     private _alertService: AlertService,
-    private _dialogService: DialogService
+    private _dialogService: DialogService,
+    private _confirmDialogService: ConfirmDialogService
   ) {}
 
   public ngOnInit(): void {
@@ -186,6 +188,33 @@ export class BudgetDetailsComponent implements OnInit {
 
   public showRemoveButton(balance: {[currency: string]: BudgetBalance}): boolean {
     return Object.values(balance).filter(budgetBalance => budgetBalance.value > 0).length === 0;
+  }
+
+  public removeGoal(category: BudgetCategory, goal: BudgetGoal): void {
+    this.removeItem('goal', this._budgetService.removeGoal(this.budget.id, this.type, category.title, goal.title));
+  }
+
+  public removeCategory(category: BudgetCategory): void {
+    this.removeItem('category', this._budgetService.removeCategory(this.budget.id, this.type, category.title));
+  }
+
+  private removeItem(removeType: string, callback: Observable<SimpleResponse>): void {
+    let loadingDialog: MatDialogRef<LoadingDialogComponent>;
+    this._confirmDialogService.openConfirmDialog(`Удаление ${removeType === 'category' ? 'категории' : 'цели'}`, `Уверены что хотите удалить ${removeType === 'category' ? 'категорию' : 'цель'}`)
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => loadingDialog = this._loadingService.openLoadingDialog(`Удаление ${removeType === 'category' ? 'категории' : 'цели'}...`)),
+        switchMap(() => callback)
+      ).subscribe((response: SimpleResponse) => {
+      loadingDialog.close();
+      if (response.status === 'SUCCESS') {
+        this._alertService.addAlert(AlertType.SUCCESS, `${removeType === 'category' ? 'Категория' : 'Цель'} удалена`);
+        this.updateBudget.next(true);
+      } else {
+        this._alertService.addAlert(AlertType.DANGER, `Ошибка при удалении ${removeType === 'category' ? 'категории' : 'цели'}`);
+      }
+    });
   }
 
   private calculateGoalCounts(): void {

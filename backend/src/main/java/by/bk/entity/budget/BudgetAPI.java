@@ -20,4 +20,6 @@ public interface BudgetAPI {
     SimpleResponse addBudgetGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, CurrencyBalanceValue balance);
     SimpleResponse editBudgetGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String originalGoalTitle, String goalTitle, CurrencyBalanceValue balance, boolean changeGoalStatus);
     SimpleResponse updateBudgetLimit(String login, String budgetId, HistoryType type, List<CurrencyBalanceValue> currencyBalances);
+    SimpleResponse removeGoal(String login, String budgetId, HistoryType type, String categoryTitle, String goalTitle);
+    SimpleResponse removeCategory(String login, String budgetId, HistoryType type, String categoryTitle);
 }

@@ -66,4 +66,14 @@ public class BudgetController extends BaseAPIController {
     public SimpleResponse updateBudgetLimit(@RequestBody BudgetRequest request, Principal principal) {
         return budgetAPI.updateBudgetLimit(principal.getName(), request.getBudgetId(), request.getType(), request.getBalance());
     }
+
+    @PostMapping("/removeGoal")
+    public SimpleResponse removeGoal(@RequestBody BudgetGoalRequest request, Principal principal) {
+        return budgetAPI.removeGoal(principal.getName(), request.getBudgetId(), request.getType(), request.getCategory(), request.getGoal());
+    }
+
+    @PostMapping("/removeCategory")
+    public SimpleResponse removeCategory(@RequestBody BudgetGoalRequest request, Principal principal) {
+        return budgetAPI.removeCategory(principal.getName(), request.getBudgetId(), request.getType(), request.getCategory());
+    }
 }

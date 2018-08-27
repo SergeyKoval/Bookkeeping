@@ -77,4 +77,21 @@ export class BudgetService {
       'balance': budgetBalance
     });
   }
+
+  public removeGoal(budgetId: string, budgetType: string, categoryTitle: string, goalTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/removeGoal', {
+      'budgetId': budgetId,
+      'type': budgetType,
+      'category': categoryTitle,
+      'goal': goalTitle
+    });
+  }
+
+  public removeCategory(budgetId: string, budgetType: string, categoryTitle: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/removeCategory', {
+      'budgetId': budgetId,
+      'type': budgetType,
+      'category': categoryTitle
+    });
+  }
 }

@@ -43,7 +43,7 @@
           </div>
           <bk-popover class="edit-button vertical-middle float-left" glyphiconClass="pencil" placement="left" text="Редактировать категорию" (click)="openCategoryEditDialog(category)"></bk-popover>
           <span class="no-remove-button" *ngIf="!showRemoveButton(category.balance)"></span>
-          <bk-popover class="delete-button vertical-middle" glyphiconClass="remove" placement="left" text="Удалить категорию" *ngIf="showRemoveButton(category.balance)"></bk-popover>
+          <bk-popover class="delete-button vertical-middle" glyphiconClass="remove" placement="left" text="Удалить категорию" *ngIf="showRemoveButton(category.balance)" (click)="removeCategory(category)"></bk-popover>
         </div>
 
         <div *ngIf="category.opened">
@@ -64,7 +64,7 @@
               </div>
               <bk-popover class="edit-button float-left" glyphiconClass="pencil" placement="left" text="Редактировать цель" (click)="openGoalEditDialog(category, goal)"></bk-popover>
               <span class="no-remove-button" *ngIf="goal.balance.value !== 0"></span>
-              <bk-popover class="delete-button" glyphiconClass="remove" placement="left" text="Удалить цель" *ngIf="goal.balance.value === 0"></bk-popover>
+              <bk-popover class="delete-button" glyphiconClass="remove" placement="left" text="Удалить цель" *ngIf="goal.balance.value === 0" (click)="removeGoal(category, goal)"></bk-popover>
             </div>
             <bk-month-progress [height]="5" *ngIf="!lastGoal" [progress]="monthProgress"></bk-month-progress>
           </div>

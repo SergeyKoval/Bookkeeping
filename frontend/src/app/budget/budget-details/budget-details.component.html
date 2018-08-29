@@ -12,10 +12,10 @@
       </div>
       <div class="col-sm-8 no-right-padding">
         <div class="row" *ngFor="let currency of budgetDetails.balance | mapKeys">
-          <span class="header-expected">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
+          <span class="header-expected" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
           <span class="header-from">из</span>
           <span class="text-right header-current">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
-          <span class="header-currency"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
+          <span class="header-currency" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
         </div>
       </div>
     </div>
@@ -37,8 +37,11 @@
             <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
             <span class="category-title full-height"><span class="vertical-middle">{{category.title}}</span></span>
             <span class="category-value" *ngFor="let currency of category.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
-              {{category.balance[currency].value | currencyValue:2:true}} из {{category.balance[currency].completeValue | currencyValue:2:true}}
-              <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+              {{category.balance[currency].value | currencyValue:2:true}} из
+              <span [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">
+                {{category.balance[currency].completeValue | currencyValue:2:true}}
+                <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+              </span>
             </span>
           </div>
           <bk-popover class="edit-button vertical-middle float-left" glyphiconClass="pencil" placement="left" text="Редактировать категорию" (click)="openCategoryEditDialog(category)"></bk-popover>

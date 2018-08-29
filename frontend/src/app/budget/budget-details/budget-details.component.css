@@ -35,6 +35,11 @@
   padding-left: 0;
 }
 
+.not-planed {
+  color: #dd0000;
+  font-weight: bold;
+}
+
 .income {
   float: left;
   font-weight: bold;

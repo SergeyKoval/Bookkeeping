@@ -26,10 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -223,7 +220,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Account account = chooseItem(accounts, title, getAccountError(login, title));
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().pull("accounts", account);
+        Update update = new Update().pull("accounts", Collections.singletonMap("title", account.getTitle()));
         SimpleResponse response = updateUser(query, update);
         if (response.isSuccess()) {
             Query historyQuery = Query.query(Criteria.where("user").is(login)
@@ -374,7 +371,7 @@ public class UserService implements UserAPI, UserDetailsService {
         SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().pull(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), subAccount);
+        Update update = new Update().pull(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), Collections.singletonMap("title", subAccount.getTitle()));
         SimpleResponse response = updateUser(query, update);
         if (response.isSuccess()) {
             Query historyQuery = Query.query(Criteria.where("user").is(login).orOperator(
@@ -434,7 +431,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Category category = chooseItem(categories, categoryTitle, getAccountError(login, categoryTitle));
 
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().pull("categories", category);
+        Update update = new Update().pull("categories", Collections.singletonMap("title", category.getTitle()));
         SimpleResponse response = updateUser(query, update);
         if (response.isSuccess()) {
             Query historyQuery = Query.query(Criteria.where("user").is(login).and("category").is(categoryTitle));

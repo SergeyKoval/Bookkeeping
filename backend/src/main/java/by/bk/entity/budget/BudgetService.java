@@ -191,7 +191,7 @@ public class BudgetService implements BudgetAPI {
             }
 //          If whole category will not be removed - remove goal
             if (!(category.getBalance().get(originalGoalBalance.getCurrency()).getCompleteValue().equals(originalGoalBalance.getCompleteValue()) && category.getBalance().size() == 1)) {
-                update.pull(categoryQuery + ".goals", originalGoal);
+                update.pull(categoryQuery + ".goals", Collections.singletonMap("title", originalGoal.getTitle()));
             }
             changeOriginalBudgetAndCategoryBalances(update, budgetDetails, category, originalGoalBalance, categoryQuery, type);
         }
@@ -234,7 +234,7 @@ public class BudgetService implements BudgetAPI {
         String categoryQuery = StringUtils.join(type.name(), ".categories.", budgetDetails.getCategories().indexOf(category));
         Update update = new Update();
         if (!(category.getBalance().get(goalBalance.getCurrency()).getCompleteValue().equals(goalBalance.getCompleteValue()) && category.getBalance().size() == 1)) {
-            update.pull(categoryQuery + ".goals", goal);
+            update.pull(categoryQuery + ".goals", Collections.singletonMap("title", goal.getTitle()));
         }
         changeOriginalBudgetAndCategoryBalances(update, budgetDetails, category, goalBalance, categoryQuery, type);
 
@@ -317,7 +317,7 @@ public class BudgetService implements BudgetAPI {
         if (category.getBalance().get(currency).getCompleteValue().equals(completeValue)) {
 //          If this is the only currency for the category - remove category
             if (category.getBalance().size() == 1) {
-                update.pull(type.name() + ".categories", category);
+                update.pull(type.name() + ".categories", Collections.singletonMap("title", category.getTitle()));
             } else {
                 update.unset(categoryBalanceCurrencyQuery);
             }

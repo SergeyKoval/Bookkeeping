@@ -50,7 +50,7 @@ export class ProfileComponent implements OnInit {
     this._profileService.updatePassword(this.profileForm.value).subscribe(response => {
       this.submitIndicator = false;
       if (response.status === 'FAIL') {
-        const message: string = response.message === 'INVALID_PASSWORD' ? 'Неверный старый пароль': 'Ошибка сервера';
+        const message: string = response.message === 'INVALID_PASSWORD' ? 'Неверный старый пароль' : 'Ошибка сервера';
         this._alertService.addAlert(AlertType.WARNING, message);
       } else {
         this._alertService.addAlert(AlertType.SUCCESS, 'Пороль успешно изменен');

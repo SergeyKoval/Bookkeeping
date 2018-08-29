@@ -133,7 +133,7 @@ export class ProfileService implements CanActivate {
     this._accounts$$.next([]);
   }
 
-  public updatePassword(profile:{oldPassword: string, newPassword: string}): Observable<SimpleResponse> {
+  public updatePassword(profile: {oldPassword: string, newPassword: string}): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/change-password', profile);
   }
 
@@ -178,15 +178,30 @@ export class ProfileService implements CanActivate {
   }
 
   public addSubAccount(subAccountTitle: string, accountTitle: string, icon: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/add-sub-account', {title: subAccountTitle, parentTitle: accountTitle, icon: icon, balance: balance});
+    return this._http.post<SimpleResponse>('/api/profile/add-sub-account', {
+      'title': subAccountTitle,
+      'parentTitle': accountTitle,
+      'icon': icon,
+      'balance': balance
+    });
   }
 
   public changeSubAccountBalance(accountTitle: string, subAccountTitle: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/change-sub-account-balance', {title: subAccountTitle, parentTitle: accountTitle, balance: balance});
+    return this._http.post<SimpleResponse>('/api/profile/change-sub-account-balance', {
+      'title': subAccountTitle,
+      'parentTitle': accountTitle,
+      'balance': balance
+    });
   }
 
   public editSubAccount(accountTitle: string, oldSubAccountTitle: string, newSubAccountTitle: string, icon: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/edit-sub-account', {oldTitle: oldSubAccountTitle, title: newSubAccountTitle, parentTitle: accountTitle, balance: balance, icon: icon});
+    return this._http.post<SimpleResponse>('/api/profile/edit-sub-account', {
+      'oldTitle': oldSubAccountTitle,
+      'title': newSubAccountTitle,
+      'parentTitle': accountTitle,
+      'balance': balance,
+      'icon': icon
+    });
   }
 
   public moveSubAccountUp(accountTitle: string, subAccountTitle: string): Observable<SimpleResponse> {
@@ -198,7 +213,7 @@ export class ProfileService implements CanActivate {
   }
 
   public toggleAccount(accountTitle: string, toggleState: boolean): void {
-    this._http.post<SimpleResponse>('/api/profile/toggle-account', {title: accountTitle, toggleState: toggleState})
+    this._http.post<SimpleResponse>('/api/profile/toggle-account', {'title': accountTitle, 'toggleState': toggleState})
       .subscribe(simpleResponse => {
         if (simpleResponse.status === 'FAIL') {
           this._alertService.addAlert(AlertType.WARNING, 'Ошибка при сохранения измененного статуса счета');
@@ -211,11 +226,11 @@ export class ProfileService implements CanActivate {
   }
 
   public addCategory(categoryTitle: string, icon: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/add-category', {title: categoryTitle, icon: icon});
+    return this._http.post<SimpleResponse>('/api/profile/add-category', {'title': categoryTitle, 'icon': icon});
   }
 
   public editCategory(oldCategoryTitle: string, newCategoryTitle: string, icon: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/edit-category', {title: newCategoryTitle, oldTitle: oldCategoryTitle, icon: icon});
+    return this._http.post<SimpleResponse>('/api/profile/edit-category', {'title': newCategoryTitle, 'oldTitle': oldCategoryTitle, 'icon': icon});
   }
 
   public deleteCategory(categoryTitle: string): Observable<SimpleResponse> {
@@ -231,27 +246,28 @@ export class ProfileService implements CanActivate {
   }
 
   public addSubCategory(subCategoryTitle: string, categoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/add-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
+    return this._http.post<SimpleResponse>('/api/profile/add-sub-category', {'title': subCategoryTitle, 'parentTitle': categoryTitle, 'subCategoryType': subCategoryType});
   }
 
-  public editSubCategory(categoryTitle: string, oldSubCategoryTitle: string, newSubCategoryTitle: string, subCategoryType: string) {
-    return this._http.post<SimpleResponse>('/api/profile/edit-sub-category', {oldTitle: oldSubCategoryTitle, title: newSubCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
+  public editSubCategory(categoryTitle: string, oldSubCategoryTitle: string, newSubCategoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/edit-sub-category', {
+      'oldTitle': oldSubCategoryTitle,
+      'title': newSubCategoryTitle,
+      'parentTitle': categoryTitle,
+      'subCategoryType': subCategoryType
+    });
   }
 
-  public deleteSubCategory(categoryTitle: string, subCategoryTitle: string, subCategoryType: string) {
-    return this._http.post<SimpleResponse>('/api/profile/delete-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType});
+  public deleteSubCategory(categoryTitle: string, subCategoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/delete-sub-category', {'title': subCategoryTitle, 'parentTitle': categoryTitle, 'subCategoryType': subCategoryType});
   }
 
   public moveSubCategoryUp(categoryTitle: string, subCategoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType, direction: 'UP'});
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {'title': subCategoryTitle, 'parentTitle': categoryTitle, 'subCategoryType': subCategoryType, 'direction': 'UP'});
   }
 
   public moveSubCategoryDown(categoryTitle: string, subCategoryTitle: string, subCategoryType: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {title: subCategoryTitle, parentTitle: categoryTitle, subCategoryType: subCategoryType, direction: 'DOWN'});
-  }
-
-  private getUserProfile(): Observable<Profile> {
-    return this._http.get<Profile>('/api/profile/full');
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {'title': subCategoryTitle, 'parentTitle': categoryTitle, 'subCategoryType': subCategoryType, 'direction': 'DOWN'});
   }
 
   public get authenticatedProfile(): Profile {
@@ -339,8 +355,8 @@ export class ProfileService implements CanActivate {
     return this._formBuilder.group({
       email: this._formBuilder.control({value: this._authenticatedProfile.email, disabled: true}),
       oldPassword: ['', Validators.required],
-      newPassword: this._formBuilder.control({value: '', disabled: true}, Validators.required),
-      newPasswordAgain: this._formBuilder.control({value: '', disabled: true}, Validators.required)
+      newPassword: this._formBuilder.control({value: '', disabled: true}, [Validators.required, Validators.minLength(3)]),
+      newPasswordAgain: this._formBuilder.control({value: '', disabled: true}, [Validators.required, Validators.minLength(3)])
     }, {
       validator: ProfileService.validateNewPassword
     });
@@ -367,11 +383,14 @@ export class ProfileService implements CanActivate {
     const passwordAgainValue: string = newPasswordAgainFormControl.value;
     const passwordValue: string = fg.controls.newPassword.value;
 
-    if (!fg.invalid && passwordAgainValue && passwordAgainValue.length >= 1 && passwordAgainValue !== passwordValue) {
-      newPasswordAgainFormControl.setErrors({message: 'Новый пароль введен второй раз неверно'});
+    if (!fg.invalid && passwordAgainValue && passwordAgainValue.length >= 1) {
+      if (passwordValue.length < 3) {
+        newPasswordAgainFormControl.setErrors({message: 'Минимальная длина 3 символа'});
+      } else if (passwordAgainValue !== passwordValue) {
+        newPasswordAgainFormControl.setErrors({message: 'Новый пароль введен второй раз неверно'});
+      }
     }
   }
-
 
   public set initialDataLoaded(value: boolean) {
     this._initialDataLoaded = value;
@@ -379,5 +398,9 @@ export class ProfileService implements CanActivate {
 
   public get initialDataLoaded(): boolean {
     return this._initialDataLoaded;
+  }
+
+  private getUserProfile(): Observable<Profile> {
+    return this._http.get<Profile>('/api/profile/full');
   }
 }

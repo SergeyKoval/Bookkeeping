@@ -11,10 +11,7 @@ import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dial
   styleUrls: ['./budget.component.css']
 })
 export class BudgetComponent implements OnInit {
-  public months: string[] = DateUtils.MONTHS;
   public loading: boolean;
-  public selectedMonth: number;
-  public selectedYear: number;
   public budget: Budget;
   public monthProgress: MonthProgress;
 
@@ -25,36 +22,15 @@ export class BudgetComponent implements OnInit {
 
   public ngOnInit(): void {
     const now: Date = new Date();
-    this.selectedYear = now.getFullYear();
-    this.selectedMonth = now.getMonth();
-    this.loadBudget(true);
-  }
-
-  public getSelectedMonth(): string {
-    return this.months[this.selectedMonth];
+    this.loadBudget(true, now.getFullYear(), now.getMonth() + 1);
   }
 
   public chooseMonth(monthIndex: number): void {
-    if (this.selectedMonth !== monthIndex) {
-      this.selectedMonth = monthIndex;
-      this.loadBudget(true);
-    }
+    this.loadBudget(true, this.budget.year, monthIndex);
   }
 
-  public decreaseYear(): void {
-    if (!this.loading) {
-      this.selectedYear--;
-      this.selectedMonth = 11;
-      this.loadBudget(true);
-    }
-  }
-
-  public increaseYear(): void {
-    if (!this.loading) {
-      this.selectedYear++;
-      this.selectedMonth = 0;
-      this.loadBudget(true);
-    }
+  public chooseYear(date: {year: number, month: number}): void {
+    this.loadBudget(true, date.year, date.month);
   }
 
   public openPlanDialog(): void {
@@ -71,22 +47,22 @@ export class BudgetComponent implements OnInit {
       }).afterClosed()
         .subscribe(refreshBudget => {
           if (refreshBudget === true) {
-            this.loadBudget(true);
+            this.loadBudget(true, this.budget.year, this.budget.month);
           }
         });
     }
   }
 
-  public loadBudget(refresh: boolean): void {
+  public loadBudget(refresh: boolean, year: number, month: number): void {
     if (refresh === true) {
       this.loading = true;
-      this.updateMonthProgress();
-      this._budgetService.loadBudget(this.selectedYear, this.selectedMonth + 1).subscribe((budget: Budget) => {
+      this._budgetService.loadBudget(year, month).subscribe((budget: Budget) => {
         if (this.budget && this.budget.year === budget.year && this.budget.month === budget.month) {
           this.setOpenedCategories('income', budget);
           this.setOpenedCategories('expense', budget);
         }
         this.budget = budget;
+        this.updateMonthProgress();
         this.loading = false;
       });
     }
@@ -94,8 +70,8 @@ export class BudgetComponent implements OnInit {
 
   private updateMonthProgress(): void {
     const now: Date = new Date();
-    const currentMonth: boolean = now.getFullYear() === this.selectedYear && now.getMonth() === this.selectedMonth;
-    const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(this.selectedYear, this.selectedMonth + 1) * 100) : 0;
+    const currentMonth: boolean = now.getFullYear() === this.budget.year && now.getMonth() === this.budget.month - 1;
+    const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(this.budget.year, this.budget.month) * 100) : 0;
     this.monthProgress = {'currentMonth': currentMonth, 'monthPercent': monthPercent};
   }
 

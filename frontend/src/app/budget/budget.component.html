@@ -6,21 +6,8 @@
         <span class="btn btn-default left-button disabled" type="button">Закрыть месяц</span>
     </div>
 
-    <div class="input-group right-button-group">
-      <span class="input-group-btn">
-        <span type="button" class="btn btn-default dropdown-toggle month-dropdown" [ngClass]="{'disabled': loading}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <strong>{{getSelectedMonth()}}</strong> <span class="caret month-dropdown-caret"></span>
-        </span>
-        <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
-          <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
-        </ul>
-        <span class="btn btn-default glyphicon glyphicon-menu-left button-icon" [ngClass]="{'disabled': loading}" type="button" (click)="decreaseYear()"></span>
-      </span>
-      <span class="input-group-addon year-aria">{{selectedYear}}</span>
-      <span class="input-group-btn float-left">
-        <span class="btn btn-default glyphicon glyphicon-menu-right button-icon" [ngClass]="{'disabled': loading}" type="button" (click)="increaseYear()"></span>
-      </span>
-    </div>
+    <bk-month-and-year class="right-button-group" [disabled]="loading" [selectedYear]="budget?.year" [selectedMonth]="budget?.month"
+                       (changeMonth)="chooseMonth($event)" (changeYear)="chooseYear($event)"></bk-month-and-year>
 
     <div *ngIf="!loading; else loadingIndicator">
       <bk-budget-details [budget]="budget" [type]="'income'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>

@@ -7,61 +7,21 @@
   width: 283px;
 }
 
-.month-dropdown {
-  width: 105px;
-}
-
-.month-dropdown-menu {
-  width: 105px;
-  min-width: 105px;
-  left: 0;
-}
-
-.month-dropdown-menu li {
-  cursor: pointer;
-}
-
-.month-dropdown-caret {
-  float: right;
-  margin-top: 8px;
-}
-
-.button-icon {
-  top: 0;
-}
-
-.year-aria {
-  float: left;
-  width: 100px;
-  height: 34px;
-  padding-top: 9px;
-  border-left-width:0;
-  border-right-width: 0;
-}
-
-.selected {
-  background-color: #f5f5f5a3;
-}
-
 @media (min-width: 768px) and (max-width: 992px) {
   .right-button-group {
-    width: 222px;
+    width: 230px;
   }
 
-  .year-aria {
-    width: 50px;
+  :host ::ng-deep bk-month-and-year .year-aria {
+    min-width: 50px;
   }
 
-  .month-dropdown, .month-dropdown-menu {
-    width: 95px;
-  }
-
-  .month-dropdown-menu {
-    min-width: 95px;
-  }
-
-  .left-button, .month-dropdown {
+  .left-button, :host ::ng-deep bk-month-and-year .month-dropdown {
     padding-left: 7px;
     padding-right: 7px;
+  }
+
+  :host ::ng-deep bk-month-and-year .month-dropdown-menu li a {
+    padding-left: 13px;
   }
 }

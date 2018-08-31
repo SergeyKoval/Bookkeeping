@@ -1,0 +1,19 @@
+<div class="input-group right-button-group">
+  <span class="input-group-btn full-width">
+    <span type="button" class="btn btn-default dropdown-toggle month-dropdown" style="width: 100%;" [ngClass]="{'disabled': disabled}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span *ngIf="!disabled">
+        <strong>{{getSelectedMonthTitle()}}</strong>
+        <span class="caret month-dropdown-caret"></span>
+      </span>
+      <bk-spinner [display]="disabled" [size]="20"></bk-spinner>
+    </span>
+    <ul class="dropdown-menu month-dropdown-menu">
+      <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
+    </ul>
+  </span>
+  <span class="btn btn-default glyphicon glyphicon-menu-left button-icon" [ngClass]="{'disabled': disabled}" type="button" (click)="decreaseYear()"></span>
+  <span class="input-group-addon year-aria">{{selectedYear}}</span>
+  <span class="input-group-btn float-left">
+    <span class="btn btn-default glyphicon glyphicon-menu-right button-icon" [ngClass]="{'disabled': disabled}" type="button" (click)="increaseYear()"></span>
+  </span>
+</div>

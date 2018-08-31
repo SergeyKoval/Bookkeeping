@@ -1,0 +1,42 @@
+.button-icon {
+  top: 0;
+}
+
+.year-aria {
+  min-width: 100px;
+}
+
+.full-width, .month-dropdown-menu {
+  width: 100%;
+}
+
+.month-dropdown-menu {
+  left: 0;
+}
+
+.glyphicon-menu-left {
+  border-radius: 0;
+  margin-left: -1px;
+  margin-right: -1px;
+}
+
+.month-dropdown-caret {
+  float: right;
+  margin-top: 8px;
+}
+
+.selected {
+  background-color: #f5f5f5a3;
+}
+
+.month-dropdown-menu {
+  min-width: 88px;
+}
+
+.month-dropdown-menu li {
+  cursor: pointer;
+}
+
+.month-dropdown {
+  height: 34px;
+}

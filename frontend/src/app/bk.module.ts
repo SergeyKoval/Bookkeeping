@@ -72,6 +72,8 @@ import { BudgetDetailsComponent } from './budget/budget-details/budget-details.c
 import { MonthProgressComponent } from './budget/budget-details/month-progress/month-progress.component';
 import { PlanBudgetDialogComponent } from './budget/plan-budget-dialog/plan-budget-dialog.component';
 import { InputCalculatorComponent } from './common/components/input-calculator/input-calculator.component';
+import { MoveGoalDialogComponent } from './budget/move-goal-dialog/move-goal-dialog.component';
+import { MonthAndYearComponent } from './common/components/month-and-year/month-and-year.component';
 
 @NgModule({
   declarations: [
@@ -123,7 +125,9 @@ import { InputCalculatorComponent } from './common/components/input-calculator/i
     BudgetDetailsComponent,
     MonthProgressComponent,
     PlanBudgetDialogComponent,
-    InputCalculatorComponent
+    InputCalculatorComponent,
+    MoveGoalDialogComponent,
+    MonthAndYearComponent
   ],
   imports: [
     BrowserModule,
@@ -156,7 +160,8 @@ import { InputCalculatorComponent } from './common/components/input-calculator/i
     AccountCategoryDialogComponent,
     BalanceDialogComponent,
     UserDialogComponent,
-    PlanBudgetDialogComponent
+    PlanBudgetDialogComponent,
+    MoveGoalDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

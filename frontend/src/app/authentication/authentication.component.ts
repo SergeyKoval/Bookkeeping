@@ -87,7 +87,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
         switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies()))
       ).subscribe(() => {
         this._profileService.initialDataLoaded = true;
-        this._router.navigate(['history']);
+        this._router.navigate(['budget']);
       });
   }
 }

@@ -1,0 +1,49 @@
+<h2 mat-dialog-title align="center" #title>Перенести остаток цели</h2>
+<mat-dialog-content id="move-goal-dialog">
+  <div align="center" class="description">Поле переноса невыполненного остатка цели, цель текущего месяца будет помечена как выполненная</div>
+
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Текущий период</span>
+      <span class="info-value">{{months[data.budget.month - 1]}} {{data.budget.year}}</span>
+    </div>
+  </div>
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Категория</span>
+      <span class="info-value">{{data.category.title}}</span>
+    </div>
+  </div>
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Название</span>
+      <span class="info-value">{{data.goal.title}}</span>
+    </div>
+  </div>
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Потрачено</span>
+      <span class="info-value">{{data.goal.balance.value}} <strong><bk-currency-symbol [currencyName]="data.goal.balance.currency"></bk-currency-symbol></strong></span>
+    </div>
+  </div>
+
+  <div class="row description" align="center">Куда перенести и какую сумму</div>
+
+  <div class="row info-wrapper">
+    <bk-month-and-year class="right-button-group" [selectedYear]="selectedYear" [selectedMonth]="selectedMonth" (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
+  </div>
+
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title"><bk-currency-symbol [currencyName]="data.goal.balance.currency"></bk-currency-symbol></span>
+      <bk-input-calculator position="right" placeholder="Лимит" [value]="moveValue" (changeInputValue)="moveValue = $event"></bk-input-calculator>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="full-width">
+    <a class="btn btn-default footer-action-item" (click)="close(false)">Закрыть</a>
+    <span class="footer-action-item">&nbsp;</span>
+    <a class="btn btn-default footer-action-item" (click)="save()">Сохранить</a>
+  </span>
+</mat-dialog-actions>

@@ -14,6 +14,7 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
 import { DialogService } from '../../common/service/dialog.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
 
 @Component({
   selector: 'bk-budget-details',
@@ -175,6 +176,23 @@ export class BudgetDetailsComponent implements OnInit {
       data: {
         'editMode': true,
         'type': 'goal',
+        'budgetType': this.type,
+        'category': category,
+        'goal': goal,
+        'budget': this.budget
+      }
+    }).afterClosed()
+      .subscribe(refreshBudget => {
+        this.updateBudget.next(refreshBudget);
+      });
+  }
+
+  public moveGoal(category: BudgetCategory, goal: BudgetGoal): void {
+    this._dialogService.openDialog(MoveGoalDialogComponent, {
+      panelClass: 'move-goal-dialog',
+      width: '400px',
+      position: {top: 'top'},
+      data: {
         'budgetType': this.type,
         'category': category,
         'goal': goal,

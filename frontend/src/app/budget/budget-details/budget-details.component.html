@@ -56,7 +56,7 @@
             <div class="row body-row">
               <bk-popover class="done-icon" glyphiconClass="ok" [conditionalClass]="{'done': goal.done}" placement="left"
                           [text]="goal.done ? 'Пометить невыполненным' : 'Пометить выполненным'" (click)="clickGoalDone(category, goal)"></bk-popover>
-              <span class="glyphicon glyphicon-log-in move-icon"></span>
+              <bk-popover class="move-icon" glyphiconClass="log-in" placement="left" text="Отложить выполнение" (click)="moveGoal(category, goal)"></bk-popover>
               <div class="progress goal-progress">
                 <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
                 <span class="goal-title">{{goal.title}}</span>

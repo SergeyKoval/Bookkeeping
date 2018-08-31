@@ -17,19 +17,8 @@
     <!--Goal month and year-->
     <div class="row" *ngIf="data.type === 'goal'">
       <div class="col-sm-12">
-        <div class="input-group right-button-group">
-            <span class="input-group-btn">
-              <span type="button" class="btn btn-default dropdown-toggle month-dropdown" [ngClass]="{'disabled': !changeGoalMonthAvailable}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="float-left">{{getSelectedMonth()}}</span> <span class="caret"></span>
-              </span>
-              <ul class="dropdown-menu dropdown-menu-right month-dropdown-menu">
-                <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
-              </ul>
-              <span class="btn btn-default glyphicon glyphicon-menu-left decrease-year" type="button" (click)="decreaseYear()" [ngClass]="{'disabled': !changeGoalMonthAvailable}"></span>
-            </span>
-          <span class="input-group-addon year-aria">{{selectedYear}}</span>
-          <span class="btn btn-default glyphicon glyphicon-menu-right increase-year" type="button" (click)="increaseYear()" [ngClass]="{'disabled': !changeGoalMonthAvailable}"></span>
-        </div>
+        <bk-month-and-year class="right-button-group" [disabled]="!changeGoalMonthAvailable" [selectedYear]="selectedYear" [selectedMonth]="selectedMonth"
+                         (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
       </div>
     </div>
 

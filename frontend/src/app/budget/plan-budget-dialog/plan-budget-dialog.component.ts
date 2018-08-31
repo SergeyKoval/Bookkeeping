@@ -10,7 +10,6 @@ import { LoadingService } from '../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
-import { DateUtils } from '../../common/utils/date-utils';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 
 @Component({
@@ -19,7 +18,6 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
   styleUrls: ['./plan-budget-dialog.component.css']
 })
 export class PlanBudgetDialogComponent implements OnInit {
-  public months: string[] = DateUtils.MONTHS;
   public currencies: CurrencyDetail[];
   public errors: string;
 
@@ -46,7 +44,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   public ngOnInit(): void {
     this._CATEGORIES = this._profileService.authenticatedProfile.categories;
     this.currencies = this._profileService.authenticatedProfile.currencies;
-    this.selectedMonth = this.data.budget.month - 1;
+    this.selectedMonth = this.data.budget.month;
     this.selectedYear = this.data.budget.year;
 
     if (this.data.editMode) {
@@ -68,27 +66,17 @@ export class PlanBudgetDialogComponent implements OnInit {
     }
   }
 
-  public chooseMonth(monthIndex: number): void {
+  public changeMonth(monthIndex: number): void {
     if (this.selectedMonth !== monthIndex && this.changeGoalMonthAvailable) {
       this.selectedMonth = monthIndex;
+      console.log(this.selectedMonth);
     }
   }
 
-  public getSelectedMonth(): string {
-    return this.months[this.selectedMonth];
-  }
-
-  public decreaseYear(): void {
+  public changeYear(date: {year: number, month: number}): void {
     if (this.changeGoalMonthAvailable) {
-      this.selectedYear--;
-      this.selectedMonth = 11;
-    }
-  }
-
-  public increaseYear(): void {
-    if (this.changeGoalMonthAvailable) {
-      this.selectedYear++;
-      this.selectedMonth = 0;
+      this.selectedYear = date.year;
+      this.selectedMonth = date.month;
     }
   }
 
@@ -187,17 +175,17 @@ export class PlanBudgetDialogComponent implements OnInit {
               this._confirmDialogService.openConfirmDialog('Изменение статуса цели', 'Цель выполнена?')
                 .afterClosed()
                 .subscribe((result: boolean) => this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
-                  this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], result)));
+                  this.selectedMonth, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], result)));
             } else {
               const changeGoalState: boolean = this.data.goal.done
                 && this.currencyBalance[0].value < this.currencyBalance[0].completeValue
                 && this.currencyBalance[0].completeValue !== this.data.goal.balance.completeValue;
               this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
-                this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], changeGoalState));
+                this.selectedMonth, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], changeGoalState));
             }
           } else {
             this.processResult(loadingDialog, this._budgetService.addBudgetGoal(this.isSelectedMonth() ? this.data.budget.id : null, this.selectedYear,
-              this.selectedMonth + 1, this.budgetType, this.categoryTitle, this.goalTitle, this.currencyBalance[0]));
+              this.selectedMonth, this.budgetType, this.categoryTitle, this.goalTitle, this.currencyBalance[0]));
           }
         }
         break;
@@ -245,7 +233,7 @@ export class PlanBudgetDialogComponent implements OnInit {
 
   private validateGoal(): boolean {
     const now: Date = new Date();
-    if (this.selectedYear < now.getFullYear() || (this.selectedYear === now.getFullYear() && this.selectedMonth < now.getMonth())) {
+    if (this.selectedYear < now.getFullYear() || (this.selectedYear === now.getFullYear() && this.selectedMonth < now.getMonth() + 1)) {
       this.errors = 'Цель для завершенного месяца';
       return false;
     }
@@ -372,6 +360,6 @@ export class PlanBudgetDialogComponent implements OnInit {
 
   private isSelectedMonth(): boolean {
     const budget: Budget = this.data.budget;
-    return budget.year === this.selectedYear && budget.month === this.selectedMonth + 1;
+    return budget.year === this.selectedYear && budget.month === this.selectedMonth;
   }
 }

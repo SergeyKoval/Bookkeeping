@@ -7,6 +7,10 @@
   width: 283px;
 }
 
+:host ::ng-deep bk-month-and-year .button-title {
+  font-weight: bold;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .right-button-group {
     width: 230px;

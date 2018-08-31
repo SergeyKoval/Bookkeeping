@@ -2,7 +2,7 @@
   <span class="input-group-btn full-width">
     <span type="button" class="btn btn-default dropdown-toggle month-dropdown" style="width: 100%;" [ngClass]="{'disabled': disabled}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span *ngIf="!disabled">
-        <strong>{{getSelectedMonthTitle()}}</strong>
+        <span class="button-title">{{getSelectedMonthTitle()}}</span>
         <span class="caret month-dropdown-caret"></span>
       </span>
       <bk-spinner [display]="disabled" [size]="20"></bk-spinner>

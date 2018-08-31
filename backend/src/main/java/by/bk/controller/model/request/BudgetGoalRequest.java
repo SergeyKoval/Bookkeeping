@@ -19,4 +19,5 @@ public class BudgetGoalRequest {
     private boolean doneStatus;
     private CurrencyBalanceValue balance;
     private boolean changeGoalState;
+    private Double value;
 }

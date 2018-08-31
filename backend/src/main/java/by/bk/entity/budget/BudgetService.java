@@ -266,6 +266,29 @@ public class BudgetService implements BudgetAPI {
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
+    @Override
+    public SimpleResponse moveGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, Double movedValue) {
+        Budget budget = validateAndGetBudget(login, budgetId);
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, type);
+        BudgetCategory category = chooseBudgetCategory(budgetDetails, categoryTitle, login, budgetId);
+        BudgetGoal goal = chooseBudgetGoal(category, goalTitle, login, budgetId);
+        CurrencyBalanceValue balance = goal.getBalance();
+
+        CurrencyBalanceValue balanceValue = new CurrencyBalanceValue(0d, movedValue, balance.getCurrency());
+        SimpleResponse simpleResponse = addBudgetGoal(login, null, year, month, type, categoryTitle, goalTitle, balanceValue);
+        if (simpleResponse.isSuccess()) {
+            Update update = new Update();
+            String categoryQuery = StringUtils.join(type.name(), ".categories.", budgetDetails.getCategories().indexOf(category));
+            editBudgetGoalSameMonth(update, budgetDetails, goalTitle, goalTitle, category, balance, goal, type, categoryQuery, true);
+
+            Query query = Query.query(Criteria.where("id").is(budgetId));
+            UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+            return updateResult.getMatchedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+        } else {
+            return simpleResponse;
+        }
+    }
+
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {
         if (!StringUtils.equals(originalGoalTitle, goalTitle) && category.getGoals().stream().anyMatch(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))) {
             throw new ItemAlreadyExistsException();

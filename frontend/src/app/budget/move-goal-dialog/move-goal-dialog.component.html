@@ -32,12 +32,15 @@
   <div class="row info-wrapper">
     <bk-month-and-year class="right-button-group" [selectedYear]="selectedYear" [selectedMonth]="selectedMonth" (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
   </div>
-
   <div class="row info-wrapper">
     <div class="input-group full-width">
       <span class="input-group-addon dropdown-addon info-title"><bk-currency-symbol [currencyName]="data.goal.balance.currency"></bk-currency-symbol></span>
       <bk-input-calculator position="right" placeholder="Лимит" [value]="moveValue" (changeInputValue)="moveValue = $event"></bk-input-calculator>
     </div>
+  </div>
+
+  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errors}}</strong>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

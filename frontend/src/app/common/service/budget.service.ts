@@ -94,4 +94,16 @@ export class BudgetService {
       'category': categoryTitle
     });
   }
+
+  public moveGoal(budgetId: string, budgetType: string, categoryTitle: string, goalTitle: string, year: number, month: number, value: number): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/moveGoal', {
+      'budgetId': budgetId,
+      'type': budgetType,
+      'category': categoryTitle,
+      'goal': goalTitle,
+      'year': year,
+      'month': month,
+      'value': value
+    });
+  }
 }

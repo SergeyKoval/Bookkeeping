@@ -53,7 +53,7 @@ export class BudgetComponent implements OnInit {
     }
   }
 
-  public loadBudget(refresh: boolean, year: number, month: number): void {
+  public loadBudget(refresh: boolean, year: number = this.budget.year, month: number = this.budget.month): void {
     if (refresh === true) {
       this.loading = true;
       this._budgetService.loadBudget(year, month).subscribe((budget: Budget) => {

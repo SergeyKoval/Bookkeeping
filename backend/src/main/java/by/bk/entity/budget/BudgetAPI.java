@@ -22,4 +22,5 @@ public interface BudgetAPI {
     SimpleResponse updateBudgetLimit(String login, String budgetId, HistoryType type, List<CurrencyBalanceValue> currencyBalances);
     SimpleResponse removeGoal(String login, String budgetId, HistoryType type, String categoryTitle, String goalTitle);
     SimpleResponse removeCategory(String login, String budgetId, HistoryType type, String categoryTitle);
+    SimpleResponse moveGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, Double movedValue);
 }

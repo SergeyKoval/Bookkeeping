@@ -188,12 +188,22 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   public moveGoal(category: BudgetCategory, goal: BudgetGoal): void {
+    if (goal.done) {
+      this._alertService.addAlert(AlertType.INFO, 'Цель уже выполнена');
+      return;
+    }
+
+    if (goal.balance.value === 0) {
+      this.openGoalEditDialog(category, goal);
+      return;
+    }
+
     this._dialogService.openDialog(MoveGoalDialogComponent, {
       panelClass: 'move-goal-dialog',
       width: '400px',
       position: {top: 'top'},
       data: {
-        'budgetType': this.type,
+        'type': this.type,
         'category': category,
         'goal': goal,
         'budget': this.budget

@@ -39,3 +39,8 @@
 .currency-dropdown {
   width: 132px;
 }
+
+.error {
+  margin-top: 10px;
+  margin-bottom: 0;
+}

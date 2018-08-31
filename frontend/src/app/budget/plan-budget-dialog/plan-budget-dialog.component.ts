@@ -335,7 +335,7 @@ export class PlanBudgetDialogComponent implements OnInit {
       tap(simpleResponse => {
         loadingDialog.close();
         if (simpleResponse.status === 'FAIL') {
-          this.errors = simpleResponse.message === 'ALREADY_EXISTS' ? 'Категория уже запланирована' : 'Ошибка при сохранении';
+          this.errors = simpleResponse.message === 'ALREADY_EXIST' ? 'Категория уже запланирована' : 'Ошибка при сохранении';
         }
       }),
       filter(simpleResponse => simpleResponse.status === 'SUCCESS'),

@@ -25,9 +25,13 @@
     padding-left: 9px;
   }
 
-  .left-button, :host ::ng-deep bk-month-and-year .month-dropdown {
+  .left-button {
     padding-left: 7px;
     padding-right: 7px;
+  }
+
+  :host ::ng-deep bk-month-and-year .month-dropdown {
+    padding-left: 7px;
   }
 
   :host ::ng-deep bk-month-and-year .month-dropdown-menu li a {

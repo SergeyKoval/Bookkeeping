@@ -21,8 +21,9 @@
 }
 
 .month-dropdown-caret {
-  float: right;
-  margin-top: 8px;
+  position: absolute;
+  right: 7px;
+  top: 14px;
 }
 
 .selected {
@@ -39,4 +40,5 @@
 
 .month-dropdown {
   height: 34px;
+  padding-right: 15px;
 }

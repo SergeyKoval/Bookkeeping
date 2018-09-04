@@ -1,6 +1,14 @@
+.panel-body {
+  padding: 10px;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
 .page-title {
   font-size: 16px;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .page-title-text {
@@ -15,6 +23,8 @@
   margin-bottom: 0;
   padding-top: 5px;
   padding-bottom: 5px;
+  margin-left: -10px;
+  margin-right: -10px;
 }
 
 .admin-label {

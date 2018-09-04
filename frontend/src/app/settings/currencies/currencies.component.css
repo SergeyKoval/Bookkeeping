@@ -8,8 +8,17 @@
   padding-bottom: 5px;
 }
 
+.row {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
 .page-title {
-  padding-bottom: 15px;
+  padding-bottom: 10px;
   font-size: 16px;
 }
 

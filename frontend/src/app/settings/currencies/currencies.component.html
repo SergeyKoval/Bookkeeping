@@ -28,7 +28,7 @@
       <bk-popover glyphiconClass="arrow-up" text="Сдвинуть вверх" placement="left"
                   (click)="moveCurrencyUp(defaultCurrency.name)" *ngIf="isCurrencyUsed(defaultCurrency.name) && !firstCurrency && isMoveAvailable()"></bk-popover>
     </div>
-    <hr/>
+    <hr *ngIf="!lastCurrency"/>
   </div>
 </div>
 

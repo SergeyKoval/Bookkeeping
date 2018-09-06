@@ -22,7 +22,7 @@ export class CurrencyUtils {
   }
 
   public static convertValueToCurrency(value: number, valueCurrency: string, resultCurrency: string, alternativeCurrencies: {[key: string]: number}): number {
-    if (valueCurrency === resultCurrency) {
+    if (valueCurrency === resultCurrency || value === 0) {
       return value || 0;
     }
 

@@ -4,7 +4,7 @@ import { BrowserUtils } from '../../utils/browser-utils';
 @Component({
   selector: 'bk-popover',
   template: `<span [class]="getFinalClass()" [popover]="text" [popoverPlacement]="placement" [popoverDisabled]="disabled"
-                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">
+                   [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true" >
              </span>`,
   styleUrls: ['./popover.component.css']
 })

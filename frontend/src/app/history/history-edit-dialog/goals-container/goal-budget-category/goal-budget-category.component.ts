@@ -2,9 +2,7 @@ import { Component, Input } from '@angular/core';
 
 import { IMyDate } from 'mydatepicker';
 
-import { DateUtils } from '../../../../common/utils/date-utils';
-import { CurrencyUtils } from '../../../../common/utils/currency-utils';
-import { HistoryService } from '../../../../common/service/history.service';
+import { ProfileService } from '../../../../common/service/profile.service';
 
 @Component({
   selector: 'bk-goal-budget-category',
@@ -17,59 +15,71 @@ export class GoalBudgetCategoryComponent {
   @Input()
   public selectedDate: IMyDate;
   @Input()
-  public categoryLoading: boolean;
+  public budgetLoading: boolean;
   @Input()
   public alternativeCurrencyLoading: boolean;
   @Input()
+  public monthProgress: MonthProgress;
+  @Input()
   public budgetCategory: BudgetCategory;
 
-  public constructor(private _historyService: HistoryService) { }
+  public balance: BudgetBalance;
 
-  public isCurrentMonth(): boolean {
-    return (new Date(Date.now()).getUTCMonth() + 1) === this.selectedDate.month;
-  }
+  public constructor(private _profileService: ProfileService) { }
 
-  public getDayPercent(): number {
-    return Math.round(new Date(Date.now()).getUTCDate() / DateUtils.daysInMonth(this.selectedDate.year, this.selectedDate.month) * 100);
-  }
-
-  public getCurrentBudgetStyle(budgetBalance: BudgetBalance): string {
-    const budgetValue: number = this.getBudgetValue(budgetBalance);
-    if (!this.isCurrentMonth()) {
-      return (this.historyItem.type === 'expense' && budgetValue <= budgetBalance.completeValue)
-        || (this.historyItem.type === 'income' && budgetValue >= budgetBalance.completeValue) ? 'progress-bar-success' : 'progress-bar-danger';
-    }
-
-    const dayPercent: number = this.getDayPercent();
-    const budgetPercent: number = Math.round(budgetValue / budgetBalance.completeValue * 100);
-    return (this.historyItem.type === 'expense' && dayPercent >= budgetPercent)
-      || (this.historyItem.type === 'income' && dayPercent <= budgetPercent) ? 'progress-bar-success' : 'progress-bar-danger';
-  }
-
-  public getBudgetValue(budgetBalance: BudgetBalance): number {
-    const currentValue: number = this.getActionValue(budgetBalance);
-    return budgetBalance.value + currentValue;
-  }
-
-  public getBudgetBalance(): BudgetBalance {
-    return null;
-    // return this._historyService.chooseBudgetBalanceBasedOnCurrency(this.historyItem, this.budgetCategory);
-  }
-
-  public getPercentBeforeAction(budgetBalance: BudgetBalance): number {
-    const percent: number = Math.round(budgetBalance.value / budgetBalance.completeValue * 100);
+  public getPercentBeforeAction(): number {
+    const percent: number = Math.round(this.balance.value / this.balance.completeValue * 100);
     return percent < 100 ? percent : 100;
   }
 
-  public getActionPercent(budgetBalance: BudgetBalance): number {
-    const previousPercent: number = this.getPercentBeforeAction(budgetBalance);
-    const selectedPercent: number = Math.round(this.getActionValue(budgetBalance) / budgetBalance.completeValue * 100);
+  public getActionPercent(): number {
+    const previousPercent: number = this.getPercentBeforeAction();
+    const selectedPercent: number = Math.round(this.getActionValue() / this.balance.completeValue * 100);
     return (selectedPercent + previousPercent) < 100 ? selectedPercent : (100 - previousPercent);
   }
 
-  private getActionValue(budgetBalance: BudgetBalance): number {
-    const value: number = this.historyItem.balance.value || 0;
-    return budgetBalance.currency === this.historyItem.balance.currency ? value
-      : CurrencyUtils.convertValueToCurrency(value, this.historyItem.balance.currency, budgetBalance.currency, this.historyItem.balance.alternativeCurrency);
+  public getCurrentBudgetStyle(): string {
+    const budgetValue: number = this.getBudgetValue();
+    if (!this.monthProgress.currentMonth) {
+      return (this.historyItem.type === 'expense' && budgetValue <= this.balance.completeValue)
+        || (this.historyItem.type === 'income' && budgetValue >= this.balance.completeValue) ? 'progress-bar-success' : 'progress-bar-warning';
+    }
+
+    const dayPercent: number = this.monthProgress.monthPercent;
+    const budgetPercent: number = Math.round(budgetValue / this.balance.completeValue * 100);
+    return (this.historyItem.type === 'expense' && dayPercent >= budgetPercent)
+      || (this.historyItem.type === 'income' && dayPercent <= budgetPercent) ? 'progress-bar-success' : 'progress-bar-warning';
+  }
+
+  public getBudgetValue(): number {
+    const currentValue: number = this.getActionValue();
+    return this.balance.value + currentValue;
+  }
+
+  private getActionValue(): number {
+    const currency: string = this.getCurrency();
+    return !this.historyItem.balance.value
+      ? 0 : (currency === this.historyItem.balance.currency
+        ? this.historyItem.balance.value : this.historyItem.balance.alternativeCurrency[currency]);
+  }
+
+  private getCurrency(): string {
+    let currency: string = this.historyItem.balance.currency;
+    let balance: BudgetBalance = this.budgetCategory.balance[currency];
+    if (balance) {
+      this.balance = balance;
+      return currency;
+    }
+
+    currency = this._profileService.defaultCurrency.name;
+    balance = this.budgetCategory.balance[currency];
+    if (balance) {
+      this.balance = balance;
+      return currency;
+    }
+
+    currency = this._profileService.defaultCurrency.name;
+    this.balance = this.budgetCategory.balance[currency];
+    return currency;
   }
 }

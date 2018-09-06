@@ -174,6 +174,14 @@ export class HistoryEditDialogComponent implements OnInit {
     this._dialogRef.close(refreshHistoryItems);
   }
 
+  public showGoalContainer(): boolean {
+    return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
+  }
+
+  public onSelectedGoalStatusChange(status: boolean): void {
+    this._goalStatusChange = status;
+  }
+
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string): HistoryType {
 
@@ -315,12 +323,4 @@ export class HistoryEditDialogComponent implements OnInit {
       this.close(true);
     });
   }
-
-  // public showGoalContainer(): boolean {
-  //   return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
-  // }
-
-  // public onSelectedGoalStatusChange(status: boolean): void {
-  //   this._goalStatusChange = status;
-  // }
 }

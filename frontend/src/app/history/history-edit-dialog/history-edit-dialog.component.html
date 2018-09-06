@@ -50,8 +50,8 @@
       </div>
     </div>
   </div>
-  <!--<bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"-->
-                      <!--[historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>-->
+  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
+                      [historyItem]="historyItem" (statusChange)="onSelectedGoalStatusChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="history-actions">

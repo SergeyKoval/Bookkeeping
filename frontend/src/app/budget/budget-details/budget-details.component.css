@@ -11,6 +11,11 @@
   color: #5cb85c;
 }
 
+:host ::ng-deep bk-month-progress .month-progress-container {
+  margin-left: 45px;
+  margin-right: 48px;
+}
+
 .glyphicon:hover {
   color: #5e5e5e;
 }

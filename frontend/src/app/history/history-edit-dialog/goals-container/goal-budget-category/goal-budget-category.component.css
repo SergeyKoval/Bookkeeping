@@ -1,6 +1,7 @@
 .budget {
   margin-left: 0;
   margin-right: 0;
+  margin-bottom: 5px;
 }
 
 .day-percent-top, .day-percent-bottom {
@@ -14,11 +15,6 @@
 
 .day-percent-bottom {
   margin-bottom: 5px;
-}
-
-.no-day-percent {
-  margin-top: 15px;
-  margin-bottom: 15px !important;
 }
 
 .category-loading {

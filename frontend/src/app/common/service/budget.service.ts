@@ -4,13 +4,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { HOST } from '../config/config';
+import { ProfileService } from './profile.service';
+import { GoalFilterType } from '../model/history/GoalFilterType';
 
 @Injectable()
 export class BudgetService {
 
   public constructor(
     private _http: HttpClient,
-    @Inject(HOST) private _host: string
+    @Inject(HOST) private _host: string,
+    private _profileService: ProfileService
   ) { }
 
   public loadBudget(year: number, month: number): Observable<Budget> {
@@ -104,6 +107,43 @@ export class BudgetService {
       'year': year,
       'month': month,
       'value': value
+    });
+  }
+
+  public static filterGoals(goals: BudgetGoal[], filterType: GoalFilterType): BudgetGoal[] {
+    if (!goals) {
+      return [];
+    }
+
+    switch (filterType) {
+      case GoalFilterType.DONE: {
+        return goals.filter((goal: BudgetGoal) => goal.done);
+      }
+      case GoalFilterType.NOT_DONE: {
+        return goals.filter((goal: BudgetGoal) => !goal.done);
+      }
+      case GoalFilterType.ALL: {
+        return goals;
+      }
+    }
+  }
+
+  public static sortGoals(goals: BudgetGoal[], selectedGoal?: BudgetGoal): BudgetGoal[] {
+    return goals.sort((firstGoal: BudgetGoal, secondGoal: BudgetGoal) => {
+      if (firstGoal === selectedGoal) {
+        return -3;
+      }
+      if (secondGoal === selectedGoal) {
+        return 3;
+      }
+
+      if ((firstGoal.done && !secondGoal.done) || (!firstGoal.done && secondGoal.done)) {
+        return secondGoal.done ? -2 : 2;
+      }
+
+      const firstPercentDone: number = firstGoal.balance.value / firstGoal.balance.completeValue;
+      const secondPercentDone: number = secondGoal.balance.value / secondGoal.balance.completeValue;
+      return firstPercentDone === secondPercentDone ? 0 : (firstPercentDone < secondPercentDone ? -1 : 1);
     });
   }
 }

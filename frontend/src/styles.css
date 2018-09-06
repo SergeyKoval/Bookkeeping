@@ -32,6 +32,10 @@
   margin-left: -25px;
 }
 
+.popover.top {
+  margin-top: -20px;
+}
+
 html {
   position: relative;
   min-height: 100%;

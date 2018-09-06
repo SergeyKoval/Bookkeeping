@@ -50,6 +50,7 @@
   position: static;
   display: inline;
   margin-bottom: 10px;
+  padding-left: 10px;
 }
 
 .progress {
@@ -68,6 +69,8 @@
 
 .selected-goal {
   font-weight: bold;
+  border: 1px solid green;
+  height: 22px;
 }
 
 .goal-name {
@@ -80,5 +83,6 @@
 }
 
 hr {
-  margin-bottom: 0;
+  margin-bottom: 5px;
+  margin-top: 10px;
 }

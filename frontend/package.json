@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy-dev.json --host 192.168.56.1",
+    "start": "ng serve --proxy-config proxy-dev.json",
     "json": "json-server db.json",
     "build": "ng build --configuration production",
     "test": "ng test",

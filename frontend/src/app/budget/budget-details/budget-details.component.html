@@ -50,7 +50,7 @@
         </div>
 
         <div *ngIf="category.opened">
-          <div *ngFor="let goal of category.goals; let firstGoal = first; let lastGoal = last;">
+          <div *ngFor="let goal of category.goals | goalSort; let firstGoal = first; let lastGoal = last;">
             <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goal)"></bk-template-variable>
             <bk-month-progress [height]="5" *ngIf="firstGoal" [progress]="monthProgress"></bk-month-progress>
             <div class="row body-row">

@@ -198,6 +198,23 @@
   min-width: 24px;
 }
 
+.type {
+  padding-left: 5px;
+}
+
+.badge {
+  position: absolute;
+  left: 100px;
+}
+
+.single-currency {
+  padding-top: 5px;
+}
+
+.budget-details {
+  background-color: #adadad;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .budget-panel .type-and-goal {
     padding-right: 0;

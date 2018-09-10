@@ -35,7 +35,7 @@ export class MonthAndYearComponent {
   public chooseMonth(monthIndex: number): void {
     if (this._selectedMonth !== monthIndex) {
       this._selectedMonth = monthIndex;
-      this.changeMonth.next(++this._selectedMonth);
+      this.changeMonth.next(this._selectedMonth + 1);
     }
   }
 

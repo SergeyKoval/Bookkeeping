@@ -3,7 +3,7 @@
                          [alternativeCurrencyLoading]="alternativeCurrencyLoading" [budgetLoading]="budgetLoading" [budgetCategory]="budgetCategory"></bk-goal-budget-category>
 
 <div class="row">
-  <div class="col-md-4 left-column">
+  <div class="col-sm-4 left-column">
     <ul class="list-group goal-groups">
       <li class="list-group-item text-center goals-header">Цели</li>
       <a *ngFor="let filterType of FILTER_TYPES" (click)="goalFilterType = filterType"
@@ -13,11 +13,11 @@
     </ul>
   </div>
 
-  <div class="col-md-8 right-column">
+  <div class="col-sm-8 right-column">
     <bk-spinner [display]="budgetLoading || alternativeCurrencyLoading"></bk-spinner>
     <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
       <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType" >
-        <div [ngClass]="{'goal-popover-container': true, 'col-md-11 no-right-padding': isSelectedGoal(goalItem), 'col-md-12 selectable-goal': !isSelectedGoal(goalItem)}">
+        <div [ngClass]="{'goal-popover-container': true, 'col-sm-11 no-right-padding': isSelectedGoal(goalItem), 'col-sm-12 selectable-goal': !isSelectedGoal(goalItem)}">
           <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
                       [text]="getGoalDonePopoverTitle(goalItem)" placement="top" (click)="changeGoalStatus(goalItem)"></bk-popover>
           <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
+        <div class="col-sm-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
           <bk-popover glyphiconClass="remove" text="Не учитывать" placement="left" (click)="uncheckGoal()"></bk-popover>
         </div>
       </div>

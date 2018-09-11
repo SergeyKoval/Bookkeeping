@@ -1,6 +1,6 @@
 <div class="row budget">
   <bk-month-progress [height]="10" [progress]="monthProgress"></bk-month-progress>
-  <div class="progress">
+  <div class="progress" [style.height.px]="getNumberOfCurrencies() * 20">
     <div *ngIf="budgetLoading || alternativeCurrencyLoading" class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%;"></div>
     <div *ngIf="budgetLoading || alternativeCurrencyLoading" class="category-loading">Загрузка...</div>
 
@@ -9,7 +9,9 @@
     <span *ngIf="!budgetLoading && !alternativeCurrencyLoading && budgetCategory">
       <div aria-valuemax="100" aria-valuemin="0" role="progressbar" [ngClass]="['progress-bar', getCurrentBudgetStyle()]" [ngStyle]="{'width.%': getPercentBeforeAction()}"></div>
       <div class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getActionPercent()}"></div>
-      <div class="progress-value"><strong><bk-currency-symbol [currencyName]="getCurrency()"></bk-currency-symbol></strong> {{getBudgetValue()}} / {{balance.completeValue}}</div>
+      <span class="progress-value" *ngFor="let currency of budgetCategory.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
+        <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong> {{getBudgetValue(currency)}} / {{budgetCategory.balance[currency].completeValue}}
+      </span>
     </span>
   </div>
   <bk-month-progress [height]="10" [progress]="monthProgress"></bk-month-progress>

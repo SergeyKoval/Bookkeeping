@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';
 import { GoalFilterType } from '../model/history/GoalFilterType';
+import { CurrencyService } from './currency.service';
 
 @Injectable()
 export class BudgetService {
@@ -13,7 +14,8 @@ export class BudgetService {
   public constructor(
     private _http: HttpClient,
     @Inject(HOST) private _host: string,
-    private _profileService: ProfileService
+    private _profileService: ProfileService,
+    private _currencyService: CurrencyService
   ) { }
 
   public loadBudget(year: number, month: number): Observable<Budget> {
@@ -108,6 +110,36 @@ export class BudgetService {
       'month': month,
       'value': value
     });
+  }
+
+  public calculatePercentDone(balance: {[currency: string]: BudgetBalance}, value: number = 0): number {
+    let completeValue: number = 0;
+    const currencies: string[] = Object.keys(balance);
+
+    if (currencies.length === 0) {
+      return 0;
+    }
+
+    if (currencies.length > 1) {
+      const defaultCurrency: CurrencyDetail = this._profileService.defaultCurrency;
+      const baseCurrency: string = balance.hasOwnProperty(defaultCurrency.name) ? defaultCurrency.name : currencies[0];
+      currencies.forEach(currency => {
+        const currencyBalance: BudgetBalance = balance[currency];
+        if (currency === baseCurrency) {
+          value = value + currencyBalance.value;
+          completeValue = completeValue + currencyBalance.completeValue;
+        } else {
+          value = value + this._currencyService.convertToCurrency(currencyBalance.value, currency, baseCurrency);
+          completeValue = completeValue + this._currencyService.convertToCurrency(currencyBalance.completeValue, currency, baseCurrency);
+        }
+      });
+    } else {
+      value = value + balance[currencies[0]].value;
+      completeValue = balance[currencies[0]].completeValue;
+    }
+
+    const percent: number = Math.round(value / completeValue * 100);
+    return percent > 100 ? 100 : percent;
   }
 
   public static filterGoals(goals: BudgetGoal[], filterType: GoalFilterType): BudgetGoal[] {

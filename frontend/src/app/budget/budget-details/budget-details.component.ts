@@ -53,7 +53,7 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   public getBudgetPercentDone(): number {
-    return this.calculatePercentDone(this.budget[this.type].balance);
+    return this._budgetService.calculatePercentDone(this.budget[this.type].balance);
   }
 
   public getNumberOfCurrencies(balance: {[currency: string]: BudgetBalance}): number {
@@ -75,7 +75,7 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   public calculateCategoryPercentDone(category: BudgetCategory): number {
-    return this.calculatePercentDone(category.balance);
+    return this._budgetService.calculatePercentDone(category.balance);
   }
 
   public calculateGoalStyle(goal: BudgetGoal, goalPercent: number): string {
@@ -245,36 +245,5 @@ export class BudgetDetailsComponent implements OnInit {
         });
       }
     });
-  }
-
-  private calculatePercentDone(balance: {[currency: string]: BudgetBalance}): number {
-    let value: number = 0;
-    let completeValue: number = 0;
-    const currencies: string[] = Object.keys(balance);
-
-    if (currencies.length === 0) {
-      return 0;
-    }
-
-    if (currencies.length > 1) {
-      const defaultCurrency: CurrencyDetail = this._profileService.defaultCurrency;
-      const baseCurrency: string = balance.hasOwnProperty(defaultCurrency.name) ? defaultCurrency.name : currencies[0];
-      currencies.forEach(currency => {
-        const currencyBalance: BudgetBalance = balance[currency];
-        if (currency === baseCurrency) {
-          value = value + currencyBalance.value;
-          completeValue = completeValue + currencyBalance.completeValue;
-        } else {
-          value = value + this._currencyService.convertToCurrency(currencyBalance.value, currency, baseCurrency);
-          completeValue = completeValue + this._currencyService.convertToCurrency(currencyBalance.completeValue, currency, baseCurrency);
-        }
-      });
-    } else {
-      value = balance[currencies[0]].value;
-      completeValue = balance[currencies[0]].completeValue;
-    }
-
-    const percent: number = Math.round(value / completeValue * 100);
-    return percent > 100 ? 100 : percent;
   }
 }

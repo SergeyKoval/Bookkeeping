@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 
 import { IMyDate } from 'mydatepicker';
 
+import { BudgetService } from '../../../../common/service/budget.service';
 import { ProfileService } from '../../../../common/service/profile.service';
 
 @Component({
@@ -23,63 +24,53 @@ export class GoalBudgetCategoryComponent {
   @Input()
   public budgetCategory: BudgetCategory;
 
-  public balance: BudgetBalance;
+  public constructor(
+    private _budgetService: BudgetService,
+    private _profileService: ProfileService
+  ) { }
 
-  public constructor(private _profileService: ProfileService) { }
+  public getNumberOfCurrencies(): number {
+    if (!this.budgetCategory) {
+      return 1;
+    }
+
+    const numberOfCurrencies: number = Object.keys(this.budgetCategory.balance).length;
+    return numberOfCurrencies > 0 ? numberOfCurrencies : 1;
+  }
 
   public getPercentBeforeAction(): number {
-    const percent: number = Math.round(this.balance.value / this.balance.completeValue * 100);
-    return percent < 100 ? percent : 100;
+    return this._budgetService.calculatePercentDone(this.budgetCategory.balance);
   }
 
   public getActionPercent(): number {
     const previousPercent: number = this.getPercentBeforeAction();
-    const selectedPercent: number = Math.round(this.getActionValue() / this.balance.completeValue * 100);
-    return (selectedPercent + previousPercent) < 100 ? selectedPercent : (100 - previousPercent);
+    const fullPercent: number = this.getPercentWithHistoryItem();
+    return fullPercent < 100 ? fullPercent - previousPercent : (100 - previousPercent);
   }
 
   public getCurrentBudgetStyle(): string {
-    const budgetValue: number = this.getBudgetValue();
+    const fullPercent: number = this.getPercentWithHistoryItem();
     if (!this.monthProgress.currentMonth) {
-      return (this.historyItem.type === 'expense' && budgetValue <= this.balance.completeValue)
-        || (this.historyItem.type === 'income' && budgetValue >= this.balance.completeValue) ? 'progress-bar-success' : 'progress-bar-warning';
+      return (this.historyItem.type === 'expense' && fullPercent <= 100) || (this.historyItem.type === 'income' && fullPercent >= 100) ? 'progress-bar-success' : 'progress-bar-warning';
     }
 
     const dayPercent: number = this.monthProgress.monthPercent;
-    const budgetPercent: number = Math.round(budgetValue / this.balance.completeValue * 100);
-    return (this.historyItem.type === 'expense' && dayPercent >= budgetPercent)
-      || (this.historyItem.type === 'income' && dayPercent <= budgetPercent) ? 'progress-bar-success' : 'progress-bar-warning';
+    return (this.historyItem.type === 'expense' && dayPercent >= fullPercent) || (this.historyItem.type === 'income' && dayPercent <= fullPercent) ? 'progress-bar-success' : 'progress-bar-warning';
   }
 
-  public getBudgetValue(): number {
-    const currentValue: number = this.getActionValue();
-    return this.balance.value + currentValue;
+  public getBudgetValue(currency: string): number {
+    return currency === this.historyItem.balance.currency
+      ? this.budgetCategory.balance[currency].value + this.getActionValue()
+      : this.budgetCategory.balance[currency].value;
   }
 
   private getActionValue(): number {
-    const currency: string = this.getCurrency();
-    return !this.historyItem.balance.value
-      ? 0 : (currency === this.historyItem.balance.currency
-        ? this.historyItem.balance.value : this.historyItem.balance.alternativeCurrency[currency]);
+    return !this.historyItem.balance.value ? 0 : this.historyItem.balance.value;
   }
 
-  private getCurrency(): string {
-    let currency: string = this.historyItem.balance.currency;
-    let balance: BudgetBalance = this.budgetCategory.balance[currency];
-    if (balance) {
-      this.balance = balance;
-      return currency;
-    }
-
-    currency = this._profileService.defaultCurrency.name;
-    balance = this.budgetCategory.balance[currency];
-    if (balance) {
-      this.balance = balance;
-      return currency;
-    }
-
-    currency = this._profileService.defaultCurrency.name;
-    this.balance = this.budgetCategory.balance[currency];
-    return currency;
+  private getPercentWithHistoryItem(): number {
+    const defaultCurrency: string = this._profileService.defaultCurrency.name;
+    const valueInDefaultCurrency: number = defaultCurrency === this.historyItem.balance.currency ? this.historyItem.balance.value : this.historyItem.balance.alternativeCurrency[defaultCurrency];
+    return this._budgetService.calculatePercentDone(this.budgetCategory.balance, valueInDefaultCurrency);
   }
 }

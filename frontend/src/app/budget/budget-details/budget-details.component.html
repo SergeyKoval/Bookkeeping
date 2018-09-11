@@ -1,6 +1,6 @@
 <div class="panel panel-default budget-panel">
   <div class="panel-heading" (click)="toggleBudgetDetails()" style="padding: 0;">
-    <div class="progress" [style.height.px]="getNumberOfCurrencies(budgetDetails.balance) * 20" style="min-height: 30px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;border-top-left-radius: 3px; border-top-right-radius: 3px;">
+    <div class="progress budget-details-progress" [style.height.px]="getNumberOfCurrencies(budgetDetails.balance) * 20">
       <div class="progress-bar budget-details" [style.width.%]="getBudgetPercentDone()"></div>
       <span class="category-title full-height">
         <span class="vertical-middle">

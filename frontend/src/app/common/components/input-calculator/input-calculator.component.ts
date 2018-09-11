@@ -21,9 +21,9 @@ export class InputCalculatorComponent implements OnInit {
   @Input()
   public skipDecimalZeros: boolean = true;
   @Input()
-  public showConfirm: boolean = true;
+  public showConfirm: boolean = false;
   @Input()
-  public confirmValue: boolean = true;
+  public confirmValue: boolean = false;
 
   @Output()
   public changeInputValue: EventEmitter<number> = new EventEmitter();

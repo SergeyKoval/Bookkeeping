@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { MatDialogModule, MatProgressSpinnerModule } from '@angular/material';
+import { MatDialogModule, MatProgressSpinnerModule, MatSlideToggleModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { PopoverModule } from 'ngx-popover';
@@ -144,6 +144,7 @@ import { MonthAndYearComponent } from './common/components/month-and-year/month-
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    MatSlideToggleModule,
     PopoverModule,
     MyDatePickerModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),

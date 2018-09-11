@@ -15,4 +15,12 @@ import lombok.Setter;
 public class BalanceValue {
     private Double value;
     private Double completeValue;
+
+    public static BalanceValue initValue(Double value) {
+        return new BalanceValue(value, 0d);
+    }
+
+    public BalanceValue initCompleteValue(Double completeValue) {
+        return new BalanceValue(0d, completeValue);
+    }
 }

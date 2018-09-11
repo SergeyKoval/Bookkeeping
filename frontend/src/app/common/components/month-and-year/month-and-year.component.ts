@@ -44,15 +44,19 @@ export class MonthAndYearComponent {
   }
 
   public decreaseYear(): void {
-    this._selectedMonth = 11;
-    this.selectedYear--;
-    this.changeYear.next({year: this.selectedYear, month: this._selectedMonth + 1});
+    if (!this.disabled) {
+      this._selectedMonth = 11;
+      this.selectedYear--;
+      this.changeYear.next({year: this.selectedYear, month: this._selectedMonth + 1});
+    }
   }
 
   public increaseYear(): void {
-    this._selectedMonth = 0;
-    this.selectedYear++;
-    this.changeYear.next({year: this.selectedYear, month: this._selectedMonth + 1});
+    if (!this.disabled) {
+      this._selectedMonth = 0;
+      this.selectedYear++;
+      this.changeYear.next({year: this.selectedYear, month: this._selectedMonth + 1});
+    }
   }
 
   public get selectedMonth(): number {

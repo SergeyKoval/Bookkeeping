@@ -23,6 +23,8 @@ type BudgetBalance = {
   value?: number,
   completeValue?: number
   currency?: string,
+  showConfirm?: boolean,
+  confirmValue?: boolean
 };
 
 type BudgetGoal = {

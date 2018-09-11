@@ -15,7 +15,7 @@
         <div class="category-value" *ngFor="let currency of budgetDetails.balance | mapKeys; let currencyIndex = index; " [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': isSingleCurrency()}">
           <span class="header-expected" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
           <span class="header-from">из</span>
-          <span class="text-right header-current">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
+          <span class="text-right header-current" [ngClass]="{'not-planed': budgetDetails.balance[currency].value > budgetDetails.balance[currency].completeValue}">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
           <span class="header-currency" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
         </div>
       </div>
@@ -38,7 +38,7 @@
             <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
             <span class="category-title full-height"><span class="vertical-middle">{{category.title}}</span></span>
             <span class="category-value" *ngFor="let currency of category.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
-              {{category.balance[currency].value | currencyValue:2:true}} из
+              <span [ngClass]="{'not-planed': category.balance[currency].value > category.balance[currency].completeValue}">{{category.balance[currency].value | currencyValue:2:true}}</span> из
               <span [ngClass]="{'not-planed': category.balance[currency].completeValue === 0}">
                 {{category.balance[currency].completeValue | currencyValue:2:true}}
                 <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
@@ -62,9 +62,10 @@
                 <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
                 <span class="goal-title">{{goal.title}}</span>
                 <span class="category-value">
-                {{goal.balance.value | currencyValue:2:true}} из {{goal.balance.completeValue | currencyValue:2:true}}
-                <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
-              </span>
+                  <span [ngClass]="{'not-planed': goal.balance.value > goal.balance.completeValue}">{{goal.balance.value | currencyValue:2:true}}</span>
+                  из {{goal.balance.completeValue | currencyValue:2:true}}
+                  <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
+                </span>
               </div>
               <bk-popover class="edit-button float-left" glyphiconClass="pencil" placement="left" text="Редактировать цель" (click)="openGoalEditDialog(category, goal)"></bk-popover>
               <span class="no-remove-button" *ngIf="goal.balance.value !== 0"></span>

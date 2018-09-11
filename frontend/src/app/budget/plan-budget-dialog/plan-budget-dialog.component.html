@@ -89,9 +89,14 @@
               <li *ngFor="let currency of currencies" (click)="balance.currency = currency.name"><a><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></a></li>
             </ul>
           </div>
-          <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" (changeInputValue)="balance.completeValue = $event"></bk-input-calculator>
+          <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" [showConfirm]="balance.showConfirm" [confirmValue]="balance.confirmValue"
+                               (changeInputValue)="balance.completeValue = $event" (changeConfirmValue)="balance.confirmValue = $event"></bk-input-calculator>
         </div>
       </div>
+    </div>
+
+    <div class="row" *ngIf="showDetails">
+      <div  class="col-sm-12 text-center"><span class="details">*</span> Игнорировать минимальное значение для валюты</div>
     </div>
   </div>
 </mat-dialog-content>

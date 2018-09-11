@@ -94,7 +94,7 @@ public class BudgetService implements BudgetAPI {
         Map<Currency, CurrencyBalanceValue> updateBalances = currencyBalances.stream().collect(Collectors.toMap(CurrencyBalanceValue::getCurrency, currencyBalanceValue -> currencyBalanceValue));
         category.getBalance().forEach((currency, balanceValue) -> {
             Double usedValue = balanceValue.getValue();
-            if (usedValue > 0 && (!updateBalances.containsKey(currency) || updateBalances.get(currency).getCompleteValue() < usedValue)) {
+            if (usedValue > 0 && (!updateBalances.containsKey(currency) || updateBalances.get(currency).getCompleteValue() < usedValue) && BooleanUtils.isNotTrue(updateBalances.get(currency).getConfirmValue())) {
                 LOG.error("Trying to update category with complete currency value less then already used.");
                 throw new InvalidBudgetPlanningException(login, budgetId, categoryTitle, currency, usedValue, updateBalances.get(currency).getCompleteValue());
             }

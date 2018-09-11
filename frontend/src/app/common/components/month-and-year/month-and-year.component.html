@@ -1,11 +1,8 @@
 <div class="input-group right-button-group">
   <span class="input-group-btn full-width">
-    <span type="button" class="btn btn-default dropdown-toggle month-dropdown" style="width: 100%;" [ngClass]="{'disabled': disabled}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <span *ngIf="!disabled">
-        <span class="button-title">{{getSelectedMonthTitle()}}</span>
-        <span class="caret month-dropdown-caret"></span>
-      </span>
-      <bk-spinner [display]="disabled" [size]="20"></bk-spinner>
+    <span type="button" class="btn btn-default dropdown-toggle month-dropdown full-width" [ngClass]="{'disabled': disabled}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="button-title" [ngClass]="{'disabled': disabled}">{{getSelectedMonthTitle()}}</span>
+      <span class="caret month-dropdown-caret"></span>
     </span>
     <ul class="dropdown-menu month-dropdown-menu">
       <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>

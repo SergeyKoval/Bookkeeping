@@ -20,6 +20,7 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 export class PlanBudgetDialogComponent implements OnInit {
   public currencies: CurrencyDetail[];
   public errors: string;
+  public showDetails: boolean = false;
 
   public changeGoalMonthAvailable: boolean = true;
   public selectedMonth: number;
@@ -69,7 +70,6 @@ export class PlanBudgetDialogComponent implements OnInit {
   public changeMonth(monthIndex: number): void {
     if (this.selectedMonth !== monthIndex && this.changeGoalMonthAvailable) {
       this.selectedMonth = monthIndex;
-      console.log(this.selectedMonth);
     }
   }
 
@@ -155,6 +155,7 @@ export class PlanBudgetDialogComponent implements OnInit {
   public save(): void {
     let loadingDialog: MatDialogRef<LoadingDialogComponent>;
     this.errors = null;
+    this.showDetails = false;
 
     switch (this.data.type) {
       case 'category':
@@ -221,8 +222,11 @@ export class PlanBudgetDialogComponent implements OnInit {
         if (!this.errors) {
           const usedValue: number = budgetBalance[currency].value;
           const planCurrency: BudgetBalance = balanceMap[currency];
-          if (usedValue > 0 && (!planCurrency || planCurrency.completeValue < usedValue)) {
+          if (usedValue > 0 && (!planCurrency || planCurrency.completeValue < usedValue) && planCurrency.confirmValue !== true) {
             this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} = ${usedValue}`;
+            planCurrency.showConfirm = true;
+            planCurrency.confirmValue = false;
+            this.showDetails = true;
           }
         }
       });
@@ -268,8 +272,13 @@ export class PlanBudgetDialogComponent implements OnInit {
     if (balanceValidation && this.data.editMode) {
       const budgetBalance: BudgetBalance = this.currencyBalance[0];
       const dataBalance: BudgetBalance = this.data.goal.balance;
-      if (budgetBalance.value > budgetBalance.completeValue && budgetBalance.completeValue !== dataBalance.completeValue && budgetBalance.currency === dataBalance.currency) {
+      if (budgetBalance.value > budgetBalance.completeValue && budgetBalance.completeValue !== dataBalance.completeValue
+        && budgetBalance.currency === dataBalance.currency && budgetBalance.confirmValue !== true) {
+
         this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(budgetBalance.currency).symbol)} = ${budgetBalance.value}`;
+        budgetBalance.showConfirm = true;
+        budgetBalance.confirmValue = false;
+        this.showDetails = true;
         return false;
       }
     }

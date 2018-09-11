@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatSlideToggleChange } from '@angular/material';
 
 import { CurrencyUtils } from '../../utils/currency-utils';
 import { CurrencyValuePipe } from '../../pipes/currency-value.pipe';
@@ -19,11 +20,17 @@ export class InputCalculatorComponent implements OnInit {
   public floatingPoint: number = 2;
   @Input()
   public skipDecimalZeros: boolean = true;
+  @Input()
+  public showConfirm: boolean = true;
+  @Input()
+  public confirmValue: boolean = true;
 
   @Output()
   public changeInputValue: EventEmitter<number> = new EventEmitter();
   @Output()
   public validInputValue: EventEmitter<boolean> = new EventEmitter();
+  @Output()
+  public changeConfirmValue: EventEmitter<boolean> = new EventEmitter();
 
   @ViewChild ('inputValue')
   private _INPUT_ELEMENT_REF: ElementRef;
@@ -34,6 +41,11 @@ export class InputCalculatorComponent implements OnInit {
   public ngOnInit(): void {
     this._INPUT = this._INPUT_ELEMENT_REF.nativeElement;
     this._INPUT.value = this.value ? this._currencyValuePipe.transform(this.value, this.floatingPoint, this.skipDecimalZeros) : '';
+  }
+
+  public onConfirmValueChanged(value: MatSlideToggleChange): void {
+    this.confirmValue = value.checked;
+    this.changeConfirmValue.next(this.confirmValue);
   }
 
   public changeInput(): void {

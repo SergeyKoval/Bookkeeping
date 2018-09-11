@@ -13,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CurrencyBalanceValue extends BalanceValue {
     private Currency currency;
+    private Boolean confirmValue;
 
     public CurrencyBalanceValue(Double value, Double completeValue, Currency currency) {
         super(value, completeValue);

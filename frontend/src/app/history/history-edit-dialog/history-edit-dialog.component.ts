@@ -12,6 +12,8 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
+import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { CurrencyValuePipe } from '../../common/pipes/currency-value.pipe';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -36,6 +38,7 @@ export class HistoryEditDialogComponent implements OnInit {
   private _titleElement: ElementRef;
   private _allCategories: Category[];
   private _goalStatusChange: boolean = false;
+  private _goalPercent: number = 0;
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
@@ -45,7 +48,9 @@ export class HistoryEditDialogComponent implements OnInit {
     private _authenticationService: ProfileService,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _confirmDialogService: ConfirmDialogService,
+    private _currencyValuePipe: CurrencyValuePipe
   ) {}
 
   public ngOnInit(): void {
@@ -126,6 +131,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public save(): void {
     let validationResult: boolean;
+    this.errors = null;
     switch (this.historyItem.type) {
       case 'expense':
       case 'income':
@@ -152,10 +158,16 @@ export class HistoryEditDialogComponent implements OnInit {
     }
 
     if (validationResult) {
-      const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
-      this.processSaveResult(mdDialogRef, this.data.editMode
-        ? this._historyService.editHistoryItem(this.historyItem)
-        : this._historyService.addHistoryItem(this.historyItem));
+      if ((this.historyItem.type === 'expense' || this.historyItem.type === 'income') && this.historyItem.goal && this._goalStatusChange === false && this._goalPercent >= 100) {
+        this._confirmDialogService.openConfirmDialog('Изменение статуса цели', `Выбранная цель выполнена на ${this._currencyValuePipe.transform(this._goalPercent, 0)}%. Пометить ее выполненной?`)
+          .afterClosed()
+          .subscribe(result => {
+            this._goalStatusChange = result;
+            this.processSaveResult();
+          });
+      } else {
+        this.processSaveResult();
+      }
     }
   }
 
@@ -180,6 +192,10 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public onSelectedGoalStatusChange(status: boolean): void {
     this._goalStatusChange = status;
+  }
+
+  public onGoalPercentChange(percent: number): void {
+    this._goalPercent = percent;
   }
 
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
@@ -307,7 +323,11 @@ export class HistoryEditDialogComponent implements OnInit {
     return true;
   }
 
-  private processSaveResult(mdDialogRef: MatDialogRef<LoadingDialogComponent>, result: Observable<SimpleResponse>): void {
+  private processSaveResult(): void {
+    const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
+    const result: Observable<SimpleResponse> = this.data.editMode
+      ? this._historyService.editHistoryItem(this.historyItem)
+      : this._historyService.addHistoryItem(this.historyItem, this._goalStatusChange);
     result.pipe(
       tap(simpleResponse => {
         if (simpleResponse.status === 'FAIL') {

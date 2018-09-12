@@ -42,6 +42,8 @@ export class GoalsContainerComponent implements OnInit {
 
   @Output()
   public statusChange: EventEmitter<boolean> = new EventEmitter();
+  @Output()
+  public goalPercentChange: EventEmitter<number> = new EventEmitter();
 
   public goalFilterType: GoalFilterType;
   public budgetLoading: boolean;
@@ -95,7 +97,11 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   public getGoalPercent(goalItem: BudgetGoal): number {
-    return this.getGoalValue(goalItem) / goalItem.balance.completeValue * 100;
+    const goalPercent: number = this.getGoalValue(goalItem) / goalItem.balance.completeValue * 100;
+    if (this.isSelectedGoal(goalItem)) {
+      this.goalPercentChange.next(goalPercent);
+    }
+    return goalPercent;
   }
 
   public chooseGoal(goalItem: BudgetGoal): void {

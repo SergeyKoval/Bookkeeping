@@ -3,6 +3,7 @@ package by.bk.entity.budget;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.model.Budget;
 import by.bk.entity.budget.model.CurrencyBalanceValue;
+import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface BudgetAPI {
     SimpleResponse removeGoal(String login, String budgetId, HistoryType type, String categoryTitle, String goalTitle);
     SimpleResponse removeCategory(String login, String budgetId, HistoryType type, String categoryTitle);
     SimpleResponse moveGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, Double movedValue);
+
+    SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
 }

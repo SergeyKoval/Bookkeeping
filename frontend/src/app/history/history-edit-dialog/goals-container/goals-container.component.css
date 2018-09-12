@@ -18,6 +18,10 @@
   color: #5cb85c;
 }
 
+:host ::ng-deep bk-popover .action {
+  margin-top: 2px;
+}
+
 .list-group {
   margin-bottom: 0;
 }
@@ -51,6 +55,7 @@
   display: inline;
   margin-bottom: 10px;
   padding-left: 10px;
+  margin-top: 1px;
 }
 
 .progress {

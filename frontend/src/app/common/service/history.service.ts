@@ -18,8 +18,8 @@ export class HistoryService {
     return this._http.post<HistoryType[]>('/api/history/page-portion', {'page': page, 'limit': pageLimit});
   }
 
-  public addHistoryItem(historyItem: HistoryType): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/history/add', historyItem);
+  public addHistoryItem(historyItem: HistoryType, changeGoalStatus: boolean): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/history/add', {'historyItem': historyItem, 'changeGoalStatus': changeGoalStatus});
   }
 
   public editHistoryItem(historyItem: HistoryType): Observable<SimpleResponse> {

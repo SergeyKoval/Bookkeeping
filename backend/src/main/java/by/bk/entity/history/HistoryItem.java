@@ -31,6 +31,7 @@ public class HistoryItem {
     private String description;
     private Balance balance;
     private boolean archived;
+    private String goal;
 
     @JsonIgnore
     Balance cloneBalance() {

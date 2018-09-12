@@ -5,8 +5,11 @@ import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.exception.*;
 import by.bk.entity.budget.model.*;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.history.Balance;
+import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
 import com.mongodb.client.result.UpdateResult;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -287,6 +290,56 @@ public class BudgetService implements BudgetAPI {
         } else {
             return simpleResponse;
         }
+    }
+
+    @Override
+    public SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus) {
+        String goalTitle = historyItem.getGoal();
+        Budget budget = getMonthBudget(login, historyItem.getYear(), historyItem.getMonth());
+        String budgetId = budget.getId();
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, historyItem.getType());
+        Optional<BudgetCategory> optionalCategory = budgetDetails.getCategories().stream()
+                .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), historyItem.getCategory()))
+                .findFirst();
+
+        if (!optionalCategory.isPresent() && StringUtils.isNotBlank(goalTitle)) {
+            LOG.error(StringUtils.join("History item is included in goal, but budget category is missed. Budget=", budgetId, ", type=", historyItem.getType(), ", category=", historyItem.getCategory(), ", goal=", goalTitle));
+            return SimpleResponse.fail();
+        }
+
+        Balance historyBalance = historyItem.getBalance();
+        Currency historyCurrency = historyBalance.getCurrency();
+        Double historyValue = historyBalance.getValue();
+
+        Update update = new Update();
+        if (!optionalCategory.isPresent()) {
+            BudgetCategory category = new BudgetCategory();
+            category.setTitle(historyItem.getCategory());
+            category.getBalance().put(historyCurrency, BalanceValue.initValue(historyValue));
+            update.addToSet(historyItem.getType() + ".categories", category);
+        } else {
+            BudgetCategory category = optionalCategory.get();
+            String categoriesQuery = StringUtils.join(historyItem.getType(), ".categories.", budgetDetails.getCategories().indexOf(category));
+            update.inc(categoriesQuery + ".balance." + historyCurrency + ".value", historyValue);
+
+            if (StringUtils.isNotBlank(goalTitle)) {
+                BudgetGoal goal = chooseBudgetGoal(category, goalTitle, login, budgetId);
+                Currency goalCurrency = goal.getBalance().getCurrency();
+                Double goalValue = goalCurrency.equals(historyCurrency) ? historyValue : historyBalance.getAlternativeCurrency().get(goalCurrency);
+                String goalQuery = StringUtils.join(categoriesQuery, ".goals.", category.getGoals().indexOf(goal));
+                update.inc(goalQuery + ".balance.value", goalValue);
+                if (changeGoalStatus) {
+                    update.set(goalQuery + ".done", !goal.isDone());
+                }
+            }
+        }
+
+        update.inc(historyItem.getType() + ".balance." + historyCurrency + ".value", historyValue);
+        update.inc(historyItem.getType() + ".balance." + historyCurrency + ".completeValue", 0d);
+
+        Query query = Query.query(Criteria.where("id").is(budgetId));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {

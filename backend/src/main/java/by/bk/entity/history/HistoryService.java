@@ -1,6 +1,7 @@
 package by.bk.entity.history;
 
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.currency.CurrencyDetail;
 import by.bk.entity.currency.CurrencyRepository;
@@ -42,6 +43,8 @@ public class HistoryService implements HistoryAPI {
     @Autowired
     private UserAPI userAPI;
     @Autowired
+    private BudgetAPI budgetAPI;
+    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -59,7 +62,7 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public SimpleResponse addHistoryItem(String login, HistoryItem historyItem) {
+    public SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus) {
         addUnusedCurrencyConversions(historyItem);
         HistoryItem savedHistoryItem = saveHistoryItem(login, historyItem);
 
@@ -68,13 +71,14 @@ public class HistoryService implements HistoryAPI {
             return SimpleResponse.fail("ERROR");
         }
 
-        SimpleResponse response = userAPI.updateUserBalance(login, savedHistoryItem.getType(), savedHistoryItem.getBalance());
+        SimpleResponse response = userAPI.updateUserBalance(login, savedHistoryItem.getType(), savedHistoryItem.cloneBalance());
         if (!response.isSuccess()) {
             LOG.error(StringUtils.join("Error updating user balance based on the history item ", savedHistoryItem, " for user ", login));
             historyRepository.delete(savedHistoryItem);
+            return response;
         }
 
-        return response;
+        return affectBudget(historyItem.getType()) ? budgetAPI.addHistoryItem(login, savedHistoryItem, changeGoalStatus) : response;
     }
 
     @Override
@@ -123,6 +127,10 @@ public class HistoryService implements HistoryAPI {
         }
 
         return response;
+    }
+
+    private boolean affectBudget(HistoryType type) {
+        return HistoryType.income.equals(type) || HistoryType.expense.equals(type);
     }
 
     private SimpleResponse revertBalanceChange(String login, HistoryType type, Balance balance) {

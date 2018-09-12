@@ -1,5 +1,6 @@
 package by.bk.controller;
 
+import by.bk.controller.model.request.HistoryItemRequest;
 import by.bk.controller.model.request.HistoryPageRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.history.HistoryAPI;
@@ -28,8 +29,8 @@ public class HistoryController extends BaseAPIController {
     }
 
     @PostMapping("/add")
-    public SimpleResponse addHistoryItem(@RequestBody HistoryItem historyItem, Principal principal) {
-        return historyAPI.addHistoryItem(principal.getName(), historyItem);
+    public SimpleResponse addHistoryItem(@RequestBody HistoryItemRequest request, Principal principal) {
+        return historyAPI.addHistoryItem(principal.getName(), request.getHistoryItem(), request.isChangeGoalStatus());
     }
 
     @PostMapping("/edit")

@@ -321,6 +321,7 @@ public class BudgetService implements BudgetAPI {
             BudgetCategory category = optionalCategory.get();
             String categoriesQuery = StringUtils.join(historyItem.getType(), ".categories.", budgetDetails.getCategories().indexOf(category));
             update.inc(categoriesQuery + ".balance." + historyCurrency + ".value", historyValue);
+            update.inc(categoriesQuery + ".balance." + historyCurrency + ".completeValue", 0d);
 
             if (StringUtils.isNotBlank(goalTitle)) {
                 BudgetGoal goal = chooseBudgetGoal(category, goalTitle, login, budgetId);
@@ -340,6 +341,63 @@ public class BudgetService implements BudgetAPI {
         Query query = Query.query(Criteria.where("id").is(budgetId));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    @Override
+    public SimpleResponse deleteHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus) {
+        Budget budget = getMonthBudget(login, historyItem.getYear(), historyItem.getMonth());
+        String budgetId = budget.getId();
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, historyItem.getType());
+        BudgetCategory category = chooseBudgetCategory(budgetDetails, historyItem.getCategory(), login, budgetId);
+
+        Balance historyBalance = historyItem.getBalance();
+        Currency historyCurrency = historyBalance.getCurrency();
+        Double historyValue = historyBalance.getValue() * -1;
+
+        Update update = new Update();
+        String categoriesQuery = StringUtils.join(historyItem.getType(), ".categories.", budgetDetails.getCategories().indexOf(category));
+        update.inc(categoriesQuery + ".balance." + historyCurrency + ".value", historyValue);
+        update.inc(categoriesQuery + ".balance." + historyCurrency + ".completeValue", 0d);
+
+        if (StringUtils.isNotBlank(historyItem.getGoal())) {
+            BudgetGoal goal = chooseBudgetGoal(category, historyItem.getGoal(), login, budgetId);
+            Currency goalCurrency = goal.getBalance().getCurrency();
+            Double goalValue = goalCurrency.equals(historyCurrency) ? historyValue : (historyBalance.getAlternativeCurrency().get(goalCurrency) * -1);
+            String goalQuery = StringUtils.join(categoriesQuery, ".goals.", category.getGoals().indexOf(goal));
+            update.inc(goalQuery + ".balance.value", goalValue);
+            if (changeGoalStatus) {
+                update.set(goalQuery + ".done", !goal.isDone());
+            }
+        }
+
+        update.inc(historyItem.getType() + ".balance." + historyCurrency + ".value", historyValue);
+        update.inc(historyItem.getType() + ".balance." + historyCurrency + ".completeValue", 0d);
+
+        Query query = Query.query(Criteria.where("id").is(budgetId));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
+        return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    @Override
+    public SimpleResponse reviewBeforeRemoveHistoryItem(String login, HistoryItem historyItem) {
+        Budget budget = getMonthBudget(login, historyItem.getYear(), historyItem.getMonth());
+        BudgetDetails budgetDetails = chooseBudgetDetails(budget, historyItem.getType());
+        BudgetCategory category = chooseBudgetCategory(budgetDetails, historyItem.getCategory(), login, budget.getId());
+        BudgetGoal goal = chooseBudgetGoal(category, historyItem.getGoal(), login, budget.getId());
+        CurrencyBalanceValue goalBalance = goal.getBalance();
+        Currency goalCurrency = goalBalance.getCurrency();
+        Balance historyBalance = historyItem.getBalance();
+
+        Double minusValue = goalCurrency.equals(historyBalance.getCurrency()) ? historyBalance.getValue() : historyBalance.getAlternativeCurrency().get(goalCurrency);
+        if (goal.isDone() && goalBalance.getValue() - minusValue < goalBalance.getCompleteValue()) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("value", goalBalance.getValue() - minusValue);
+            result.put("completeValue", goalBalance.getCompleteValue());
+            result.put("currency", goalCurrency);
+            return SimpleResponse.failWithDetails(result);
+        } else {
+            return SimpleResponse.success();
+        }
     }
 
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {

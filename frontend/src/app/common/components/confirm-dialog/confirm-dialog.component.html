@@ -1,5 +1,8 @@
-<h2 mat-dialog-title>{{data.title}}</h2>
-<mat-dialog-content align="center">{{data.body}}</mat-dialog-content>
+<h2 align="center" mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
+  <div *ngIf="data.body">{{data.body}}</div>
+  <div *ngIf="data.htmlBody" [innerHTML]="data.htmlBody" align="center"></div>
+</mat-dialog-content>
 <mat-dialog-actions align="center">
   <div class="btn-group" role="group">
     <div type="button" class="btn btn-default" (click)="dialogRef.close(true)">&nbsp;&nbsp;&nbsp;Да&nbsp;&nbsp;&nbsp;</div>

@@ -26,7 +26,7 @@ export class HistoryService {
     return this._http.post<SimpleResponse>('/api/history/edit', historyItem);
   }
 
-  public deleteHistoryItem(historyItemId: string): Observable<SimpleResponse> {
-    return this._http.post<SimpleResponse>('/api/history/delete', {id: historyItemId});
+  public deleteHistoryItem(historyItemId: string, changeGoalStatus: boolean): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/history/delete', {'id': historyItemId, 'changeGoalStatus': changeGoalStatus});
   }
 }

@@ -1,5 +1,6 @@
 package by.bk.controller;
 
+import by.bk.controller.model.request.HistoryItemDeleteRequest;
 import by.bk.controller.model.request.HistoryItemRequest;
 import by.bk.controller.model.request.HistoryPageRequest;
 import by.bk.controller.model.response.SimpleResponse;
@@ -39,7 +40,7 @@ public class HistoryController extends BaseAPIController {
     }
 
     @PostMapping("/delete")
-    public SimpleResponse deleteHistoryItem(@RequestBody HistoryItem historyItem, Principal principal) {
-        return historyAPI.deleteHistoryItem(principal.getName(), historyItem.getId());
+    public SimpleResponse deleteHistoryItem(@RequestBody HistoryItemDeleteRequest request, Principal principal) {
+        return historyAPI.deleteHistoryItem(principal.getName(), request.getId(), request.isChangeGoalStatus());
     }
 }

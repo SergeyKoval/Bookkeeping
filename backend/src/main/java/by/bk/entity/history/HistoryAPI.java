@@ -14,5 +14,6 @@ public interface HistoryAPI {
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
     HistoryItem addBalanceHistoryItem(String login, Currency currency, String accountTitle, String subAccountTitle, Supplier<Double> value);
     SimpleResponse editHistoryItem(String login, HistoryItem historyItem);
-    SimpleResponse deleteHistoryItem(String login, String historyItemId);
+    SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus);
+    HistoryItem getById(String login, String historyItemId);
 }

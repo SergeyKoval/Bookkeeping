@@ -13,7 +13,16 @@ export class ConfirmDialogService {
     return this._dialogService.openDialog(ConfirmDialogComponent, {
       data: {
         'title': title,
-        'body': body
+        'body': body,
+      },
+    });
+  }
+
+  public openConfirmDialogWithHtml(title: string, htmlBody: string): MatDialogRef<ConfirmDialogComponent> {
+    return this._dialogService.openDialog(ConfirmDialogComponent, {
+      data: {
+        'title': title,
+        'htmlBody': htmlBody,
       },
     });
   }

@@ -2,6 +2,7 @@ package by.bk.entity.history;
 
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.BudgetAPI;
+import by.bk.entity.budget.exception.HistoryItemMissedException;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.currency.CurrencyDetail;
 import by.bk.entity.currency.CurrencyRepository;
@@ -101,7 +102,7 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public SimpleResponse editHistoryItem(String login, HistoryItem historyItem) {
-        HistoryItem originalHistoryItem = historyRepository.findById(historyItem.getId()).get();
+        HistoryItem originalHistoryItem = getById(login, historyItem.getId());
         SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
         if (response.isSuccess()) {
             historyItem.setUser(login);
@@ -119,14 +120,19 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public SimpleResponse deleteHistoryItem(String login, String historyItemId) {
-        HistoryItem originalHistoryItem = historyRepository.findById(historyItemId).get();
-        SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.getBalance());
+    public SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus) {
+        HistoryItem originalHistoryItem = getById(login, historyItemId);
+        SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
         if (response.isSuccess()) {
             historyRepository.deleteById(historyItemId);
         }
 
-        return response;
+        return affectBudget(originalHistoryItem.getType()) ? budgetAPI.deleteHistoryItem(login, originalHistoryItem, changeGoalStatus) : response;
+    }
+
+    @Override
+    public HistoryItem getById(String login, String historyItemId) {
+        return historyRepository.findById(historyItemId).orElseThrow(() -> new HistoryItemMissedException(login, historyItemId));
     }
 
     private boolean affectBudget(HistoryType type) {

@@ -1,7 +1,8 @@
 type SimpleResponse = {
   status: string,
-  message?: string
-}
+  message?: string,
+  result?: {}
+};
 
 type Profile = {
   id: number,

@@ -7,6 +7,8 @@ import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.exception.BudgetProcessException;
 import by.bk.entity.budget.model.Budget;
+import by.bk.entity.history.HistoryAPI;
+import by.bk.entity.history.HistoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,8 @@ import java.security.Principal;
 public class BudgetController extends BaseAPIController {
     @Autowired
     private BudgetAPI budgetAPI;
+    @Autowired
+    private HistoryAPI historyAPI;
 
     @ExceptionHandler({BudgetProcessException.class})
     public SimpleResponse handleBudgetProcessException(BudgetProcessException e) {
@@ -80,5 +84,12 @@ public class BudgetController extends BaseAPIController {
     @PostMapping("/moveGoal")
     public SimpleResponse moveGoal(@RequestBody BudgetGoalRequest request, Principal principal) {
         return budgetAPI.moveGoal(principal.getName(), request.getBudgetId(), request.getYear(), request.getMonth(), request.getType(), request.getCategory(), request.getGoal(), request.getValue());
+    }
+
+    @GetMapping("/reviewBeforeRemoveHistoryItem/{historyItemId}")
+    public SimpleResponse reviewBeforeRemoveHistoryItem(@PathVariable("historyItemId") String historyItemId, Principal principal) {
+        String login = principal.getName();
+        HistoryItem historyItem = historyAPI.getById(login, historyItemId);
+        return budgetAPI.reviewBeforeRemoveHistoryItem(login, historyItem);
     }
 }

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';
@@ -19,7 +20,11 @@ export class BudgetService {
   ) { }
 
   public loadBudget(year: number, month: number): Observable<Budget> {
-    return this._http.post<Budget>('/api/budget', {'year': year, 'month': month});
+    return this._http.post<Budget>('/api/budget', {'year': year, 'month': month})
+      .pipe(tap(budget => {
+        this.clearEmptyCurrencies(budget.income);
+        this.clearEmptyCurrencies(budget.expense);
+      }));
   }
 
   public changeGoalDoneStatus(budgetId: string, type: string, category: string, goal: string, newDoneStatus: boolean): Observable<SimpleResponse> {
@@ -112,6 +117,10 @@ export class BudgetService {
     });
   }
 
+  public reviewBudgetGoalBeforeDelete(historyItemId: string, goal: string): Observable<SimpleResponse> {
+    return this._http.get<SimpleResponse>(`/api/budget/reviewBeforeRemoveHistoryItem/${historyItemId}`);
+  }
+
   public calculatePercentDone(balance: {[currency: string]: BudgetBalance}, value: number = 0): number {
     let completeValue: number = 0;
     const currencies: string[] = Object.keys(balance);
@@ -140,6 +149,21 @@ export class BudgetService {
 
     const percent: number = Math.round(value / completeValue * 100);
     return percent > 100 ? 100 : percent;
+  }
+
+  private clearEmptyCurrencies(budgetDetails: BudgetDetails): void {
+    this.clearBalanceEmptyCurrencies(budgetDetails.balance);
+    budgetDetails.categories.forEach(category => {
+      this.clearBalanceEmptyCurrencies(category.balance);
+    });
+  }
+
+  private clearBalanceEmptyCurrencies(balance: {[currency: string]: BudgetBalance}): void {
+    Object.keys(balance).forEach(currency => {
+      if (balance[currency].value === 0 && balance[currency].completeValue === 0) {
+        delete balance[currency];
+      }
+    });
   }
 
   public static filterGoals(goals: BudgetGoal[], filterType: GoalFilterType): BudgetGoal[] {

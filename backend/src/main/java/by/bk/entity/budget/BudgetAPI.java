@@ -26,4 +26,6 @@ public interface BudgetAPI {
     SimpleResponse moveGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, Double movedValue);
 
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
+    SimpleResponse deleteHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
+    SimpleResponse reviewBeforeRemoveHistoryItem(String login, HistoryItem historyItem);
 }

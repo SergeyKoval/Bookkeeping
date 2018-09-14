@@ -91,6 +91,6 @@ export class InputCalculatorComponent implements OnInit {
     }
 
     // tslint:disable-next-line:no-eval
-    return CurrencyUtils.LAST_SYMBOL_PATTERN.test(value) || eval(value) < 0.01 ? 'validation-fail' : 'validation-success';
+    return CurrencyUtils.LAST_SYMBOL_PATTERN.test(value) || CurrencyUtils.convertValue(value) < 0.01 ? 'validation-fail' : 'validation-success';
   }
 }

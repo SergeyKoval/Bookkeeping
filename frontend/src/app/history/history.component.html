@@ -6,7 +6,7 @@
       <div class="row header">
         <div class="col-sm-2">Дата</div>
         <div class="col-sm-2 sm-small-left-padding">Сумма</div>
-        <div class="col-sm-3 sm-small-left-padding">Категория</div>
+        <div class="col-sm-3 sm-category-column">Категория</div>
         <div class="col-sm-3">Комментарий</div>
         <div class="col-sm-2 text-center sm-small-left-padding">Действия</div>
       </div>
@@ -20,11 +20,6 @@
                 <div class="footnote">{{historyGroup.dayOfWeek}}</div>
               </span>
             </div>
-            <bk-popover spanClass="goal-icon col-sm-1 no-left-right-padding" glyphiconClass="screenshot" [text]="historyItem.goal" placement="top" *ngIf="historyItem.goal"></bk-popover>
-            <!--<div *ngIf="historyItem.goal" class="glyphicon glyphicon-screenshot goal-icon col-sm-1 no-left-right-padding"-->
-                 <!--popover="{{historyItem.goal}}" popoverPlacement="top"-->
-                 <!--[popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">-->
-            <!--</div>-->
           </div>
 
           <!--exchange middle-->
@@ -48,6 +43,7 @@
 
           <!--not exchange, second column-->
           <div [ngClass]="{'col-sm-2 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type !== 'exchange'">
+            <bk-popover spanClass="goal-icon col-sm-1 no-left-right-padding" glyphiconClass="screenshot" [text]="historyItem.goal" placement="top" *ngIf="historyItem.goal"></bk-popover>
             <div class="no-left-padding no-right-padding">
               <div [ngClass]="historyItem.type">
                 {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
@@ -61,7 +57,7 @@
           </div>
 
           <!--expense or income third column-->
-          <div class="col-sm-3 sm-small-left-padding" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">
+          <div class="col-sm-3 sm-category-column" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">
             <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'category'">
             <span class="description">{{historyItem.category}}</span>
             <div class="footnote">{{historyItem.subCategory}}</div>

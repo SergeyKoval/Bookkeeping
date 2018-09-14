@@ -65,7 +65,9 @@
 }
 
 :host ::ng-deep bk-popover .goal-icon {
-  padding-top: 9px;
+  padding-left: 0;
+  padding-top: 1px;
+  margin-right: 12px;
 }
 
 .transfer-exchange-icon {
@@ -136,6 +138,10 @@
   }
   .exchange-account {
     min-width: 70px;
+  }
+  .sm-category-column {
+    padding-left: 15px;
+    padding-right: 0;
   }
 }
 

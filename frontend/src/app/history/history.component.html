@@ -64,14 +64,14 @@
           </div>
 
           <!--balance third column-->
-          <div class="col-sm-6 sm-small-left-padding no-right-padding" *ngIf="historyItem.type === 'balance'">
+          <div class="col-sm-6 no-right-padding" *ngIf="historyItem.type === 'balance'">
             <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
             <span class="description">{{historyItem.balance.account}} >> {{historyItem.balance.subAccount}}</span>
             <div class="footnote">Изменение остатков</div>
           </div>
 
           <!--transfer third column-->
-          <div class="col-sm-6 sm-small-left-padding no-right-padding" *ngIf="historyItem.type === 'transfer'">
+          <div class="col-sm-6 no-right-padding" *ngIf="historyItem.type === 'transfer'">
             <div class="transfer-exchange-row">
                 <span class="transfer-from">
                   <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">

@@ -143,6 +143,9 @@
     padding-left: 15px;
     padding-right: 0;
   }
+  .exchange-value {
+    padding-left: 20px;
+  }
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {

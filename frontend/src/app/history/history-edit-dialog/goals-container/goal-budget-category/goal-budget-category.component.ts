@@ -4,6 +4,7 @@ import { IMyDate } from 'mydatepicker';
 
 import { BudgetService } from '../../../../common/service/budget.service';
 import { ProfileService } from '../../../../common/service/profile.service';
+import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
 
 @Component({
   selector: 'bk-goal-budget-category',
@@ -26,7 +27,8 @@ export class GoalBudgetCategoryComponent {
 
   public constructor(
     private _budgetService: BudgetService,
-    private _profileService: ProfileService
+    private _profileService: ProfileService,
+    private _currencyValuePipe: CurrencyValuePipe
   ) { }
 
   public getNumberOfCurrencies(): number {
@@ -58,10 +60,11 @@ export class GoalBudgetCategoryComponent {
     return (this.historyItem.type === 'expense' && dayPercent >= fullPercent) || (this.historyItem.type === 'income' && dayPercent <= fullPercent) ? 'progress-bar-success' : 'progress-bar-warning';
   }
 
-  public getBudgetValue(currency: string): number {
-    return currency === this.historyItem.balance.currency
+  public getBudgetValue(currency: string): string {
+    const value: number = currency === this.historyItem.balance.currency
       ? this.budgetCategory.balance[currency].value + this.getActionValue()
       : this.budgetCategory.balance[currency].value;
+    return this._currencyValuePipe.transform(value, 2, true);
   }
 
   private getActionValue(): number {

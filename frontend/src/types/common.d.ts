@@ -14,10 +14,10 @@ type Profile = {
 };
 
 type CurrencyDetail = {
-  defaultCurrency: boolean,
-  name: string,
-  order: number,
-  symbol: string,
+  defaultCurrency?: boolean,
+  name?: string,
+  order?: number,
+  symbol?: string,
 };
 
 type CurrencyHistory = {

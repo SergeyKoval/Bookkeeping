@@ -400,6 +400,24 @@ public class BudgetService implements BudgetAPI {
         }
     }
 
+    @Override
+    public SimpleResponse editHistoryItem(String login, HistoryItem originalHistoryItem, boolean changeOriginalGoalStatus, HistoryItem historyItem, boolean changeGoalStatus) {
+        SimpleResponse revertResponse = deleteHistoryItem(login, originalHistoryItem, changeOriginalGoalStatus);
+        if (revertResponse.isSuccess()) {
+            SimpleResponse addResponse = addHistoryItem(login, historyItem, changeGoalStatus);
+            if (!addResponse.isSuccess()) {
+                LOG.error(StringUtils.join("Error adding history item on edit operation. login=", login
+                        , ", originalHistoryItem=", originalHistoryItem, ", changeOriginalGoalStatus=", changeGoalStatus, ", historyItem=", historyItem, ", changeGoalStatus=", changeGoalStatus));
+            }
+
+            return addResponse;
+        } else {
+            LOG.error(StringUtils.join("Error reverting history item on edit operation. login=", login
+                    , ", originalHistoryItem=", originalHistoryItem, ", changeOriginalGoalStatus=", changeGoalStatus, ", historyItem=", historyItem, ", changeGoalStatus=", changeGoalStatus));
+            return revertResponse;
+        }
+    }
+
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {
         if (!StringUtils.equals(originalGoalTitle, goalTitle) && category.getGoals().stream().anyMatch(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))) {
             throw new ItemAlreadyExistsException();

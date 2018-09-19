@@ -288,7 +288,8 @@ export class ProfileService implements CanActivate {
 
   public get defaultCurrency(): CurrencyDetail {
     if (!this._authenticatedProfile) {
-      throw new Error('Accessing profile of the unauthorized user');
+      console.error('Accessing profile of the unauthorized user');
+      return {};
     }
 
     let defaultCurrency: CurrencyDetail = null;

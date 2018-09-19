@@ -39,6 +39,8 @@ export class HistoryEditDialogComponent implements OnInit {
   private _allCategories: Category[];
   private _goalStatusChange: boolean = false;
   private _goalPercent: number = 0;
+  private _originalGoalDetails: GoalDetails;
+  private _originalHistoryItem: HistoryType;
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
@@ -55,6 +57,10 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public ngOnInit(): void {
     const today: Date = new Date(Date.now());
+    if (this.data.editMode === true && (this.data.historyItem.type === 'expense' || this.data.historyItem.type === 'income')) {
+      this._originalHistoryItem = Object.assign({}, this.data.historyItem);
+      this._originalHistoryItem.balance = Object.assign({}, this.data.historyItem.balance);
+    }
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
     this.selectedDate = {year: this.historyItem.year, month: this.historyItem.month, day: this.historyItem.day};
 
@@ -125,6 +131,10 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
+  public onOriginalGoalDetailsChange(originalGoalDetails: GoalDetails): void {
+    this._originalGoalDetails = originalGoalDetails;
+  }
+
   public isTypeSelected(type: string): boolean {
     return this.historyItem.type === type;
   }
@@ -160,6 +170,22 @@ export class HistoryEditDialogComponent implements OnInit {
     if (validationResult) {
       if ((this.historyItem.type === 'expense' || this.historyItem.type === 'income') && this.historyItem.goal && this._goalStatusChange === false && this._goalPercent >= 100) {
         this._confirmDialogService.openConfirmDialog('Изменение статуса цели', `Выбранная цель выполнена на ${this._currencyValuePipe.transform(this._goalPercent, 0)}%. Пометить ее выполненной?`)
+          .afterClosed()
+          .subscribe(result => {
+            this._goalStatusChange = result;
+            this.processSaveResult();
+          });
+      } else if (this.data.editMode === true
+        && (this.historyItem.type === 'expense' || this.historyItem.type === 'income')
+        && this.historyItem.year === this._originalHistoryItem.year
+        && this.historyItem.month === this._originalHistoryItem.month
+        && this.historyItem.category === this._originalHistoryItem.category
+        && this.historyItem.goal === this._originalHistoryItem.goal
+        && this._originalGoalDetails.done === true
+        && this._goalPercent < 100
+      ) {
+        this._confirmDialogService.openConfirmDialog('Изменение статуса цели',
+          `После редактирования выбранная цель выполнена на ${this._currencyValuePipe.transform(this._goalPercent, 0)}%. Пометить ее невыполненной?`)
           .afterClosed()
           .subscribe(result => {
             this._goalStatusChange = result;
@@ -326,7 +352,7 @@ export class HistoryEditDialogComponent implements OnInit {
   private processSaveResult(): void {
     const mdDialogRef: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
     const result: Observable<SimpleResponse> = this.data.editMode
-      ? this._historyService.editHistoryItem(this.historyItem)
+      ? this._historyService.editHistoryItem(this.historyItem, this._goalStatusChange, this._originalGoalDetails.changeStatus)
       : this._historyService.addHistoryItem(this.historyItem, this._goalStatusChange);
     result.pipe(
       tap(simpleResponse => {

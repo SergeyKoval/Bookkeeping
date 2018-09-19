@@ -28,4 +28,5 @@ public interface BudgetAPI {
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
     SimpleResponse deleteHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
     SimpleResponse reviewBeforeRemoveHistoryItem(String login, HistoryItem historyItem);
+    SimpleResponse editHistoryItem(String login, HistoryItem originalHistoryItem, boolean changeOriginalGoalStatus, HistoryItem historyItem, boolean changeGoalStatus);
 }

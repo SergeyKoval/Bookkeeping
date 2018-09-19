@@ -13,7 +13,7 @@ public interface HistoryAPI {
     List<HistoryItem> getPagePortion(String login, int page, int limit);
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
     HistoryItem addBalanceHistoryItem(String login, Currency currency, String accountTitle, String subAccountTitle, Supplier<Double> value);
-    SimpleResponse editHistoryItem(String login, HistoryItem historyItem);
+    SimpleResponse editHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus, boolean changeOriginalGoalStatus);
     SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus);
     HistoryItem getById(String login, String historyItemId);
 }

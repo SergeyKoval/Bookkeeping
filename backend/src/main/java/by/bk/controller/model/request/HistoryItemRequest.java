@@ -8,6 +8,8 @@ import lombok.Getter;
  */
 @Getter
 public class HistoryItemRequest {
+    private String id;
     private HistoryItem historyItem;
     private boolean changeGoalStatus;
+    private boolean changeOriginalGoalStatus;
 }

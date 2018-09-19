@@ -2,6 +2,7 @@ package by.bk.entity.user;
 
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.entity.budget.model.Budget;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.history.*;
 import by.bk.entity.history.Balance;
@@ -574,6 +575,7 @@ public class UserService implements UserAPI, UserDetailsService {
     public SimpleResponse deleteUser(String email) {
         userRepository.deleteById(email);
         mongoTemplate.remove(Query.query(Criteria.where("user").is(email)), HistoryItem.class);
+        mongoTemplate.remove(Query.query(Criteria.where("user").is(email)), Budget.class);
         return SimpleResponse.success();
     }
 

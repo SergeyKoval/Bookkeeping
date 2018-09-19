@@ -39,9 +39,13 @@ public class NbrbJob {
     private CurrencyAPI currencyAPI;
     @Autowired
     private RestTemplate restTemplate;
+//    @Autowired
+//    private PopulateUserBudgetJob populateUserBudgetJob;
+
 
     @Scheduled(fixedDelay = 3600000)
     public void getFreshCurrencies() {
+//        populateUserBudgetJob.populateBudgetForAllUsers();
         LocalDate today = LocalDate.now();
         List<CurrencyDetail> todayCurrencies = currencyAPI.getCurrenciesForDay(today);
         if (todayCurrencies.isEmpty()) {

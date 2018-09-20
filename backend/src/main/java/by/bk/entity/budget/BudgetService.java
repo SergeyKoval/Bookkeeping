@@ -418,6 +418,24 @@ public class BudgetService implements BudgetAPI {
         }
     }
 
+    @Override
+    public SimpleResponse renameCategory(String login, String oldCategoryTitle, String newCategoryTitle) {
+        Query budgetQuery = Query.query(Criteria.where("user").is(login)
+                .orOperator(Criteria.where("expense.categories.title").is(oldCategoryTitle), Criteria.where("income.categories.title").is(oldCategoryTitle)));
+        mongoTemplate.find(budgetQuery, Budget.class).stream()
+                .peek(budget -> {
+                    renameBudgetDetailsCategory(budget.getExpense(), oldCategoryTitle, newCategoryTitle);
+                    renameBudgetDetailsCategory(budget.getIncome(), oldCategoryTitle, newCategoryTitle);
+                }).forEach(budget -> budgetRepository.save(budget));
+        return SimpleResponse.success();
+    }
+
+    private void renameBudgetDetailsCategory(BudgetDetails budgetDetails, String oldCategoryTitle, String newCategoryTitle) {
+        budgetDetails.getCategories().stream()
+                .filter(category -> StringUtils.equals(oldCategoryTitle, category.getTitle()))
+                .forEach(category -> category.setTitle(newCategoryTitle));
+    }
+
     private void editBudgetGoalSameMonth(Update update, BudgetDetails budgetDetails, String originalGoalTitle, String goalTitle, BudgetCategory category, CurrencyBalanceValue balance, BudgetGoal originalGoal, HistoryType type, String categoryQuery, boolean changeGoalStatus) {
         if (!StringUtils.equals(originalGoalTitle, goalTitle) && category.getGoals().stream().anyMatch(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))) {
             throw new ItemAlreadyExistsException();

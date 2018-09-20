@@ -2,6 +2,7 @@ package by.bk.entity.user;
 
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.model.Budget;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.history.*;
@@ -41,7 +42,9 @@ public class UserService implements UserAPI, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private HistoryService historyService;
+    private HistoryAPI historyApi;
+    @Autowired
+    private BudgetAPI budgetAPI;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -229,7 +232,7 @@ public class UserService implements UserAPI, UserDetailsService {
             archiveHistoryItems(historyQuery);
 
             account.getSubAccounts().forEach(subAccount -> subAccount.getBalance().forEach((currency, value) -> {
-                historyService.addBalanceHistoryItem(login, currency, title, subAccount.getTitle(), () -> value * -1);
+                historyApi.addBalanceHistoryItem(login, currency, title, subAccount.getTitle(), () -> value * -1);
             }));
         }
 
@@ -274,7 +277,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         if (response.isSuccess()) {
             balance.forEach((currency, value) -> {
-                historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value);
+                historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value);
             });
         }
 
@@ -379,7 +382,7 @@ public class UserService implements UserAPI, UserDetailsService {
                     Criteria.where("balance.account").is(accountTitle).and("balance.subAccount").is(subAccountTitle),
                     Criteria.where("balance.accountTo").is(accountTitle).and("balance.subAccountTo").is(subAccountTitle)));
             archiveHistoryItems(historyQuery);
-            subAccount.getBalance().forEach((currency, value) -> historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value * -1));
+            subAccount.getBalance().forEach((currency, value) -> historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value * -1));
         }
 
         return response;
@@ -421,6 +424,8 @@ public class UserService implements UserAPI, UserDetailsService {
             Query historyQuery = Query.query(Criteria.where("user").is(login).and("category").is(oldCategoryTitle));
             Update historyUpdate = Update.update("category", newCategoryTitle);
             mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+
+            response = budgetAPI.renameCategory(login, oldCategoryTitle, newCategoryTitle);
         }
 
         return response;
@@ -690,13 +695,13 @@ public class UserService implements UserAPI, UserDetailsService {
         subAccount.getBalance().forEach((currency, value) -> {
             Double currencyValue = !balance.containsKey(currency) ? value * -1 : Double.parseDouble(CURRENCY_FORMAT.format(balance.get(currency) - value));
             if (currencyValue != 0) {
-                historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> currencyValue);
+                historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> currencyValue);
             }
         });
 
         CollectionUtils.disjunction(subAccount.getBalance().keySet(), balance.keySet()).forEach(currency -> {
             if (balance.containsKey(currency)) {
-                historyService.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> balance.get(currency));
+                historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> balance.get(currency));
             }
         });
     }

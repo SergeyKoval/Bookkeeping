@@ -44,5 +44,6 @@ type GoalDetails = {
   currency: string,
   value: number,
   completeValue: number,
-  changeStatus: boolean
+  changeStatus: boolean,
+  percent: number
 };

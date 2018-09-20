@@ -61,11 +61,9 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   @Output()
-  public statusChange: EventEmitter<boolean> = new EventEmitter();
-  @Output()
-  public goalPercentChange: EventEmitter<number> = new EventEmitter();
-  @Output()
   public originalGoalDetailsChange: EventEmitter<GoalDetails> = new EventEmitter();
+  @Output()
+  public goalDetailsChange: EventEmitter<GoalDetails> = new EventEmitter();
 
   public goalFilterType: GoalFilterType;
   public budgetLoading: boolean;
@@ -76,11 +74,11 @@ export class GoalsContainerComponent implements OnInit {
   private _budget: Budget;
   private _selectedCategory: string;
   private _selectedDate: IMyDate;
-  private _selectedGoalChangeStatus: boolean = false;
   private _originalHistoryItem: HistoryType;
   private _originalBudget: Budget;
   private _originalCategory: BudgetCategory;
   private _originalGoalDetails: GoalDetails;
+  private _goalDetails: GoalDetails;
 
   public constructor(
     private _budgetService: BudgetService,
@@ -122,8 +120,8 @@ export class GoalsContainerComponent implements OnInit {
 
   public getGoalPercent(goalItem: BudgetGoal): number {
     const goalPercent: number = this.getGoalValue(goalItem) / goalItem.balance.completeValue * 100;
-    if (this.isSelectedGoal(goalItem)) {
-      this.goalPercentChange.next(goalPercent);
+    if (this._goalDetails && this.isSelectedGoal(goalItem)) {
+      this._goalDetails.percent = goalPercent;
     }
     return goalPercent;
   }
@@ -140,14 +138,22 @@ export class GoalsContainerComponent implements OnInit {
         && goalItem.title === this._originalHistoryItem.goal
       ) {
         goalItem.done = true;
-        this._selectedGoalChangeStatus = false;
         this._originalGoalDetails.changeStatus = false;
-        this.originalGoalDetailsChange.next(this._originalGoalDetails);
       }
 
       this.changePreviouslySelectedGoal().subscribe(() => {
         this.selectedGoal = goalItem;
         this.historyItem.goal = goalItem.title;
+        this._goalDetails = {
+          changeStatus: false,
+          done: this.selectedGoal.done,
+          title: this.selectedGoal.title,
+          currency: this.selectedGoal.balance.currency,
+          value: this.selectedGoal.balance.value,
+          completeValue: this.selectedGoal.balance.completeValue,
+          percent: this.selectedGoal.balance.value / this.selectedGoal.balance.completeValue * 100
+        };
+        this.goalDetailsChange.next(this._goalDetails);
       });
     }
   }
@@ -163,8 +169,7 @@ export class GoalsContainerComponent implements OnInit {
   public changeGoalStatus(goalItem: BudgetGoal): void {
     if (goalItem.title === this.historyItem.goal) {
       this.selectedGoal.done = !this.selectedGoal.done;
-      this._selectedGoalChangeStatus = !this._selectedGoalChangeStatus;
-      this.statusChange.next(this._selectedGoalChangeStatus);
+      this._goalDetails.changeStatus = !this._goalDetails.changeStatus;
     }
   }
 
@@ -239,8 +244,12 @@ export class GoalsContainerComponent implements OnInit {
       currency: goalBalance.currency,
       value: goalBalance.value - goalValue,
       completeValue: goalBalance.completeValue,
-      changeStatus: false
+      changeStatus: false,
+      percent: (goalBalance.value - goalValue) / goalBalance.completeValue * 100
     };
+    this._goalDetails = Object.assign({}, this._originalGoalDetails);
+    this.originalGoalDetailsChange.next(this._originalGoalDetails);
+    this.goalDetailsChange.next(this._goalDetails);
   }
 
   private convertValueToCurrency(balance: HistoryBalanceType, resultCurrency: string): number {
@@ -259,9 +268,9 @@ export class GoalsContainerComponent implements OnInit {
   }
 
   private revertSelectedGoalOriginalStatus(): void {
-    if (this._selectedGoalChangeStatus === true && this.selectedGoal) {
+    if (this.selectedGoal && this._goalDetails.changeStatus === true) {
       this.selectedGoal.done = !this.selectedGoal.done;
-      this._selectedGoalChangeStatus = false;
+      this._goalDetails.changeStatus = false;
     }
   }
 
@@ -289,11 +298,10 @@ export class GoalsContainerComponent implements OnInit {
         .pipe(tap(result => {
           if (result === true) {
             this.selectedGoal.done = false;
-            this._selectedGoalChangeStatus = false;
+            this._goalDetails.changeStatus = false;
           }
 
           this._originalGoalDetails.changeStatus = result;
-          this.originalGoalDetailsChange.next(this._originalGoalDetails);
         }));
     } else {
       return of({});

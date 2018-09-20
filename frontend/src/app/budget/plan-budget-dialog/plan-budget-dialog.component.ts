@@ -304,16 +304,20 @@ export class PlanBudgetDialogComponent implements OnInit {
       this.data.budget[this.budgetType].categories.forEach((category: BudgetCategory) => {
         const categoryBalance: {[currency: string]: BudgetBalance} = category.balance;
         Object.keys(categoryBalance).forEach(currency => {
-          const completeValue: number = categoryBalance[currency].completeValue;
-          minimumBalanceMap.set(currency, minimumBalanceMap.has(currency) ? (minimumBalanceMap.get(currency) + completeValue) : completeValue);
+          const minBalance: BudgetBalance = categoryBalance[currency];
+          const minValue: number = minBalance.completeValue > minBalance.value ? minBalance.completeValue : minBalance.value;
+          minimumBalanceMap.set(currency, minimumBalanceMap.has(currency) ? (minimumBalanceMap.get(currency) + minValue) : minValue);
         });
       });
 
       minimumBalanceMap.forEach((minimumValue, currency) => {
         if (!this.errors) {
           const planedValue: BudgetBalance = balanceMap[currency];
-          if (!planedValue || planedValue.completeValue < minimumValue) {
+          if (!planedValue || (planedValue.completeValue < minimumValue && planedValue.confirmValue !== true)) {
             this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} = ${minimumValue}`;
+            planedValue.showConfirm = true;
+            planedValue.confirmValue = false;
+            this.showDetails = true;
           }
         }
       });
@@ -358,7 +362,11 @@ export class PlanBudgetDialogComponent implements OnInit {
         return true;
       }
 
-      if ((!balance.completeValue || balance.completeValue <= 0) && !this.errors) {
+      if (balance.value && !balance.completeValue) {
+        balance.completeValue = 0;
+      }
+
+      if ((!balance.value && (!balance.completeValue || balance.completeValue <= 0)) && !this.errors) {
         this.errors = `Лимит для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(balance.currency).symbol)} не задан`;
         return true;
       }

@@ -26,7 +26,7 @@
             <div *ngIf="isSelectedGoal(goalItem)" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>
             <div class="goal-name">{{goalItem.title}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>
             <div class="progress-value">
-              <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem)}} / {{goalItem.balance.completeValue}}
+              <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem) | currencyValue:2:true}} / {{goalItem.balance.completeValue}}
             </div>
           </div>
         </div>

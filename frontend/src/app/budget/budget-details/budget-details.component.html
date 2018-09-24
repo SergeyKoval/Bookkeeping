@@ -25,7 +25,7 @@
   <div *ngIf="budgetDetails.opened">
     <div class="text-center" *ngIf="budgetDetails.categories.length === 0">Нет запланированных категорий</div>
     <div *ngIf="budgetDetails.categories.length > 0">
-      <div *ngFor="let category of budgetDetails.categories; let firstCategory = first; let lastCategory = last;">
+      <div *ngFor="let category of budgetDetails.categories | categorySort; let firstCategory = first; let lastCategory = last;">
         <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(category)"></bk-template-variable>
         <bk-month-progress [height]="10" *ngIf="firstCategory" [progress]="monthProgress"></bk-month-progress>
         <div class="row body-row">

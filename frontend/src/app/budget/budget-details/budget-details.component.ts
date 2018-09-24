@@ -56,6 +56,10 @@ export class BudgetDetailsComponent implements OnInit {
     return this._budgetService.calculatePercentDone(this.budget[this.type].balance);
   }
 
+  public getBudgetFullPercentDone(): number {
+    return this._budgetService.calculatePercentDone(this.budget[this.type].balance, 0, true);
+  }
+
   public getNumberOfCurrencies(balance: {[currency: string]: BudgetBalance}): number {
     const numberOfCurrencies: number = Object.keys(balance).length;
     return numberOfCurrencies > 0 ? numberOfCurrencies : 1;
@@ -76,6 +80,10 @@ export class BudgetDetailsComponent implements OnInit {
 
   public calculateCategoryPercentDone(category: BudgetCategory): number {
     return this._budgetService.calculatePercentDone(category.balance);
+  }
+
+  public calculateCategoryFullPercentDone(category: BudgetCategory): number {
+    return this._budgetService.calculatePercentDone(category.balance, 0, true);
   }
 
   public calculateGoalStyle(goal: BudgetGoal, goalPercent: number): string {

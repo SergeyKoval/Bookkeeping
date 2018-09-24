@@ -121,7 +121,7 @@ export class BudgetService {
     return this._http.get<SimpleResponse>(`/api/budget/reviewBeforeRemoveHistoryItem/${historyItemId}`);
   }
 
-  public calculatePercentDone(balance: {[currency: string]: BudgetBalance}, value: number = 0): number {
+  public calculatePercentDone(balance: {[currency: string]: BudgetBalance}, value: number = 0, fullPercent: boolean = false): number {
     let completeValue: number = 0;
     const currencies: string[] = Object.keys(balance);
 
@@ -148,7 +148,7 @@ export class BudgetService {
     }
 
     const percent: number = Math.round(value / completeValue * 100);
-    return percent > 100 ? 100 : percent;
+    return percent > 100 && fullPercent === false ? 100 : percent;
   }
 
   private clearEmptyCurrencies(budgetDetails: BudgetDetails): void {

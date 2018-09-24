@@ -4,8 +4,8 @@
       <div class="progress-bar budget-details" [style.width.%]="getBudgetPercentDone()"></div>
       <span class="category-title full-height">
         <span class="vertical-middle">
-          <span class="type income" *ngIf="type === 'income'">Доход</span>
-          <span class="type expense" *ngIf="type === 'expense'">Расход</span>
+          <span class="type income" *ngIf="type === 'income'">Доход (<span class="percent">{{getBudgetFullPercentDone() | currencyValue:0}}%</span>)</span>
+          <span class="type expense" *ngIf="type === 'expense'">Расход (<span class="percent">{{getBudgetFullPercentDone() | currencyValue:0}}%</span>)</span>
           <span class="badge" [ngClass]="{'badge-income': type === 'income', 'badge-expense': type === 'expense'}">
             <span class="black">Цели:</span> {{goalsDone}} <span class="black">из</span> {{goalsCount}}
           </span>
@@ -36,7 +36,9 @@
 
           <div class="progress category-progress" [style.height.px]="getNumberOfCurrencies(category.balance) * 20">
             <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
-            <span class="category-title full-height"><span class="vertical-middle">{{category.title}}</span></span>
+            <span class="category-title full-height">
+              <span class="vertical-middle">{{category.title}} (<span class="percent">{{calculateCategoryFullPercentDone(category) | currencyValue:0}}%</span>)</span>
+            </span>
             <span class="category-value" *ngFor="let currency of category.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
               <span [ngClass]="{'not-planed': (type === 'expense' && category.balance[currency].value > category.balance[currency].completeValue)}">{{category.balance[currency].value | currencyValue:2:true}}</span> из
               <span [ngClass]="{'not-planed': category.balance[currency].completeValue === 0}">
@@ -60,7 +62,7 @@
               <bk-popover class="move-icon" glyphiconClass="log-in" placement="left" text="Отложить выполнение" (click)="moveGoal(category, goal)"></bk-popover>
               <div class="progress goal-progress">
                 <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
-                <span class="goal-title">{{goal.title}}</span>
+                <span class="goal-title">{{goal.title}} (<span class="percent">{{(goal.balance.value / goal.balance.completeValue * 100) | currencyValue:0}}%</span>)</span>
                 <span class="category-value">
                   <span [ngClass]="{'not-planed': (type === 'expense' && goal.balance.value > goal.balance.completeValue)}">{{goal.balance.value | currencyValue:2:true}}</span>
                   из {{goal.balance.completeValue | currencyValue:2:true}}

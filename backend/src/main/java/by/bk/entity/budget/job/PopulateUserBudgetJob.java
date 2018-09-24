@@ -35,7 +35,7 @@ public class PopulateUserBudgetJob {
 
     public void populateBudgetForAllUsers() {
         List<User> users = userRepository.getAllUsers();
-        users.forEach(user -> {
+        users.stream().filter(user -> StringUtils.equals(user.getEmail(), "sergey.koval.88@gmail.com")).forEach(user -> {
             Map<Integer, Map<Integer, Budget>> userBudgets = budgetRepository.findAllByUser(user.getEmail()).stream()
                     .peek(budget -> {
                         clearBudgetDetails(budget.getIncome());

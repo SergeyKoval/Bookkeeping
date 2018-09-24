@@ -204,7 +204,8 @@
 
 .badge {
   position: absolute;
-  left: 100px;
+  left: 110px;
+  margin-top: 1px;
 }
 
 .single-currency {
@@ -218,6 +219,11 @@
 .budget-details-progress {
   min-height: 30px;
   border-radius: 3px 3px 0px 0px;
+}
+
+.percent {
+  font-style: italic;
+  font-weight: normal;
 }
 
 @media (min-width: 768px) and (max-width: 992px) {

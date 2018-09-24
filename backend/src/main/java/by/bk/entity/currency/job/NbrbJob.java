@@ -1,5 +1,6 @@
 package by.bk.entity.currency.job;
 
+import by.bk.entity.budget.job.PopulateUserBudgetJob;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.currency.CurrencyAPI;
 import by.bk.entity.currency.CurrencyDetail;

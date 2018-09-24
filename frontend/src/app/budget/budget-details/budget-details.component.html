@@ -12,7 +12,7 @@
         </span>
       </span>
       <div class="vertical-middle">
-        <div class="category-value" *ngFor="let currency of budgetDetails.balance | mapKeys; let currencyIndex = index; " [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': isSingleCurrency()}">
+        <div class="category-value" *ngFor="let currency of budgetDetails.balance | mapKeys | currencySort; let currencyIndex = index; " [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': isSingleCurrency()}">
           <span class="header-expected" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
           <span class="header-from">из</span>
           <span class="text-right header-current" [ngClass]="{'not-planed': (type === 'expense' && budgetDetails.balance[currency].value > budgetDetails.balance[currency].completeValue)}">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
@@ -39,7 +39,7 @@
             <span class="category-title full-height">
               <span class="vertical-middle">{{category.title}} (<span class="percent">{{calculateCategoryFullPercentDone(category) | currencyValue:0}}%</span>)</span>
             </span>
-            <span class="category-value" *ngFor="let currency of category.balance | mapKeys; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
+            <span class="category-value" *ngFor="let currency of category.balance | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
               <span [ngClass]="{'not-planed': (type === 'expense' && category.balance[currency].value > category.balance[currency].completeValue)}">{{category.balance[currency].value | currencyValue:2:true}}</span> из
               <span [ngClass]="{'not-planed': category.balance[currency].completeValue === 0}">
                 {{category.balance[currency].completeValue | currencyValue:2:true}}

@@ -74,6 +74,7 @@ import { PlanBudgetDialogComponent } from './budget/plan-budget-dialog/plan-budg
 import { InputCalculatorComponent } from './common/components/input-calculator/input-calculator.component';
 import { MoveGoalDialogComponent } from './budget/move-goal-dialog/move-goal-dialog.component';
 import { MonthAndYearComponent } from './common/components/month-and-year/month-and-year.component';
+import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
 
 @NgModule({
   declarations: [
@@ -127,7 +128,8 @@ import { MonthAndYearComponent } from './common/components/month-and-year/month-
     PlanBudgetDialogComponent,
     InputCalculatorComponent,
     MoveGoalDialogComponent,
-    MonthAndYearComponent
+    MonthAndYearComponent,
+    CurrencySortPipe
   ],
   imports: [
     BrowserModule,

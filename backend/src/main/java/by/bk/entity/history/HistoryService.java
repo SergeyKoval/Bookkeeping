@@ -107,7 +107,7 @@ public class HistoryService implements HistoryAPI {
         if (response.isSuccess()) {
             historyItem.setUser(login);
             historyItem = historyRepository.save(historyItem);
-            response = userAPI.updateUserBalance(login, historyItem.getType(), historyItem.getBalance());
+            response = userAPI.updateUserBalance(login, historyItem.getType(), historyItem.cloneBalance());
 
             if (!response.isSuccess()) {
                 LOG.error(StringUtils.join("Error on second updating balance for changing history item. Step 1 success update, which need to be reverted: ", originalHistoryItem));

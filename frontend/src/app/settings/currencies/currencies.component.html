@@ -9,7 +9,7 @@
     <div class="col-sm-3">Действия</div>
   </div>
 
-  <div class="row" *ngFor="let defaultCurrency of allCurrencies | currencySort; let lastCurrency = last; let firstCurrency = first; let currencyIndex  = index;">
+  <div class="row" *ngFor="let defaultCurrency of allCurrencies | currencyDetailSort; let lastCurrency = last; let firstCurrency = first; let currencyIndex  = index;">
     <div class="col-sm-2 text-center"><span [innerHTML]="defaultCurrency.symbol"></span></div>
     <div class="col-sm-2 text-center">{{defaultCurrency.name}}</div>
     <div class="col-sm-2 text-center"><span *ngIf="isCurrencyUsed(defaultCurrency.name)" class="glyphicon glyphicon-ok green-mark"></span></div>

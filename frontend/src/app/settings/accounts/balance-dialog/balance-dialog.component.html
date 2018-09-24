@@ -3,7 +3,7 @@
 </h2>
 <mat-dialog-content>
   <div class="table">
-    <div class="row" *ngFor="let currency of currencies | currencySort">
+    <div class="row" *ngFor="let currency of currencies | currencyDetailSort">
       <div class="input-group">
         <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></span>
         <input type="text" [(ngModel)]="this.data.subAccountBalance[currency.name]" class="form-control"

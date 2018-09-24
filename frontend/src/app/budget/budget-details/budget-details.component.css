@@ -218,7 +218,7 @@
 
 .budget-details-progress {
   min-height: 30px;
-  border-radius: 3px 3px 0px 0px;
+  border-radius: 3px 3px 0 0;
 }
 
 .percent {

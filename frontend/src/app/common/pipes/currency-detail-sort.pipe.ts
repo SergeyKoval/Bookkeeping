@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'currencySort'
+  name: 'currencyDetailSort'
 })
-export class CurrencySortPipe implements PipeTransform {
+export class CurrencyDetailSortPipe implements PipeTransform {
   public transform(currencies: CurrencyDetail[]): CurrencyDetail[] {
     currencies.sort((a: CurrencyDetail, b: CurrencyDetail) => {
       if (!a.order) {

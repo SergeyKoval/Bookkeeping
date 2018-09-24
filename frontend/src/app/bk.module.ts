@@ -60,7 +60,7 @@ import { CurrenciesComponent } from './settings/currencies/currencies.component'
 import { AccountsComponent } from './settings/accounts/accounts.component';
 import { CategoriesComponent } from './settings/categories/categories.component';
 import { ProfileComponent } from './settings/profile/profile.component';
-import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
+import { CurrencyDetailSortPipe } from './common/pipes/currency-detail-sort.pipe';
 import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balance-dialog.component';
 import { AuthenticationService } from './common/service/authentication.service';
 import { AuthenticationInterceptor } from './authentication.interceptor';
@@ -116,7 +116,7 @@ import { MonthAndYearComponent } from './common/components/month-and-year/month-
     AccountsComponent,
     CategoriesComponent,
     ProfileComponent,
-    CurrencySortPipe,
+    CurrencyDetailSortPipe,
     BalanceDialogComponent,
     AccountCategoryDialogComponent,
     UsersComponent,

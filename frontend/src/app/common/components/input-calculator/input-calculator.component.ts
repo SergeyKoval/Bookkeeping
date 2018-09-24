@@ -35,6 +35,7 @@ export class InputCalculatorComponent implements OnInit {
   @ViewChild ('inputValue')
   private _INPUT_ELEMENT_REF: ElementRef;
   private _INPUT: HTMLInputElement;
+  private _focused: boolean = false;
 
   public constructor(private _currencyValuePipe: CurrencyValuePipe) {}
 
@@ -60,6 +61,7 @@ export class InputCalculatorComponent implements OnInit {
   }
 
   public blurOrEnterClick(): void {
+    this._focused = false;
     this.value = this.calculateValue();
     if (this.value === 0) {
       this.value = null;
@@ -71,7 +73,11 @@ export class InputCalculatorComponent implements OnInit {
   }
 
   public showCalculation(): boolean {
-    return CurrencyUtils.CALCULATION_PATTERN.test(this._INPUT.value);
+    return this._focused === true && CurrencyUtils.CALCULATION_PATTERN.test(this._INPUT.value);
+  }
+
+  public focusInput(): void {
+    this._focused = true;
   }
 
   public calculateValue(): number {

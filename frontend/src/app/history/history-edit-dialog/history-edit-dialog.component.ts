@@ -273,7 +273,7 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   private commonValidation(balance: HistoryBalanceType): boolean {
-    if (!balance.value || balance.value < 0.01) {
+    if (!balance.value || balance.value < 0.01 || balance.value >= 10000000) {
       this.errors = 'Сумма указана неверно';
       return false;
     }
@@ -342,7 +342,7 @@ export class HistoryEditDialogComponent implements OnInit {
       return false;
     }
 
-    if (!balance.newValue || balance.newValue < 0.01) {
+    if (!balance.newValue || balance.newValue < 0.01 || balance.newValue >= 10000000) {
       this.errors = 'Сумма указана неверно';
       return false;
     }

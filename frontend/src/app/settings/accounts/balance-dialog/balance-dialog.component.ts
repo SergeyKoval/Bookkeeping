@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { ProfileService } from '../../../common/service/profile.service';
+import { CurrencyUtils } from '../../../common/utils/currency-utils';
 
 @Component({
   selector: 'bk-balance-dialog',
@@ -11,6 +12,7 @@ import { ProfileService } from '../../../common/service/profile.service';
 export class BalanceDialogComponent implements OnInit {
   public currencies: CurrencyDetail[];
   public loading: boolean = true;
+  public errors: string;
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {subAccountBalance: {[currency: string]: number}},
@@ -27,7 +29,12 @@ export class BalanceDialogComponent implements OnInit {
   }
 
   public save(): void {
-    this._dialogRef.close(this.data.subAccountBalance);
+    const filterResult: [string, number][] = Object.entries(this.data.subAccountBalance).filter(([currency, value]) => value < 0 || value >= 10000000);
+    if (filterResult.length > 0) {
+      this.errors = `Недопустимое значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(filterResult[0][0]).symbol)}`;
+    } else {
+      this._dialogRef.close(this.data.subAccountBalance);
+    }
   }
 
   public getCurrencyValue(currency: CurrencyDetail): number {

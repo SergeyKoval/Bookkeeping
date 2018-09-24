@@ -366,6 +366,11 @@ export class PlanBudgetDialogComponent implements OnInit {
         balance.completeValue = 0;
       }
 
+      if (balance.completeValue < 0 || balance.completeValue >= 10000000) {
+        this.errors = `Недопустимое значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(balance.currency).symbol)}`;
+        return true;
+      }
+
       if ((!balance.value && (!balance.completeValue || balance.completeValue <= 0)) && !this.errors) {
         this.errors = `Лимит для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(balance.currency).symbol)} не задан`;
         return true;

@@ -2,6 +2,10 @@
   <span>Редактирование остатков субсчета</span>
 </h2>
 <mat-dialog-content>
+  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errors}}</strong>
+  </div>
+
   <div class="table">
     <div class="row" *ngFor="let currency of currencies | currencyDetailSort">
       <div class="input-group">

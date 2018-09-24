@@ -7,6 +7,8 @@ import { DateUtils } from '../../common/utils/date-utils';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { BudgetService } from '../../common/service/budget.service';
+import { CurrencyUtils } from '../../common/utils/currency-utils';
+import { ProfileService } from '../../common/service/profile.service';
 
 @Component({
   selector: 'bk-move-goal-dialog',
@@ -24,7 +26,8 @@ export class MoveGoalDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: {type: string, budgetType: string, category: BudgetCategory, budget: Budget, goal: BudgetGoal},
     private _dialogRef: MatDialogRef<MoveGoalDialogComponent>,
     private _loadingService: LoadingService,
-    private _budgetService: BudgetService
+    private _budgetService: BudgetService,
+    private _profileService: ProfileService
   ) {}
 
   public ngOnInit(): void {
@@ -54,6 +57,9 @@ export class MoveGoalDialogComponent implements OnInit {
     }
     if (this.moveValue <= 0) {
       this.errors = 'Неверная сумму остатка';
+    }
+    if (this.moveValue <= 0 || this.moveValue >= 10000000) {
+      this.errors = `Недопустимое значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(this.data.goal.balance.currency).symbol)}`;
     }
 
     if (!this.errors) {

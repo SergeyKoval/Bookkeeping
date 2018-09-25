@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -19,11 +19,14 @@ import { BrowserUtils } from '../common/utils/browser-utils';
 })
 export class AuthenticationComponent implements OnInit, OnDestroy {
   public authenticationForm: FormGroup;
+  public registrationForm: FormGroup;
   public submitted: boolean = false;
   public errorMessage: string;
   public loading: boolean = false;
   public applicationLoading: boolean = false;
   public alwaysEditing: boolean;
+  public type: string = 'authentication';
+  public codeSent: boolean = false;
 
   @ViewChild('formRef')
   private _FORM_REF: HTMLFormElement;
@@ -37,7 +40,8 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     private _loadingService: LoadingService,
     private _currencyService: CurrencyService,
     private _router: Router,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _formBuilder: FormBuilder
   ) {}
 
   public ngOnInit(): void {
@@ -89,5 +93,27 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
         this._profileService.initialDataLoaded = true;
         this._router.navigate(['budget']);
       });
+  }
+
+  public showRegistrationForm(): void {
+    this.submitted = false;
+    this.registrationForm = this._authenticationService.initRegistrationForm();
+    this.type = 'registration';
+  }
+
+  public sendCode(): void {
+    this.submitted = true;
+    if (!this.registrationForm.valid) {
+      return;
+    }
+
+    if (!this.registrationForm.contains('code')) {
+      this.registrationForm.addControl('code', this._formBuilder.control({value: '', disabled: false}));
+    } else {
+      this.registrationForm.patchValue({code: ''});
+    }
+    this.loading = true;
+    this.codeSent = true;
+
   }
 }

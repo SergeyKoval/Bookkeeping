@@ -44,6 +44,13 @@ export class AuthenticationService implements CanActivate {
     });
   }
 
+  public initRegistrationForm(): FormGroup {
+    return this._formBuilder.group({
+      email: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(3)]]
+    });
+  }
+
   public authenticate(credentials: {email: string, password: string}): Observable<HttpResponse<{token: string}>> {
     this._authentication$$.next(true);
     return this._http.post<{token: string}>('/token/generate-token', credentials, { observe: 'response' })

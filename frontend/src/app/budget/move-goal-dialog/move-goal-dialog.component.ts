@@ -69,7 +69,6 @@ export class MoveGoalDialogComponent implements OnInit {
           tap(simpleResponse => {
             loadingDialog.close();
             if (simpleResponse.status === 'FAIL') {
-              console
               this.errors = simpleResponse.message === 'ALREADY_EXIST' ? 'Цель существует в выбранном месяце' : 'Ошибка при сохранении';
             }
           }),

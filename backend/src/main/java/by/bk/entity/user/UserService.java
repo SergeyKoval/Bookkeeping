@@ -62,7 +62,7 @@ public class UserService implements UserAPI, UserDetailsService {
             throw new MissedUserException(email);
         }
 
-        User user = optionalUser.orElseGet(() -> new User(email, passwordEncoder.encode(password), Collections.singletonList(UserPermission.USER)));
+        User user = optionalUser.orElseGet(() -> initUserFromTemplate(email, password, Collections.singletonList(UserPermission.USER)));
         if (!restorePassword && user.isEnabled()) {
             return SimpleResponse.alreadyExistsFail();
         }
@@ -600,7 +600,7 @@ public class UserService implements UserAPI, UserDetailsService {
             return SimpleResponse.alreadyExistsFail();
         }
 
-        userRepository.save(new User(email, passwordEncoder.encode(password), roles));
+        userRepository.save(initUserFromTemplate(email, password, roles));
         return SimpleResponse.success();
     }
 
@@ -742,5 +742,48 @@ public class UserService implements UserAPI, UserDetailsService {
                 historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> balance.get(currency));
             }
         });
+    }
+
+    private User initUserFromTemplate(String email, String password, List<UserPermission> roles) {
+        User user = new User(email, passwordEncoder.encode(password), roles);
+        user.setCurrencies(Collections.singletonList(new UserCurrency(Currency.BYN, true, 1)));
+
+        List<Account> accounts = new ArrayList<>();
+        user.setAccounts(accounts);
+        Account mainAccount = new Account("Деньги", 1);
+        mainAccount.setOpened(true);
+        mainAccount.getSubAccounts().add(new SubAccount("Наличные", 1, "Money.gif", new HashMap<>()));
+        mainAccount.getSubAccounts().add(new SubAccount("Альфа банк", 2, "alfa.gif", new HashMap<>()));
+        mainAccount.getSubAccounts().add(new SubAccount("Беларусьбанк", 3, "belarusbank.gif", new HashMap<>()));
+        Account additionalAccount = new Account("Долги", 2);
+        additionalAccount.getSubAccounts().add(new SubAccount("Дядя Вася", 1, "rabotnik.gif", new HashMap<>()));
+        additionalAccount.getSubAccounts().add(new SubAccount("Вера Пупкина", 2, "collega.gif", new HashMap<>()));
+        accounts.add(mainAccount);
+        accounts.add(additionalAccount);
+
+        List<Category> categories = new ArrayList<>();
+        user.setCategories(categories);
+        Category category = new Category("Автомобиль", "avto.gif", 1);
+        category.getSubCategories().add(new SubCategory("Бунзин", 1, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Мойка", 2, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Штраф", 3, SubCategoryType.expense));
+        categories.add(category);
+        category = new Category("Дом", "home.gif", 2);
+        category.getSubCategories().add(new SubCategory("Комуналка", 1, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Вода", 2, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Электричество", 3, SubCategoryType.expense));
+        categories.add(category);
+        category = new Category("Дети", "deti.gif", 3);
+        category.getSubCategories().add(new SubCategory("Вещи", 1, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Подарки", 2, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Подарки", 3, SubCategoryType.income));
+        category.getSubCategories().add(new SubCategory("Образование", 4, SubCategoryType.expense));
+        categories.add(category);
+        category = new Category("Доход", "income.gif", 4);
+        category.getSubCategories().add(new SubCategory("Зарплата", 1, SubCategoryType.income));
+        category.getSubCategories().add(new SubCategory("Подарки", 2, SubCategoryType.income));
+        category.getSubCategories().add(new SubCategory("Проценты в банке", 3, SubCategoryType.income));
+        categories.add(category);
+        return user;
     }
 }

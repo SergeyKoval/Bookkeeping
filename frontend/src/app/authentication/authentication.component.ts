@@ -148,7 +148,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
       if (response.status === 'FAIL') {
         this.errorMessage = response.message === 'INVALID_CODE' ? 'Код не совпадает' : 'Ошибка при проверке кода';
       } else {
-        this.loadInitialData(['budget']);
+        this.loadInitialData(['settings', 'profile']);
       }
     });
   }

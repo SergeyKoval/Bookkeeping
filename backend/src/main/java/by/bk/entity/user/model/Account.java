@@ -1,6 +1,7 @@
 package by.bk.entity.user.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
  * @author Sergey Koval
  */
 @Getter
+@Setter
 public class Account implements Orderable, Selectable {
     private int order;
     private boolean opened;

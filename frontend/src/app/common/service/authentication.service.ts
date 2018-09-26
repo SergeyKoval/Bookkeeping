@@ -44,10 +44,11 @@ export class AuthenticationService implements CanActivate {
     });
   }
 
-  public initRegistrationForm(email: string, password: string): FormGroup {
+  public initRegistrationForm(restorePassword: boolean, email: string, password: string): FormGroup {
     return this._formBuilder.group({
       email: [email, [Validators.required, Validators.email, Validators.minLength(3)]],
-      password: [password, [Validators.required, Validators.minLength(3)]]
+      password: [password, [Validators.required, Validators.minLength(3)]],
+      restorePassword: [restorePassword]
     });
   }
 

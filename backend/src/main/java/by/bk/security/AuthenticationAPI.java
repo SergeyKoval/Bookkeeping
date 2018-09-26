@@ -10,6 +10,6 @@ import java.util.function.Supplier;
  */
 public interface AuthenticationAPI {
     Authentication getAuthentication(String login);
-    SimpleResponse sendRegistrationCode(String email, String password);
+    SimpleResponse sendRegistrationCode(String email, String password, boolean restorePassword);
     SimpleResponse reviewRegistrationCode(String email, String password, String code, Supplier<String> tokenSupplier);
 }

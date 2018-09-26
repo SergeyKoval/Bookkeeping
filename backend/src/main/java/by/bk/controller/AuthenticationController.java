@@ -61,7 +61,7 @@ public class AuthenticationController {
     @PostMapping("/send-registration-code")
     public SimpleResponse sendRegistrationCode(@RequestBody RegistrationRequest request) {
         String email = StringUtils.lowerCase(request.getEmail());
-        return authenticationAPI.sendRegistrationCode(email, request.getPassword());
+        return authenticationAPI.sendRegistrationCode(email, request.getPassword(), request.isRestorePassword());
     }
 
     @PostMapping("/review-registration-code")

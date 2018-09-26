@@ -31,7 +31,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     }
 
     return next.handle(req).pipe(catchError(err => {
-      if (err.url.endsWith('/token/generate-token') && (err.status === 401 || err.status === 403)) {
+      if ((err.url.endsWith('/token/generate-token') || err.url.endsWith('/token/send-registration-code')) && (err.status === 401 || err.status === 403)) {
         if (err.status === 401) {
           this._authenticationService.addErrorMessage(err.error);
         } else if (err.status === 403) {

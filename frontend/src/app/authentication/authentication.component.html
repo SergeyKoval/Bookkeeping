@@ -7,14 +7,16 @@
 
     <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!loading; else loadingIndicator">Войти</button>
     <div class="additional-actions">
-      <label style="float: left;"><a (click)="showRegistrationForm()">Регистрация</a></label>
-      <label style="float: right;"><a [routerLink]="['/restore-password']">Восстановить пароль</a></label>
+      <label style="float: left;"><a (click)="showRegistrationForm(false)">Регистрация</a></label>
+      <label style="float: right;"><a (click)="showRegistrationForm(true)">Восстановить пароль</a></label>
     </div>
   </form>
 
   <form [formGroup]="registrationForm" *ngIf="type === 'registration'">
     <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('email')" [submitted]="submitted">Логин (E-mail)</bk-authentication-input>
-    <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
+    <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('password')" [type]="'password'" [submitted]="submitted">
+      {{registrationForm.get('restorePassword').value === true ? 'Новый пароль' : 'Пароль'}}
+    </bk-authentication-input>
     <bk-authentication-input *ngIf="codeSent === true" [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('code')" [submitted]="submitted">Код подтверждения (отправлен на E-mail)</bk-authentication-input>
 
     <button class="btn btn-primary button-block" (click)="sendCode()" *ngIf="!loading; else loadingIndicator">

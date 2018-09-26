@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
-import { tap } from 'rxjs/internal/operators';
 import { switchMap } from 'rxjs/operators';
 
 import { ProfileService } from '../common/service/profile.service';
@@ -56,10 +55,11 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     this._AUTHENTICATION_ERROR_SUBSCRIPTION = this._authenticationService.errorMessage$.subscribe(value => {
       if (value === 'MISSED USER') {
         this.errorMessage = 'Несуществующий пользователь';
+        this.codeSent = false;
       } else if (value === 'BAD CREDENTIALS') {
         this.errorMessage = 'Неверный пароль';
       } else if (value === 'NOT ACTIVE') {
-        this.showRegistrationForm(this.authenticationForm.get('email').value, this.authenticationForm.get('password').value);
+        this.showRegistrationForm(false, this.authenticationForm.get('email').value, this.authenticationForm.get('password').value);
         this.errorMessage = 'Пользователь не активирован';
         this.alwaysEditing = true;
       }
@@ -95,13 +95,15 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loadInitialData(['budget']);
+    this._authenticationService.authenticate(this.authenticationForm.value).subscribe(() => {
+      this.loadInitialData(['budget']);
+    });
   }
 
-  public showRegistrationForm(email: string = '', password: string = ''): void {
+  public showRegistrationForm(restorePassword: boolean, email: string = '', password: string = ''): void {
     this.errorMessage = null;
     this.submitted = false;
-    this.registrationForm = this._authenticationService.initRegistrationForm(email, password);
+    this.registrationForm = this._authenticationService.initRegistrationForm(restorePassword, email, password);
     this.type = 'registration';
   }
 
@@ -121,7 +123,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     this.codeSent = true;
     this._authenticationService.sendRegistrationCode(this.registrationForm.value).subscribe(response => {
       if (response.status === 'FAIL') {
-        this.errorMessage = response.message === 'ALREADY_EXIST' ? 'Пользователь с таким мэйлом уже существует' : 'Ошибка при отправке кода подтверждения';
+        this.errorMessage = response.message === 'ALREADY_EXIST' ? 'Пользователь уже зарегистрирован' : 'Ошибка при отправке кода подтверждения';
       }
       this.loading = false;
     });
@@ -152,14 +154,12 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   }
 
   private loadInitialData(redirectPage: string[]): void {
-    this._authenticationService.authenticate(this.authenticationForm.value)
-      .pipe(
-        tap(() => this.applicationLoading = true),
-        switchMap(() => this._profileService.loadFullProfile()),
-        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies()))
-      ).subscribe(() => {
-      this._profileService.initialDataLoaded = true;
-      this._router.navigate(redirectPage);
-    });
+    this.applicationLoading = true;
+    this._profileService.loadFullProfile()
+      .pipe(switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies())))
+      .subscribe(() => {
+        this._profileService.initialDataLoaded = true;
+        this._router.navigate(redirectPage);
+      });
   }
 }

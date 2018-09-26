@@ -56,13 +56,20 @@ public class UserService implements UserAPI, UserDetailsService {
     private EmailPreparator registrationCodeEmailPreparator;
 
     @Override
-    public SimpleResponse sendRegistrationCode(String email, String password) {
-        User user = userRepository.findById(email)
-                .orElseGet(() -> new User(email, passwordEncoder.encode(password), Collections.singletonList(UserPermission.USER)));
-        if (user.isEnabled()) {
+    public SimpleResponse sendRegistrationCode(String email, String password, boolean restorePassword) {
+        Optional<User> optionalUser = userRepository.findById(email);
+        if (restorePassword && !optionalUser.isPresent()) {
+            throw new MissedUserException(email);
+        }
+
+        User user = optionalUser.orElseGet(() -> new User(email, passwordEncoder.encode(password), Collections.singletonList(UserPermission.USER)));
+        if (!restorePassword && user.isEnabled()) {
             return SimpleResponse.alreadyExistsFail();
         }
 
+        if (restorePassword) {
+            user.setEnabled(false);
+        }
         user.setCode(Long.toString(RandomUtils.nextLong(1000, 10000)));
         userRepository.save(user);
         return registrationCodeEmailPreparator.prepareAndSend(email, user.getCode()) ? SimpleResponse.success() : SimpleResponse.fail();

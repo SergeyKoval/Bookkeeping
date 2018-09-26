@@ -14,14 +14,16 @@ public class JwtUser implements UserDetails {
     private String username;
     private String password;
     private List<UserPermission> authorities;
+    private boolean enabled;
 
     public JwtUser() {
     }
 
-    public JwtUser(String username, String password, List<UserPermission> permissions) {
+    public JwtUser(String username, String password, boolean enabled, List<UserPermission> permissions) {
         this.username = username;
         this.authorities = permissions;
         this.password = password;
+        this.enabled = enabled;
     }
 
     @Override
@@ -56,6 +58,6 @@ public class JwtUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

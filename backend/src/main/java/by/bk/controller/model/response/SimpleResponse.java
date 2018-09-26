@@ -31,6 +31,10 @@ public class SimpleResponse {
         return new SimpleResponse(Status.SUCCESS, null);
     }
 
+    public static SimpleResponse success(String message) {
+        return new SimpleResponse(Status.SUCCESS, message);
+    }
+
     public static SimpleResponse fail(String message) {
         return new SimpleResponse(Status.FAIL, message);
     }

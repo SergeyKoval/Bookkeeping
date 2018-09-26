@@ -8,6 +8,8 @@ h1 {
 h2 {
   text-align: center;
   color: #c62828;
+  margin-top: 30px;
+  margin-bottom: 0;
 }
 
 .progress {
@@ -55,4 +57,8 @@ a {
 
 .additional-actions {
   padding-top: 15px;
+}
+
+.second-button {
+  margin-top: 10px;
 }

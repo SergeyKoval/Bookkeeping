@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<User, String> {
     @Query(value = "{_id: ?0}", fields = "{password: 1, email: 0}")
     User getUserPassword(String login);
-    @Query(value = "{_id: ?0}", fields = "{email: 1, password: 1, roles: 1}")
+    @Query(value = "{_id: ?0}", fields = "{email: 1, password: 1, roles: 1, enabled: 1}")
     Optional<User> authenticateUser(String login);
     @Query(value = "{_id: ?0}", fields = "{email: 0, roles: 1}")
     Optional<User> getAuthenticatedUser(String login);

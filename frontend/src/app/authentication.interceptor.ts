@@ -20,7 +20,9 @@ export class AuthenticationInterceptor implements HttpInterceptor {
 
   // tslint:disable-next-line:no-any
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!req.url.endsWith('/token/generate-token') && !this._authenticationService.validateToken()) {
+    if ((!req.url.endsWith('/token/generate-token') && !req.url.endsWith('/token/send-registration-code') && !req.url.endsWith('/token/review-registration-code'))
+      && !this._authenticationService.validateToken()
+    ) {
       return of();
     }
 
@@ -29,9 +31,11 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     }
 
     return next.handle(req).pipe(catchError(err => {
-      if (err.url.endsWith('/token/generate-token') && err.status === 401) {
-        if (err.error === 'BAD CREDENTIALS') {
-          this._authenticationService.addErrorMessage('Неверный пароль');
+      if (err.url.endsWith('/token/generate-token') && (err.status === 401 || err.status === 403)) {
+        if (err.status === 401) {
+          this._authenticationService.addErrorMessage(err.error);
+        } else if (err.status === 403) {
+          this._authenticationService.addErrorMessage('NOT ACTIVE');
         }
       } else if (err.status === 401) {
         console.log(err);

@@ -53,7 +53,18 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     this.authenticationForm = this._authenticationService.initAuthenticationForm();
     this._AUTHENTICATION_LOADING_SUBSCRIPTION = this._authenticationService.authentication$$.subscribe((value: boolean) => this.loading = value);
     this._APPLICATION_LOADING_SUBSCRIPTION = this._authenticationService.applicationLoading$$.subscribe((value: boolean) => this.applicationLoading = value);
-    this._AUTHENTICATION_ERROR_SUBSCRIPTION = this._authenticationService.errorMessage$.subscribe(value => this.errorMessage = value);
+    this._AUTHENTICATION_ERROR_SUBSCRIPTION = this._authenticationService.errorMessage$.subscribe(value => {
+      if (value === 'MISSED USER') {
+        this.errorMessage = 'Несуществующий пользователь';
+      } else if (value === 'BAD CREDENTIALS') {
+        this.errorMessage = 'Неверный пароль';
+      } else if (value === 'NOT ACTIVE') {
+        this.showRegistrationForm(this.authenticationForm.get('email').value, this.authenticationForm.get('password').value);
+        this.errorMessage = 'Пользователь не активирован';
+        this.alwaysEditing = true;
+      }
+
+    });
     this.alwaysEditing = BrowserUtils.isMobileOrTablet();
   }
 
@@ -84,24 +95,18 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this._authenticationService.authenticate(this.authenticationForm.value)
-      .pipe(
-        tap(() => this.applicationLoading = true),
-        switchMap(() => this._profileService.loadFullProfile()),
-        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies()))
-      ).subscribe(() => {
-        this._profileService.initialDataLoaded = true;
-        this._router.navigate(['budget']);
-      });
+    this.loadInitialData(['budget']);
   }
 
-  public showRegistrationForm(): void {
+  public showRegistrationForm(email: string = '', password: string = ''): void {
+    this.errorMessage = null;
     this.submitted = false;
-    this.registrationForm = this._authenticationService.initRegistrationForm();
+    this.registrationForm = this._authenticationService.initRegistrationForm(email, password);
     this.type = 'registration';
   }
 
   public sendCode(): void {
+    this.errorMessage = null;
     this.submitted = true;
     if (!this.registrationForm.valid) {
       return;
@@ -114,6 +119,47 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     }
     this.loading = true;
     this.codeSent = true;
+    this._authenticationService.sendRegistrationCode(this.registrationForm.value).subscribe(response => {
+      if (response.status === 'FAIL') {
+        this.errorMessage = response.message === 'ALREADY_EXIST' ? 'Пользователь с таким мэйлом уже существует' : 'Ошибка при отправке кода подтверждения';
+      }
+      this.loading = false;
+    });
+  }
 
+  public reviewCode(): void {
+    this.errorMessage = null;
+    this.submitted = true;
+    if (!this.registrationForm.valid) {
+      return;
+    }
+    const codeValue: string = this.registrationForm.get('code').value;
+    if (!codeValue || codeValue.length !== 4) {
+      this.errorMessage = 'Код не совпадает';
+      return;
+    }
+
+
+    this.loading = true;
+    this._authenticationService.reviewRegistrationCode(this.registrationForm.value).subscribe(response => {
+      this.loading = false;
+      if (response.status === 'FAIL') {
+        this.errorMessage = response.message === 'INVALID_CODE' ? 'Код не совпадает' : 'Ошибка при проверке кода';
+      } else {
+        this.loadInitialData(['budget']);
+      }
+    });
+  }
+
+  private loadInitialData(redirectPage: string[]): void {
+    this._authenticationService.authenticate(this.authenticationForm.value)
+      .pipe(
+        tap(() => this.applicationLoading = true),
+        switchMap(() => this._profileService.loadFullProfile()),
+        switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies()))
+      ).subscribe(() => {
+      this._profileService.initialDataLoaded = true;
+      this._router.navigate(redirectPage);
+    });
   }
 }

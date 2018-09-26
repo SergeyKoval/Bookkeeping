@@ -75,7 +75,7 @@ export class UserDialogComponent implements OnInit {
       .subscribe(result => {
         this.loading = false;
         if (result.status === 'FAIL') {
-          this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Пользователь с таким мэйлом уже существует': 'Ошибка при сохранении';
+          this.errorMessage = result.message === 'ALREADY_EXIST' ? 'Пользователь с таким мэйлом уже существует' : 'Ошибка при сохранении';
           return;
         }
 

@@ -9,9 +9,12 @@ import by.bk.entity.history.*;
 import by.bk.entity.history.Balance;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
+import by.bk.mail.EmailPreparator;
+import by.bk.security.MissedUserException;
 import by.bk.security.model.JwtUser;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +52,34 @@ public class UserService implements UserAPI, UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private EmailPreparator registrationCodeEmailPreparator;
+
+    @Override
+    public SimpleResponse sendRegistrationCode(String email, String password) {
+        User user = userRepository.findById(email)
+                .orElseGet(() -> new User(email, passwordEncoder.encode(password), Collections.singletonList(UserPermission.USER)));
+        if (user.isEnabled()) {
+            return SimpleResponse.alreadyExistsFail();
+        }
+
+        user.setCode(Long.toString(RandomUtils.nextLong(1000, 10000)));
+        userRepository.save(user);
+        return registrationCodeEmailPreparator.prepareAndSend(email, user.getCode()) ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    @Override
+    public SimpleResponse reviewRegistrationCode(String email, String password, String code, Supplier<String> tokenSupplier) {
+        User user = userRepository.findById(email).orElseThrow(() -> new MissedUserException(email));
+        if (!StringUtils.equals(code, user.getCode())) {
+            return SimpleResponse.fail("INVALID_CODE");
+        }
+
+        user.setEnabled(true);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return SimpleResponse.success(tokenSupplier.get());
+    }
 
     @Override
     public SimpleResponse updateUserPassword(String login, String oldPassword, String newPassword) {
@@ -77,8 +108,8 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public JwtUser loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.authenticateUser(username)
-                .map(user -> new JwtUser(username, user.getPassword(), user.getRoles()))
-                .orElse(new JwtUser());
+                .map(user -> new JwtUser(username, user.getPassword(), user.isEnabled(), user.getRoles()))
+                .orElseThrow(() -> new MissedUserException(username));
     }
 
     @Override
@@ -89,7 +120,7 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public Authentication getAuthentication(String login) {
         return userRepository.getAuthenticatedUser(login)
-                .map(user -> new JwtUser(login, null, user.getRoles()))
+                .map(user -> new JwtUser(login, null, user.isEnabled(), user.getRoles()))
                 .map(jwtUser -> new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities()))
                 .orElseThrow(() -> new RuntimeException("UserService.getAuthentication doesn't have user retrieved"));
     }

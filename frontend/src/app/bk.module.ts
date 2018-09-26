@@ -140,9 +140,9 @@ import { CategorySortPipe } from './common/pipes/category-sort.pipe';
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => {return localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`)},
+        tokenGetter: () => localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`),
         whitelistedDomains: ['localhost:8080', 'localhost:3000'],
-        blacklistedRoutes: [/token\/generate-token.*/]
+        blacklistedRoutes: [/token\/generate-token.*/, /token\/send-registration-code.*/, /token\/review-registration-code.*/]
       }
     }),
     BrowserAnimationsModule,

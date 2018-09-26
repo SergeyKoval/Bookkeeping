@@ -3,6 +3,7 @@ package by.bk.entity.user.model;
 import by.bk.entity.user.UserPermission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,11 +15,14 @@ import java.util.List;
  */
 @Document(collection = "users")
 @Getter
+@Setter
 public class User {
     @Id
     private String email;
     @JsonIgnore
     private String password;
+    private boolean enabled;
+    private String code;
     private List<UserPermission> roles;
     private List<UserCurrency> currencies;
     private List<Category> categories;

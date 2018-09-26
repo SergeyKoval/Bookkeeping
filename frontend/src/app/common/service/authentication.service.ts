@@ -44,11 +44,27 @@ export class AuthenticationService implements CanActivate {
     });
   }
 
-  public initRegistrationForm(): FormGroup {
+  public initRegistrationForm(email: string, password: string): FormGroup {
     return this._formBuilder.group({
-      email: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(3)]]
+      email: [email, [Validators.required, Validators.email, Validators.minLength(3)]],
+      password: [password, [Validators.required, Validators.minLength(3)]]
     });
+  }
+
+  public sendRegistrationCode(registrationData: {}): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/token/send-registration-code', registrationData);
+  }
+
+  public reviewRegistrationCode(registrationData: {}): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/token/review-registration-code', registrationData)
+      .pipe(
+        tap(response => {
+          if (response.status === 'SUCCESS') {
+            this._localStorageService.set(AuthenticationService.TOKEN, response.message);
+            this.startAuthenticationExpirationJob();
+          }
+        }),
+      );
   }
 
   public authenticate(credentials: {email: string, password: string}): Observable<HttpResponse<{token: string}>> {

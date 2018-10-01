@@ -764,7 +764,7 @@ public class UserService implements UserAPI, UserDetailsService {
         List<Category> categories = new ArrayList<>();
         user.setCategories(categories);
         Category category = new Category("Автомобиль", "avto.gif", 1);
-        category.getSubCategories().add(new SubCategory("Бунзин", 1, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Бензин", 1, SubCategoryType.expense));
         category.getSubCategories().add(new SubCategory("Мойка", 2, SubCategoryType.expense));
         category.getSubCategories().add(new SubCategory("Штраф", 3, SubCategoryType.expense));
         categories.add(category);

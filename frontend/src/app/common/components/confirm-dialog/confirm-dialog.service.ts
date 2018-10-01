@@ -11,6 +11,7 @@ export class ConfirmDialogService {
 
   public openConfirmDialog(title: string, body: string): MatDialogRef<ConfirmDialogComponent> {
     return this._dialogService.openDialog(ConfirmDialogComponent, {
+      id: 'confirm-dialog',
       data: {
         'title': title,
         'body': body,
@@ -20,6 +21,7 @@ export class ConfirmDialogService {
 
   public openConfirmDialogWithHtml(title: string, htmlBody: string): MatDialogRef<ConfirmDialogComponent> {
     return this._dialogService.openDialog(ConfirmDialogComponent, {
+      id: 'confirm-dialog',
       data: {
         'title': title,
         'htmlBody': htmlBody,

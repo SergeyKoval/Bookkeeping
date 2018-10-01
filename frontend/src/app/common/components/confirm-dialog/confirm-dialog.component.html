@@ -1,4 +1,4 @@
-<h2 align="center" mat-dialog-title>{{data.title}}</h2>
+<h2 align="center" mat-dialog-title bkDraggable dragTarget="#confirm-dialog">{{data.title}}</h2>
 <mat-dialog-content>
   <div *ngIf="data.body">{{data.body}}</div>
   <div *ngIf="data.htmlBody" [innerHTML]="data.htmlBody" align="center"></div>

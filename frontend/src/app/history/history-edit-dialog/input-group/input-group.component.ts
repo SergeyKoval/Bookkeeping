@@ -69,6 +69,7 @@ export class InputGroupComponent implements OnInit {
   public openCurrenciesPopup(): void {
     if (!this.alternativeCurrencyLoading && this.enableCurrencies && this.inputValue > 0) {
       this._dialogService.openDialog(AlternativeCurrenciesDialogComponent, {
+        id: 'alternative-currencies-dialog',
         disableClose: true,
         width: '470px',
         data: {

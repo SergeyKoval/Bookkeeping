@@ -44,6 +44,7 @@ export class AccountCategoryDialogComponent implements OnInit {
 
   public editSubAccountBalance(): void {
     this._dialogService.openDialog(BalanceDialogComponent, {
+      id: 'balance-dialog',
       position: {top: 'top'},
       width: '350px',
       data: {'subAccountBalance': Object.assign({}, this.data.balance)}

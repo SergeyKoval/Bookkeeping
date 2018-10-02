@@ -45,6 +45,10 @@
   font-weight: bold;
 }
 
+.excess {
+  color: #dd0000;
+}
+
 .income {
   float: left;
   font-weight: bold;

@@ -37,7 +37,11 @@
           <div class="progress category-progress" [style.height.px]="getNumberOfCurrencies(category.balance) * 20">
             <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
             <span class="category-title full-height">
-              <span class="vertical-middle">{{category.title}} (<span class="percent">{{calculateCategoryFullPercentDone(category) | currencyValue:0}}%</span>)</span>
+              <span class="vertical-middle">{{category.title}} (
+                <span class="percent" [ngClass]="{'excess': type === 'expense' && calculateCategoryFullPercentDone(category) > 100}">
+                  {{calculateCategoryFullPercentDone(category) | currencyValue:0}}%
+                </span>)
+              </span>
             </span>
             <span class="category-value" *ngFor="let currency of category.balance | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
               <span [ngClass]="{'not-planed': (type === 'expense' && category.balance[currency].value > category.balance[currency].completeValue)}">{{category.balance[currency].value | currencyValue:2:true}}</span> из

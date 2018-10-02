@@ -12,8 +12,9 @@
 }
 
 .caret {
-  float: right;
-  margin-top: 8px;
+  position: absolute;
+  right: 8px;
+  top: 14px;
 }
 
 .full-width-dropdown {

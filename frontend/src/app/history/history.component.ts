@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { HistoryService } from '../common/service/history.service';
 import { ProfileService } from '../common/service/profile.service';
@@ -12,7 +13,6 @@ import { AlertType } from '../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
 import { DialogService } from '../common/service/dialog.service';
 import { BudgetService } from '../common/service/budget.service';
-import { Observable, of } from 'rxjs';
 import { CurrencyUtils } from '../common/utils/currency-utils';
 import { LoadingService } from '../common/service/loading.service';
 import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
@@ -22,14 +22,16 @@ import { LoadingDialogComponent } from '../common/components/loading-dialog/load
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css']
 })
-export class HistoryComponent implements OnInit {
-  public static readonly PAGE_LIMIT: number = 10;
+export class HistoryComponent implements OnInit, AfterViewChecked {
+  public static readonly PAGE_LIMIT: number = 15;
 
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;
   public disableMoreButton: boolean = false;
 
   public historyItems: HistoryType[] = [];
+
+  private _lastElementId: string;
 
   public constructor(
     private _dialogService: DialogService,
@@ -39,14 +41,22 @@ export class HistoryComponent implements OnInit {
     private _alertService: AlertService,
     private _budgetService: BudgetService,
     private _profileService: ProfileService,
-    private _loadingService: LoadingService
+    private _loadingService: LoadingService,
   ) {}
 
   public ngOnInit(): void {
     this.init(1, HistoryComponent.PAGE_LIMIT);
   }
 
+  public ngAfterViewChecked(): void {
+    if (!this.loading && this._lastElementId) {
+      document.getElementById(this._lastElementId).scrollIntoView();
+      this._lastElementId = null;
+    }
+  }
+
   public loadMoreItems(numberOfNewItems: number): void {
+    this._lastElementId = document.getElementsByClassName('last-item')[0].id;
     this.init(1, this.historyItems.length + numberOfNewItems);
   }
 

@@ -12,7 +12,8 @@
       </div>
 
       <div *ngFor="let historyGroup of historyItems | historyGroup; let lastGroup = last">
-        <div class="row history-line" *ngFor="let historyItem of historyGroup.historyItems; let firstItem = first">
+        <div class="row history-line" [id]="historyItem.originalItem.id" [ngClass]="{'last-item': lastGroup && lastItem}"
+             *ngFor="let historyItem of historyGroup.historyItems; let firstItem = first; let lastItem = last">
           <div class="col-sm-2 sm-small-left-padding" *ngIf="firstItem">
             <div [ngClass]="['no-left-right-padding', historyItem.goal ? 'col-sm-5' : 'col-sm-6']">
               <span>

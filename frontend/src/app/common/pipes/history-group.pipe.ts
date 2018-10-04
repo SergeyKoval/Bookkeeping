@@ -45,7 +45,7 @@ export class HistoryGroupPipe implements PipeTransform {
       historyGroups.push(historyGroup);
       historyGroup.historyItems.sort((firstItem: HistoryItem, secondItem: HistoryItem) => secondItem.order - firstItem.order);
     });
-    historyGroups.sort((firstGroup: HistoryGroup, secondGroup: HistoryGroup) => secondGroup.date.getMilliseconds() - firstGroup.date.getMilliseconds());
+    historyGroups.sort((firstGroup: HistoryGroup, secondGroup: HistoryGroup) => secondGroup.date.getTime() - firstGroup.date.getTime());
     return historyGroups;
   }
 }

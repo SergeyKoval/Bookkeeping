@@ -111,8 +111,7 @@ public class HistoryService implements HistoryAPI {
         HistoryItem originalHistoryItem = getById(login, historyItem.getId());
         SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
         if (response.isSuccess()) {
-            historyItem.setUser(login);
-            historyItem = historyRepository.save(historyItem);
+            historyItem = saveHistoryItem(login, historyItem);
             response = userAPI.updateUserBalance(login, historyItem.getType(), historyItem.cloneBalance());
 
             if (!response.isSuccess()) {

@@ -33,6 +33,7 @@
         <hr/>
         <div [ngClass]="{'col-sm-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
         <div class="col-sm-4 text-right">
+          <bk-popover glyphiconClass="log-in" text="Переместить подкатегорию" class="move-sub-category" placement="left" (click)="moveSubCategory(category, subCategory)"></bk-popover>
           <bk-popover glyphiconClass="pencil" text="Редактировать подкатегорию" placement="left" (click)="editSubCategory(category, subCategory)"></bk-popover>
           <bk-popover glyphiconClass="remove" text="Удалить подкатегорию" placement="left" (click)="deleteSubCategory(category, subCategory)"></bk-popover>
           <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubCategoryDown(category, subCategory)" *ngIf="!lastSubCategory"></bk-popover>

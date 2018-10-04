@@ -270,6 +270,15 @@ export class ProfileService implements CanActivate {
     return this._http.post<SimpleResponse>('/api/profile/move-sub-category', {'title': subCategoryTitle, 'parentTitle': categoryTitle, 'subCategoryType': subCategoryType, 'direction': 'DOWN'});
   }
 
+  public moveCategory(oldCategoryTitle: string, newCategoryTitle: string, subCategoryTitle: string, type: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/move-sub-category-to-another-category', {
+      'oldTitle': oldCategoryTitle,
+      'parentTitle': newCategoryTitle,
+      'title': subCategoryTitle,
+      'subCategoryType': type
+    });
+  }
+
   public get authenticatedProfile(): Profile {
     return this._authenticatedProfile;
   }

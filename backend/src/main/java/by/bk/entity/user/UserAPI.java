@@ -45,6 +45,7 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse editSubCategory(String login, String categoryTitle, String oldSubCategoryTitle, String newSubCategoryTitle, SubCategoryType subCategoryType);
     SimpleResponse deleteSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType);
     SimpleResponse moveSubCategory(String login, String categoryTitle, String subCategoryTitle, SubCategoryType subCategoryType, Direction direction);
+    SimpleResponse moveSubCategoryToAnotherCategory(String login, String oldCategoryTitle, String newCategoryTitle, String subCategoryTitle, SubCategoryType subCategoryType);
 
     List<User> getAllUsers();
     SimpleResponse addUser(String email, String password, List<UserPermission> roles);

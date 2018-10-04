@@ -590,6 +590,28 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
+    public SimpleResponse moveSubCategoryToAnotherCategory(String login, String oldCategoryTitle, String newCategoryTitle, String subCategoryTitle, SubCategoryType subCategoryType) {
+        List<Category> categories = userRepository.getUserCategories(login).getCategories();
+        Category oldCategory = chooseItem(categories, oldCategoryTitle, getAccountError(login, oldCategoryTitle));
+        Category newCategory = chooseItem(categories, newCategoryTitle, getAccountError(login, newCategoryTitle));
+        int newSubCategoryOrder = newCategory.getSubCategories().stream().mapToInt(SubCategory::getOrder).max().orElse(0) + 1;
+        SubCategory subCategory = chooseSubCategory(oldCategory.getSubCategories(), subCategoryTitle, subCategoryType, getSubAccountError(login, oldCategoryTitle, subCategoryTitle));
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        Update update = new Update()
+                .pull("categories." + categories.indexOf(oldCategory) + ".subCategories", subCategory)
+                .push("categories." + categories.indexOf(newCategory) + ".subCategories", new SubCategory(subCategory.getTitle(), newSubCategoryOrder, subCategory.getType()));
+        SimpleResponse response = updateUser(query, update);
+
+        if (response.isSuccess()) {
+            List<HistoryItem> historyItems = historyApi.getSuitable(login, oldCategoryTitle, subCategoryTitle, subCategoryType);
+            response = budgetAPI.moveCategory(login, oldCategoryTitle, newCategoryTitle, subCategoryTitle, subCategoryType, historyItems);
+        }
+
+        return response;
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();
     }

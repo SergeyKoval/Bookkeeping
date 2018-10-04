@@ -77,6 +77,7 @@ import { MonthAndYearComponent } from './common/components/month-and-year/month-
 import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
 import { CategorySortPipe } from './common/pipes/category-sort.pipe';
 import { DraggableDirective } from './common/directives/draggable.directive';
+import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-category-dialog/move-sub-category-dialog.component';
 
 @NgModule({
   declarations: [
@@ -133,7 +134,8 @@ import { DraggableDirective } from './common/directives/draggable.directive';
     MonthAndYearComponent,
     CurrencySortPipe,
     CategorySortPipe,
-    DraggableDirective
+    DraggableDirective,
+    MoveSubCategoryDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -168,7 +170,8 @@ import { DraggableDirective } from './common/directives/draggable.directive';
     BalanceDialogComponent,
     UserDialogComponent,
     PlanBudgetDialogComponent,
-    MoveGoalDialogComponent
+    MoveGoalDialogComponent,
+    MoveSubCategoryDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

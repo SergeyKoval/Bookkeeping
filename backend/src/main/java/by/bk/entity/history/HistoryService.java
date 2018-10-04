@@ -8,6 +8,7 @@ import by.bk.entity.currency.CurrencyDetail;
 import by.bk.entity.currency.CurrencyRepository;
 import by.bk.entity.user.UserAPI;
 import by.bk.entity.user.UserRepository;
+import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +61,11 @@ public class HistoryService implements HistoryAPI {
         projectCurrencies.forEach(currency -> query.fields().exclude(StringUtils.join("balance.alternativeCurrency.", currency.name())));
 
         return mongoTemplate.find(query, HistoryItem.class);
+    }
+
+    @Override
+    public List<HistoryItem> getSuitable(String login, String category, String subCategory, SubCategoryType subCategoryType) {
+        return historyRepository.getAllByUserAndCategoryAndSubCategoryAndType(login, category, subCategory, subCategoryType.convertToHistoryType());
     }
 
     @Override

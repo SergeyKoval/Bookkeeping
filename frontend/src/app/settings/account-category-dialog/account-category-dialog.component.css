@@ -73,3 +73,7 @@
 .dropdown-menu {
   width: 100%;
 }
+
+a {
+  cursor: pointer;
+}

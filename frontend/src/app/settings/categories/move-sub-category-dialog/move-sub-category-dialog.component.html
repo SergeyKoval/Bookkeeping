@@ -1,0 +1,56 @@
+<h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Перенос категории</h2>
+<mat-dialog-content id="move-sub-category-dialog">
+  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
+    <strong>{{errors}}</strong>
+  </div>
+
+  <div class="text-center description"><span class="attention">ВНИМАНИЕ!!!</span> Перемещение подкатегории автоматически отразится на бюджете</div>
+
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Текущая категория</span>
+      <span class="info-value"><img class="icon-selected" [src]="getCategoryIcon(data.category) | assetImage:'category'"> {{data.category}}</span>
+    </div>
+  </div>
+
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Подкатегория</span>
+      <span class="info-value" [ngClass]="data.type">{{data.subCategory}}</span>
+    </div>
+  </div>
+
+  <div class="row info-wrapper">
+    <div class="input-group full-width">
+      <span class="input-group-addon dropdown-addon info-title">Тип</span>
+      <span class="info-value">{{data.type === 'expense' ? 'Расходная' : 'Доходная'}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="input-group">
+        <span class="input-group-addon dropdown-addon">Новая категория</span>
+        <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img *ngIf="categoryTitle" class="icon-selected float-left" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
+          <span [ngClass]="{'float-left': categoryTitle}">{{categoryTitle ? categoryTitle : (categories.length === 0 ? 'Нету доступных категорий' : 'Категория')}}</span>
+          <span class="caret"></span>
+        </span>
+        <ul class="dropdown-menu">
+          <li *ngFor="let category of categories">
+            <a (click)="changeCategory(category)">
+              <img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'">{{category.title}}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="full-width">
+    <a class="btn btn-default footer-action-item" (click)="close(false)">Закрыть</a>
+    <span class="footer-action-item">&nbsp;</span>
+    <a class="btn btn-default footer-action-item" (click)="save()">Сохранить</a>
+  </span>
+</mat-dialog-actions>

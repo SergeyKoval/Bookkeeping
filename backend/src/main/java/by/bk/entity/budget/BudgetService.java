@@ -8,6 +8,7 @@ import by.bk.entity.currency.Currency;
 import by.bk.entity.history.Balance;
 import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
+import by.bk.entity.user.model.SubCategoryType;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -244,6 +245,18 @@ public class BudgetService implements BudgetAPI {
         Query query = Query.query(Criteria.where("id").is(budgetId));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Budget.class);
         return updateResult.getModifiedCount() == 1 ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    @Override
+    public SimpleResponse moveCategory(String login, String oldCategoryTitle, String newCategoryTitle, String subCategoryTitle, SubCategoryType subCategoryType, List<HistoryItem> historyItems) {
+        historyItems.forEach(historyItem -> {
+            deleteHistoryItem(login, historyItem, false);
+            historyItem.setCategory(newCategoryTitle);
+            addHistoryItem(login, historyItem, false);
+            mongoTemplate.save(historyItem);
+        });
+
+        return SimpleResponse.success();
     }
 
     @Override

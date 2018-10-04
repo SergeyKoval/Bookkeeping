@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs/index';
+import { Observable, of } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
@@ -10,6 +9,7 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 import { DialogService } from '../../common/service/dialog.service';
+import { MoveSubCategoryDialogComponent } from './move-sub-category-dialog/move-sub-category-dialog.component';
 
 @Component({
   selector: 'bk-categories',
@@ -49,7 +49,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   public deleteCategory(deleteCategory: Category): void {
-    let removeCallback = () => this._profileService.deleteCategory(deleteCategory.title);
+    const removeCallback: () => Observable<SimpleResponse> = () => this._profileService.deleteCategory(deleteCategory.title);
     this.deleteCategoryOrSubCategory(removeCallback, 'При удалении категории все ее подкатегории а так же существующие операции с этими подкатегориями будут удалены. Продолжить?');
   }
 
@@ -82,7 +82,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   public deleteSubCategory(category: Category, subCategory: SubCategory): void {
-    let removeCallback = () => this._profileService.deleteSubCategory(category.title, subCategory.title, subCategory.type);
+    const removeCallback: () => Observable<SimpleResponse> = () => this._profileService.deleteSubCategory(category.title, subCategory.title, subCategory.type);
     this.deleteCategoryOrSubCategory(removeCallback, 'При удалении подкатегории все существующие операции с этой подкатегорией будут удалены. Продолжить?');
   }
 
@@ -94,6 +94,22 @@ export class CategoriesComponent implements OnInit {
   public moveSubCategoryDown(category: Category, subCategory: SubCategory): void {
     this.loading = true;
     this.moveCategoryOrSubCategory(this._profileService.moveSubCategoryDown(category.title, subCategory.title, subCategory.type));
+  }
+
+  public moveSubCategory(category: Category, subCategory: SubCategory): void {
+    const dialogResult: Observable<boolean> = this._dialogService.openDialog(MoveSubCategoryDialogComponent, {
+      panelClass: 'move-sub-category-dialog',
+      width: '400px',
+      position: {top: 'top'},
+      data: {
+        'category': category.title,
+        'subCategory': subCategory.title,
+        'categories': this.profile.categories,
+        'type': subCategory.type
+      }
+    }).afterClosed();
+
+    this.processCategoryDialogResult(dialogResult);
   }
 
   public hasSubcategories(category: Category): boolean {
@@ -148,7 +164,7 @@ export class CategoriesComponent implements OnInit {
           this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
           this.loading = true;
         }),
-        switchMap(() =>this._profileService.reloadCategoriesInProfile())
+        switchMap(() => this._profileService.reloadCategoriesInProfile())
       ).subscribe(() => {
       this.loading = false;
     });

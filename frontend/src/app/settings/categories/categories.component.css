@@ -8,11 +8,11 @@
 }
 
 .income-category {
-  color: #5cb85c;
+  color: #009900;
 }
 
 .expense-category {
-  color: orangered;
+  color: #dd0000;
 }
 
 .add-category {
@@ -74,6 +74,10 @@ hr {
 
 .page-title .table {
   margin-bottom: 0;
+}
+
+.move-sub-category {
+  padding-right: 3px;
 }
 
 @media (min-width: 768px) and (max-width: 992px) {

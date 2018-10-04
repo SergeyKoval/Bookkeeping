@@ -1,0 +1,78 @@
+#move-sub-category-dialog {
+  overflow: visible !important;
+}
+
+.footer-action-item {
+  float: right;
+}
+
+.full-width, .dropdown-with-addon {
+  width: 100%;
+}
+
+.info-title, .dropdown-addon {
+  min-width: 150px;
+}
+
+.info-wrapper {
+  margin: 0 0 10px;
+}
+
+.info-value {
+  width: 100%;
+  display: table-cell;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+.dropdown-with-addon {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.caret {
+  position: absolute;
+  right: 8px;
+  top: 14px;
+}
+
+.dropdown-menu {
+  left: 150px;
+  width: 202px;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.icon-selected {
+  margin-right: 5px;
+}
+
+.float-left {
+  float: left;
+}
+
+.dropdown-menu>li>a {
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+.attention {
+  color: red;
+}
+
+.income {
+  color: #009900;
+}
+
+.expense {
+  color: #dd0000;
+}

@@ -5,6 +5,7 @@ import by.bk.entity.budget.model.Budget;
 import by.bk.entity.budget.model.CurrencyBalanceValue;
 import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
+import by.bk.entity.user.model.SubCategoryType;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public interface BudgetAPI {
     SimpleResponse editBudgetGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String originalGoalTitle, String goalTitle, CurrencyBalanceValue balance, boolean changeGoalStatus);
     SimpleResponse updateBudgetLimit(String login, String budgetId, HistoryType type, List<CurrencyBalanceValue> currencyBalances);
     SimpleResponse removeGoal(String login, String budgetId, HistoryType type, String categoryTitle, String goalTitle);
+    SimpleResponse moveCategory(String login, String oldCategoryTitle, String newCategoryTitle, String subCategoryTitle, SubCategoryType subCategoryType, List<HistoryItem> historyItems);
     SimpleResponse removeCategory(String login, String budgetId, HistoryType type, String categoryTitle);
     SimpleResponse moveGoal(String login, String budgetId, Integer year, Integer month, HistoryType type, String categoryTitle, String goalTitle, Double movedValue);
 

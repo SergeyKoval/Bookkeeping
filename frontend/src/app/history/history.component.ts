@@ -56,7 +56,9 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   }
 
   public loadMoreItems(numberOfNewItems: number): void {
-    this._lastElementId = document.getElementsByClassName('last-item')[0].id;
+    if (numberOfNewItems > 1) {
+      this._lastElementId = document.getElementsByClassName('last-item')[0].id;
+    }
     this.init(1, this.historyItems.length + numberOfNewItems);
   }
 
@@ -70,8 +72,10 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         'editMode': true
       }
     }).afterClosed()
-      .pipe(filter((result: boolean) => result === true))
-      .subscribe(() => this.loadMoreItems(0));
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => this._lastElementId = historyItem.originalItem.id)
+      ).subscribe(() => this.loadMoreItems(0));
   }
 
   public deleteHistoryItem(historyItem: HistoryItem): void {
@@ -102,6 +106,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
           loadingDialog.close();
           if (simpleResponse.status === 'FAIL') {
             this._alertService.addAlert(AlertType.WARNING, 'Ошибка при удалении');
+            this._lastElementId = historyItem.originalItem.id;
             this.loadMoreItems(0);
           }
         }),

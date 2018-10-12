@@ -218,6 +218,10 @@ export class BudgetDetailsComponent implements OnInit {
     return Object.keys(this.budgetDetails.balance).length === 1;
   }
 
+  public showCategoryPercent(category: BudgetCategory): boolean {
+    return Object.values(category.balance).filter(budgetBalance => budgetBalance.completeValue > 0).length > 0;
+  }
+
   private removeItem(removeType: string, callback: Observable<SimpleResponse>): void {
     let loadingDialog: MatDialogRef<LoadingDialogComponent>;
     this._confirmDialogService.openConfirmDialog(`Удаление ${removeType === 'category' ? 'категории' : 'цели'}`, `Уверены что хотите удалить ${removeType === 'category' ? 'категорию' : 'цель'}`)

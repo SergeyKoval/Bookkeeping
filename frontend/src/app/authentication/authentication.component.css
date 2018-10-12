@@ -62,3 +62,11 @@ a {
 .second-button {
   margin-top: 10px;
 }
+
+.unsupported-browser-resolution {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}

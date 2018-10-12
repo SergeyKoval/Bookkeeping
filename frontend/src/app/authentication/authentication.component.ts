@@ -26,6 +26,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   public alwaysEditing: boolean;
   public type: string = 'authentication';
   public codeSent: boolean = false;
+  public unsupportedBrowser: boolean;
 
   @ViewChild('formRef')
   private _FORM_REF: HTMLFormElement;
@@ -44,6 +45,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
+    this.unsupportedBrowser = !this.isBrowserSupported();
     this._route.queryParams.subscribe(value => {
       if (value.expiredSession === 'true') {
         this.errorMessage = 'Сессия устарела';
@@ -151,6 +153,24 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
         this.loadInitialData(['settings', 'profile']);
       }
     });
+  }
+
+  public getBrowserWidth(): number {
+    return window.innerWidth;
+  }
+
+  public isResolutionUnsupported(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  private isBrowserSupported(): boolean {
+    // @ts-ignore
+    const isChrome: boolean = !!window.chrome && !!window.chrome.webstore;
+    console.log(isChrome);
+    // @ts-ignore
+    const isFirefox: boolean = typeof InstallTrigger !== 'undefined';
+    console.log(isFirefox);
+    return isChrome || isFirefox;
   }
 
   private loadInitialData(redirectPage: string[]): void {

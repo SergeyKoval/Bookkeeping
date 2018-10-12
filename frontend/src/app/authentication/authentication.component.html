@@ -1,5 +1,15 @@
 <h1>Бухгалтерия</h1>
 
+<div *ngIf="unsupportedBrowser" class="text-center unsupported-browser-resolution">
+  <div>Ваш браузер не поддерживается.</div>
+  <div>Приложение корректно работает в Chrome и FireFox.</div>
+</div>
+
+<div *ngIf="isResolutionUnsupported()" class="text-center unsupported-browser-resolution">
+  <div>Ваша ширина браузера {{getBrowserWidth()}}px.</div>
+  <div>Минимальная ширина для корректной работы 768px.</div>
+</div>
+
 <div *ngIf="!applicationLoading; else applicationLoadingIndicator">
   <form #formRef [formGroup]="authenticationForm" *ngIf="type === 'authentication'">
     <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>

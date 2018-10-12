@@ -147,8 +147,12 @@ export class BudgetService {
       completeValue = balance[currencies[0]].completeValue;
     }
 
-    const percent: number = Math.round(value / completeValue * 100);
-    return percent > 100 && fullPercent === false ? 100 : percent;
+    if (completeValue === 0) {
+      return 100;
+    } else {
+      const percent: number = Math.round(value / completeValue * 100);
+      return percent > 100 && fullPercent === false ? 100 : percent;
+    }
   }
 
   private clearEmptyCurrencies(budgetDetails: BudgetDetails): void {

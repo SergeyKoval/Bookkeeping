@@ -166,7 +166,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   private isBrowserSupported(): boolean {
     // @ts-ignore
     const isChrome: boolean = !!window.chrome && !!window.chrome.webstore;
-    const isTabletChrome: boolean = navigator.userAgent.match('CriOS').length > 0;
+    const isTabletChrome: boolean = navigator.userAgent.match('CriOS') !== null;
     // @ts-ignore
     const isFirefox: boolean = typeof InstallTrigger !== 'undefined';
 

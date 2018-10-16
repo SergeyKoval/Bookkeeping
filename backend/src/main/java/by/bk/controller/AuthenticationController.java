@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +39,8 @@ public class AuthenticationController {
     private JwtTokenUtil tokenUtil;
     @Autowired
     private AuthenticationAPI authenticationAPI;
+    @Value("${project.version}")
+    private String version;
 
     @ExceptionHandler({BadCredentialsException.class})
     public ResponseEntity<String> handleAuthenticationException() {
@@ -48,6 +51,11 @@ public class AuthenticationController {
     public ResponseEntity<String> handleMissedUserException(MissedUserException e) {
         LOG.error("Missed user: " + e.toString());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(MISSED_USER);
+    }
+
+    @GetMapping("/server/version")
+    public SimpleResponse getServerVersion() {
+        return SimpleResponse.success(version);
     }
 
     @PostMapping("/generate-token")

@@ -152,6 +152,10 @@ export class AuthenticationService implements CanActivate {
     return this._applicationLoading$$;
   }
 
+  public getServerVersion(): Observable<SimpleResponse> {
+    return this._http.get<SimpleResponse>(`/token/server/version?timestamp=${new Date().getTime()}`);
+  }
+
   private startAuthenticationExpirationJob(): void {
     if (this.validateToken()) {
       setTimeout(this.startAuthenticationExpirationJob.bind(this), 30000);

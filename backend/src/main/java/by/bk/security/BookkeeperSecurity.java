@@ -56,6 +56,7 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/token/server/version").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/generate-token").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/send-registration-code").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/review-registration-code").permitAll()

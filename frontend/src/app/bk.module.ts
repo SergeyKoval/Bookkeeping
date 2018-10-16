@@ -146,7 +146,7 @@ import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-c
       config: {
         tokenGetter: () => localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`),
         whitelistedDomains: ['localhost:8080', 'localhost:3000'],
-        blacklistedRoutes: [/token\/generate-token.*/, /token\/send-registration-code.*/, /token\/review-registration-code.*/]
+        blacklistedRoutes: [/token\/server\/version.*/, /token\/generate-token.*/, /token\/send-registration-code.*/, /token\/review-registration-code.*/]
       }
     }),
     BrowserAnimationsModule,

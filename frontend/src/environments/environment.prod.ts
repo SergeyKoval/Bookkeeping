@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  backendHost: 'http://localhost:3000'
+  backendHost: 'http://localhost:3000',
+  VERSION: require('../../package.json').version
 };

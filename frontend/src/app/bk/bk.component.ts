@@ -8,6 +8,8 @@ import { filter, map } from 'rxjs/internal/operators';
 import { AlertService } from '../common/service/alert.service';
 import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
+import { AuthenticationService } from '../common/service/authentication.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'bk-root',
@@ -16,6 +18,10 @@ import { LoadingService } from '../common/service/loading.service';
 })
 export class BookkeepingRootComponent implements OnInit, OnDestroy {
   public authenticationCheckIndicator: boolean = false;
+  public versionCheckIndicator: boolean = true;
+  public versionError: boolean = false;
+  public serverVersion: string;
+  public uiVersion: string;
 
   private subscription: Subscription;
   private authenticationCheckSubscription: Subscription;
@@ -26,10 +32,22 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
     private _alertService: AlertService,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
-    private _titleService: Title
+    private _titleService: Title,
+    private _authenticationService: AuthenticationService
   ) {}
 
   public ngOnInit(): void {
+    this._authenticationService.getServerVersion().subscribe(response => {
+      if (response.message === environment.VERSION) {
+        this.versionCheckIndicator = this.versionError = false;
+      } else {
+        this.versionCheckIndicator = false;
+        this.versionError = true;
+        this.serverVersion = response.message;
+        this.uiVersion = environment.VERSION;
+      }
+    });
+
     this.authenticationCheckSubscription = this._loadingService.authenticationCheck$$.subscribe(value => {
       this.authenticationCheckIndicator = value;
     });

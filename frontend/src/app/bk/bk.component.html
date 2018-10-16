@@ -20,6 +20,21 @@
       </div>
     </div>
 
-    <router-outlet *ngIf="!authenticationCheckIndicator"></router-outlet>
+    <div class="table authentication-check" *ngIf="versionCheckIndicator">
+      <div class="row">
+        <div class="col-sm-2 authentication-check-spinner">
+          <bk-spinner [size]="35"></bk-spinner>
+        </div>
+        <div class="col-sm-10 authentication-check-text">Проверка версии...</div>
+      </div>
+    </div>
+
+    <div class="table authentication-check" *ngIf="versionError">
+      <div class="row"><div class="col-sm-12 authentication-check-text">Версия сервера отличается.</div></div>
+      <div class="row"><div class="col-sm-12 authentication-check-text">Сервер: {{serverVersion}}</div></div>
+      <div class="row"><div class="col-sm-12 authentication-check-text">Клиент: {{uiVersion}}</div></div>
+    </div>
+
+    <router-outlet *ngIf="!authenticationCheckIndicator && !versionCheckIndicator && !versionError"></router-outlet>
   </div>
 </ng-template>

@@ -166,11 +166,11 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   private isBrowserSupported(): boolean {
     // @ts-ignore
     const isChrome: boolean = !!window.chrome && !!window.chrome.webstore;
-    console.log(isChrome);
+    const isTabletChrome: boolean = navigator.userAgent.match('CriOS').length > 0;
     // @ts-ignore
     const isFirefox: boolean = typeof InstallTrigger !== 'undefined';
-    console.log(isFirefox);
-    return isChrome || isFirefox;
+
+    return isChrome || isFirefox || isTabletChrome;
   }
 
   private loadInitialData(redirectPage: string[]): void {

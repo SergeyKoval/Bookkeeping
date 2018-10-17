@@ -38,3 +38,9 @@
     <router-outlet *ngIf="!authenticationCheckIndicator && !versionCheckIndicator && !versionError"></router-outlet>
   </div>
 </ng-template>
+
+<footer class="footer text-center">
+  <div class="container">
+    <span class="text-muted">Версия: {{uiVersion}}</span>
+  </div>
+</footer>

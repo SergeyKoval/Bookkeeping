@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>bookkeeper-backend</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>war</packaging>
 
     <dependencies>
@@ -93,24 +93,6 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <tasks>
-                                <replace token="$BOOKKEEPER_VERSION$" value="${project.version}" dir="target/classes/static">
-                                    <include name="**/*.html"/>
-                                </replace>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

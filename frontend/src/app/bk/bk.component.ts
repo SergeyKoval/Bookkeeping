@@ -21,7 +21,7 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
   public versionCheckIndicator: boolean = true;
   public versionError: boolean = false;
   public serverVersion: string;
-  public uiVersion: string;
+  public uiVersion: string = environment.VERSION;
 
   private subscription: Subscription;
   private authenticationCheckSubscription: Subscription;
@@ -44,7 +44,6 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
         this.versionCheckIndicator = false;
         this.versionError = true;
         this.serverVersion = response.message;
-        this.uiVersion = environment.VERSION;
       }
     });
 

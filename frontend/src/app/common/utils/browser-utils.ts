@@ -3,6 +3,27 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class BrowserUtils {
   private static mobileOrTablet: boolean = null;
+  private static DATA_OS: {name: string, value: string, version: string}[] = [
+    { name: 'Windows Phone', value: 'Windows Phone', version: 'OS' },
+    { name: 'Windows', value: 'Win', version: 'NT' },
+    { name: 'iPhone', value: 'iPhone', version: 'OS' },
+    { name: 'iPad', value: 'iPad', version: 'OS' },
+    { name: 'Kindle', value: 'Silk', version: 'Silk' },
+    { name: 'Android', value: 'Android', version: 'Android' },
+    { name: 'PlayBook', value: 'PlayBook', version: 'OS' },
+    { name: 'BlackBerry', value: 'BlackBerry', version: '/' },
+    { name: 'Macintosh', value: 'Mac', version: 'OS X' },
+    { name: 'Linux', value: 'Linux', version: 'rv' },
+    { name: 'Palm', value: 'Palm', version: 'PalmOS' }];
+  private static DATA_BROWSER: {name: string, value: string, version: string}[] = [
+    { name: 'Chrome', value: 'Chrome', version: 'Chrome' },
+    { name: 'Firefox', value: 'Firefox', version: 'Firefox' },
+    { name: 'Safari', value: 'Safari', version: 'Version' },
+    { name: 'Internet Explorer', value: 'MSIE', version: 'MSIE' },
+    { name: 'Opera', value: 'Opera', version: 'Opera' },
+    { name: 'BlackBerry', value: 'CLDC', version: 'CLDC' },
+    { name: 'Mozilla', value: 'Mozilla', version: 'Mozilla' }
+  ];
 
   public static isMobileOrTablet(): boolean {
     if (!this.mobileOrTablet) {
@@ -10,6 +31,56 @@ export class BrowserUtils {
     }
 
     return this.mobileOrTablet;
+  }
+
+  public static isSupportedBrowser(): boolean {
+    // this.debug += 'navigator.userAgent = ' + navigator.userAgent + '<br/>';
+    // this.debug += 'navigator.appVersion = ' + navigator.appVersion + '<br/>';
+    // this.debug += 'navigator.platform = ' + navigator.platform + '<br/>';
+    // this.debug += 'navigator.vendor = ' + navigator.vendor + '<br/>';
+
+    // @ts-ignore
+    const headers: string[] = [navigator.platform, navigator.userAgent, navigator.appVersion, navigator.vendor, window.opera];
+    const browserInfo: {os: {name: string, version: number}, browser: {name: string, version: number}} = this.initBrowserInfo(headers);
+    return browserInfo.browser.name === 'Chrome' || browserInfo.browser.name === 'Firefox';
+  }
+
+  private static initBrowserInfo(headers: string[]): {os: {name: string, version: number}, browser: {name: string, version: number}} {
+    const agent: string = headers.join(' ');
+    const os: {name: string, version: number} = this.matchItem(agent, this.DATA_OS);
+    const browser: {name: string, version: number} = this.matchItem(agent, this.DATA_BROWSER);
+
+    return {'os': os, 'browser': browser};
+  }
+
+  private static matchItem(agent: string, data: {name: string, value: string, version: string}[]): {name: string, version: number} {
+    // tslint:disable-next-line
+    let i = 0, j = 0, html = '', regex, regexv, match, matches, version;
+
+    for (i = 0; i < data.length; i += 1) {
+      regex = new RegExp(data[i].value, 'i');
+      match = regex.test(agent);
+      if (match) {
+        regexv = new RegExp(data[i].version + '[- /:;]([\\d._]+)', 'i');
+        matches = agent.match(regexv);
+        version = '';
+        if (matches) { if (matches[1]) { matches = matches[1]; } }
+        if (matches) {
+          matches = matches.split(/[._]+/);
+          for (j = 0; j < matches.length; j += 1) {
+            if (j === 0) {
+              version += matches[j] + '.';
+            } else {
+              version += matches[j];
+            }
+          }
+        } else {
+          version = '0';
+        }
+        return {name: data[i].name, version: parseFloat(version)};
+      }
+    }
+    return { name: 'unknown', version: 0 };
   }
 
   private static checkMobileOrTablet(): boolean {

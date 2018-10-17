@@ -45,7 +45,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this.unsupportedBrowser = !this.isBrowserSupported();
+    this.unsupportedBrowser = !BrowserUtils.isSupportedBrowser();
     this._route.queryParams.subscribe(value => {
       if (value.expiredSession === 'true') {
         this.errorMessage = 'Сессия устарела';
@@ -161,16 +161,6 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
 
   public isResolutionUnsupported(): boolean {
     return window.innerWidth < 768;
-  }
-
-  private isBrowserSupported(): boolean {
-    // @ts-ignore
-    const isChrome: boolean = !!window.chrome && !!window.chrome.webstore;
-    const isTabletChrome: boolean = navigator.userAgent.match('CriOS') !== null;
-    // @ts-ignore
-    const isFirefox: boolean = typeof InstallTrigger !== 'undefined';
-
-    return isChrome || isFirefox || isTabletChrome;
   }
 
   private loadInitialData(redirectPage: string[]): void {

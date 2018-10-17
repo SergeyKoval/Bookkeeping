@@ -42,7 +42,8 @@ export class BrowserUtils {
     // @ts-ignore
     const headers: string[] = [navigator.platform, navigator.userAgent, navigator.appVersion, navigator.vendor, window.opera];
     const browserInfo: {os: {name: string, version: number}, browser: {name: string, version: number}} = this.initBrowserInfo(headers);
-    return browserInfo.browser.name === 'Chrome' || browserInfo.browser.name === 'Firefox';
+    // CriOS = Chrome on iPad
+    return browserInfo.browser.name === 'Chrome' || browserInfo.browser.name === 'Firefox' || navigator.userAgent.match('CriOS') !== null;
   }
 
   private static initBrowserInfo(headers: string[]): {os: {name: string, version: number}, browser: {name: string, version: number}} {

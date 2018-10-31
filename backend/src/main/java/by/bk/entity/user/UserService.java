@@ -791,7 +791,7 @@ public class UserService implements UserAPI, UserDetailsService {
         category.getSubCategories().add(new SubCategory("Штраф", 3, SubCategoryType.expense));
         categories.add(category);
         category = new Category("Дом", "home.gif", 2);
-        category.getSubCategories().add(new SubCategory("Комуналка", 1, SubCategoryType.expense));
+        category.getSubCategories().add(new SubCategory("Коммуналка", 1, SubCategoryType.expense));
         category.getSubCategories().add(new SubCategory("Вода", 2, SubCategoryType.expense));
         category.getSubCategories().add(new SubCategory("Электричество", 3, SubCategoryType.expense));
         categories.add(category);

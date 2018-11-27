@@ -34,6 +34,10 @@
       <span *ngIf="codeSent === true">Отправить код еще раз</span>
     </button>
     <button class="btn btn-primary button-block second-button" (click)="reviewCode()" *ngIf="!loading && codeSent">Проверить код</button>
+
+    <div class="additional-actions">
+      <label style="float: right;"><a (click)="showAuthenticationForm()">Назад</a></label>
+    </div>
   </form>
   <h2 *ngIf="errorMessage">{{errorMessage}}</h2>
 </div>

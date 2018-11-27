@@ -109,6 +109,12 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     this.type = 'registration';
   }
 
+  public showAuthenticationForm(): void {
+    this.errorMessage = null;
+    this.submitted = false;
+    this.type = 'authentication';
+  }
+
   public sendCode(): void {
     this.errorMessage = null;
     this.submitted = true;

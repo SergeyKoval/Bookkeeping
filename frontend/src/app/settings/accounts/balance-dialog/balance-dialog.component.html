@@ -10,9 +10,8 @@
     <div class="row" *ngFor="let currency of currencies | currencyDetailSort">
       <div class="input-group">
         <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></span>
-        <bk-input-calculator position="right" placeholder="Остаток в валюте" [value]="this.data.subAccountBalance[currency.name]" (changeInputValue)="this.data.subAccountBalance[currency.name] = $event" ></bk-input-calculator>
-        <!--<input type="text" [(ngModel)]="this.data.subAccountBalance[currency.name]" class="form-control"-->
-               <!--bkCurrencyValue="2" [skipDecimalZeros]="true" [patchModelValueToFixedSize]="true">-->
+        <bk-input-calculator [value]="this.data.subAccountBalance[currency.name]" (changeInputValue)="this.data.subAccountBalance[currency.name] = $event"
+                             position="right" placeholder="Остаток в валюте"></bk-input-calculator>
       </div>
     </div>
   </div>

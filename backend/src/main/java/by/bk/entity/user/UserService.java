@@ -331,7 +331,7 @@ public class UserService implements UserAPI, UserDetailsService {
         List<SubAccount> subAccounts = account.getSubAccounts();
         SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
 
-        balance.entrySet().removeIf(entry -> entry.getValue() == 0);
+        balance.entrySet().removeIf(entry -> entry.getValue() == null || entry.getValue() == 0);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance"), balance);
 

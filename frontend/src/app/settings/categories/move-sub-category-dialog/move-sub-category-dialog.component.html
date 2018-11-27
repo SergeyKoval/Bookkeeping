@@ -33,7 +33,7 @@
         <span class="input-group-addon dropdown-addon">Новая категория</span>
         <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <img *ngIf="categoryTitle" class="icon-selected float-left" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
-          <span [ngClass]="{'float-left': categoryTitle}">{{categoryTitle ? categoryTitle : (categories.length === 0 ? 'Нету доступных категорий' : 'Категория')}}</span>
+          <span [ngClass]="{'float-left': categoryTitle}">{{categoryTitle ? categoryTitle : (categories.length === 0 ? 'Нет доступных категорий' : 'Категория')}}</span>
           <span class="caret"></span>
         </span>
         <ul class="dropdown-menu">

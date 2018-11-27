@@ -170,3 +170,20 @@
   color: red;
   font-weight: bold;
 }
+
+.category-statistics {
+  top: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  border-left-width: 0;
+}
+
+.with-statistics {
+  width: 221px;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.with-statistics .caret {
+  right: 48px;
+}

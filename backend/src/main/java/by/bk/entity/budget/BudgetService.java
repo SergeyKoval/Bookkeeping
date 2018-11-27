@@ -1,6 +1,7 @@
 package by.bk.entity.budget;
 
 import by.bk.controller.exception.ItemAlreadyExistsException;
+import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.exception.*;
 import by.bk.entity.budget.model.*;
@@ -15,7 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -441,6 +444,29 @@ public class BudgetService implements BudgetAPI {
                     renameBudgetDetailsCategory(budget.getIncome(), oldCategoryTitle, newCategoryTitle);
                 }).forEach(budget -> budgetRepository.save(budget));
         return SimpleResponse.success();
+    }
+
+    @Override
+    public List<BudgetStatistics> categoryStatistics(String name, BudgetCategoryStatisticsRequest request) {
+        Criteria matchCriteria = Criteria.where("user").is(name)
+                .and(request.getBudgetType() + ".categories.title").is(request.getCategory())
+                .orOperator(Criteria.where("year").lt(request.getYear()), Criteria.where("year").is(request.getYear()).and("month").lt(request.getMonth()));
+        MatchOperation matchStage = Aggregation.match(matchCriteria);
+        SortOperation sortStage = Aggregation.sort(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month")));
+        LimitOperation limitStage = Aggregation.limit(6);
+        ProjectionOperation projectionOperation = Aggregation.project("year", "month", request.getBudgetType() + ".categories");
+
+        Aggregation aggregation = Aggregation.newAggregation(matchStage, sortStage, limitStage, projectionOperation);
+        AggregationResults<BudgetStatistics> result = mongoTemplate.aggregate(aggregation, "budget", BudgetStatistics.class);
+        return result.getMappedResults().stream()
+                .peek(budgetStatistics ->  {
+                    budgetStatistics.setCategory(budgetStatistics.getCategories().stream()
+                            .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), request.getCategory()))
+                            .findFirst()
+                            .orElse(null));
+                    budgetStatistics.setCategories(null);
+                })
+                .collect(Collectors.toList());
     }
 
     private void renameBudgetDetailsCategory(BudgetDetails budgetDetails, String oldCategoryTitle, String newCategoryTitle) {

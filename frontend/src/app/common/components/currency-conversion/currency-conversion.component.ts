@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ProfileService } from '../../common/service/profile.service';
-import { CurrencyService } from '../../common/service/currency.service';
-import { AlertService } from '../../common/service/alert.service';
-import { AlertType } from '../../common/model/alert/AlertType';
+import { ProfileService } from '../../service/profile.service';
+import { CurrencyService } from '../../service/currency.service';
+import { AlertService } from '../../service/alert.service';
+import { AlertType } from '../../model/alert/AlertType';
 
 @Component({
   selector: 'bk-currency-conversion',

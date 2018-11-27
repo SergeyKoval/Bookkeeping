@@ -26,7 +26,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { SummaryComponent } from './summary/summary.component';
 import { SpinnerComponent } from './common/components/spinner/spinner.component';
 import { CurrencyService } from './common/service/currency.service';
-import { CurrencyConversionComponent } from './summary/currency-conversion/currency-conversion.component';
+import { CurrencyConversionComponent } from './common/components/currency-conversion/currency-conversion.component';
 import { SummaryBodyComponent } from './summary/summary-body/summary-body.component';
 import { SummaryFooterComponent } from './summary/summary-footer/summary-footer.component';
 import { SummaryFooterPipe } from './common/pipes/summary/summary-footer.pipe';
@@ -78,6 +78,7 @@ import { CurrencySortPipe } from './common/pipes/currency-sort.pipe';
 import { CategorySortPipe } from './common/pipes/category-sort.pipe';
 import { DraggableDirective } from './common/directives/draggable.directive';
 import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-category-dialog/move-sub-category-dialog.component';
+import { CategoryStatisticsDialogComponent } from './budget/category-statistics-dialog/category-statistics-dialog.component';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,8 @@ import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-c
     CurrencySortPipe,
     CategorySortPipe,
     DraggableDirective,
-    MoveSubCategoryDialogComponent
+    MoveSubCategoryDialogComponent,
+    CategoryStatisticsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -171,7 +173,8 @@ import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-c
     UserDialogComponent,
     PlanBudgetDialogComponent,
     MoveGoalDialogComponent,
-    MoveSubCategoryDialogComponent
+    MoveSubCategoryDialogComponent,
+    CategoryStatisticsDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

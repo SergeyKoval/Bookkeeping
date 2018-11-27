@@ -1,13 +1,3 @@
-.summary-to-currency {
-  position: absolute;
-  top: 4px;
-  right: 18px;
-}
-
-.summary-to-currency .dropdown button {
-  background-color: #f5f5f5;
-}
-
 li a {
   cursor: pointer;
   line-height: 16px;
@@ -17,9 +7,7 @@ li a.static-line {
   padding: 3px 10px;
 }
 
-button {
-  padding: 3px 12px;
-}
+
 
 .dropdown-menu {
   min-width: 120px;

@@ -31,3 +31,17 @@
 #summary {
   padding-right: 10px;
 }
+
+:host ::ng-deep bk-currency-conversion .summary-to-currency {
+  position: absolute;
+  top: 4px;
+  right: 18px;
+}
+
+:host ::ng-deep bk-currency-conversion .summary-to-currency .dropdown .dropdown-toggle {
+  background-color: #f5f5f5;
+}
+
+:host ::ng-deep bk-currency-conversion .dropdown-toggle {
+  padding: 3px 12px;
+}

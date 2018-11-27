@@ -24,7 +24,8 @@ type BudgetBalance = {
   completeValue?: number
   currency?: string,
   showConfirm?: boolean,
-  confirmValue?: boolean
+  confirmValue?: boolean,
+  selectedValue?: boolean
 };
 
 type BudgetGoal = {
@@ -46,4 +47,10 @@ type GoalDetails = {
   completeValue: number,
   changeStatus: boolean,
   percent: number
+};
+
+type BudgetStatistic = {
+  year: number,
+  month: number,
+  category: BudgetCategory
 };

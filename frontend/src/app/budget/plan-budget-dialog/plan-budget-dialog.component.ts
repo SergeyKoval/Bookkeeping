@@ -11,6 +11,8 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { DialogService } from '../../common/service/dialog.service';
+import { CategoryStatisticsDialogComponent } from '../category-statistics-dialog/category-statistics-dialog.component';
 
 @Component({
   selector: 'bk-plan-budget-dialog',
@@ -39,7 +41,8 @@ export class PlanBudgetDialogComponent implements OnInit {
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
     private _budgetService: BudgetService,
-    private _confirmDialogService: ConfirmDialogService
+    private _confirmDialogService: ConfirmDialogService,
+    private _dialogService: DialogService
   ) {}
 
   public ngOnInit(): void {
@@ -196,6 +199,28 @@ export class PlanBudgetDialogComponent implements OnInit {
           this.processResult(loadingDialog, this._budgetService.updateBudgetLimit(this.data.budget.id, this.budgetType, this.currencyBalance));
         }
         break;
+    }
+  }
+
+  public showStatistics(): void {
+    if (this.categoryTitle) {
+      this._dialogService.openDialog(CategoryStatisticsDialogComponent, {
+        id: 'category-statistics-dialog',
+        panelClass: 'budget-plan-dialog',
+        width: '450px',
+        position: {top: 'top'},
+        data: {
+          'budgetType': this.budgetType,
+          'category': this.categoryTitle,
+          'year': this.data.budget.year,
+          'month': this.data.budget.month
+        }
+      }).afterClosed()
+        .subscribe(budgetBalances => {
+          if (budgetBalances.length > 0) {
+            this.currencyBalance = budgetBalances;
+          }
+        });
     }
   }
 

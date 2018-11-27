@@ -223,6 +223,7 @@ public class UserService implements UserAPI, UserDetailsService {
             return SimpleResponse.alreadyExistsFail();
         }
 
+        // TODO: 23-Nov-18 mapToInt.max
         int order = 1 + accounts.stream()
                 .max(Comparator.comparingInt(Account::getOrder))
                 .map(Account::getOrder)

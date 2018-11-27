@@ -1,0 +1,17 @@
+.full-width {
+  width: 100%;
+}
+
+.statistic-separator {
+  margin-bottom: 5px;
+}
+
+.currency-and-value {
+  padding-left: 0;
+}
+
+.currency-symbol {
+  width: 30px;
+  display: inline-block;
+  font-weight: bold;
+}

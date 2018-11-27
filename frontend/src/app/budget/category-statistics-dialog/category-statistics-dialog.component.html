@@ -1,0 +1,47 @@
+<h2 mat-dialog-title align="center" #title bkDraggable dragTarget="#category-statistics-dialog">Статистика предыдущих месяцев</h2>
+<mat-dialog-content id="budget-plan-dialog" *ngIf="!loading; else loadingIndicator">
+  <div class="table">
+    <div *ngFor="let categoryStatistic of categoryStatistics">
+      <div class="row" *ngFor="let balanceItem of categoryStatistic.category.balance | keyvalue; let firstItem = first; let lastItem = last;" [ngClass]="{'statistic-separator' : lastItem}">
+        <div class="col-sm-4" *ngIf="firstItem">{{getMonthTitle(categoryStatistic.month)}} {{categoryStatistic.year}}</div>
+        <div class="col-sm-5" [ngClass]="{'col-sm-offset-4': !firstItem}">
+          <div class="progress statistic-separator">
+            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" [ngStyle]="{'width.%': getPercent(balanceItem.key, balanceItem.value.value)}"></div>
+          </div>
+        </div>
+        <div class="col-sm-3 currency-and-value">
+          <bk-currency-symbol class="currency-symbol" [currencyName]="balanceItem.key"></bk-currency-symbol>
+          <span>{{balanceItem.value.value | currencyValue:2:true}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row statistic-separator text-center">
+      Среднее значение прошлых периодов:
+    </div>
+
+    <div class="row statistic-separator" *ngFor="let balance of currencyBalance">
+      <div  class="col-sm-12">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <input type="checkbox" [checked]="balance.selectedValue" (click)="changeSelectedValue(balance)">
+          </span>
+          <span class="input-group-addon dropdown-addon">{{balance.currency}}</span>
+          <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" (changeInputValue)="balance.completeValue = $event" ></bk-input-calculator>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="full-width">
+    <bk-currency-conversion class="pull-left" (currencyConversion)="changeCurrency($event)"></bk-currency-conversion>
+    <a class="btn btn-default pull-right" (click)="close()">Закрыть</a>
+    <span class="pull-right">&nbsp;</span>
+    <a class="btn btn-default pull-right" (click)="save()">Применить</a>
+  </span>
+</mat-dialog-actions>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="60"></bk-spinner>
+</ng-template>

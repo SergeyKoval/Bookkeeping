@@ -1,7 +1,9 @@
 package by.bk.entity.budget;
 
+import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.model.Budget;
+import by.bk.entity.budget.model.BudgetStatistics;
 import by.bk.entity.budget.model.CurrencyBalanceValue;
 import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
@@ -33,4 +35,6 @@ public interface BudgetAPI {
     SimpleResponse editHistoryItem(String login, HistoryItem originalHistoryItem, boolean changeOriginalGoalStatus, HistoryItem historyItem, boolean changeGoalStatus);
 
     SimpleResponse renameCategory(String login, String oldCategoryTitle, String newCategoryTitle);
+
+    List<BudgetStatistics> categoryStatistics(String name, BudgetCategoryStatisticsRequest request);
 }

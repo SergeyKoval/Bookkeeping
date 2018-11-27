@@ -1,18 +1,21 @@
 package by.bk.controller;
 
 import by.bk.controller.model.request.BudgetCategoryRequest;
+import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
 import by.bk.controller.model.request.BudgetGoalRequest;
 import by.bk.controller.model.request.BudgetRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.exception.BudgetProcessException;
 import by.bk.entity.budget.model.Budget;
+import by.bk.entity.budget.model.BudgetStatistics;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 /**
  * @author Sergey Koval
@@ -91,5 +94,10 @@ public class BudgetController extends BaseAPIController {
         String login = principal.getName();
         HistoryItem historyItem = historyAPI.getById(login, historyItemId);
         return budgetAPI.reviewBeforeRemoveHistoryItem(login, historyItem);
+    }
+
+    @PostMapping("/categoryStatistics")
+    public List<BudgetStatistics> categoryStatistics(@RequestBody BudgetCategoryStatisticsRequest request, Principal principal) {
+        return budgetAPI.categoryStatistics(principal.getName(), request);
     }
 }

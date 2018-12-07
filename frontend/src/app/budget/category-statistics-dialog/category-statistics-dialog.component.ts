@@ -42,7 +42,7 @@ export class CategoryStatisticsDialogComponent implements OnInit {
   }
 
   public getMonthTitle(monthNumber: number): string {
-    return this.months[monthNumber];
+    return this.months[monthNumber - 1];
   }
 
   public getPercent(currency: string, value: number): number {

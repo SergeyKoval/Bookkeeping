@@ -4,6 +4,7 @@ import { DateUtils } from '../common/utils/date-utils';
 import { BudgetService } from '../common/service/budget.service';
 import { DialogService } from '../common/service/dialog.service';
 import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dialog.component';
+import { CloseMonthDialogComponent } from './close-month-dialog/close-month-dialog.component';
 
 @Component({
   selector: 'bk-budget',
@@ -49,6 +50,22 @@ export class BudgetComponent implements OnInit {
           if (refreshBudget === true) {
             this.loadBudget(true, this.budget.year, this.budget.month);
           }
+        });
+    }
+  }
+
+  public openCloseMonthDialog(): void {
+    if (!this.loading) {
+      this._dialogService.openDialog(CloseMonthDialogComponent, {
+        panelClass: 'budget-close-month-dialog',
+        width: '650px',
+        position: {top: 'top'},
+        data: {
+          'budget': this.budget
+        }
+      }).afterClosed()
+        .subscribe(refreshBudget => {
+
         });
     }
   }

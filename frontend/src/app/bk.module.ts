@@ -79,6 +79,7 @@ import { CategorySortPipe } from './common/pipes/category-sort.pipe';
 import { DraggableDirective } from './common/directives/draggable.directive';
 import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-category-dialog/move-sub-category-dialog.component';
 import { CategoryStatisticsDialogComponent } from './budget/category-statistics-dialog/category-statistics-dialog.component';
+import { CloseMonthDialogComponent } from './budget/close-month-dialog/close-month-dialog.component';
 
 @NgModule({
   declarations: [
@@ -137,7 +138,8 @@ import { CategoryStatisticsDialogComponent } from './budget/category-statistics-
     CategorySortPipe,
     DraggableDirective,
     MoveSubCategoryDialogComponent,
-    CategoryStatisticsDialogComponent
+    CategoryStatisticsDialogComponent,
+    CloseMonthDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -174,7 +176,8 @@ import { CategoryStatisticsDialogComponent } from './budget/category-statistics-
     PlanBudgetDialogComponent,
     MoveGoalDialogComponent,
     MoveSubCategoryDialogComponent,
-    CategoryStatisticsDialogComponent
+    CategoryStatisticsDialogComponent,
+    CloseMonthDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

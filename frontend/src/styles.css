@@ -4,7 +4,7 @@
 @media (min-width: 768px) and (max-width: 992px) {}
 @media (min-width: 992px) and (max-width: 1200px) {}
 
-.history-add-edit-dialog mat-dialog-container, .budget-plan-dialog mat-dialog-container, .move-goal-dialog mat-dialog-container, .move-sub-category-dialog mat-dialog-container {
+.history-add-edit-dialog mat-dialog-container, .budget-plan-dialog mat-dialog-container, .move-goal-dialog mat-dialog-container, .move-sub-category-dialog mat-dialog-container, .budget-close-month-dialog mat-dialog-container {
   overflow: visible !important;
 }
 
@@ -36,6 +36,11 @@
   margin-top: -20px;
 }
 
+.popover.right {
+  margin-left: 25px;
+  white-space: nowrap;
+}
+
 html {
   position: relative;
   min-height: 100%;
@@ -54,6 +59,10 @@ body {
 .text-muted {
   text-align: center;
   font-style: italic;
+}
+
+.full-width {
+  width: 100%;
 }
 
 

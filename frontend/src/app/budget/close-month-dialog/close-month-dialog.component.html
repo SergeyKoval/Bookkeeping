@@ -1,0 +1,127 @@
+<h2 mat-dialog-title align="center" #title bkDraggable dragTarget=".mat-dialog-container">Закрытие месяца, планирование следующего</h2>
+<mat-dialog-content id="budget-close-month-dialog">
+  <ul class="nav nav-tabs nav-justified">
+    <li role="presentation" [ngClass]="{'active': type === 'goals'}" (click)="onChangeSelectedType('goals')"><a>Цели</a></li>
+    <li role="presentation" [ngClass]="{'active': type === 'categories'}" (click)="onChangeSelectedType('categories')"><a>Категории</a></li>
+  </ul>
+
+  <div class="table" style="padding-top: 10px;margin-bottom: 0;" *ngIf="type === 'goals'">
+    <div class="row">
+      <div class="col-sm-2" style="padding-right: 0;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-danger" style="vertical-align: text-top;">Расход</span></div>
+        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+      <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
+        <div class="progress" style="margin-bottom: 10px;">
+          <div class="progress-bar" [style.width.%]="20"></div>
+          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
+          <span class="category-value" style="position: absolute;right: 5px;">
+            <span>150</span> из 350
+            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-3" style="padding-left: 10px;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Июнь 2018</span></div>
+        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-2" style="padding-right: 0;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-success" style="vertical-align: text-top;">Доход</span></div>
+        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+      <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
+        <div class="progress" style="margin-bottom: 10px;">
+          <div class="progress-bar" [style.width.%]="20"></div>
+          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
+          <span class="category-value" style="position: absolute;right: 5px;">
+            <span>150</span> из 350
+            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-3" style="padding-left: 10px;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Сентябрь 2018</span></div>
+        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+    </div>
+  </div>
+
+  <div class="table" style="padding-top: 10px;margin-bottom: 0;" *ngIf="type === 'categories'">
+    <div class="row">
+      <div class="col-sm-3" style="padding-right: 0;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-danger" style="vertical-align: text-top;">Расход</span></div>
+        <bk-popover class="move-icon" glyphiconClass="signal" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        <span style="position: absolute;top: 1px;right: 20px;" class="badge">42</span>
+        <span _ngcontent-c8="" class="vertical-middle category-icon-wrapper"><img style="top: 2px;right: 0;position: absolute;" class="icon" src="assets/image/category/deti.gif"></span>
+      </div>
+      <div class="col-sm-6" style="padding-left: 5px; padding-right: 0;">
+
+        <div class="progress" style="margin-bottom: 10px;">
+          <div class="progress-bar" [style.width.%]="20"></div>
+          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
+          <span class="category-value" style="position: absolute;right: 5px;">
+            <span>150</span> из 350
+            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-3" style="padding-left: 10px;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Июнь 2018</span></div>
+        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-2" style="padding-right: 0;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-success" style="vertical-align: text-top;">Доход</span></div>
+        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+      <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
+        <div class="progress" style="margin-bottom: 10px;">
+          <div class="progress-bar" [style.width.%]="20"></div>
+          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
+          <span class="category-value" style="position: absolute;right: 5px;">
+            <span>150</span> из 350
+            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-3" style="padding-left: 10px;">
+        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Сентябрь 2018</span></div>
+        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
+        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="full-width">
+    <span class="summary-to-currency pull-left">
+      <div class="dropdown">
+        <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 190px;">
+          Фильтр: Невыполненные
+        </span>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="width: 190px;">
+          <li><a>Невыполненые</a></li>
+          <li><a>Выполненные</a></li>
+          <li><a>Все</a></li>
+          <li><a>Перенесенные</a></li>
+          <li><a>Расходные</a></li>
+          <li><a>Доходные</a></li>
+        </ul>
+      </div>
+    </span>
+
+    <a class="btn btn-default pull-right" (click)="close()">Закрыть</a>
+    <span class="pull-right">&nbsp;</span>
+    <a class="btn btn-default pull-right" (click)="save()">Далее</a>
+  </span>
+</mat-dialog-actions>

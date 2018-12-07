@@ -7,10 +7,6 @@
   cursor: pointer;
 }
 
-.full-width {
-  width: 100%;
-}
-
 .caret {
   position: absolute;
   right: 8px;

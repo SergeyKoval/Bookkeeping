@@ -37,7 +37,7 @@ export class MoveGoalDialogComponent implements OnInit {
       this.selectedYear = this.data.budget.year;
       this.selectedMonth = this.data.budget.month + 1;
     } else {
-      this.selectedYear = this.data.budget.year++;
+      this.selectedYear = this.data.budget.year + 1;
       this.selectedMonth = 1;
     }
   }

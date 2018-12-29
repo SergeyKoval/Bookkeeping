@@ -54,3 +54,9 @@ type BudgetStatistic = {
   month: number,
   category: BudgetCategory
 };
+
+type CloseMonthGoalPlan = {
+  year: number,
+  month: number,
+  balance: BudgetBalance
+};

@@ -5,99 +5,94 @@
     <li role="presentation" [ngClass]="{'active': type === 'categories'}" (click)="onChangeSelectedType('categories')"><a>Категории</a></li>
   </ul>
 
-  <div class="table" style="padding-top: 10px;margin-bottom: 0;" *ngIf="type === 'goals'">
-    <div class="row">
-      <div class="col-sm-2" style="padding-right: 0;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-danger" style="vertical-align: text-top;">Расход</span></div>
-        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-      </div>
-      <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
-        <div class="progress" style="margin-bottom: 10px;">
-          <div class="progress-bar" [style.width.%]="20"></div>
-          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
-          <span class="category-value" style="position: absolute;right: 5px;">
-            <span>150</span> из 350
-            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
-          </span>
+  <div class="table table-content">
+    <div *ngIf="type === 'goals'">
+      <div class="row" *ngFor="let goalWrapper of goals | closeMonthGoalFilter:goalFilters">
+        <div class="col-sm-2 no-right-padding">
+          <div class="goal-type-label">
+            <span class="label label-danger" *ngIf="goalWrapper.type === 'expense'">Расход</span>
+            <span class="label label-success" *ngIf="goalWrapper.type === 'income'">Доход</span>
+          </div>
+          <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" *ngIf="!goalWrapper.actionPlan" (click)="repeatGoal(goalWrapper)"></bk-popover>
+          <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение"
+                      *ngIf="!goalWrapper.goal.done && !goalWrapper.actionPlan" (click)="moveGoal(goalWrapper)"></bk-popover>
         </div>
-      </div>
-      <div class="col-sm-3" style="padding-left: 10px;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Июнь 2018</span></div>
-        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-2" style="padding-right: 0;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-success" style="vertical-align: text-top;">Доход</span></div>
-        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-      </div>
-      <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
-        <div class="progress" style="margin-bottom: 10px;">
-          <div class="progress-bar" [style.width.%]="20"></div>
-          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
-          <span class="category-value" style="position: absolute;right: 5px;">
-            <span>150</span> из 350
-            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
-          </span>
-        </div>
-      </div>
-      <div class="col-sm-3" style="padding-left: 10px;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Сентябрь 2018</span></div>
-        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-      </div>
-    </div>
-  </div>
 
-  <div class="table" style="padding-top: 10px;margin-bottom: 0;" *ngIf="type === 'categories'">
-    <div class="row">
-      <div class="col-sm-3" style="padding-right: 0;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-danger" style="vertical-align: text-top;">Расход</span></div>
-        <bk-popover class="move-icon" glyphiconClass="signal" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        <span style="position: absolute;top: 1px;right: 20px;" class="badge">42</span>
-        <span _ngcontent-c8="" class="vertical-middle category-icon-wrapper"><img style="top: 2px;right: 0;position: absolute;" class="icon" src="assets/image/category/deti.gif"></span>
-      </div>
-      <div class="col-sm-6" style="padding-left: 5px; padding-right: 0;">
-
-        <div class="progress" style="margin-bottom: 10px;">
-          <div class="progress-bar" [style.width.%]="20"></div>
-          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
-          <span class="category-value" style="position: absolute;right: 5px;">
-            <span>150</span> из 350
-            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+        <div class="col-sm-7 progress-column">
+          <div class="progress">
+            <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goalWrapper.goal)"></bk-template-variable>
+            <div class="progress-bar" [style.width.%]="goalPercent.value"></div>
+            <span class="goal-title">{{goalWrapper.goal.title}} (<span class="percent">{{goalPercent.value}}%</span>)</span>
+            <span class="goal-value">
+            <span>{{goalWrapper.goal.balance.value}}</span> из {{goalWrapper.goal.balance.completeValue}}
+            <strong><bk-currency-symbol [currencyName]="goalWrapper.goal.balance.currency"></bk-currency-symbol></strong>
           </span>
+          </div>
         </div>
-      </div>
-      <div class="col-sm-3" style="padding-left: 10px;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Июнь 2018</span></div>
-        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+
+        <div class="col-sm-3 actions-column">
+          <div *ngIf="!goalWrapper.actionPlan"><span class="badge badge-category">{{goalWrapper.category}}</span></div>
+          <div *ngIf="goalWrapper.actionPlan">
+            <div class="action-label"><span class="label label-primary">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span></div>
+            <bk-popover class="edit-icon" glyphiconClass="pencil" placement="left" text="Редактировать" (click)="editGoal(goalWrapper)"></bk-popover>
+            <bk-popover class="remove-icon" glyphiconClass="remove" placement="left" text="Исключить" (click)="excludeGoal(goalWrapper)"></bk-popover>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-2" style="padding-right: 0;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-success" style="vertical-align: text-top;">Доход</span></div>
-        <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-      </div>
-      <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
-        <div class="progress" style="margin-bottom: 10px;">
-          <div class="progress-bar" [style.width.%]="20"></div>
-          <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
-          <span class="category-value" style="position: absolute;right: 5px;">
+
+
+
+
+
+
+    <div *ngIf="type === 'categories'">
+      <div class="row">
+        <div class="col-sm-3" style="padding-right: 0;">
+          <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-danger" style="vertical-align: text-top;">Расход</span></div>
+          <bk-popover class="move-icon" glyphiconClass="signal" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+          <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+          <span style="position: absolute;top: 1px;right: 20px;" class="badge">42</span>
+          <span _ngcontent-c8="" class="vertical-middle category-icon-wrapper"><img style="top: 2px;right: 0;position: absolute;" class="icon" src="assets/image/category/deti.gif"></span>
+        </div>
+        <div class="col-sm-6" style="padding-left: 5px; padding-right: 0;">
+
+          <div class="progress" style="margin-bottom: 10px;">
+            <div class="progress-bar" [style.width.%]="20"></div>
+            <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
+            <span class="category-value" style="position: absolute;right: 5px;">
             <span>150</span> из 350
             <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
           </span>
+          </div>
+        </div>
+        <div class="col-sm-3" style="padding-left: 10px;">
+          <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Июнь 2018</span></div>
+          <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
+          <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
         </div>
       </div>
-      <div class="col-sm-3" style="padding-left: 10px;">
-        <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Сентябрь 2018</span></div>
-        <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
-        <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+      <div class="row">
+        <div class="col-sm-2" style="padding-right: 0;">
+          <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-success" style="vertical-align: text-top;">Доход</span></div>
+          <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+          <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        </div>
+        <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
+          <div class="progress" style="margin-bottom: 10px;">
+            <div class="progress-bar" [style.width.%]="20"></div>
+            <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
+            <span class="category-value" style="position: absolute;right: 5px;">
+            <span>150</span> из 350
+            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+          </span>
+          </div>
+        </div>
+        <div class="col-sm-3" style="padding-left: 10px;">
+          <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Сентябрь 2018</span></div>
+          <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
+          <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+        </div>
       </div>
     </div>
   </div>
@@ -106,22 +101,25 @@
   <span class="full-width">
     <span class="summary-to-currency pull-left">
       <div class="dropdown">
-        <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 190px;">
-          Фильтр: Невыполненные
+        <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <strong>Фильтр:</strong> <span *ngFor="let goalFilter of goalFilters; let last = last;"> {{goalFilter}}<span *ngIf="!last">,</span></span>
         </span>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="width: 190px;">
-          <li><a>Невыполненые</a></li>
-          <li><a>Выполненные</a></li>
-          <li><a>Все</a></li>
-          <li><a>Перенесенные</a></li>
-          <li><a>Расходные</a></li>
-          <li><a>Доходные</a></li>
+        <ul class="dropdown-menu filter" aria-labelledby="dropdownMenu1">
+          <li (click)="clickGoalFilter(GOAL_FILTER.USED, GOAL_FILTER.UNUSED)"><a><input type="checkbox" [checked]="isChecked(GOAL_FILTER.USED)"> {{GOAL_FILTER.USED}}</a></li>
+          <li (click)="clickGoalFilter(GOAL_FILTER.UNUSED, GOAL_FILTER.USED)"><a><input type="checkbox" [checked]="isChecked(GOAL_FILTER.UNUSED)"> {{GOAL_FILTER.UNUSED}}</a></li>
+          <li role="separator" class="divider"></li>
+          <li (click)="clickGoalFilter(GOAL_FILTER.DONE, GOAL_FILTER.UNDONE)"><a><input type="checkbox" [checked]="isChecked(GOAL_FILTER.DONE)"> {{GOAL_FILTER.DONE}}</a></li>
+          <li (click)="clickGoalFilter(GOAL_FILTER.UNDONE, GOAL_FILTER.DONE)"><a><input type="checkbox" [checked]="isChecked(GOAL_FILTER.UNDONE)"> {{GOAL_FILTER.UNDONE}}</a></li>
+          <li role="separator" class="divider"></li>
+          <li (click)="clickGoalFilter(GOAL_FILTER.INCOME, GOAL_FILTER.EXPENSE)"><a><input type="checkbox" [checked]="isChecked(GOAL_FILTER.INCOME)"> {{GOAL_FILTER.INCOME}}</a></li>
+          <li (click)="clickGoalFilter(GOAL_FILTER.EXPENSE, GOAL_FILTER.INCOME)"><a><input type="checkbox" [checked]="isChecked(GOAL_FILTER.EXPENSE)"> {{GOAL_FILTER.EXPENSE}}</a></li>
         </ul>
       </div>
     </span>
 
     <a class="btn btn-default pull-right" (click)="close()">Закрыть</a>
     <span class="pull-right">&nbsp;</span>
-    <a class="btn btn-default pull-right" (click)="save()">Далее</a>
+    <a class="btn btn-default pull-right" *ngIf="type === 'goals'" (click)="onChangeSelectedType('categories')">Далее</a>
+    <a class="btn btn-default pull-right" *ngIf="type === 'categories'">Сохранить</a>
   </span>
 </mat-dialog-actions>

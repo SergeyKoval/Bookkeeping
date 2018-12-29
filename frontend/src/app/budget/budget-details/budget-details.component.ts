@@ -147,8 +147,10 @@ export class BudgetDetailsComponent implements OnInit {
         'editMode': true,
         'type': 'category',
         'budgetType': this.type,
-        'category': category,
-        'budget': this.budget
+        'categoryTitle': category.title,
+        'categoryBalance': category.balance,
+        'budget': this.budget,
+        'postpone': false
       }
     }).afterClosed()
       .subscribe(refreshBudget => {
@@ -165,9 +167,11 @@ export class BudgetDetailsComponent implements OnInit {
         'editMode': true,
         'type': 'goal',
         'budgetType': this.type,
-        'category': category,
+        'categoryTitle': category.title,
+        'categoryBalance': category.balance,
         'goal': goal,
-        'budget': this.budget
+        'budget': this.budget,
+        'postpone': false
       }
     }).afterClosed()
       .subscribe(refreshBudget => {
@@ -192,9 +196,10 @@ export class BudgetDetailsComponent implements OnInit {
       position: {top: 'top'},
       data: {
         'type': this.type,
-        'category': category,
+        'category': category.title,
         'goal': goal,
-        'budget': this.budget
+        'budget': this.budget,
+        'postpone': false
       }
     }).afterClosed()
       .subscribe(refreshBudget => {

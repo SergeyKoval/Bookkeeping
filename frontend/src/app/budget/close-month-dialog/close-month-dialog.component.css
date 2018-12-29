@@ -1,3 +1,71 @@
 .nav-tabs li {
   cursor: pointer;
 }
+
+.table-content {
+  padding-top: 10px;
+  margin-bottom: 0;
+}
+
+.no-right-padding, .progress-column {
+  padding-right: 0;
+}
+
+.goal-type-label {
+  display: inline-block;
+  position: relative;
+  top: 2px;
+  width: 50px;
+}
+
+.action-label {
+  display: inline-block;
+  position: relative;
+  top: 2px;
+  width: 90px;
+}
+
+.label {
+  vertical-align: text-top;
+}
+
+.repeat-icon, .move-icon, .progress-column, .remove-icon {
+  padding-left: 5px;
+}
+
+.edit-icon {
+  padding-left: 7px;
+}
+
+.progress {
+  margin-bottom: 10px;
+}
+
+.goal-title {
+  font-weight: bold;
+  position: absolute;
+  left: 10px;
+}
+
+.goal-value {
+  position: absolute;
+  right: 5px;
+}
+
+.actions-column {
+  padding-left: 10px;
+}
+
+.badge-category {
+  position: absolute;
+  top: 1px;
+  width: 83%;
+}
+
+.dropdown-menu li {
+  cursor: pointer;
+}
+
+.filter {
+  min-width: 100px;
+}

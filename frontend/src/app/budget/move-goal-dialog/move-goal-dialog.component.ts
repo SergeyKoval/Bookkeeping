@@ -23,7 +23,7 @@ export class MoveGoalDialogComponent implements OnInit {
   public errors: string;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {type: string, budgetType: string, category: BudgetCategory, budget: Budget, goal: BudgetGoal},
+    @Inject(MAT_DIALOG_DATA) public data: {type: string, budgetType: string, category: string, budget: Budget, goal: BudgetGoal, postpone: boolean},
     private _dialogRef: MatDialogRef<MoveGoalDialogComponent>,
     private _loadingService: LoadingService,
     private _budgetService: BudgetService,
@@ -33,13 +33,9 @@ export class MoveGoalDialogComponent implements OnInit {
   public ngOnInit(): void {
     const balance: BudgetBalance = this.data.goal.balance;
     this.moveValue = balance.completeValue - balance.value;
-    if (this.data.budget.month < 12) {
-      this.selectedYear = this.data.budget.year;
-      this.selectedMonth = this.data.budget.month + 1;
-    } else {
-      this.selectedYear = this.data.budget.year + 1;
-      this.selectedMonth = 1;
-    }
+    const nextMonthPeriod: {year: number, month: number} = DateUtils.nextMonthPeriod(this.data.budget.year, this.data.budget.month);
+    this.selectedYear = nextMonthPeriod.year;
+    this.selectedMonth = nextMonthPeriod.month;
   }
 
   public close(refreshBudget: boolean): void {
@@ -63,17 +59,21 @@ export class MoveGoalDialogComponent implements OnInit {
     }
 
     if (!this.errors) {
-      const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
-      this._budgetService.moveGoal(this.data.budget.id, this.data.type, this.data.category.title, this.data.goal.title, this.selectedYear, this.selectedMonth, this.moveValue)
-        .pipe(
-          tap(simpleResponse => {
-            loadingDialog.close();
-            if (simpleResponse.status === 'FAIL') {
-              this.errors = simpleResponse.message === 'ALREADY_EXIST' ? 'Цель существует в выбранном месяце' : 'Ошибка при сохранении';
-            }
-          }),
-          filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
-        ).subscribe(() => this._dialogRef.close(true));
+      if (!this.data.postpone) {
+        const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
+        this._budgetService.moveGoal(this.data.budget.id, this.data.type, this.data.category, this.data.goal.title, this.selectedYear, this.selectedMonth, this.moveValue)
+          .pipe(
+            tap(simpleResponse => {
+              loadingDialog.close();
+              if (simpleResponse.status === 'FAIL') {
+                this.errors = simpleResponse.message === 'ALREADY_EXIST' ? 'Цель существует в выбранном месяце' : 'Ошибка при сохранении';
+              }
+            }),
+            filter(simpleResponse => simpleResponse.status === 'SUCCESS'),
+          ).subscribe(() => this._dialogRef.close(true));
+      } else {
+        this._dialogRef.close({year: this.selectedYear, month: this.selectedMonth, balance: {completeValue: this.moveValue, currency: this.data.goal.balance.currency}});
+      }
     }
   }
 

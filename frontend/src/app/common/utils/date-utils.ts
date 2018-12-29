@@ -32,6 +32,14 @@ export class DateUtils {
     return new Date(year, month, 0).getDate();
   }
 
+  public static nextMonthPeriod(year: number, month: number): {year: number, month: number} {
+    if (month < 12) {
+      return {'year': year, 'month': month + 1};
+    } else {
+      return {'year': year + 1, 'month': 1};
+    }
+  }
+
   private static initUTCDate(year: number, month: number, day: number): number {
     return Date.UTC(year, month, day, 12, 0, 0, 0);
   }

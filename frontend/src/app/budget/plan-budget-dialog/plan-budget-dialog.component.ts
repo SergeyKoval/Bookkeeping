@@ -36,7 +36,17 @@ export class PlanBudgetDialogComponent implements OnInit {
   private _CATEGORIES: Category[];
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, budgetType: string, category: BudgetCategory, budget: Budget, goal: BudgetGoal},
+    @Inject(MAT_DIALOG_DATA) public data: {
+      editMode: boolean,
+      type: string,
+      budgetType: string,
+      categoryBalance: {[currency: string]: BudgetBalance},
+      budget: Budget,
+      goal: BudgetGoal,
+      closeMonthGoalPlan: CloseMonthGoalPlan,
+      categoryTitle: string,
+      postpone: boolean
+    },
     private _dialogRef: MatDialogRef<PlanBudgetDialogComponent>,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
@@ -48,19 +58,19 @@ export class PlanBudgetDialogComponent implements OnInit {
   public ngOnInit(): void {
     this._CATEGORIES = this._profileService.authenticatedProfile.categories;
     this.currencies = this._profileService.authenticatedProfile.currencies;
-    this.selectedMonth = this.data.budget.month;
-    this.selectedYear = this.data.budget.year;
+    this.selectedMonth = this.data.closeMonthGoalPlan ? this.data.closeMonthGoalPlan.month : this.data.budget.month;
+    this.selectedYear = this.data.closeMonthGoalPlan ? this.data.closeMonthGoalPlan.year : this.data.budget.year;
 
     if (this.data.editMode) {
       this.budgetType = this.data.budgetType;
-      this.categoryTitle = this.data.category.title;
+      this.categoryTitle = this.data.categoryTitle;
 
       if (this.data.goal) {
         this.goalTitle = this.data.goal.title;
-        this.changeGoalMonthAvailable = this.data.goal.balance.value === 0;
-        this.currencyBalance = [Object.assign({}, this.data.goal.balance)];
+        this.changeGoalMonthAvailable = this.data.goal.balance.value === 0 || this.data.postpone;
+        this.currencyBalance = [Object.assign({}, this.data.closeMonthGoalPlan ? this.data.closeMonthGoalPlan.balance : this.data.goal.balance)];
       } else {
-        of(this.data.category.balance).pipe(
+        of(this.data.categoryBalance).pipe(
           map(categoryBalance => Object.keys(categoryBalance).map(currency => {
             const currencyBalanceItem: BudgetBalance = Object.assign({}, categoryBalance[currency]);
             currencyBalanceItem.currency = currency;
@@ -173,23 +183,27 @@ export class PlanBudgetDialogComponent implements OnInit {
         break;
       case 'goal':
         if (this.validateGoal() === true) {
-          loadingDialog = this.openLoadingFrame();
-          if (this.data.editMode) {
-            if (this.currencyBalance[0].value === this.currencyBalance[0].completeValue && !this.data.goal.done) {
-              this._confirmDialogService.openConfirmDialog('Изменение статуса цели', 'Цель выполнена?')
-                .afterClosed()
-                .subscribe((result: boolean) => this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
-                  this.selectedMonth, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], result)));
-            } else {
-              const changeGoalState: boolean = this.data.goal.done
-                && this.currencyBalance[0].value < this.currencyBalance[0].completeValue
-                && this.currencyBalance[0].completeValue !== this.data.goal.balance.completeValue;
-              this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
-                this.selectedMonth, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], changeGoalState));
-            }
+          if (this.data.postpone) {
+            this._dialogRef.close({year: this.selectedYear, month: this.selectedMonth, balance: this.currencyBalance[0]});
           } else {
-            this.processResult(loadingDialog, this._budgetService.addBudgetGoal(this.isSelectedMonth() ? this.data.budget.id : null, this.selectedYear,
-              this.selectedMonth, this.budgetType, this.categoryTitle, this.goalTitle, this.currencyBalance[0]));
+            loadingDialog = this.openLoadingFrame();
+            if (this.data.editMode) {
+              if (this.currencyBalance[0].value === this.currencyBalance[0].completeValue && !this.data.goal.done) {
+                this._confirmDialogService.openConfirmDialog('Изменение статуса цели', 'Цель выполнена?')
+                  .afterClosed()
+                  .subscribe((result: boolean) => this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
+                    this.selectedMonth, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], result)));
+              } else {
+                const changeGoalState: boolean = this.data.goal.done
+                  && this.currencyBalance[0].value < this.currencyBalance[0].completeValue
+                  && this.currencyBalance[0].completeValue !== this.data.goal.balance.completeValue;
+                this.processResult(loadingDialog, this._budgetService.editBudgetGoal(this.data.budget.id, this.selectedYear,
+                  this.selectedMonth, this.budgetType, this.categoryTitle, this.data.goal.title, this.goalTitle, this.currencyBalance[0], changeGoalState));
+              }
+            } else {
+              this.processResult(loadingDialog, this._budgetService.addBudgetGoal(this.isSelectedMonth() ? this.data.budget.id : null, this.selectedYear,
+                this.selectedMonth, this.budgetType, this.categoryTitle, this.goalTitle, this.currencyBalance[0]));
+            }
           }
         }
         break;
@@ -242,10 +256,9 @@ export class PlanBudgetDialogComponent implements OnInit {
         resultMap[balance.currency] = balance;
         return resultMap;
       }, {});
-      const budgetBalance: BudgetBalance = this.data.category.balance;
-      Object.keys(budgetBalance).forEach(currency => {
+      Object.keys(this.data.categoryBalance).forEach(currency => {
         if (!this.errors) {
-          const usedValue: number = budgetBalance[currency].value;
+          const usedValue: number = this.data.categoryBalance[currency].value;
           const planCurrency: BudgetBalance = balanceMap[currency];
           if (usedValue > 0 && (!planCurrency || planCurrency.completeValue < usedValue) && planCurrency.confirmValue !== true) {
             this.errors = `Минимальное значение для ${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(currency).symbol)} = ${usedValue}`;

@@ -80,6 +80,7 @@ import { DraggableDirective } from './common/directives/draggable.directive';
 import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-category-dialog/move-sub-category-dialog.component';
 import { CategoryStatisticsDialogComponent } from './budget/category-statistics-dialog/category-statistics-dialog.component';
 import { CloseMonthDialogComponent } from './budget/close-month-dialog/close-month-dialog.component';
+import { CloseMonthGoalFilterPipe } from './common/pipes/budget/close-month-goal-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -139,7 +140,8 @@ import { CloseMonthDialogComponent } from './budget/close-month-dialog/close-mon
     DraggableDirective,
     MoveSubCategoryDialogComponent,
     CategoryStatisticsDialogComponent,
-    CloseMonthDialogComponent
+    CloseMonthDialogComponent,
+    CloseMonthGoalFilterPipe
   ],
   imports: [
     BrowserModule,

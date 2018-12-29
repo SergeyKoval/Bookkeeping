@@ -43,7 +43,8 @@ export class BudgetComponent implements OnInit {
         data: {
           'editMode': false,
           'type': 'goal',
-          'budget': this.budget
+          'budget': this.budget,
+          'postpone': false
         }
       }).afterClosed()
         .subscribe(refreshBudget => {

@@ -1,13 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { GoalWrapper } from '../../model/budget/GoalWrapper';
-import { GoalFilter } from '../../model/budget/GoalFilter';
+import { CloseMonthFilter } from '../../model/budget/CloseMonthFilter';
 
 @Pipe({
   name: 'closeMonthGoalFilter'
 })
 export class CloseMonthGoalFilterPipe implements PipeTransform {
-  public transform(goals: GoalWrapper[], filters: GoalFilter[]): GoalWrapper[] {
+  public transform(goals: GoalWrapper[], filters: CloseMonthFilter[]): GoalWrapper[] {
     if (!filters || filters.length === 0) {
       return goals;
     }
@@ -16,19 +16,19 @@ export class CloseMonthGoalFilterPipe implements PipeTransform {
     return goals;
   }
 
-  private static filter(goals: GoalWrapper[], filter: GoalFilter): GoalWrapper[] {
+  private static filter(goals: GoalWrapper[], filter: CloseMonthFilter): GoalWrapper[] {
     switch (filter) {
-      case GoalFilter.DONE:
+      case CloseMonthFilter.DONE:
         return goals.filter(goalWrapper => goalWrapper.goal.done);
-      case GoalFilter.UNDONE:
+      case CloseMonthFilter.UNDONE:
         return goals.filter(goalWrapper => !goalWrapper.goal.done);
-      case GoalFilter.USED:
+      case CloseMonthFilter.USED:
         return goals.filter(goalWrapper => goalWrapper.actionPlan);
-      case GoalFilter.UNUSED:
+      case CloseMonthFilter.UNUSED:
         return goals.filter(goalWrapper => !goalWrapper.actionPlan);
-      case GoalFilter.INCOME:
+      case CloseMonthFilter.INCOME:
         return goals.filter(goalWrapper => goalWrapper.type === 'income');
-      case GoalFilter.EXPENSE:
+      case CloseMonthFilter.EXPENSE:
         return goals.filter(goalWrapper => goalWrapper.type === 'expense');
     }
   }

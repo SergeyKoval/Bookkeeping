@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material';
+
+import { switchMap } from 'rxjs/operators';
 
 import { DateUtils } from '../common/utils/date-utils';
 import { BudgetService } from '../common/service/budget.service';
 import { DialogService } from '../common/service/dialog.service';
 import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dialog.component';
 import { CloseMonthDialogComponent } from './close-month-dialog/close-month-dialog.component';
+import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
+import { LoadingService } from '../common/service/loading.service';
 
 @Component({
   selector: 'bk-budget',
@@ -18,7 +23,8 @@ export class BudgetComponent implements OnInit {
 
   public constructor(
     private _budgetService: BudgetService,
-    private _dialogService: DialogService
+    private _dialogService: DialogService,
+    private _loadingService: LoadingService
   ) {}
 
   public ngOnInit(): void {
@@ -57,17 +63,25 @@ export class BudgetComponent implements OnInit {
 
   public openCloseMonthDialog(): void {
     if (!this.loading) {
-      this._dialogService.openDialog(CloseMonthDialogComponent, {
-        panelClass: 'budget-close-month-dialog',
-        width: '650px',
-        position: {top: 'top'},
-        data: {
-          'budget': this.budget
-        }
-      }).afterClosed()
-        .subscribe(refreshBudget => {
-
-        });
+      const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Загрузка следующего периода...');
+      const today: Date = new Date();
+      const nextMonthPeriod: {year: number, month: number} = today.getDate() < 15
+        ? {year: today.getFullYear(), month: today.getMonth() + 1} : DateUtils.nextMonthPeriod(today.getFullYear(), today.getMonth() + 1);
+      this._budgetService.loadBudget(nextMonthPeriod.year, nextMonthPeriod.month)
+        .pipe(switchMap(nextPeriodBudget => {
+            const dialog: MatDialogRef<CloseMonthDialogComponent, any> = this._dialogService.openDialog(CloseMonthDialogComponent, {
+              panelClass: 'budget-close-month-dialog',
+              width: '650px',
+              position: {top: 'top'},
+              data: {
+                'budget': this.budget,
+                'nextMonthPeriod': nextMonthPeriod,
+                'nextPeriodBudget': nextPeriodBudget
+              }
+            });
+            dialog.afterOpen().subscribe(() => loadingDialog.close());
+            return dialog.afterClosed();
+        })).subscribe(refreshBudget => console.log('aaa'));
     }
   }
 

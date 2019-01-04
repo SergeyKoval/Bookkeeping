@@ -4,6 +4,8 @@ export class GoalWrapper {
   public constructor(
     public goal: BudgetGoal,
     public type: string,
-    public category: string
+    public category: string,
+    public removable: boolean = true,
+    public missedInClosedMonth: boolean = false
   ) {}
 }

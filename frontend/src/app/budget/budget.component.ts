@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 
 import { DateUtils } from '../common/utils/date-utils';
 import { BudgetService } from '../common/service/budget.service';
@@ -65,10 +65,14 @@ export class BudgetComponent implements OnInit {
     if (!this.loading) {
       const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Загрузка следующего периода...');
       const today: Date = new Date();
-      const nextMonthPeriod: {year: number, month: number} = today.getDate() < 15
-        ? {year: today.getFullYear(), month: today.getMonth() + 1} : DateUtils.nextMonthPeriod(today.getFullYear(), today.getMonth() + 1);
+      const todayYear: number = today.getFullYear();
+      const todayMonth: number = today.getMonth() + 1;
+
+      const nextMonthPeriod: {year: number, month: number} = (this.budget.year !== todayYear || this.budget.month !== todayMonth) && today.getDate() < 15
+        ? {year: todayYear, month: todayMonth} : DateUtils.nextMonthPeriod(todayYear, todayMonth);
       this._budgetService.loadBudget(nextMonthPeriod.year, nextMonthPeriod.month)
-        .pipe(switchMap(nextPeriodBudget => {
+        .pipe(
+          switchMap(nextPeriodBudget => {
             const dialog: MatDialogRef<CloseMonthDialogComponent, any> = this._dialogService.openDialog(CloseMonthDialogComponent, {
               panelClass: 'budget-close-month-dialog',
               width: '650px',
@@ -81,7 +85,9 @@ export class BudgetComponent implements OnInit {
             });
             dialog.afterOpen().subscribe(() => loadingDialog.close());
             return dialog.afterClosed();
-        })).subscribe(refreshBudget => console.log('aaa'));
+          }),
+          filter(loadNextPeriodBudget => loadNextPeriodBudget)
+        ).subscribe(() => this.loadBudget(true, nextMonthPeriod.year, nextMonthPeriod.month));
     }
   }
 

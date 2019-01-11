@@ -1,6 +1,7 @@
 package by.bk.entity.budget;
 
 import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
+import by.bk.controller.model.request.BudgetCloseMonthRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.model.Budget;
 import by.bk.entity.budget.model.BudgetStatistics;
@@ -36,5 +37,6 @@ public interface BudgetAPI {
 
     SimpleResponse renameCategory(String login, String oldCategoryTitle, String newCategoryTitle);
 
-    List<BudgetStatistics> categoryStatistics(String name, BudgetCategoryStatisticsRequest request);
+    List<BudgetStatistics> categoryStatistics(String login, BudgetCategoryStatisticsRequest request);
+    SimpleResponse closeMonth(String login, BudgetCloseMonthRequest request);
 }

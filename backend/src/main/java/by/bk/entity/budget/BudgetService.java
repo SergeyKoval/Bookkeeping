@@ -2,6 +2,7 @@ package by.bk.entity.budget;
 
 import by.bk.controller.exception.ItemAlreadyExistsException;
 import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
+import by.bk.controller.model.request.BudgetCloseMonthRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.exception.*;
 import by.bk.entity.budget.model.*;
@@ -13,6 +14,7 @@ import by.bk.entity.user.model.SubCategoryType;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -447,8 +449,8 @@ public class BudgetService implements BudgetAPI {
     }
 
     @Override
-    public List<BudgetStatistics> categoryStatistics(String name, BudgetCategoryStatisticsRequest request) {
-        Criteria matchCriteria = Criteria.where("user").is(name)
+    public List<BudgetStatistics> categoryStatistics(String login, BudgetCategoryStatisticsRequest request) {
+        Criteria matchCriteria = Criteria.where("user").is(login)
                 .and(request.getBudgetType() + ".categories.title").is(request.getCategory())
                 .orOperator(Criteria.where("year").lt(request.getYear()), Criteria.where("year").is(request.getYear()).and("month").lt(request.getMonth()));
         MatchOperation matchStage = Aggregation.match(matchCriteria);
@@ -467,6 +469,117 @@ public class BudgetService implements BudgetAPI {
                     budgetStatistics.setCategories(null);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public SimpleResponse closeMonth(String login, BudgetCloseMonthRequest request) {
+        Budget budget = getMonthBudget(login, request.getYear(), request.getMonth());
+        request.getPlaningCategories().forEach(categoryRequest -> {
+            BudgetDetails budgetDetails = chooseBudgetDetails(budget, categoryRequest.getType());
+            String categoryTitle = categoryRequest.getCategory().getTitle();
+            BudgetCategory budgetCategory = chooseBudgetCategory(budgetDetails, categoryTitle).orElseGet(() -> {
+                BudgetCategory newBudgetCategory = new BudgetCategory();
+                newBudgetCategory.setTitle(categoryTitle);
+                newBudgetCategory.setBalance(categoryRequest.getActionPlan());
+                newBudgetCategory.getBalance().forEach((currency, balanceValue) -> balanceValue.setValue(0d));
+                budgetDetails.getCategories().add(newBudgetCategory);
+                return newBudgetCategory;
+            });
+            Map<Currency, BalanceValue> categoryBalance = budgetCategory.getBalance();
+            categoryRequest.getActionPlan().forEach((currency, balanceValue) -> {
+                if (categoryBalance.containsKey(currency)) {
+                    categoryBalance.get(currency).setCompleteValue(balanceValue.getCompleteValue());
+                } else {
+                    categoryBalance.put(currency, balanceValue);
+                }
+            });
+
+            categoryRequest.getGoalWrappers().forEach(goalRequest -> {
+                String goalTitle = goalRequest.getGoal().getTitle();
+                CurrencyBalanceValue goalBalance = goalRequest.getActionPlan().getBalance();
+                BudgetGoal budgetGoal = chooseBudgetGoal(budgetCategory, goalTitle).orElseGet(() -> {
+                    goalBalance.setValue(0d);
+                    BudgetGoal newBudgetGoal = new BudgetGoal(false, goalTitle, goalBalance);
+                    budgetCategory.getGoals().add(newBudgetGoal);
+                    return newBudgetGoal;
+                });
+                CurrencyBalanceValue balance = budgetGoal.getBalance();
+                balance.setCompleteValue(goalBalance.getCompleteValue());
+            });
+        });
+
+        updateBudgetDetailsBalanceBasedOnCategories(budget.getIncome());
+        updateBudgetDetailsBalanceBasedOnCategories(budget.getExpense());
+        budgetRepository.save(budget);
+
+        List<String> errors = closeMonthAnotherPeriodGoals(login, request);
+        return errors.isEmpty() ? SimpleResponse.success() : SimpleResponse.failWithDetails(Collections.singletonMap("errors", errors));
+    }
+
+    private List<String> closeMonthAnotherPeriodGoals(String login, BudgetCloseMonthRequest request) {
+        List<String> errors = new ArrayList<>();
+        Map<ImmutablePair<Integer, Integer>, Budget> anotherBudgets = request.getAnotherMontGoals().stream()
+                .map(goalRequest -> new ImmutablePair<>(goalRequest.getActionPlan().getYear(), goalRequest.getActionPlan().getMonth()))
+                .distinct()
+                .collect(Collectors.toMap(period -> period, period -> getMonthBudget(login, period.getLeft(), period.getRight())));
+
+        request.getAnotherMontGoals().forEach(goalRequest -> {
+            CurrencyBalanceValue goalBalance = goalRequest.getActionPlan().getBalance();
+            Budget anotherBudget = anotherBudgets.get(new ImmutablePair<>(goalRequest.getActionPlan().getYear(), goalRequest.getActionPlan().getMonth()));
+            BudgetDetails budgetDetails = chooseBudgetDetails(anotherBudget, goalRequest.getType());
+
+            BudgetCategory budgetCategory = chooseBudgetCategory(budgetDetails, goalRequest.getCategory()).orElseGet(() -> {
+                BudgetCategory newBudgetCategory = new BudgetCategory();
+                newBudgetCategory.setTitle(goalRequest.getCategory());
+                budgetDetails.getCategories().add(newBudgetCategory);
+                return newBudgetCategory;
+            });
+
+            Optional<BudgetGoal> optionalBudgetGoal = chooseBudgetGoal(budgetCategory, goalRequest.getGoal().getTitle());
+            if (!optionalBudgetGoal.isPresent()) {
+                incrementBalanceForCurrency(budgetDetails.getBalance(), goalBalance.getCurrency(), goalBalance.getCompleteValue());
+                incrementBalanceForCurrency(budgetCategory.getBalance(), goalBalance.getCurrency(), goalBalance.getCompleteValue());
+
+                goalBalance.setValue(0d);
+                BudgetGoal newBudgetGoal = new BudgetGoal(false, goalRequest.getGoal().getTitle(), goalBalance);
+                budgetCategory.getGoals().add(newBudgetGoal);
+            } else {
+                LOG.warn(StringUtils.join("Goal '", goalRequest.getGoal().getTitle(), "' was not added to the period ", goalRequest.getActionPlan().getMonth(), ".", goalRequest.getActionPlan().getYear(), " because it is already present"));
+                errors.add(StringUtils.join("Цель '", goalRequest.getGoal().getTitle(), "' не добавлена в период ", goalRequest.getActionPlan().getMonth(), ".", goalRequest.getActionPlan().getYear(), " потому что она там уже есть"));
+            }
+        });
+
+        budgetRepository.saveAll(anotherBudgets.values());
+        return errors;
+    }
+
+
+    private void updateBudgetDetailsBalanceBasedOnCategories(BudgetDetails budgetDetails) {
+        Map<Currency, Double> completeValuesMap = budgetDetails.getCategories().stream()
+                .map(BudgetCategory::getBalance)
+                .flatMap(balanceMap -> balanceMap.entrySet().stream().map(balanceEntry -> new CurrencyBalanceValue(0d, balanceEntry.getValue().getCompleteValue(), balanceEntry.getKey())))
+                .collect(Collectors.groupingBy(CurrencyBalanceValue::getCurrency, Collectors.summingDouble(CurrencyBalanceValue::getCompleteValue)));
+
+        completeValuesMap.forEach((currency, completeValue) -> {
+            Map<Currency, BalanceValue> balance = budgetDetails.getBalance();
+            if (balance.containsKey(currency)) {
+                BalanceValue balanceValue = balance.get(currency);
+                if (balanceValue.getCompleteValue() < completeValue) {
+                    balanceValue.setCompleteValue(completeValue);
+                }
+            } else {
+                balance.put(currency, new BalanceValue(0d, completeValue));
+            }
+        });
+    }
+
+    private void incrementBalanceForCurrency(Map<Currency, BalanceValue> balance, Currency currency, Double incrementValue) {
+        if (balance.containsKey(currency)) {
+            BalanceValue balanceValue = balance.get(currency);
+            balanceValue.setCompleteValue(balanceValue.getCompleteValue() + incrementValue);
+        } else {
+            balance.put(currency, new BalanceValue(0d, incrementValue));
+        }
     }
 
     private void renameBudgetDetailsCategory(BudgetDetails budgetDetails, String oldCategoryTitle, String newCategoryTitle) {
@@ -574,17 +687,23 @@ public class BudgetService implements BudgetAPI {
         }
     }
 
-    private BudgetCategory chooseBudgetCategory(BudgetDetails budgetDetails, String categoryTitle, String login, String budgetId) {
+    private Optional<BudgetCategory> chooseBudgetCategory(BudgetDetails budgetDetails, String categoryTitle) {
         return budgetDetails.getCategories().stream()
                 .filter(budgetCategory -> StringUtils.equals(budgetCategory.getTitle(), categoryTitle))
-                .findFirst()
-                .orElseThrow(() -> new CategoryMissedException(login, budgetId, categoryTitle));
+                .findFirst();
+    }
+
+    private BudgetCategory chooseBudgetCategory(BudgetDetails budgetDetails, String categoryTitle, String login, String budgetId) {
+        return chooseBudgetCategory(budgetDetails, categoryTitle).orElseThrow(() -> new CategoryMissedException(login, budgetId, categoryTitle));
+    }
+
+    private Optional<BudgetGoal> chooseBudgetGoal(BudgetCategory budgetCategory, String goalTitle) {
+        return budgetCategory.getGoals().stream()
+                .filter(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))
+                .findFirst();
     }
 
     private BudgetGoal chooseBudgetGoal(BudgetCategory budgetCategory, String goalTitle, String login, String budgetId) {
-        return budgetCategory.getGoals().stream()
-                .filter(budgetGoal -> StringUtils.equals(budgetGoal.getTitle(), goalTitle))
-                .findFirst()
-                .orElseThrow(() -> new GoalMissedException(login, budgetId, budgetCategory.getTitle(), goalTitle));
+        return chooseBudgetGoal(budgetCategory, goalTitle).orElseThrow(() -> new GoalMissedException(login, budgetId, budgetCategory.getTitle(), goalTitle));
     }
 }

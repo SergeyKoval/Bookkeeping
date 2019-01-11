@@ -81,6 +81,7 @@ import { MoveSubCategoryDialogComponent } from './settings/categories/move-sub-c
 import { CategoryStatisticsDialogComponent } from './budget/category-statistics-dialog/category-statistics-dialog.component';
 import { CloseMonthDialogComponent } from './budget/close-month-dialog/close-month-dialog.component';
 import { CloseMonthGoalFilterPipe } from './common/pipes/budget/close-month-goal-filter.pipe';
+import { CloseMonthCategoryFilterPipe } from './common/pipes/budget/close-month-category-filter.pipe';
 
 @NgModule({
   declarations: [
@@ -141,7 +142,8 @@ import { CloseMonthGoalFilterPipe } from './common/pipes/budget/close-month-goal
     MoveSubCategoryDialogComponent,
     CategoryStatisticsDialogComponent,
     CloseMonthDialogComponent,
-    CloseMonthGoalFilterPipe
+    CloseMonthGoalFilterPipe,
+    CloseMonthCategoryFilterPipe
   ],
   imports: [
     BrowserModule,

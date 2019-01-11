@@ -1,9 +1,6 @@
 package by.bk.controller;
 
-import by.bk.controller.model.request.BudgetCategoryRequest;
-import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
-import by.bk.controller.model.request.BudgetGoalRequest;
-import by.bk.controller.model.request.BudgetRequest;
+import by.bk.controller.model.request.*;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.exception.BudgetProcessException;
@@ -99,5 +96,10 @@ public class BudgetController extends BaseAPIController {
     @PostMapping("/categoryStatistics")
     public List<BudgetStatistics> categoryStatistics(@RequestBody BudgetCategoryStatisticsRequest request, Principal principal) {
         return budgetAPI.categoryStatistics(principal.getName(), request);
+    }
+
+    @PostMapping("/closeMonth")
+    public SimpleResponse closeMonth(@RequestBody BudgetCloseMonthRequest request, Principal principal) {
+        return budgetAPI.closeMonth(principal.getName(), request);
     }
 }

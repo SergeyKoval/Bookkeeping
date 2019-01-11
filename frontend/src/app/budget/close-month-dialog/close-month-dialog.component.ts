@@ -11,6 +11,13 @@ import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dia
 import { CloseMonthFilter } from '../../common/model/budget/CloseMonthFilter';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { BudgetService } from '../../common/service/budget.service';
+import { CategoryWrapper } from '../../common/model/budget/CategoryWrapper';
+import { ProfileService } from '../../common/service/profile.service';
+import { CategoryStatisticsDialogComponent } from '../category-statistics-dialog/category-statistics-dialog.component';
+import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
+import { LoadingService } from '../../common/service/loading.service';
+import { AlertType } from '../../common/model/alert/AlertType';
+import { AlertService } from '../../common/service/alert.service';
 
 @Component({
   selector: 'bk-close-month-dialog',
@@ -22,6 +29,7 @@ export class CloseMonthDialogComponent implements OnInit {
   public months: string[] = DateUtils.MONTHS;
   public type: string = 'goals';
   public goals: GoalWrapper[] = [];
+  public categories: CategoryWrapper[] = [];
   public goalFilters: CloseMonthFilter[] = [];
   public categoryFilters: CloseMonthFilter[] = [];
 
@@ -30,8 +38,10 @@ export class CloseMonthDialogComponent implements OnInit {
     private _dialogRef: MatDialogRef<CloseMonthDialogComponent>,
     private _dialogService: DialogService,
     private _confirmDialogService: ConfirmDialogService,
-
-    private _budgetService: BudgetService
+    private _profileService: ProfileService,
+    private _budgetService: BudgetService,
+    private _loadingService: LoadingService,
+    private _alertService: AlertService
   ) {}
 
   public ngOnInit(): void {
@@ -77,6 +87,26 @@ export class CloseMonthDialogComponent implements OnInit {
     goalWrapper.actionPlan = null;
   }
 
+  public excludeCategory(categoryWrapper: CategoryWrapper): void {
+    categoryWrapper.actionPlan = null;
+  }
+
+  public showStatistics(categoryWrapper: CategoryWrapper): void {
+    this._dialogService.openDialog(CategoryStatisticsDialogComponent, {
+      id: 'category-statistics-dialog',
+      panelClass: 'budget-plan-dialog',
+      width: '450px',
+      position: {top: 'top'},
+      data: {
+        'budgetType': categoryWrapper.type,
+        'category': categoryWrapper.category.title,
+        'year': this.data.nextMonthPeriod.year,
+        'month': this.data.nextMonthPeriod.month
+      }
+    }).afterClosed()
+      .subscribe(potentialActionPlan => this.processPotentialCategoryActionPlan(categoryWrapper, potentialActionPlan));
+  }
+
   public repeatGoal(goalWrapper: GoalWrapper): void {
     this._dialogService.openDialog(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
@@ -99,6 +129,42 @@ export class CloseMonthDialogComponent implements OnInit {
       .subscribe((actionPlan: CloseMonthGoalPlan) => this.processGoalActionPlanResult(goalWrapper, actionPlan));
   }
 
+  public repeatCategory(categoryWrapper: CategoryWrapper): void {
+    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+      panelClass: 'budget-plan-dialog',
+      width: '400px',
+      position: {top: 'top'},
+      data: {
+        'editMode': true,
+        'type': 'category',
+        'budgetType': categoryWrapper.type,
+        'categoryTitle': categoryWrapper.category.title,
+        'postpone': true,
+        'budget': this.data.nextPeriodBudget,
+        'categoryBalance': Object.assign({}, categoryWrapper.category.balance)
+      }
+    }).afterClosed()
+      .subscribe(potentialActionPlan => this.processPotentialCategoryActionPlan(categoryWrapper, potentialActionPlan));
+  }
+
+  public editCategory(categoryWrapper: CategoryWrapper): void {
+    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+      panelClass: 'budget-plan-dialog',
+      width: '400px',
+      position: {top: 'top'},
+      data: {
+        'editMode': true,
+        'type': 'category',
+        'budgetType': categoryWrapper.type,
+        'categoryTitle': categoryWrapper.category.title,
+        'postpone': true,
+        'budget': this.data.nextPeriodBudget,
+        'categoryBalance': Object.assign({}, categoryWrapper.actionPlan)
+      }
+    }).afterClosed()
+      .subscribe(potentialActionPlan => this.processPotentialCategoryActionPlan(categoryWrapper, potentialActionPlan));
+  }
+
   public editGoal(goalWrapper: GoalWrapper): void {
     this._dialogService.openDialog(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
@@ -112,7 +178,8 @@ export class CloseMonthDialogComponent implements OnInit {
         'budget': this.data.budget,
         'categoryTitle': goalWrapper.category,
         'closeMonthGoalPlan': goalWrapper.actionPlan,
-        'postpone': true
+        'postpone': true,
+        'disableChangeGoalMonth': true
       }
     }).afterClosed()
       .subscribe((actionPlan: CloseMonthGoalPlan) => this.processGoalActionPlanResult(goalWrapper, actionPlan));
@@ -145,10 +212,15 @@ export class CloseMonthDialogComponent implements OnInit {
     this._confirmDialogService.openConfirmDialog('Вернуться к целям', 'При возврате, все изменения, сделанные в категориях, будут потеряны. Продолжить?')
       .afterClosed()
       .pipe(filter((result: boolean) => result === true))
-      .subscribe(() => this.type = 'goals');
+      .subscribe(() => {
+        this.categories = [];
+        this.type = 'goals';
+      });
   }
 
   public nextToCategories (): void {
+    this.processBudgetCategories(this.data.nextPeriodBudget.income, this.data.budget.income, 'income');
+    this.processBudgetCategories(this.data.nextPeriodBudget.expense, this.data.budget.expense, 'expense');
     this.type = 'categories';
   }
 
@@ -156,8 +228,103 @@ export class CloseMonthDialogComponent implements OnInit {
     return this.type === 'goals' ? this.goalFilters : this.categoryFilters;
   }
 
+  public getCategoryIcon(category: string): string {
+    return this._profileService.getCategoryIcon(category);
+  }
+
+  public getNumberOfLinesInCategory(categoryWrapper: CategoryWrapper): number {
+    let lines: number = Object.keys(categoryWrapper.category.balance).length;
+    if (categoryWrapper.actionPlan) {
+      const actionPlanLines: number = Object.keys(categoryWrapper.actionPlan).length;
+      if (actionPlanLines > lines) {
+        lines = actionPlanLines;
+      }
+    }
+
+    return lines > 0 ? lines : 1;
+  }
+
+  public calculateCategoryPercentDone(categoryWrapper: CategoryWrapper): number {
+    return this._budgetService.calculatePercentDone(categoryWrapper.category.balance);
+  }
+
   public close(): void {
-    this._dialogRef.close();
+    this._dialogRef.close(false);
+  }
+
+  public save(): void {
+    const planingCategories: CategoryWrapper[] = this.categories.filter(categoryWrapper => categoryWrapper.actionPlan);
+    const anotherMontGoals: GoalWrapper[] = this.goals.filter(goalWrapper => {
+      return goalWrapper.actionPlan && (goalWrapper.actionPlan.year !== this.data.nextPeriodBudget.year || goalWrapper.actionPlan.month !== this.data.nextPeriodBudget.month);
+    });
+    const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
+    this._budgetService.closeMonth(this.data.nextPeriodBudget.year, this.data.nextPeriodBudget.month, planingCategories, anotherMontGoals)
+      .subscribe((simpleResponse: SimpleResponse) => {
+        loadingDialog.close();
+        if (simpleResponse.status === 'SUCCESS') {
+          this._alertService.addAlert(AlertType.SUCCESS, 'Бюджет успешно запланирован');
+        } else {
+          const errors: string[] = simpleResponse.result['errors'];
+          errors.forEach(errorMessage => this._alertService.addAlert(AlertType.WARNING, errorMessage));
+        }
+        this._dialogRef.close(true);
+      });
+  }
+
+  private processPotentialCategoryActionPlan(categoryWrapper: CategoryWrapper, potentialActionPlan: BudgetBalance[]): void {
+    const actionPlan: {[currency: string]: BudgetBalance} = {};
+    potentialActionPlan.forEach(balanceItem => {
+      if (balanceItem.completeValue > 0) {
+        actionPlan[balanceItem.currency] = balanceItem;
+      }
+    });
+
+    categoryWrapper.actionPlan = Object.keys(actionPlan).length > 0 ? actionPlan : null;
+  }
+
+  private isSuitableGoalWrapper(goalWrapper: GoalWrapper, type: string, categoryTitle: string): boolean {
+    return goalWrapper.actionPlan
+      && goalWrapper.actionPlan.year === this.data.nextPeriodBudget.year
+      && goalWrapper.actionPlan.month === this.data.nextPeriodBudget.month
+      && goalWrapper.type === type && goalWrapper.category === categoryTitle;
+  }
+
+  private processBudgetCategories(nextPeriodBudgetDetails: BudgetDetails, budgetDetails: BudgetDetails, type: string): void {
+    const categoryMap: Map<string, CategoryWrapper> = new Map<string, CategoryWrapper>();
+    budgetDetails.categories.forEach(category => {
+      const goalWrappers: GoalWrapper[] = this.goals.filter(goalWrapper => this.isSuitableGoalWrapper(goalWrapper, type, category.title));
+      categoryMap.set(category.title, new CategoryWrapper(category, type, goalWrappers, goalWrappers.length === 0));
+    });
+
+    nextPeriodBudgetDetails.categories.forEach(category => {
+      if (!categoryMap.has(category.title)) {
+        const categoryGoals: GoalWrapper[] = this.goals.filter(goalWrapper => this.isSuitableGoalWrapper(goalWrapper, type, category.title));
+        categoryMap.set(category.title, new CategoryWrapper(category, type, categoryGoals, false, true, category.balance));
+      } else {
+        categoryMap.get(category.title).removable = false;
+        categoryMap.get(category.title).actionPlan = category.balance;
+      }
+    });
+
+    Array.from(categoryMap.values()).forEach((categoryWrapper: CategoryWrapper)  => {
+      if (categoryWrapper.goalWrappers.length > 0) {
+        categoryWrapper.goalWrappers.forEach(goalWrapper => {
+          if (goalWrapper.removable) {
+            const goalCurrency: string = goalWrapper.actionPlan.balance.currency;
+            if (!categoryWrapper.actionPlan) {
+              categoryWrapper.actionPlan = {};
+            }
+            if (!categoryWrapper.actionPlan.hasOwnProperty(goalCurrency)) {
+              categoryWrapper.actionPlan[goalCurrency] = {currency: goalCurrency};
+            }
+
+            categoryWrapper.actionPlan[goalCurrency].completeValue = goalWrapper.actionPlan.balance.completeValue + (categoryWrapper.actionPlan[goalCurrency].completeValue | 0);
+          }
+        });
+      }
+
+      this.categories.push(categoryWrapper);
+    });
   }
 
   private processBudgetGoals(nextPeriodBudgetDetails: BudgetDetails, budgetDetails: BudgetDetails, type: string): void {

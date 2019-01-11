@@ -1,4 +1,4 @@
-<h2 mat-dialog-title align="center" #title bkDraggable dragTarget=".mat-dialog-container">Закрытие месяца, планирование следующего</h2>
+<h2 mat-dialog-title align="center" #title bkDraggable dragTarget=".budget-close-month-dialog">Закрытие месяца, планирование следующего</h2>
 <mat-dialog-content id="budget-close-month-dialog">
   <ul class="nav nav-tabs nav-justified">
     <li role="presentation" [ngClass]="{'active': type === 'goals'}"><a>Шаг 1: Цели</a></li>
@@ -9,13 +9,16 @@
     <div *ngIf="type === 'goals'">
       <div class="row" *ngFor="let goalWrapper of goals | closeMonthGoalFilter:goalFilters">
         <div class="col-sm-2 no-right-padding">
-          <div class="goal-type-label">
+          <div class="type-label">
             <span class="label label-danger" *ngIf="goalWrapper.type === 'expense'">Расход</span>
             <span class="label label-success" *ngIf="goalWrapper.type === 'income'">Доход</span>
           </div>
           <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" *ngIf="!goalWrapper.actionPlan" (click)="repeatGoal(goalWrapper)"></bk-popover>
           <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение"
                       *ngIf="!goalWrapper.goal.done && !goalWrapper.actionPlan" (click)="moveGoal(goalWrapper)"></bk-popover>
+          <bk-popover class="edit-icon" glyphiconClass="pencil" placement="right" text="Редактировать" *ngIf="goalWrapper.actionPlan" (click)="editGoal(goalWrapper)"></bk-popover>
+          <bk-popover class="remove-icon" glyphiconClass="remove" placement="right" text="Исключить"
+                      *ngIf="goalWrapper.actionPlan && goalWrapper.removable" (click)="excludeGoal(goalWrapper)"></bk-popover>
         </div>
 
         <div class="col-sm-7 progress-column">
@@ -24,7 +27,7 @@
             <div class="progress-bar" [style.width.%]="goalPercent.value"></div>
             <span class="goal-title">{{goalWrapper.goal.title}} <span *ngIf="!goalWrapper.missedInClosedMonth">(<span class="percent">{{goalPercent.value}}%</span>)</span></span>
             <span class="goal-value">
-            <span *ngIf="!goalWrapper.missedInClosedMonth">{{goalWrapper.goal.balance.value}} из</span> {{goalWrapper.goal.balance.completeValue}}
+            <span *ngIf="!goalWrapper.missedInClosedMonth">{{goalWrapper.goal.balance.value | currencyValue:2:true}} из</span> {{goalWrapper.goal.balance.completeValue | currencyValue:2:true}}
             <strong><bk-currency-symbol [currencyName]="goalWrapper.goal.balance.currency"></bk-currency-symbol></strong>
           </span>
           </div>
@@ -32,72 +35,55 @@
 
         <div class="col-sm-3 actions-column">
           <div *ngIf="!goalWrapper.actionPlan"><span class="badge badge-category">{{goalWrapper.category}}</span></div>
-          <div *ngIf="goalWrapper.actionPlan">
-            <div class="action-label"><span class="label label-primary">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span></div>
-            <bk-popover class="edit-icon" glyphiconClass="pencil" placement="left" text="Редактировать" (click)="editGoal(goalWrapper)"></bk-popover>
-            <bk-popover class="remove-icon" glyphiconClass="remove" placement="left" text="Исключить" *ngIf="goalWrapper.removable" (click)="excludeGoal(goalWrapper)"></bk-popover>
-          </div>
+          <span *ngIf="goalWrapper.actionPlan" class="action-label">
+            <span class="label label-primary">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span>
+          </span>
         </div>
       </div>
     </div>
 
-
-
-
-
-
     <div *ngIf="type === 'categories'">
-      <div class="row" style="display: flex;margin-bottom: 10px;">
-        <div class="col-sm-3" style="padding-right: 0;display: flex;align-items: center;min-height: 100%;">
-          <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-danger" style="vertical-align: text-top;">Расход</span></div>
-          <bk-popover class="move-icon" glyphiconClass="signal" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-          <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-          <span style="position: absolute;right: 20px;display: flex;align-items: center;" class="badge">42</span>
-          <span style="display: flex;align-items: center;min-height: 100%;" class="vertical-middle category-icon-wrapper"><img style="right: 0;position: absolute;vertical-align: middle;" class="icon" src="assets/image/category/deti.gif"></span>
-        </div>
-        <div class="col-sm-6" style="padding-left: 5px; padding-right: 0;">
-
-          <div class="progress" style="margin-bottom: 0;height: 40px;">
-            <div class="progress-bar" [style.width.%]="20"></div>
-            <span style="height: 100%;font-weight: bold;position: absolute;left: 10px;">
-              <span class="goal-title1" style="display: flex;align-items: center;min-height: 100%;">Название цели (<span class="percent">50%</span>)</span>
-            </span>
-            <span class="category-value" style="position: absolute;right: 5px;">
-              <span>150</span> из 350
-              <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
-            </span>
-            <span class="category-value" style="position: absolute;right: 5px;top: 20px;">
-              <span>20</span> из 1000
-              <strong><bk-currency-symbol [currencyName]="'USD'"></bk-currency-symbol></strong>
-            </span>
+      <div class="row category-row" *ngFor="let categoryWrapper of categories | closeMonthCategoryFilter:categoryFilters">
+        <bk-template-variable #linesNumber [value]="getNumberOfLinesInCategory(categoryWrapper)"></bk-template-variable>
+        <div class="col-sm-3 left-column">
+          <div class="type-label">
+            <span class="label label-danger" *ngIf="categoryWrapper.type === 'expense'">Расход</span>
+            <span class="label label-success" *ngIf="categoryWrapper.type === 'income'">Доход</span>
           </div>
-        </div>
-        <div class="col-sm-3" style="padding-left: 10px;display: flex;align-items: center;min-height: 100%;">
-          <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Июнь 2018</span></div>
-          <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
-          <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-2" style="padding-right: 0;">
-          <div style="display: inline-block;position: relative;top: 2px;width: 50px;"><span class="label label-success" style="vertical-align: text-top;">Доход</span></div>
-          <bk-popover class="move-icon" glyphiconClass="paste" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-          <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
-        </div>
-        <div class="col-sm-7" style="padding-left: 5px; padding-right: 0;">
-          <div class="progress" style="margin-bottom: 10px;">
-            <div class="progress-bar" [style.width.%]="20"></div>
-            <span class="goal-title" style="font-weight: bold;position: absolute;left: 10px;">Название цели (<span class="percent">50%</span>)</span>
-            <span class="category-value" style="position: absolute;right: 5px;">
-            <span>150</span> из 350
-            <strong><bk-currency-symbol [currencyName]="'BYN'"></bk-currency-symbol></strong>
+          <bk-popover class="statistic-icon" glyphiconClass="signal" placement="right" text="Статистика" *ngIf="!categoryWrapper.actionPlan" (click)="showStatistics(categoryWrapper)"></bk-popover>
+          <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" *ngIf="!categoryWrapper.actionPlan" (click)="repeatCategory(categoryWrapper)"></bk-popover>
+          <bk-popover class="edit-icon" glyphiconClass="pencil" placement="right" text="Редактировать" *ngIf="categoryWrapper.actionPlan" (click)="editCategory(categoryWrapper)"></bk-popover>
+          <bk-popover class="remove-icon" glyphiconClass="remove" placement="right" text="Исключить"
+                      *ngIf="categoryWrapper.actionPlan && categoryWrapper.removable" (click)="excludeCategory(categoryWrapper)"></bk-popover>
+          <span [popover]="'Целей в категории'" [popoverPlacement]="'right'" [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true"
+                class="badge badge-goal" *ngIf="categoryWrapper.goalWrappers.length > 0">
+            {{categoryWrapper.goalWrappers.length}}
           </span>
+          <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(categoryWrapper.category.title) | assetImage:'category'"></span>
+        </div>
+
+        <div class="col-sm-7 category-progress-column">
+          <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(categoryWrapper)"></bk-template-variable>
+          <div class="progress" [style.height.px]="20 * linesNumber.value">
+            <div class="progress-bar" [style.width.%]="categoryPercent.value"></div>
+            <span class="category-title-wrapper">
+              <span class="category-title">{{categoryWrapper.category.title}} <span *ngIf="!categoryWrapper.missedInClosedMonth">(<span class="percent">{{categoryPercent.value}}%</span>)</span></span>
+            </span>
+            <span *ngIf="!categoryWrapper.missedInClosedMonth">
+              <span class="category-value" *ngFor="let currency of categoryWrapper.category.balance | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
+                <span>{{categoryWrapper.category.balance[currency].value | currencyValue:2:true}}</span> из {{categoryWrapper.category.balance[currency].completeValue | currencyValue:2:true}}
+                  <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+              </span>
+            </span>
           </div>
         </div>
-        <div class="col-sm-3" style="padding-left: 10px;">
-          <div style="display: inline-block;position: relative;top: 2px;width: 90px;"><span class="label label-primary" style="vertical-align: text-top;">Сентябрь 2018</span></div>
-          <bk-popover class="move-icon" glyphiconClass="pencil" placement="left" text="Отложить выполнение" style="padding-left: 7px;"></bk-popover>
-          <bk-popover class="move-icon" glyphiconClass="remove" placement="left" text="Отложить выполнение" style="padding-left: 5px;"></bk-popover>
+
+        <div class="col-sm-2 right-column">
+          <span class="action-plan" *ngIf="categoryWrapper.actionPlan">
+            <span class="category-value" *ngFor="let currency of categoryWrapper.actionPlan | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
+              {{categoryWrapper.actionPlan[currency].completeValue | currencyValue:2:true}} <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+            </span>
+          </span>
         </div>
       </div>
     </div>
@@ -138,7 +124,7 @@
     <a class="btn btn-default pull-right" (click)="close()">Закрыть</a>
     <span class="pull-right">&nbsp;</span>
     <a class="btn btn-default pull-right" *ngIf="type === 'goals'" (click)="nextToCategories()">Далее</a>
-    <a class="btn btn-default pull-right" *ngIf="type === 'categories'">Сохранить</a>
+    <a class="btn btn-default pull-right" *ngIf="type === 'categories'" (click)="save()">Сохранить</a>
     <span class="pull-right">&nbsp;</span>
     <a class="btn btn-default pull-right" *ngIf="type === 'categories' && goals.length > 0" (click)="backToGoals()">Назад</a>
   </span>

@@ -45,7 +45,8 @@ export class PlanBudgetDialogComponent implements OnInit {
       goal: BudgetGoal,
       closeMonthGoalPlan: CloseMonthGoalPlan,
       categoryTitle: string,
-      postpone: boolean
+      postpone: boolean,
+      disableChangeGoalMonth: boolean
     },
     private _dialogRef: MatDialogRef<PlanBudgetDialogComponent>,
     private _profileService: ProfileService,
@@ -67,7 +68,7 @@ export class PlanBudgetDialogComponent implements OnInit {
 
       if (this.data.goal) {
         this.goalTitle = this.data.goal.title;
-        this.changeGoalMonthAvailable = this.data.goal.balance.value === 0 || this.data.postpone;
+        this.changeGoalMonthAvailable = !this.data.disableChangeGoalMonth && (this.data.goal.balance.value === 0 || this.data.postpone);
         this.currencyBalance = [Object.assign({}, this.data.closeMonthGoalPlan ? this.data.closeMonthGoalPlan.balance : this.data.goal.balance)];
       } else {
         of(this.data.categoryBalance).pipe(
@@ -173,11 +174,15 @@ export class PlanBudgetDialogComponent implements OnInit {
     switch (this.data.type) {
       case 'category':
         if (this.validateCategory() === true) {
-          loadingDialog = this.openLoadingFrame();
-          if (this.data.editMode) {
-            this.processResult(loadingDialog, this._budgetService.editBudgetCategory(this.data.budget.id, this.budgetType, this.categoryTitle, this.currencyBalance));
+          if (this.data.postpone) {
+            this._dialogRef.close(this.currencyBalance);
           } else {
-            this.processResult(loadingDialog, this._budgetService.addBudgetCategory(this.data.budget.id, this.budgetType, this.categoryTitle, this.currencyBalance));
+            loadingDialog = this.openLoadingFrame();
+            if (this.data.editMode) {
+              this.processResult(loadingDialog, this._budgetService.editBudgetCategory(this.data.budget.id, this.budgetType, this.categoryTitle, this.currencyBalance));
+            } else {
+              this.processResult(loadingDialog, this._budgetService.addBudgetCategory(this.data.budget.id, this.budgetType, this.categoryTitle, this.currencyBalance));
+            }
           }
         }
         break;

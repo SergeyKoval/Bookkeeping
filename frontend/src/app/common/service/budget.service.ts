@@ -8,6 +8,8 @@ import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';
 import { GoalFilterType } from '../model/history/GoalFilterType';
 import { CurrencyService } from './currency.service';
+import { CategoryWrapper } from '../model/budget/CategoryWrapper';
+import { GoalWrapper } from '../model/budget/GoalWrapper';
 
 @Injectable()
 export class BudgetService {
@@ -114,6 +116,15 @@ export class BudgetService {
       'year': year,
       'month': month,
       'value': value
+    });
+  }
+
+  public closeMonth (year: number, month: number, planingCategories: CategoryWrapper[], anotherMontGoals: GoalWrapper[]): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/budget/closeMonth', {
+      'planingCategories': planingCategories,
+      'anotherMontGoals': anotherMontGoals,
+      'year': year,
+      'month': month
     });
   }
 

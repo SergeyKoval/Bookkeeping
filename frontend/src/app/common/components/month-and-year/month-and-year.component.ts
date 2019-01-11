@@ -18,7 +18,7 @@ export class MonthAndYearComponent {
   public selectedYear: number;
   @Input()
   public set selectedMonth(value: number) {
-    if (value && !this._selectedMonth) {
+    if (value) {
       this._selectedMonth = value - 1;
     }
   }

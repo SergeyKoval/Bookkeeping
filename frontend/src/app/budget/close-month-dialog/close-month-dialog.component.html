@@ -8,7 +8,7 @@
   <div class="table table-content">
     <div *ngIf="type === 'goals'">
       <div class="row" *ngFor="let goalWrapper of goals | closeMonthGoalFilter:goalFilters">
-        <div class="col-sm-2 no-right-padding">
+        <div class="col-sm-2 no-right-padding first-column">
           <div class="type-label">
             <span class="label label-danger" *ngIf="goalWrapper.type === 'expense'">Расход</span>
             <span class="label label-success" *ngIf="goalWrapper.type === 'income'">Доход</span>

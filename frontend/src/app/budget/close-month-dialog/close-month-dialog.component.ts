@@ -130,6 +130,14 @@ export class CloseMonthDialogComponent implements OnInit {
   }
 
   public repeatCategory(categoryWrapper: CategoryWrapper): void {
+    const categoryBalance: {[currency: string]: BudgetBalance} = Object.assign({}, categoryWrapper.category.balance);
+    Object.keys(categoryBalance).forEach(currency => {
+      const balance: BudgetBalance = categoryBalance[currency];
+      if (balance.value > balance.completeValue) {
+        balance.completeValue = balance.value;
+      }
+    });
+
     this._dialogService.openDialog(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
@@ -141,7 +149,7 @@ export class CloseMonthDialogComponent implements OnInit {
         'categoryTitle': categoryWrapper.category.title,
         'postpone': true,
         'budget': this.data.nextPeriodBudget,
-        'categoryBalance': Object.assign({}, categoryWrapper.category.balance)
+        'categoryBalance': categoryBalance
       }
     }).afterClosed()
       .subscribe(potentialActionPlan => this.processPotentialCategoryActionPlan(categoryWrapper, potentialActionPlan));

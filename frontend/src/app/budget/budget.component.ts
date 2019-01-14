@@ -106,6 +106,11 @@ export class BudgetComponent implements OnInit {
     }
   }
 
+  public isFuturePeriod(): boolean {
+    const today: Date = new Date();
+    return this.budget.year > today.getFullYear() || this.budget.year === today.getFullYear() && this.budget.month > today.getMonth() + 1;
+  }
+
   private updateMonthProgress(): void {
     const now: Date = new Date();
     const currentMonth: boolean = now.getFullYear() === this.budget.year && now.getMonth() === this.budget.month - 1;

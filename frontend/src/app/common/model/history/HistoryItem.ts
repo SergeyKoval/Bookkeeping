@@ -8,6 +8,7 @@ export class HistoryItem {
     public description: string,
     public balance: HistoryBalanceType,
     public goal?: string,
+    public archived?: boolean,
     public icon?: string,
     public additionalIcon?: string
   ) {}

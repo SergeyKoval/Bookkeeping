@@ -9,7 +9,8 @@ type HistoryType = {
   balance: HistoryBalanceType,
   goal?: string,
   description?: string,
-  id?: string
+  id?: string,
+  archived: boolean
 };
 
 type HistoryBalanceType = {

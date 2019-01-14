@@ -92,8 +92,8 @@
 
           <!--last column-->
           <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
-            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="top" (click)="editHistoryItem(historyItem)"></bk-popover>
-            <bk-popover glyphiconClass="remove" text="Удалить" placement="top" (click)="deleteHistoryItem(historyItem)"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="top" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить" placement="top" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
           </div>
         </div>
         <hr *ngIf="!lastGroup">

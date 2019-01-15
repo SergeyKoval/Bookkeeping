@@ -106,6 +106,22 @@
   min-height: 100%;
 }
 
+.period-row {
+  padding-top: 15px;
+}
+
+.period-title {
+  padding-top: 7px;
+}
+
+#budget-close-month-dialog {
+  overflow: visible !important;
+}
+
+.error {
+  margin-bottom: 0;
+}
+
 .vertical-middle {
   display: flex;
   align-items: center;

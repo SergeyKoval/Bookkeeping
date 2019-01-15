@@ -27,14 +27,17 @@ import { AlertService } from '../../common/service/alert.service';
 export class CloseMonthDialogComponent implements OnInit {
   public FILTER: typeof CloseMonthFilter = CloseMonthFilter;
   public months: string[] = DateUtils.MONTHS;
-  public type: string = 'goals';
+  public type: string = 'period';
   public goals: GoalWrapper[] = [];
   public categories: CategoryWrapper[] = [];
   public goalFilters: CloseMonthFilter[] = [];
   public categoryFilters: CloseMonthFilter[] = [];
+  public nextMonthPeriod: {year: number, month: number};
+  public errorMessage: string;
+  public nextPeriodBudget: Budget;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {budget: Budget, nextPeriodBudget: Budget, nextMonthPeriod: {year: number, month: number}},
+    @Inject(MAT_DIALOG_DATA) public data: {budget: Budget},
     private _dialogRef: MatDialogRef<CloseMonthDialogComponent>,
     private _dialogService: DialogService,
     private _confirmDialogService: ConfirmDialogService,
@@ -45,13 +48,12 @@ export class CloseMonthDialogComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.processBudgetGoals(this.data.nextPeriodBudget.income, this.data.budget.income, 'income');
-    this.processBudgetGoals(this.data.nextPeriodBudget.expense, this.data.budget.expense, 'expense');
-    if (this.goals.length === 0) {
-      this.nextToCategories();
-    } else if (this.goals.filter(goalWrapper => !goalWrapper.goal.done).length > 0) {
-      this.goalFilters.push(CloseMonthFilter.UNDONE);
-    }
+    const today: Date = new Date();
+    const todayYear: number = today.getFullYear();
+    const todayMonth: number = today.getMonth() + 1;
+
+    this.nextMonthPeriod = (this.data.budget.year !== todayYear || this.data.budget.month !== todayMonth)
+      ? {year: todayYear, month: todayMonth} : DateUtils.nextMonthPeriod(todayYear, todayMonth);
   }
 
   public calculateGoalPercentDone(goal: BudgetGoal): number {
@@ -100,8 +102,8 @@ export class CloseMonthDialogComponent implements OnInit {
       data: {
         'budgetType': categoryWrapper.type,
         'category': categoryWrapper.category.title,
-        'year': this.data.nextMonthPeriod.year,
-        'month': this.data.nextMonthPeriod.month
+        'year': this.nextMonthPeriod.year,
+        'month': this.nextMonthPeriod.month
       }
     }).afterClosed()
       .subscribe(potentialActionPlan => this.processPotentialCategoryActionPlan(categoryWrapper, potentialActionPlan));
@@ -120,8 +122,8 @@ export class CloseMonthDialogComponent implements OnInit {
         'budget': this.data.budget,
         'categoryTitle': goalWrapper.category,
         'closeMonthGoalPlan': {
-          'month': this.data.nextMonthPeriod.month,
-          'year': this.data.nextMonthPeriod.year,
+          'month': this.nextMonthPeriod.month,
+          'year': this.nextMonthPeriod.year,
           'balance': {'completeValue': goalWrapper.goal.balance.completeValue, 'currency': goalWrapper.goal.balance.currency}
         }, 'postpone': true
       }
@@ -148,7 +150,7 @@ export class CloseMonthDialogComponent implements OnInit {
         'budgetType': categoryWrapper.type,
         'categoryTitle': categoryWrapper.category.title,
         'postpone': true,
-        'budget': this.data.nextPeriodBudget,
+        'budget': this.nextPeriodBudget,
         'categoryBalance': categoryBalance
       }
     }).afterClosed()
@@ -166,7 +168,7 @@ export class CloseMonthDialogComponent implements OnInit {
         'budgetType': categoryWrapper.type,
         'categoryTitle': categoryWrapper.category.title,
         'postpone': true,
-        'budget': this.data.nextPeriodBudget,
+        'budget': this.nextPeriodBudget,
         'categoryBalance': Object.assign({}, categoryWrapper.actionPlan)
       }
     }).afterClosed()
@@ -216,20 +218,51 @@ export class CloseMonthDialogComponent implements OnInit {
     }
   }
 
-  public backToGoals(): void {
-    this._confirmDialogService.openConfirmDialog('Вернуться к целям', 'При возврате, все изменения, сделанные в категориях, будут потеряны. Продолжить?')
+  public back(): void {
+    const backType: string = this.type === 'goals' || this.goals.length === 0 ? 'period' : 'goals';
+    this._confirmDialogService.openConfirmDialog(`Вернуться к ${backType === 'period' ? 'выбору периода' : 'целям'}`
+      , `При возврате, все изменения, сделанные в ${backType === 'period' ? 'целях' : 'категориях'}, будут потеряны. Продолжить?`)
       .afterClosed()
       .pipe(filter((result: boolean) => result === true))
       .subscribe(() => {
+        if (backType === 'period') {
+          this.goals = [];
+          this.nextPeriodBudget = null;
+          this.goalFilters = [];
+          this.errorMessage = null;
+        }
         this.categories = [];
-        this.type = 'goals';
+        this.type = backType;
       });
   }
 
-  public nextToCategories (): void {
-    this.processBudgetCategories(this.data.nextPeriodBudget.income, this.data.budget.income, 'income');
-    this.processBudgetCategories(this.data.nextPeriodBudget.expense, this.data.budget.expense, 'expense');
-    this.type = 'categories';
+  public next(): void {
+    if (this.type === 'period') {
+      const today: Date = new Date();
+      const year: number = today.getFullYear();
+      if (this.nextMonthPeriod.year < year
+        || (this.nextMonthPeriod.year === year && this.nextMonthPeriod.month <= today.getMonth())
+        || (this.data.budget.year === this.nextMonthPeriod.year && this.data.budget.month === this.nextMonthPeriod.month)) {
+        this.errorMessage = 'Выбранный период нельзя спланировать';
+        return;
+      }
+      const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Загрузка планируемого периода...');
+      this._budgetService.loadBudget(this.nextMonthPeriod.year, this.nextMonthPeriod.month).subscribe(nextPeriodBudget => {
+        this.nextPeriodBudget = nextPeriodBudget;
+        this.processBudgetGoals(nextPeriodBudget.income, this.data.budget.income, 'income');
+        this.processBudgetGoals(nextPeriodBudget.expense, this.data.budget.expense, 'expense');
+        this.type = 'goals';
+        if (this.goals.length === 0) {
+          this.nextToCategories();
+        } else if (this.goals.filter(goalWrapper => !goalWrapper.goal.done).length > 0) {
+          this.goalFilters.push(CloseMonthFilter.UNDONE);
+        }
+
+        loadingDialog.close();
+      });
+    } else {
+      this.nextToCategories();
+    }
   }
 
   public getFilters(): CloseMonthFilter[] {
@@ -263,10 +296,10 @@ export class CloseMonthDialogComponent implements OnInit {
   public save(): void {
     const planingCategories: CategoryWrapper[] = this.categories.filter(categoryWrapper => categoryWrapper.actionPlan);
     const anotherMontGoals: GoalWrapper[] = this.goals.filter(goalWrapper => {
-      return goalWrapper.actionPlan && (goalWrapper.actionPlan.year !== this.data.nextPeriodBudget.year || goalWrapper.actionPlan.month !== this.data.nextPeriodBudget.month);
+      return goalWrapper.actionPlan && (goalWrapper.actionPlan.year !== this.nextPeriodBudget.year || goalWrapper.actionPlan.month !== this.nextPeriodBudget.month);
     });
     const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Сохранение...');
-    this._budgetService.closeMonth(this.data.nextPeriodBudget.year, this.data.nextPeriodBudget.month, planingCategories, anotherMontGoals)
+    this._budgetService.closeMonth(this.nextPeriodBudget.year, this.nextPeriodBudget.month, planingCategories, anotherMontGoals)
       .subscribe((simpleResponse: SimpleResponse) => {
         loadingDialog.close();
         if (simpleResponse.status === 'SUCCESS') {
@@ -277,6 +310,20 @@ export class CloseMonthDialogComponent implements OnInit {
         }
         this._dialogRef.close(true);
       });
+  }
+
+  public changeMonth (month: number): void {
+    this.nextMonthPeriod.month = month;
+  }
+
+  public changeYear (nextMonthPeriod: {year: number; month: number}): void {
+    this.nextMonthPeriod = nextMonthPeriod;
+  }
+
+  private nextToCategories(): void {
+    this.processBudgetCategories(this.nextPeriodBudget.income, this.data.budget.income, 'income');
+    this.processBudgetCategories(this.nextPeriodBudget.expense, this.data.budget.expense, 'expense');
+    this.type = 'categories';
   }
 
   private processPotentialCategoryActionPlan(categoryWrapper: CategoryWrapper, potentialActionPlan: BudgetBalance[]): void {
@@ -292,8 +339,8 @@ export class CloseMonthDialogComponent implements OnInit {
 
   private isSuitableGoalWrapper(goalWrapper: GoalWrapper, type: string, categoryTitle: string): boolean {
     return goalWrapper.actionPlan
-      && goalWrapper.actionPlan.year === this.data.nextPeriodBudget.year
-      && goalWrapper.actionPlan.month === this.data.nextPeriodBudget.month
+      && goalWrapper.actionPlan.year === this.nextPeriodBudget.year
+      && goalWrapper.actionPlan.month === this.nextPeriodBudget.month
       && goalWrapper.type === type && goalWrapper.category === categoryTitle;
   }
 
@@ -352,8 +399,8 @@ export class CloseMonthDialogComponent implements OnInit {
       const goalMap: Map<string, GoalWrapper> = categoryMap.get(category.title);
       category.goals.forEach(goal => {
         const actionPlan: CloseMonthGoalPlan = {
-          year: this.data.nextMonthPeriod.year,
-          month: this.data.nextMonthPeriod.month,
+          year: this.nextMonthPeriod.year,
+          month: this.nextMonthPeriod.month,
           balance: {currency: goal.balance.currency, completeValue: goal.balance.completeValue}
         };
         if (goalMap.has(goal.title)) {

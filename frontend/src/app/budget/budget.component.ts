@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
 
-import { filter, switchMap } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 import { DateUtils } from '../common/utils/date-utils';
 import { BudgetService } from '../common/service/budget.service';
 import { DialogService } from '../common/service/dialog.service';
 import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dialog.component';
 import { CloseMonthDialogComponent } from './close-month-dialog/close-month-dialog.component';
-import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../common/service/loading.service';
 
 @Component({
@@ -62,32 +60,17 @@ export class BudgetComponent implements OnInit {
   }
 
   public openCloseMonthDialog(): void {
-    if (!this.loading) {
-      const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Загрузка следующего периода...');
-      const today: Date = new Date();
-      const todayYear: number = today.getFullYear();
-      const todayMonth: number = today.getMonth() + 1;
-
-      const nextMonthPeriod: {year: number, month: number} = (this.budget.year !== todayYear || this.budget.month !== todayMonth) && today.getDate() < 15
-        ? {year: todayYear, month: todayMonth} : DateUtils.nextMonthPeriod(todayYear, todayMonth);
-      this._budgetService.loadBudget(nextMonthPeriod.year, nextMonthPeriod.month)
-        .pipe(
-          switchMap(nextPeriodBudget => {
-            const dialog: MatDialogRef<CloseMonthDialogComponent, any> = this._dialogService.openDialog(CloseMonthDialogComponent, {
-              panelClass: 'budget-close-month-dialog',
-              width: '650px',
-              position: {top: 'top'},
-              data: {
-                'budget': this.budget,
-                'nextMonthPeriod': nextMonthPeriod,
-                'nextPeriodBudget': nextPeriodBudget
-              }
-            });
-            dialog.afterOpen().subscribe(() => loadingDialog.close());
-            return dialog.afterClosed();
-          }),
-          filter(loadNextPeriodBudget => loadNextPeriodBudget)
-        ).subscribe(() => this.loadBudget(true, nextMonthPeriod.year, nextMonthPeriod.month));
+    if (!this.loading && !this.isFuturePeriod()) {
+      this._dialogService.openDialog(CloseMonthDialogComponent, {
+        panelClass: 'budget-close-month-dialog',
+        width: '650px',
+        position: {top: 'top'},
+        data: {
+          'budget': this.budget
+        }
+      }).afterClosed()
+        .pipe(filter(loadNextPeriodBudget => loadNextPeriodBudget))
+        .subscribe((nextMonthPeriod: {year: number, month: number}) => this.loadBudget(true, nextMonthPeriod.year, nextMonthPeriod.month));
     }
   }
 

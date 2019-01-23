@@ -110,6 +110,9 @@ export class CloseMonthDialogComponent implements OnInit {
   }
 
   public repeatGoal(goalWrapper: GoalWrapper): void {
+    const value: number = goalWrapper.goal.balance.value;
+    const completeValue: number = goalWrapper.goal.balance.completeValue;
+    const repeatValue: number = value > completeValue ? value : completeValue;
     this._dialogService.openDialog(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
@@ -124,7 +127,7 @@ export class CloseMonthDialogComponent implements OnInit {
         'closeMonthGoalPlan': {
           'month': this.nextMonthPeriod.month,
           'year': this.nextMonthPeriod.year,
-          'balance': {'completeValue': goalWrapper.goal.balance.completeValue, 'currency': goalWrapper.goal.balance.currency}
+          'balance': {'completeValue': repeatValue, 'currency': goalWrapper.goal.balance.currency}
         }, 'postpone': true
       }
     }).afterClosed()

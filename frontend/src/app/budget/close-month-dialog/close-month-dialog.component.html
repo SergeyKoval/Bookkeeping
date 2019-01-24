@@ -39,7 +39,7 @@
         <div class="col-sm-7 progress-column">
           <div class="progress">
             <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goalWrapper.goal)"></bk-template-variable>
-            <div class="progress-bar" [style.width.%]="goalPercent.value"></div>
+            <div class="progress-bar progress-bar-info" [style.width.%]="goalPercent.value"></div>
             <span class="goal-title">{{goalWrapper.goal.title}} <span *ngIf="!goalWrapper.missedInClosedMonth">(<span class="percent">{{goalPercent.value}}%</span>)</span></span>
             <span class="goal-value">
             <span *ngIf="!goalWrapper.missedInClosedMonth">{{goalWrapper.goal.balance.value | currencyValue:2:true}} из</span> {{goalWrapper.goal.balance.completeValue | currencyValue:2:true}}
@@ -51,7 +51,7 @@
         <div class="col-sm-3 actions-column">
           <div *ngIf="!goalWrapper.actionPlan"><span class="badge badge-category">{{goalWrapper.category}}</span></div>
           <span *ngIf="goalWrapper.actionPlan" class="action-label">
-            <span class="label label-primary">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span>
+            <span class="label label-info">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span>
           </span>
         </div>
       </div>
@@ -80,7 +80,7 @@
         <div class="col-sm-7 category-progress-column">
           <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(categoryWrapper)"></bk-template-variable>
           <div class="progress" [style.height.px]="20 * linesNumber.value">
-            <div class="progress-bar" [style.width.%]="categoryPercent.value"></div>
+            <div class="progress-bar progress-bar-info" [style.width.%]="categoryPercent.value"></div>
             <span class="category-title-wrapper">
               <span class="category-title">{{categoryWrapper.category.title}} <span *ngIf="!categoryWrapper.missedInClosedMonth">(<span class="percent">{{categoryPercent.value}}%</span>)</span></span>
             </span>

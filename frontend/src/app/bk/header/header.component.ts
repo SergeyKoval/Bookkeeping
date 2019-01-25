@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Observable } from 'rxjs/index';
+import { Observable } from 'rxjs';
 
 import { AuthenticationService } from '../../common/service/authentication.service';
 import { ProfileService } from '../../common/service/profile.service';
@@ -23,5 +23,9 @@ export class HeaderComponent {
 
   public exit(): void {
     this._authenticationService.exit();
+  }
+
+  public needDisplayReports(): boolean {
+    return this._profileService.authenticatedProfile.email === 'skoval@gmail.com';
   }
 }

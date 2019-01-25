@@ -10,6 +10,7 @@ import { PopoverModule } from 'ngx-popover';
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MyDatePickerModule } from 'mydatepicker';
+import { MyDateRangePickerModule } from 'mydaterangepicker';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
@@ -82,6 +83,9 @@ import { CategoryStatisticsDialogComponent } from './budget/category-statistics-
 import { CloseMonthDialogComponent } from './budget/close-month-dialog/close-month-dialog.component';
 import { CloseMonthGoalFilterPipe } from './common/pipes/budget/close-month-goal-filter.pipe';
 import { CloseMonthCategoryFilterPipe } from './common/pipes/budget/close-month-category-filter.pipe';
+import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
+import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
+import { ThreeStateCheckboxComponent } from './common/components/three-state-checkbox/three-state-checkbox.component';
 
 @NgModule({
   declarations: [
@@ -143,7 +147,10 @@ import { CloseMonthCategoryFilterPipe } from './common/pipes/budget/close-month-
     CategoryStatisticsDialogComponent,
     CloseMonthDialogComponent,
     CloseMonthGoalFilterPipe,
-    CloseMonthCategoryFilterPipe
+    CloseMonthCategoryFilterPipe,
+    ReportActionsComponent,
+    ReportSummaryComponent,
+    ThreeStateCheckboxComponent
   ],
   imports: [
     BrowserModule,
@@ -163,6 +170,7 @@ import { CloseMonthCategoryFilterPipe } from './common/pipes/budget/close-month-
     MatSlideToggleModule,
     PopoverModule,
     MyDatePickerModule,
+    MyDateRangePickerModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
     LocalStorageModule.withConfig({
       prefix: 'Bookkeeper',

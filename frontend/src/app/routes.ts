@@ -11,6 +11,8 @@ import { ProfileComponent } from './settings/profile/profile.component';
 import { AuthenticationService } from './common/service/authentication.service';
 import { UsersComponent } from './users/users.component';
 import { ProfileService } from './common/service/profile.service';
+import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
+import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -34,6 +36,27 @@ export const BOOKKEEPING_ROUTES: Route[] = [
     component: HistoryComponent,
     canActivate: [AuthenticationService],
     data: {title: 'Бухгалтерия - учет'}
+  },
+  {
+    path: 'reports',
+    canActivate: [AuthenticationService],
+    children: [
+      {
+        path: '',
+        redirectTo: 'actions',
+        pathMatch: 'full'
+      },
+      {
+        path: 'actions',
+        component: ReportActionsComponent,
+        data: {title: 'Бухгалтерия - отчеты - операции за период'}
+      },
+      {
+        path: 'summary',
+        component: ReportSummaryComponent,
+        data: {title: 'Бухгалтерия - отчеты - итоги за период'}
+      }
+    ]
   },
   {
     path: 'users',

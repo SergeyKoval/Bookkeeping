@@ -5,6 +5,8 @@ import { IMyDate } from 'mydatepicker';
 @Injectable()
 export class DateUtils {
   public static MONTHS: string[] = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  public static MONTH_LABELS: {} = { 1: 'Янв', 2: 'Фев', 3: 'Март', 4: 'Апр', 5: 'Май', 6: 'Июнь', 7: 'Июль', 8: 'Авг', 9: 'Сент', 10: 'Окт', 11: 'Ноя', 12: 'Дек' };
+  public static DAY_LABELS: {} = {su: 'Вс', mo: 'Пн', tu: 'Вт', we: 'Ср', th: 'Чт', fr: 'Пт', sa: 'Сб'};
   private static DAYS_OF_WEEK: string[] = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
   public static convertDateToString(year: number, month: number, day: number): string {

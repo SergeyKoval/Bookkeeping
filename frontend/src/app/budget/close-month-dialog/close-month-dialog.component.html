@@ -111,7 +111,7 @@
         <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           <strong>Фильтр:</strong> <span *ngFor="let filter of getFilters(); let last = last;"> {{filter}}<span *ngIf="!last">,</span></span>
         </span>
-        <ul class="dropdown-menu filter" aria-labelledby="dropdownMenu1">
+        <ul class="dropdown-menu filter" aria-labelledby="dropdownMenu1" bkStopPropagation>
           <li (click)="clickFilter(FILTER.USED, FILTER.UNUSED)">
             <a><input type="checkbox" [checked]="isChecked(FILTER.USED)"> {{FILTER.USED}}</a>
           </li>

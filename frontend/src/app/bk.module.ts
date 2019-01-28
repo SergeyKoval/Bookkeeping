@@ -86,6 +86,7 @@ import { CloseMonthCategoryFilterPipe } from './common/pipes/budget/close-month-
 import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 import { ThreeStateCheckboxComponent } from './common/components/three-state-checkbox/three-state-checkbox.component';
+import { StopPropagationDirective } from './common/directives/stop-propagation.directive';
 
 @NgModule({
   declarations: [
@@ -150,7 +151,8 @@ import { ThreeStateCheckboxComponent } from './common/components/three-state-che
     CloseMonthCategoryFilterPipe,
     ReportActionsComponent,
     ReportSummaryComponent,
-    ThreeStateCheckboxComponent
+    ThreeStateCheckboxComponent,
+    StopPropagationDirective
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,7 @@
   <div class="panel-heading text-center">Операции за период</div>
   <div class="panel-body" *ngIf="!loading; else loadingIndicator">
     <div class="row">
-      <div class="col-sm-6" style="display: inline-flex;">
+      <div class="col-sm-9" style="display: inline-flex;">
         <div class="dropdown" style="padding-right: 10px;">
           <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-default" data-target="#">
             Фильтр <span class="caret"></span>
@@ -30,7 +30,7 @@
         </div>
         <my-date-range-picker placeholder="Период" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker>
       </div>
-      <div class="col-sm-6">
+      <div class="col-sm-3">
         <span class="btn btn-default left-button pull-right" [ngClass]="{'disabled': loading}" type="button">Поиск</span>
       </div>
     </div>
@@ -38,1017 +38,111 @@
     <div class="table">
       <div class="row header">
         <div class="col-sm-2">Дата</div>
-        <div class="col-sm-2 sm-small-left-padding">Сумма</div>
-        <div class="col-sm-3 sm-category-column">Категория</div>
-        <div class="col-sm-3">Комментарий</div>
-        <div class="col-sm-2 text-center sm-small-left-padding">Действия</div>
+        <div class="col-sm-2">Сумма</div>
+        <div class="col-sm-3">Счет</div>
+        <div class="col-sm-5">Категория</div>
       </div>
-    </div>
 
-
-
-    <div _ngcontent-c15="" class="table">
-      <div _ngcontent-c15="" class="row header">
-        <div _ngcontent-c15="" class="col-sm-2">Дата</div>
-        <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">Сумма</div>
-        <div _ngcontent-c15="" class="col-sm-3 sm-category-column">Категория</div>
-        <div _ngcontent-c15="" class="col-sm-3">Комментарий</div>
-        <div _ngcontent-c15="" class="col-sm-2 text-center sm-small-left-padding">Действия</div>
-      </div><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object],[object Object"
-}-->
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5c482781ec907a3d905b90b7"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-5"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-5"><span _ngcontent-c15=""> 23.01.2019 <div
-              _ngcontent-c15="" class="footnote">Среда</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": "Фигурное катание"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="screenshot" placement="top"
-                        spanclass="goal-icon col-sm-1 no-left-right-padding" _nghost-c14=""
-                        ng-reflect-span-class="goal-icon col-sm-1 no-left-rig" ng-reflect-text="Фигурное катание"
-                        ng-reflect-glyphicon-class="screenshot" ng-reflect-placement="top"><span _ngcontent-c14=""
-                                                                                                 ng-reflect-content="Фигурное катание"
-                                                                                                 ng-reflect-popover-disabled="false"
-                                                                                                 ng-reflect-popover-placement="top"
-                                                                                                 ng-reflect-popover-on-hover="true"
-                                                                                                 ng-reflect-popover-close-on-mouse-outside="true"
-                                                                                                 class="goal-icon col-sm-1 no-left-right-padding action glyphicon glyphicon-screenshot "></span>
-            </bk-popover>
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 150
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">не пустой1</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Подарки</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
-          </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object],[object Object"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5c3c63c285bd0e51a8df1453"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 14.01.2019 <div
-              _ngcontent-c15="" class="footnote">Понедельник</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="balance" ng-reflect-ng-class="balance"> 0
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-6 no-right-padding"><!--bindings={}--><span _ngcontent-c15=""
-                                                                                           class="description">Новый2 &gt;&gt; еще новый</span>
-            <div _ngcontent-c15="" class="footnote">Изменение остатков</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div>
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5c3c63b585bd0e51a8df1452"><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding col-sm-offset-2"
-               ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="transfer" ng-reflect-ng-class="transfer"> 180
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-6 no-right-padding">
-            <div _ngcontent-c15="" class="transfer-exchange-row"><span _ngcontent-c15="" class="transfer-from"><!--bindings={}--><span
-              _ngcontent-c15="" class="description">еще новый (Новый2)</span></span><span _ngcontent-c15=""
-                                                                                          class="transfer-to"><span
-              _ngcontent-c15="" class="glyphicon glyphicon-random transfer-exchange-icon"></span><!--bindings={
-  "ng-reflect-ng-if": "Money.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/account/Money.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Наличные (Деньги)</span></span>
+      <!--Доход / Расход-->
+      <div style="margin-bottom: 5px;">
+        <div class="row">
+          <div class="col-sm-2">
+            <div>
+              <span>23.01.2019</span>
             </div>
-            <div _ngcontent-c15="" class="footnote"></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5c24c57c226bba42a0aa6ffb"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-5"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-5"><span _ngcontent-c15=""> 27.12.2018 <div
-              _ngcontent-c15="" class="footnote">Четверг</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": "Английский"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="screenshot" placement="top"
-                        spanclass="goal-icon col-sm-1 no-left-right-padding" _nghost-c14=""
-                        ng-reflect-span-class="goal-icon col-sm-1 no-left-rig" ng-reflect-text="Английский"
-                        ng-reflect-glyphicon-class="screenshot" ng-reflect-placement="top"><span _ngcontent-c14=""
-                                                                                                 ng-reflect-content="Английский"
-                                                                                                 ng-reflect-popover-disabled="false"
-                                                                                                 ng-reflect-popover-placement="top"
-                                                                                                 ng-reflect-popover-on-hover="true"
-                                                                                                 ng-reflect-popover-close-on-mouse-outside="true"
-                                                                                                 class="goal-icon col-sm-1 no-left-right-padding action glyphicon glyphicon-screenshot "></span>
-            </bk-popover>
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 40
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Альфа</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Одежда</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
           </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5c0a6de2226bba4178818b07"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-5"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-5"><span _ngcontent-c15=""> 07.12.2018 <div
-              _ngcontent-c15="" class="footnote">Пятница</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": "Фигурное катание"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="screenshot" placement="top"
-                        spanclass="goal-icon col-sm-1 no-left-right-padding" _nghost-c14=""
-                        ng-reflect-span-class="goal-icon col-sm-1 no-left-rig" ng-reflect-text="Фигурное катание"
-                        ng-reflect-glyphicon-class="screenshot" ng-reflect-placement="top"><span _ngcontent-c14=""
-                                                                                                 ng-reflect-content="Фигурное катание"
-                                                                                                 ng-reflect-popover-disabled="false"
-                                                                                                 ng-reflect-popover-placement="top"
-                                                                                                 ng-reflect-popover-on-hover="true"
-                                                                                                 ng-reflect-popover-close-on-mouse-outside="true"
-                                                                                                 class="goal-icon col-sm-1 no-left-right-padding action glyphicon glyphicon-screenshot "></span>
-            </bk-popover>
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 50
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">PayOK</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Одежда</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
+          <div class="col-sm-2 sm-small-left-padding" >
+            <div class="no-left-padding no-right-padding">
+              <div class="expense"> 150 Byn</div>
+            </div>
           </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bfd2268ceb89c51ec74da50"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 27.11.2018 <div
-              _ngcontent-c15="" class="footnote">Вторник</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="balance" ng-reflect-ng-class="balance"> 13.03
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-6 no-right-padding"><!--bindings={
-  "ng-reflect-ng-if": "Money.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/account/Money.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Новый2 &gt;&gt; не пустой1</span>
-            <div _ngcontent-c15="" class="footnote">Изменение остатков</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bc5d45a96dad72778b15004"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 16.10.2018 <div
-              _ngcontent-c15="" class="footnote">Вторник</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 5
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">еще новый</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "avto.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/avto.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Автомобиль</span>
-            <div _ngcontent-c15="" class="footnote">Страхование</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bc4538096dad77be7746cb6"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 15.10.2018 <div
-              _ngcontent-c15="" class="footnote">Понедельник</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 4
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Резерв</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "avto.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/avto.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Автомобиль</span>
-            <div _ngcontent-c15="" class="footnote">ТО</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
+          <div class="col-sm-3 sm-small-left-padding" style="font-size: 12px;">
+            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги >> </span>
+            <span style="white-space: nowrap;">Беларусьбанк</span>
           </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bc0607b0bbaa44f040fb048"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 12.10.2018 <div
-              _ngcontent-c15="" class="footnote">Пятница</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 2
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">не пустой1</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Одежда</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
-          </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
-      </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object],[object Object"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bbf6b650bbaa4353cfe4db6"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 11.10.2018 <div
-              _ngcontent-c15="" class="footnote">Четверг</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 2
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Резерв</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "avto.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/avto.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Автомобиль</span>
-            <div _ngcontent-c15="" class="footnote">Страхование</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
+          <div class="col-sm-5 sm-category-column" style="font-size: 12px;">
+            <img class="icon" src="assets/image/category/deti.gif"><span class="description">Питание >> </span>
+            <span class="footnote" style="white-space: nowrap;">Продукты питания</span>
           </div>
         </div>
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bbf6afd0bbaa4353cfe4db5"><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding col-sm-offset-2"
-               ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 1
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Наличные</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "avto.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/avto.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Автомобиль</span>
-            <div _ngcontent-c15="" class="footnote">ТО</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
-          </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
+        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
+          <div class="col-sm-4"><strong>Цель:</strong> Страховка Tiguan</div>
+          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
+        </div>
       </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object],[object Object"
-}-->
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bb61147748b83221c42e919"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 04.10.2018 <div
-              _ngcontent-c15="" class="footnote">Четверг</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 1
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Наличные</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Одежда</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
+
+      <hr style="margin-top: 0;margin-bottom: 5px;"/>
+
+      <!-- Изменение остатков -->
+      <div style="margin-bottom: 5px;">
+        <div class="row">
+          <div class="col-sm-2">
+            <div>
+              <span>24.01.2019</span>
+            </div>
+          </div>
+          <div class="col-sm-2 sm-small-left-padding" >
+            <div class="no-left-padding no-right-padding">
+              <div class="expense"> 150 Byn</div>
+            </div>
+          </div>
+          <div class="col-sm-8 sm-small-left-padding" style="font-size: 12px;">
+            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги >> </span>
+            <span style="white-space: nowrap;">Беларусьбанк</span>
           </div>
         </div>
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bb61172748b83221c42e91d"><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding col-sm-offset-2"
-               ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 5
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Наличные</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Одежда</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
+        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
+          <div class="col-sm-4"><strong>Операция:</strong> изм. остатков</div>
+          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
+        </div>
+      </div>
+
+      <!-- Перевод -->
+      <div style="margin-bottom: 5px;">
+        <div class="row">
+          <div class="col-sm-2">
+            <div>
+              <span>25.01.2019</span>
+            </div>
+          </div>
+          <div class="col-sm-2 sm-small-left-padding" >
+            <div class="no-left-padding no-right-padding">
+              <div class="expense"> 150 Byn</div>
+            </div>
+          </div>
+          <div class="col-sm-8 sm-small-left-padding" style="font-size: 12px;">
+            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги (Беларусьбанк) >> </span>
+            <span style="white-space: nowrap;">Деньги (Белагропромбанк)</span>
           </div>
         </div>
-        <div _ngcontent-c15="" class="row history-line" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5bb6115f748b83221c42e91c"><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding col-sm-offset-2"
-               ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 4
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="BYN"><span>Byn</span>
-                </bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">Наличные</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "deti.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/deti.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Дети</span>
-            <div _ngcontent-c15="" class="footnote">Одежда</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
-          </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-        <hr _ngcontent-c15="">
+        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
+          <div class="col-sm-4"><strong>Операция:</strong> перевод</div>
+          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
+        </div>
       </div>
-      <div _ngcontent-c15=""><!--bindings={
-  "ng-reflect-ng-for-of": "[object Object]"
-}-->
-        <div _ngcontent-c15="" class="row history-line last-item" ng-reflect-klass="row history-line"
-             ng-reflect-ng-class="[object Object]" id="5ba89cc112377b5634cf90ca"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding">
-            <div _ngcontent-c15="" class="no-left-right-padding col-sm-6"
-                 ng-reflect-ng-class="no-left-right-padding,col-sm-6"><span _ngcontent-c15=""> 24.09.2018 <div
-              _ngcontent-c15="" class="footnote">Понедельник</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 sm-small-left-padding" ng-reflect-ng-class="[object Object]"><!--bindings={
-  "ng-reflect-ng-if": null
-}-->
-            <div _ngcontent-c15="" class="no-left-padding no-right-padding">
-              <div _ngcontent-c15="" class="expense" ng-reflect-ng-class="expense"> 5
-                <bk-currency-symbol _ngcontent-c15="" ng-reflect-currency-name="EUR"><span>€</span></bk-currency-symbol>
-              </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><span _ngcontent-c15=""><bk-template-variable _ngcontent-c15="" _nghost-c12=""
-                                                  ng-reflect-toggle-state="false"></bk-template-variable><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}--><div _ngcontent-c15="" class="footnote clickable">не пустой</div></span></div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 sm-category-column"><!--bindings={
-  "ng-reflect-ng-if": "avto.gif"
-}--><img _ngcontent-c15="" class="icon" src="assets/image/category/avto.gif"><span _ngcontent-c15=""
-                                                                                   class="description">Автомобиль</span>
-            <div _ngcontent-c15="" class="footnote">Бензин</div>
-          </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-3 description"></div><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-          <div _ngcontent-c15="" class="col-sm-2 text-center"><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="pencil" placement="top" text="Редактировать" _nghost-c14=""
-                        ng-reflect-text="Редактировать" ng-reflect-glyphicon-class="pencil" ng-reflect-placement="top">
-              <span _ngcontent-c14="" ng-reflect-content="Редактировать" ng-reflect-popover-disabled="false"
-                    ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-                    ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-pencil "></span>
-            </bk-popover><!--bindings={
-  "ng-reflect-ng-if": "true"
-}-->
-            <bk-popover _ngcontent-c15="" glyphiconclass="remove" placement="top" text="Удалить" _nghost-c14=""
-                        ng-reflect-text="Удалить" ng-reflect-glyphicon-class="remove" ng-reflect-placement="top"><span
-              _ngcontent-c14="" ng-reflect-content="Удалить" ng-reflect-popover-disabled="false"
-              ng-reflect-popover-placement="top" ng-reflect-popover-on-hover="true"
-              ng-reflect-popover-close-on-mouse-outside="true" class=" action glyphicon glyphicon-remove "></span>
-            </bk-popover>
+
+      <!-- Обмен -->
+      <div style="margin-bottom: 5px;">
+        <div class="row">
+          <div class="col-sm-2">
+            <div>
+              <span>25.01.2019</span>
+            </div>
           </div>
-        </div><!--bindings={
-  "ng-reflect-ng-if": "false"
-}--></div>
+          <div class="col-sm-5 sm-small-left-padding" >
+            <div class="no-left-padding no-right-padding">
+              <span class="expense">Byn 15'865.59 >> </span><span style="white-space: nowrap;">$ 18'365.89</span>
+            </div>
+          </div>
+          <div class="col-sm-5 sm-small-left-padding" style="font-size: 12px;">
+            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги >> Беларусьбанк</span>
+          </div>
+        </div>
+        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
+          <div class="col-sm-4"><strong>Операция:</strong> обмен</div>
+          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

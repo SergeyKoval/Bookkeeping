@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { IMyDrpOptions } from 'mydaterangepicker';
 
 import { DateUtils } from '../../common/utils/date-utils';
+import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
+import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 
 @Component({
   selector: 'bk-report-actions',
@@ -23,6 +25,17 @@ export class ReportActionsComponent implements OnInit {
     selectorWidth: '225px',
     disableSince: {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() + 1}
   };
+  public filterModel: MultiLevelDropdownItem[] = [
+    new MultiLevelDropdownItem('Доход', CheckboxState.CHECKED),
+    new MultiLevelDropdownItem('Расход', CheckboxState.INDETERMINATE, null, [
+      new MultiLevelDropdownItem('Дети', CheckboxState.INDETERMINATE, 'assets/image/category/deti.gif', [
+        new MultiLevelDropdownItem('Одежда', CheckboxState.CHECKED),
+        new MultiLevelDropdownItem('Подарки', CheckboxState.UNCHECKED),
+      ]),
+      new MultiLevelDropdownItem('Автомобиль', CheckboxState.UNCHECKED),
+      new MultiLevelDropdownItem('Комунальные платежи', CheckboxState.CHECKED),
+    ])
+  ];
 
   public constructor() { }
 

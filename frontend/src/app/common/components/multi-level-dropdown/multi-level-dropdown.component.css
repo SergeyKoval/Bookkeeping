@@ -1,0 +1,3 @@
+.open ::ng-deep > bk-multi-level-dropdown-level > .dropdown-menu {
+  display: block;
+}

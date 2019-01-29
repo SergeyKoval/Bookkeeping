@@ -1,0 +1,6 @@
+<div class="dropdown">
+  <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-default" data-target="#">
+    {{buttonTitle}} <span class="caret"></span>
+  </a>
+  <bk-multi-level-dropdown-level [dataModel]="dataModel" [stopPropagation]="stopPropagation" (childStateChange)="onChildStateChange($event)"></bk-multi-level-dropdown-level>
+</div>

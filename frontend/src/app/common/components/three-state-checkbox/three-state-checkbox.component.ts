@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { CheckboxState } from './CheckboxState';
 
@@ -6,14 +6,11 @@ import { CheckboxState } from './CheckboxState';
   selector: 'bk-three-state-checkbox',
   template: `<input type="checkbox" [indeterminate]="getIndeterminateValue()" [checked]="getCheckedValue()" (click)="changeState()">`
 })
-export class ThreeStateCheckboxComponent implements OnInit {
+export class ThreeStateCheckboxComponent {
   @Input()
   public state: CheckboxState = CheckboxState.UNCHECKED;
   @Output()
   public stateChanged: EventEmitter<CheckboxState> = new EventEmitter();
-
-  public ngOnInit(): void {
-  }
 
   public getCheckedValue(): boolean {
     return this.state === CheckboxState.CHECKED;
@@ -24,7 +21,7 @@ export class ThreeStateCheckboxComponent implements OnInit {
   }
 
   public changeState(): void {
-    this.state = this.state !== CheckboxState.UNCHECKED ? CheckboxState.UNCHECKED : CheckboxState.CHECKED;
+    this.state = this.state !== CheckboxState.CHECKED ? CheckboxState.CHECKED : CheckboxState.UNCHECKED;
     this.stateChanged.next(this.state);
   }
 }

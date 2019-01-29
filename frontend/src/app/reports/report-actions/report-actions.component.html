@@ -3,31 +3,7 @@
   <div class="panel-body" *ngIf="!loading; else loadingIndicator">
     <div class="row">
       <div class="col-sm-9" style="display: inline-flex;">
-        <div class="dropdown" style="padding-right: 10px;">
-          <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-default" data-target="#">
-            Фильтр <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-            <li><a>Some action</a></li>
-            <li><a>Some other action</a></li>
-            <li class="divider"></li>
-            <li class="dropdown-submenu">
-              <a tabindex="-1">Hover me for more options</a>
-              <ul class="dropdown-menu">
-                <li><a tabindex="-1">Second level</a></li>
-                <li class="dropdown-submenu">
-                  <a>Even More..</a>
-                  <ul class="dropdown-menu">
-                    <li><a>3rd level</a></li>
-                    <li><a>3rd level</a></li>
-                  </ul>
-                </li>
-                <li><a>Second level</a></li>
-                <li><a>Second level</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+        <bk-multi-level-dropdown buttonTitle="Фильтр" [dataModel]="filterModel" [stopPropagation]="true" style="padding-right: 10px;"></bk-multi-level-dropdown>
         <my-date-range-picker placeholder="Период" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker>
       </div>
       <div class="col-sm-3">

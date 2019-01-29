@@ -87,6 +87,8 @@ import { ReportActionsComponent } from './reports/report-actions/report-actions.
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 import { ThreeStateCheckboxComponent } from './common/components/three-state-checkbox/three-state-checkbox.component';
 import { StopPropagationDirective } from './common/directives/stop-propagation.directive';
+import { MultiLevelDropdownComponent } from './common/components/multi-level-dropdown/multi-level-dropdown.component';
+import { MultiLevelDropdownLevelComponent } from './common/components/multi-level-dropdown/multi-level-dropdown-level/multi-level-dropdown-level.component';
 
 @NgModule({
   declarations: [
@@ -152,7 +154,9 @@ import { StopPropagationDirective } from './common/directives/stop-propagation.d
     ReportActionsComponent,
     ReportSummaryComponent,
     ThreeStateCheckboxComponent,
-    StopPropagationDirective
+    StopPropagationDirective,
+    MultiLevelDropdownComponent,
+    MultiLevelDropdownLevelComponent
   ],
   imports: [
     BrowserModule,

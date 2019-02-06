@@ -94,7 +94,7 @@ export class ReportActionsComponent implements OnInit {
         incomeCategories.push(new MultiLevelDropdownItem(category.title, CheckboxState.CHECKED, this._imagePipe.transform(category.icon, 'category'), income));
       }
       if (expense.length > 0) {
-        expenseCategories.push(new MultiLevelDropdownItem(category.title, CheckboxState.CHECKED, category.icon, expense));
+        expenseCategories.push(new MultiLevelDropdownItem(category.title, CheckboxState.CHECKED, this._imagePipe.transform(category.icon, 'category'), expense));
       }
     });
 

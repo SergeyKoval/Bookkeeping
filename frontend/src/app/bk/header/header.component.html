@@ -9,11 +9,11 @@
           <li class="divider-vertical"></li>
           <li routerLinkActive="active"><a [routerLink]="['budget']">Бюджет</a></li>
           <li routerLinkActive="active"><a [routerLink]="['history']">Учет</a></li>
-          <li routerLinkActive="active" class="dropdown" *ngIf="needDisplayReports()">
+          <li routerLinkActive="active" class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Отчеты <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li routerLinkActive="active"><a [routerLink]="['reports', 'actions']">Операции за период</a></li>
-              <li routerLinkActive="active"><a [routerLink]="['reports', 'summary']">Итоги за период</a></li>
+              <li routerLinkActive="active" *ngIf="needDisplayReports()"><a [routerLink]="['reports', 'summary']">Итоги за период</a></li>
             </ul>
           </li>
         </ul>

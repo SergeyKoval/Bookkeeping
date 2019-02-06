@@ -75,7 +75,10 @@ export class CategoryStatisticsDialogComponent implements OnInit {
     });
 
     this.currencyBalance = [];
-    averageValues.forEach((value, currency) => this.currencyBalance.push({'currency': currency, 'completeValue': value / this.statistics.length, 'selectedValue': true}));
+    averageValues.forEach((value, currency) => {
+      const completeValue: number = Number((value / this.statistics.length).toFixed(2));
+      this.currencyBalance.push({'currency': currency, 'completeValue': completeValue, 'selectedValue': true});
+    });
   }
 
   private convertToCurrency(): BudgetStatistic[] {

@@ -1,5 +1,6 @@
 package by.bk.entity.history;
 
+import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.user.model.SubCategoryType;
@@ -18,4 +19,6 @@ public interface HistoryAPI {
     SimpleResponse editHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus, boolean changeOriginalGoalStatus);
     SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus);
     HistoryItem getById(String login, String historyItemId);
+
+    List<HistoryItem> getFiltered(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts);
 }

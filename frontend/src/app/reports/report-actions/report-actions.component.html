@@ -1,17 +1,18 @@
 <div class="panel panel-default">
   <div class="panel-heading text-center">Операции за период</div>
   <div class="panel-body" *ngIf="!loading; else loadingIndicator">
-    <div class="row">
-      <div class="col-sm-9" style="display: inline-flex;">
-        <bk-multi-level-dropdown buttonTitle="Фильтр" [dataModel]="filterModel" [stopPropagation]="true" style="padding-right: 10px;"></bk-multi-level-dropdown>
-        <my-date-range-picker placeholder="Период" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker>
+    <div class="row filter-row">
+      <div class="col-sm-10" style="display: inline-flex;">
+        <bk-multi-level-dropdown class="filter" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        <bk-multi-level-dropdown class="filter" buttonTitle="Счета" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        <my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker>
       </div>
-      <div class="col-sm-3">
-        <span class="btn btn-default left-button pull-right" [ngClass]="{'disabled': loading}" type="button">Поиск</span>
+      <div class="col-sm-2">
+        <span class="btn btn-default search-button pull-right" type="button" (click)="search()">Поиск</span>
       </div>
     </div>
 
-    <div class="table">
+    <div class="table" *ngIf="historyItems">
       <div class="row header">
         <div class="col-sm-2">Дата</div>
         <div class="col-sm-2">Сумма</div>
@@ -19,110 +20,115 @@
         <div class="col-sm-5">Категория</div>
       </div>
 
-      <!--Доход / Расход-->
-      <div style="margin-bottom: 5px;">
-        <div class="row">
-          <div class="col-sm-2">
-            <div>
-              <span>23.01.2019</span>
+      <div *ngFor="let historyGroup of historyItems | historyGroup; let lastGroup = last">
+        <div *ngFor="let historyItem of historyGroup.historyItems; let firstItem = first; let lastItem = last">
+          <!--Expense / Income-->
+          <div class="row-wrapper" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">
+            <div class="row">
+              <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
+              <div class="col-sm-2 sm-small-left-padding" >
+                <div class="no-left-padding no-right-padding">
+                  <div [ngClass]="historyItem.type">
+                    {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3 sm-small-left-padding default-style">
+                <img class="icon" *ngIf="historyItem.additionalIcon" [src]="historyItem.additionalIcon | assetImage:'account'">
+                <span>{{historyItem.balance.account}} >> </span>
+                <span class="text-nowrap">{{historyItem.balance.subAccount}}</span>
+              </div>
+              <div class="col-sm-5 sm-category-column default-style">
+                <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'category'">
+                <span class="description">{{historyItem.category}} >> </span>
+                <span class="footnote text-nowrap">{{historyItem.subCategory}}</span>
+              </div>
+            </div>
+            <div class="row footnote-row" *ngIf="historyItem.goal || historyItem.description">
+              <div class="col-sm-4"><span *ngIf="historyItem.goal"><strong>Цель:</strong> {{historyItem.goal}}</span></div>
+              <div class="col-sm-8"><span *ngIf="historyItem.description"><strong>Комментарий:</strong> {{historyItem.description}}</span></div>
             </div>
           </div>
-          <div class="col-sm-2 sm-small-left-padding" >
-            <div class="no-left-padding no-right-padding">
-              <div class="expense"> 150 Byn</div>
-            </div>
-          </div>
-          <div class="col-sm-3 sm-small-left-padding" style="font-size: 12px;">
-            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги >> </span>
-            <span style="white-space: nowrap;">Беларусьбанк</span>
-          </div>
-          <div class="col-sm-5 sm-category-column" style="font-size: 12px;">
-            <img class="icon" src="assets/image/category/deti.gif"><span class="description">Питание >> </span>
-            <span class="footnote" style="white-space: nowrap;">Продукты питания</span>
-          </div>
-        </div>
-        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
-          <div class="col-sm-4"><strong>Цель:</strong> Страховка Tiguan</div>
-          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
-        </div>
-      </div>
 
-      <hr style="margin-top: 0;margin-bottom: 5px;"/>
+          <!--Balance-->
+          <div class="row-wrapper" *ngIf="historyItem.type === 'balance'">
+            <div class="row">
+              <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
+              <div class="col-sm-2 sm-small-left-padding" >
+                <div class="no-left-padding no-right-padding">
+                  <div [ngClass]="historyItem.type">
+                    {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-8 sm-small-left-padding default-style">
+                <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
+                <span>{{historyItem.balance.account}} >> </span>
+                <span class="text-nowrap">{{historyItem.balance.subAccount}}</span>
+              </div>
+            </div>
+            <div class="row footnote-row">
+              <div class="col-sm-4"><strong>Операция:</strong> изм. остатков</div>
+              <div class="col-sm-8"><span *ngIf="historyItem.description"><strong>Комментарий:</strong> {{historyItem.description}}</span></div>
+            </div>
+          </div>
 
-      <!-- Изменение остатков -->
-      <div style="margin-bottom: 5px;">
-        <div class="row">
-          <div class="col-sm-2">
-            <div>
-              <span>24.01.2019</span>
+          <!-- Transfer -->
+          <div class="row-wrapper" *ngIf="historyItem.type === 'transfer'">
+            <div class="row">
+              <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
+              <div class="col-sm-2 sm-small-left-padding" >
+                <div class="no-left-padding no-right-padding">
+                  <div [ngClass]="historyItem.type">
+                    {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-8 sm-small-left-padding default-style">
+                <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
+                <span>{{historyItem.balance.account}} ({{historyItem.balance.subAccount}})  >>  </span>
+                <span class="text-nowrap">
+                  <img class="icon" *ngIf="historyItem.additionalIcon" [src]="historyItem.additionalIcon | assetImage:'account'">{{historyItem.balance.accountTo}} ({{historyItem.balance.subAccountTo}})
+                </span>
+              </div>
+            </div>
+            <div class="row footnote-row">
+              <div class="col-sm-4"><strong>Операция:</strong> перевод</div>
+              <div class="col-sm-8"><span *ngIf="historyItem.description"><strong>Комментарий:</strong> {{historyItem.description}}</span></div>
             </div>
           </div>
-          <div class="col-sm-2 sm-small-left-padding" >
-            <div class="no-left-padding no-right-padding">
-              <div class="expense"> 150 Byn</div>
-            </div>
-          </div>
-          <div class="col-sm-8 sm-small-left-padding" style="font-size: 12px;">
-            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги >> </span>
-            <span style="white-space: nowrap;">Беларусьбанк</span>
-          </div>
-        </div>
-        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
-          <div class="col-sm-4"><strong>Операция:</strong> изм. остатков</div>
-          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
-        </div>
-      </div>
 
-      <!-- Перевод -->
-      <div style="margin-bottom: 5px;">
-        <div class="row">
-          <div class="col-sm-2">
-            <div>
-              <span>25.01.2019</span>
+          <!-- Exchange -->
+          <div class="row-wrapper" *ngIf="historyItem.type === 'exchange'">
+            <div class="row">
+              <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
+              <div class="col-sm-5 sm-small-left-padding" >
+                <div class="no-left-padding no-right-padding">
+                  <span [ngClass]="historyItem.type">
+                    <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol> {{historyItem.balance.value | currencyValue}}
+                  </span>
+                  <span class="text-nowrap" [ngClass]="historyItem.type">
+                    <bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol> {{historyItem.balance.newValue | currencyValue}}
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-5 sm-small-left-padding default-style">
+                <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'account'">
+                <span>{{historyItem.balance.account}} >> {{historyItem.balance.subAccount}}</span>
+              </div>
+            </div>
+            <div class="row footnote-row">
+              <div class="col-sm-4"><strong>Операция:</strong> обмен</div>
+              <div class="col-sm-8"><span *ngIf="historyItem.description"><strong>Комментарий:</strong> {{historyItem.description}}</span></div>
             </div>
           </div>
-          <div class="col-sm-2 sm-small-left-padding" >
-            <div class="no-left-padding no-right-padding">
-              <div class="expense"> 150 Byn</div>
-            </div>
-          </div>
-          <div class="col-sm-8 sm-small-left-padding" style="font-size: 12px;">
-            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги (Беларусьбанк) >> </span>
-            <span style="white-space: nowrap;">Деньги (Белагропромбанк)</span>
-          </div>
         </div>
-        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
-          <div class="col-sm-4"><strong>Операция:</strong> перевод</div>
-          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
-        </div>
-      </div>
-
-      <!-- Обмен -->
-      <div style="margin-bottom: 5px;">
-        <div class="row">
-          <div class="col-sm-2">
-            <div>
-              <span>25.01.2019</span>
-            </div>
-          </div>
-          <div class="col-sm-5 sm-small-left-padding" >
-            <div class="no-left-padding no-right-padding">
-              <span class="expense">Byn 15'865.59 >> </span><span style="white-space: nowrap;">$ 18'365.89</span>
-            </div>
-          </div>
-          <div class="col-sm-5 sm-small-left-padding" style="font-size: 12px;">
-            <img class="icon" src="assets/image/category/deti.gif"><span>Деньги >> Беларусьбанк</span>
-          </div>
-        </div>
-        <div class="row" style="color: #999;font-size: 11px;font-style: normal;">
-          <div class="col-sm-4"><strong>Операция:</strong> обмен</div>
-          <div class="col-sm-8"><strong>Комментарий:</strong> Комментарий к операции</div>
-        </div>
+        <hr *ngIf="!lastGroup">
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #loadingIndicator>
-  <bk-spinner [size]="100"></bk-spinner>
+  <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
 </ng-template>

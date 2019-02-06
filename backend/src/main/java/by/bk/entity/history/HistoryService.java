@@ -1,5 +1,6 @@
 package by.bk.entity.history;
 
+import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.exception.HistoryItemMissedException;
@@ -17,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -140,6 +142,57 @@ public class HistoryService implements HistoryAPI {
         return historyRepository.findById(historyItemId).orElseThrow(() -> new HistoryItemMissedException(login, historyItemId));
     }
 
+    @Override
+    public List<HistoryItem> getFiltered(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts) {
+        List<AggregationOperation> pipes = new ArrayList<>();
+        Criteria periodCriteria = preparePeriodsCriteria(login, startPeriod, endPeriod);
+        if (!operations.isEmpty()) {
+            periodCriteria.and("type").in(operations.stream().map(operationsHierarchy -> operationsHierarchy.get(0)).collect(Collectors.toList()));
+        }
+        pipes.add(Aggregation.match(periodCriteria));
+
+        if (!operations.isEmpty()) {
+            List<Criteria> orCategories = new ArrayList<>();
+            operations.forEach(operationsHierarchy -> {
+                Iterator<String> iterator = operationsHierarchy.iterator();
+                Criteria criteria = Criteria.where("type").is(iterator.next());
+                if (iterator.hasNext()) {
+                    criteria.and("category").is(iterator.next());
+                    if (iterator.hasNext()) {
+                        criteria.and("subCategory").is(iterator.next());
+                    }
+                }
+                orCategories.add(criteria);
+            });
+            Criteria operationsCriteria = new Criteria().orOperator(orCategories.toArray(new Criteria[0]));
+            pipes.add(Aggregation.match(operationsCriteria));
+        }
+
+        if (!accounts.isEmpty()) {
+            List<Criteria> orAccounts = new ArrayList<>();
+            accounts.forEach(accountsHierarchy -> {
+                Iterator<String> iterator = accountsHierarchy.iterator();
+                String account = iterator.next();
+                Criteria criteria = Criteria.where("balance.account").is(account);
+                Criteria criteriaTo = Criteria.where("balance.accountTo").is(account);
+                if (iterator.hasNext()) {
+                    String subAccount = iterator.next();
+                    criteria.and("balance.subAccount").is(subAccount);
+                    criteriaTo.and("balance.subAccountTo").is(subAccount);
+                }
+                orAccounts.add(criteria);
+                orAccounts.add(criteriaTo);
+            });
+            Criteria operationsCriteria = new Criteria().orOperator(orAccounts.toArray(new Criteria[0]));
+            pipes.add(Aggregation.match(operationsCriteria));
+        }
+
+        pipes.add(Aggregation.sort(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"))));
+
+        Aggregation aggregation = Aggregation.newAggregation(pipes);
+        return mongoTemplate.aggregate(aggregation, "history", HistoryItem.class).getMappedResults();
+    }
+
     private boolean affectBudget(HistoryType type) {
         return HistoryType.income.equals(type) || HistoryType.expense.equals(type);
     }
@@ -201,5 +254,40 @@ public class HistoryService implements HistoryAPI {
         historyItem.setOrder(order);
         historyItem.setUser(login);
         return historyRepository.save(historyItem);
+    }
+
+    private Criteria preparePeriodsCriteria(String login, DateRequest startPeriod, DateRequest endPeriod) {
+        Criteria criteria = Criteria.where("user").is(login);
+        if (startPeriod.getYear().equals(endPeriod.getYear()) && startPeriod.getMonth().equals(endPeriod.getMonth())) {
+            return criteria.and("year").is(startPeriod.getYear())
+                    .and("month").is(startPeriod.getMonth())
+                    .and("day").gte(startPeriod.getDay()).lte(endPeriod.getDay());
+        }
+
+        List<Criteria> orPeriods = new ArrayList<>();
+        orPeriods.add(Criteria.where("year").is(startPeriod.getYear()).and("month").is(startPeriod.getMonth()).and("day").gte(startPeriod.getDay()));
+        orPeriods.add(Criteria.where("year").is(endPeriod.getYear()).and("month").is(endPeriod.getMonth()).and("day").lte(endPeriod.getDay()));
+        if (!nearPeriods(startPeriod, endPeriod)) {
+            switchToNextPeriod(startPeriod);
+            while (startPeriod.getYear() < endPeriod.getYear() || (startPeriod.getYear().equals(endPeriod.getYear()) && startPeriod.getMonth() < endPeriod.getMonth())) {
+                orPeriods.add(Criteria.where("year").is(startPeriod.getYear()).and("month").is(startPeriod.getMonth()));
+                switchToNextPeriod(startPeriod);
+            }
+        }
+        return criteria.orOperator(orPeriods.toArray(new Criteria[0]));
+    }
+
+    private boolean nearPeriods(DateRequest startPeriod, DateRequest endPeriod) {
+        return (startPeriod.getYear().equals(endPeriod.getYear()) && endPeriod.getMonth() - startPeriod.getMonth() == 1)
+                || (endPeriod.getYear() - startPeriod.getYear() == 1 && startPeriod.getMonth() == 12 && endPeriod.getMonth() == 1);
+    }
+
+    private void switchToNextPeriod(DateRequest period) {
+        if (period.getMonth() == 12) {
+            period.setYear(period.getYear() + 1);
+            period.setMonth(1);
+        } else {
+            period.setMonth(period.getMonth() + 1);
+        }
     }
 }

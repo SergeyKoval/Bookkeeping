@@ -29,6 +29,7 @@ export class HistoryGroupPipe implements PipeTransform {
         case 'expense':
         case 'income':
           historyItem.icon = this._authenticationService.getCategoryIcon(item.category);
+          historyItem.additionalIcon = this._authenticationService.getAccountIcon(item.balance.account, item.balance.subAccount);
           break;
         case 'transfer':
           historyItem.additionalIcon = this._authenticationService.getAccountIcon(item.balance.accountTo, item.balance.subAccountTo);

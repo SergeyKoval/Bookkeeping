@@ -29,3 +29,72 @@
 .table div hr {
   margin: 5px 0;
 }
+
+.filter {
+  padding-right: 10px;
+}
+
+.row-wrapper {
+  margin-bottom: 5px;
+}
+
+.expense {
+  color: #cc0000;
+  white-space: nowrap;
+}
+
+.balance {
+  color: #666666;
+  white-space: nowrap;
+}
+
+.income {
+  color: #009900;
+  white-space: nowrap;
+}
+
+.transfer {
+  color: #0099ff;
+  white-space: nowrap;
+}
+
+.default-style {
+  font-size: 12px;
+}
+
+.icon {
+  padding-right: 5px;
+}
+
+.footnote-row {
+  color: #999;
+  font-size: 11px;
+  font-style: normal;
+}
+
+hr {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.spinner-wrapper {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .filter-row {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  .filter {
+    padding-right: 5px;
+  }
+
+  .search-button, :host ::ng-deep bk-multi-level-dropdown .btn {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+

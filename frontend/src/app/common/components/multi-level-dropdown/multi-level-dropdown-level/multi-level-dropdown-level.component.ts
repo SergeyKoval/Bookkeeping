@@ -15,6 +15,8 @@ export class MultiLevelDropdownLevelComponent {
   public nextLevels: boolean = false;
   @Input()
   public stopPropagation: boolean;
+  @Input()
+  public checkAllButton: boolean = false;
   @Output()
   public childStateChange: EventEmitter<MultiLevelDropdownItem> = new EventEmitter();
 
@@ -32,6 +34,18 @@ export class MultiLevelDropdownLevelComponent {
   public changeCheckboxState(item: MultiLevelDropdownItem, newState: CheckboxState): void {
     this.processDescendants(item, newState);
     this.childStateChange.next(item);
+  }
+
+  public checkAll(): void {
+    const newState: CheckboxState = this.isAllChecked() ? CheckboxState.UNCHECKED : CheckboxState.CHECKED;
+    this.dataModel.forEach(item => {
+      item.state = newState;
+      this.processDescendants(item, newState);
+    });
+  }
+
+  public isAllChecked(): boolean {
+    return this.dataModel.filter(item => item.state === CheckboxState.CHECKED).length === this.dataModel.length;
   }
 
   private processDescendants(item: MultiLevelDropdownItem, newState: CheckboxState): void {

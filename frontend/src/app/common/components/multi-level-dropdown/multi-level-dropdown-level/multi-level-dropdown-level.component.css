@@ -73,3 +73,13 @@
 .element-title {
   cursor: pointer;
 }
+
+.divider {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.check-all {
+  padding-left: 10px;
+  padding-right: 10px;
+}

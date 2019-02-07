@@ -15,6 +15,8 @@ export class InputComponent {
   public submitted: boolean;
   @Input()
   public alwaysEditing: boolean;
+  @Input()
+  public inputId: string;
 
   public isInvalidValue(): boolean {
     return this.submitted && this.input.invalid;

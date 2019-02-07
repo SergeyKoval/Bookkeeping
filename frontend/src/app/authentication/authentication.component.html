@@ -12,8 +12,8 @@
 
 <div *ngIf="!applicationLoading; else applicationLoadingIndicator">
   <form #formRef [formGroup]="authenticationForm" *ngIf="type === 'authentication'">
-    <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
-    <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
+    <bk-authentication-input inputId="login" [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('email')" [submitted]="submitted">Логин</bk-authentication-input>
+    <bk-authentication-input inputId="password" [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="submitted">Пароль</bk-authentication-input>
 
     <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!loading; else loadingIndicator">Войти</button>
     <div class="additional-actions">

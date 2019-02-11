@@ -82,6 +82,10 @@ hr {
   margin-bottom: 10px;
 }
 
+.filters {
+  display: inline-flex;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .filter-row {
     margin-left: -20px;

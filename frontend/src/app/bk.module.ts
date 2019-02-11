@@ -11,6 +11,7 @@ import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MyDatePickerModule } from 'mydatepicker';
 import { MyDateRangePickerModule } from 'mydaterangepicker';
+import { ChartsModule } from 'ng2-charts';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
@@ -177,6 +178,7 @@ import { MultiLevelDropdownLevelComponent } from './common/components/multi-leve
     PopoverModule,
     MyDatePickerModule,
     MyDateRangePickerModule,
+    ChartsModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
     LocalStorageModule.withConfig({
       prefix: 'Bookkeeper',

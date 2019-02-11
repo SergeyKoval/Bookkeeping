@@ -1,0 +1,122 @@
+.spinner-wrapper {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-body {
+  padding: 10px;
+}
+
+.panel-heading {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-weight: bold;
+}
+
+.header {
+  color: #333;
+  border-color: #ddd;
+  font-weight: bolder;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.table {
+  margin: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.filter {
+  padding-right: 10px;
+}
+
+.filter-row {
+  display: inline-flex;
+}
+
+hr {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.table-row {
+  margin-right: 0;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+}
+
+.table-panel {
+  margin-bottom: 0;
+}
+
+.table {
+  margin-bottom: 5px;
+}
+
+.no-right-padding, .no-padding {
+  padding-right: 0;
+}
+
+.no-left-padding, .no-padding {
+  padding-left: 0;
+}
+
+.small-left-padding {
+  padding-left: 5px;
+}
+
+.total {
+  padding-left: 20px;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .filter-row-wrapper {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  .filter {
+    padding-right: 5px;
+  }
+
+  .search-button, :host ::ng-deep bk-multi-level-dropdown .btn {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  :host ::ng-deep my-date-range-picker .mydrp {
+    width: 264px !important;
+  }
+
+  .search-button {
+    height: 73px;
+    vertical-align: middle;
+    line-height: 61px;
+  }
+
+  .table-wrapper{
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .category-column {
+    padding-left: 5px;
+  }
+
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  :host ::ng-deep my-date-range-picker .mydrp {
+    width: 299px !important;
+  }
+
+  .search-button {
+    height: 73px;
+    vertical-align: middle;
+    line-height: 61px;
+  }
+}

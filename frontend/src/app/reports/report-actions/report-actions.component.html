@@ -2,7 +2,7 @@
   <div class="panel-heading text-center">Операции за период</div>
   <div class="panel-body" *ngIf="!loading; else loadingIndicator">
     <div class="row filter-row">
-      <div class="col-sm-10" style="display: inline-flex;">
+      <div class="col-sm-10 filters">
         <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Счета" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker>

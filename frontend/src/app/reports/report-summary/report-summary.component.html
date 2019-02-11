@@ -1,3 +1,75 @@
-<p>
-  report-summary works!
-</p>
+<div class="panel panel-default">
+  <div class="panel-heading text-center">Итоги за период</div>
+  <div class="panel-body" *ngIf="!loading; else loadingIndicator">
+    <div class="row filter-row-wrapper">
+      <div class="col-sm-10">
+        <span class="filter-row" style="float: left;padding-bottom: 5px;">
+          <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+          <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Счета" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+          <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="В валюте" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        </span>
+        <span><my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker></span>
+      </div>
+      <div class="col-sm-2">
+        <span class="btn btn-default search-button pull-right" type="button" (click)="search()">Поиск</span>
+      </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2" style="display: block;padding-bottom: 10px;">
+      <canvas baseChart
+              [data]="pieChartData"
+              [labels]="pieChartLabels"
+              [chartType]="pieChartType"
+              (chartHover)="chartHovered($event)"
+              (chartClick)="chartClicked($event)"></canvas>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 table-wrapper">
+
+        <div class="panel panel-default table-panel">
+          <div class="panel-heading text-center">Сумма расходные операции за период</div>
+          <table class="table">
+            <div class="row header">
+              <div class="col-sm-3 no-right-padding category-column">Категория</div>
+              <div class="col-sm-9 no-padding">
+                <div class="row table-row">
+                  <div class="col-sm-5 small-left-padding">Подкатегория</div>
+                  <div class="col-sm-2 no-padding text-center">Процент</div>
+                  <div class="col-sm-5 total">Итог</div>
+                </div>
+              </div>
+            </div>
+            <hr/>
+            <div class="row table-row">
+              <div class="col-sm-3 vertical-middle no-right-padding category-column"><span>Дети</span></div>
+              <div class="col-sm-9 no-padding">
+                <div class="row table-row">
+                  <div class="col-sm-5 small-left-padding">Образование</div>
+                  <div class="col-sm-2 no-padding text-center">5%</div>
+                  <div class="col-sm-5 no-right-padding">
+                    <div class="row table-row small-left-padding">Byn 30</div>
+                    <hr/>
+                    <div class="row table-row small-left-padding">$ 30</div>
+                  </div>
+                </div>
+                <hr/>
+                <div class="row table-row">
+                  <div class="col-sm-5 small-left-padding">Развлечения</div>
+                  <div class="col-sm-2 no-padding text-center">5%</div>
+                  <div class="col-sm-5 total">Byn 30</div>
+                </div>
+              </div>
+            </div>
+            <hr/>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #loadingIndicator>
+  <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
+</ng-template>

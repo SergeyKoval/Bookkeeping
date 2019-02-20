@@ -98,7 +98,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     this.pieChartData = [];
     this.reportSum = 0;
     this.items = [];
-    this.type = this.operationsFilter[0].alias;
+    this.type = this.operationsFilter.filter(operation => operation.state === CheckboxState.CHECKED)[0].alias;
     this.onlyCategories = true;
 
     let defaultCurrency: string = this._profileService.defaultCurrency.name;

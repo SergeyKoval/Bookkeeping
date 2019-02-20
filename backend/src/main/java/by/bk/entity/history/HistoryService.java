@@ -12,9 +12,9 @@ import by.bk.entity.user.UserAPI;
 import by.bk.entity.user.UserRepository;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
-import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,7 +231,7 @@ public class HistoryService implements HistoryAPI {
 
     private Collection<SummaryReportResponse> collectSummaryReportSubCategories(Stream<SummaryReportItem> items) {
         return items.collect(Collectors.toMap(
-                item -> new Pair<>(item.getCategory(), item.getSubCategory()),
+                item -> new MutablePair<>(item.getCategory(), item.getSubCategory()),
                 item -> new SummaryReportResponse(item, false),
                 SUMMARY_REPORT_MERGE_FUNCTION)
         ).values();

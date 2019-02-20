@@ -20,7 +20,7 @@ export class AccountCategoryDialogComponent implements OnInit {
     , 'tehnobank.png', 'status.png', 'moskva-minsk.png', 'bps.jpg', 'paritet.jpg', 'prior.png', 'belveb.png', 'bsb.gif'
     , 'vtb.png', 'bnb.png', 'belinvest.jpg', 'mtb.png'];
   public categoryIcons: string[] = ['twinpalm.gif', 'eating.gif', 'shopping.gif', 'health.gif', 'rock-and-roll.gif', 'income.gif'
-    , 'kredit.gif', 'avto.gif', 'deti.gif', 'home.gif', 'plane.gif', 'mouse.png', 'ruler.png', 'work.png'];
+    , 'kredit.gif', 'avto.gif', 'deti.gif', 'home.gif', 'plane.gif', 'mouse.png', 'ruler.png', 'work.png', 'gift.png'];
   public title: string;
   public errorMessage: string;
   public loading: boolean;
@@ -66,7 +66,7 @@ export class AccountCategoryDialogComponent implements OnInit {
       return;
     }
 
-    if(this.isAccountType()) {
+    if (this.isAccountType()) {
       if (!this.data.editMode) {
         this.processResult(this._profileService.addAccount(this.title), 'Счет с таким названием уже существует', 'Ошибка при добавлении счета');
       } else if (this.title === this.data.title) {
@@ -76,15 +76,17 @@ export class AccountCategoryDialogComponent implements OnInit {
       }
     }
 
-    if(this.isSubAccountType()) {
+    if (this.isSubAccountType()) {
       if (!this.data.editMode) {
-        this.processResult(this._profileService.addSubAccount(this.title, this.data.parentTitle, this.data.icon, this.data.balance), 'Субчет с таким названием уже существует', 'Ошибка при добавлении субсчета');
+        this.processResult(this._profileService.addSubAccount(this.title, this.data.parentTitle, this.data.icon, this.data.balance)
+          , 'Субчет с таким названием уже существует', 'Ошибка при добавлении субсчета');
       } else {
-        this.processResult(this._profileService.editSubAccount(this.data.parentTitle, this.data.title, this.title, this.data.icon, this.data.balance), 'Субсчет с таким названием уже существует', 'Ошибка при изменении субсчета');
+        this.processResult(this._profileService.editSubAccount(this.data.parentTitle, this.data.title, this.title, this.data.icon, this.data.balance)
+          , 'Субсчет с таким названием уже существует', 'Ошибка при изменении субсчета');
       }
     }
 
-    if(this.isCategoryType()) {
+    if (this.isCategoryType()) {
       if (!this.data.editMode) {
         this.processResult(this._profileService.addCategory(this.title, this.data.icon), 'Категория с таким названием уже существует', 'Ошибка при добавлении категории');
       } else {
@@ -92,18 +94,20 @@ export class AccountCategoryDialogComponent implements OnInit {
       }
     }
 
-    if(this.isSubCategoryType()) {
+    if (this.isSubCategoryType()) {
       if (!this.data.editMode) {
         if (isNullOrUndefined(this.data.subCategoryType)) {
           this.errorMessage = 'Необходимо выбрать тип';
           this.loading = false;
           return;
         }
-        this.processResult(this._profileService.addSubCategory(this.title, this.data.parentTitle, this.data.subCategoryType), 'Подкатегория с таким названием уже существует', 'Ошибка при добавлении подкатегории');
+        this.processResult(this._profileService.addSubCategory(this.title, this.data.parentTitle, this.data.subCategoryType)
+          , 'Подкатегория с таким названием уже существует', 'Ошибка при добавлении подкатегории');
       } else if (this.title === this.data.title) {
         this._dialogRef.close(false);
       } else {
-        this.processResult(this._profileService.editSubCategory(this.data.parentTitle, this.data.title, this.title, this.data.subCategoryType), 'Подкатегория с таким названием уже существует', 'Ошибка при изменении подкатегории');
+        this.processResult(this._profileService.editSubCategory(this.data.parentTitle, this.data.title, this.title, this.data.subCategoryType)
+          , 'Подкатегория с таким названием уже существует', 'Ошибка при изменении подкатегории');
       }
     }
   }
@@ -140,7 +144,7 @@ export class AccountCategoryDialogComponent implements OnInit {
     resultObservable.subscribe(result => {
       this.loading = false;
       if (result.status === 'FAIL') {
-        this.errorMessage = result.message === 'ALREADY_EXIST' ? alreadyExistError: otherError;
+        this.errorMessage = result.message === 'ALREADY_EXIST' ? alreadyExistError : otherError;
         return;
       }
 

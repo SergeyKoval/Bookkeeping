@@ -2,9 +2,11 @@ package by.bk.entity.history;
 
 import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.controller.model.response.SummaryReportResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.user.model.SubCategoryType;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -21,4 +23,5 @@ public interface HistoryAPI {
     HistoryItem getById(String login, String historyItemId);
 
     List<HistoryItem> getFiltered(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts);
+    Collection<SummaryReportResponse> getPeriodSummary(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> currencies);
 }

@@ -3,10 +3,10 @@
   <div class="panel-body" *ngIf="!loading; else loadingIndicator">
     <div class="row filter-row-wrapper">
       <div class="col-sm-10">
-        <span class="filter-row" style="float: left;padding-bottom: 5px;">
-          <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        <span class="filter-row">
+          <bk-multi-level-dropdown class="filter" alternativeSelection="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
           <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Счета" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
-          <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="В валюте" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+          <bk-multi-level-dropdown class="filter" buttonTitle="В валюте" [dataModel]="currenciesFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         </span>
         <span><my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker></span>
       </div>
@@ -15,54 +15,55 @@
       </div>
     </div>
 
-    <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2" style="display: block;padding-bottom: 10px;">
-      <canvas baseChart
-              [data]="pieChartData"
-              [labels]="pieChartLabels"
-              [chartType]="pieChartType"
-              (chartHover)="chartHovered($event)"
-              (chartClick)="chartClicked($event)"></canvas>
-    </div>
+    <div *ngIf="items && items.length > 0">
+      <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2 chart-row" *ngIf="pieChartData && pieChartLabels">
+        <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"></canvas>
+      </div>
 
-    <div class="row">
-      <div class="col-sm-12 table-wrapper">
-
-        <div class="panel panel-default table-panel">
-          <div class="panel-heading text-center">Сумма расходные операции за период</div>
-          <table class="table">
-            <div class="row header">
-              <div class="col-sm-3 no-right-padding category-column">Категория</div>
-              <div class="col-sm-9 no-padding">
-                <div class="row table-row">
-                  <div class="col-sm-5 small-left-padding">Подкатегория</div>
-                  <div class="col-sm-2 no-padding text-center">Процент</div>
-                  <div class="col-sm-5 total">Итог</div>
-                </div>
-              </div>
-            </div>
-            <hr/>
-            <div class="row table-row">
-              <div class="col-sm-3 vertical-middle no-right-padding category-column"><span>Дети</span></div>
-              <div class="col-sm-9 no-padding">
-                <div class="row table-row">
-                  <div class="col-sm-5 small-left-padding">Образование</div>
-                  <div class="col-sm-2 no-padding text-center">5%</div>
-                  <div class="col-sm-5 no-right-padding">
-                    <div class="row table-row small-left-padding">Byn 30</div>
-                    <hr/>
-                    <div class="row table-row small-left-padding">$ 30</div>
+      <div class="row">
+        <div class="col-sm-12 table-wrapper">
+          <div class="panel panel-default table-panel">
+            <div class="panel-heading text-center">Сумма <span *ngIf="type === 'expense'">расходных</span><span *ngIf="type === 'income'">доходных</span> операции за период</div>
+            <div class="table">
+              <div class="row header">
+                <div class="col-sm-3 no-right-padding category-column">Категория</div>
+                <div class="col-sm-9 no-padding">
+                  <div class="row table-row">
+                    <div class="col-sm-5 small-left-padding"><span *ngIf="!onlyCategories">Подкатегория</span></div>
+                    <div class="col-sm-2 no-padding text-center">Процент</div>
+                    <div class="col-sm-5 total">Итог</div>
                   </div>
                 </div>
-                <hr/>
+              </div>
+              <hr/>
+
+              <div *ngFor="let categoryGroup of items; let lastGroup = last">
                 <div class="row table-row">
-                  <div class="col-sm-5 small-left-padding">Развлечения</div>
-                  <div class="col-sm-2 no-padding text-center">5%</div>
-                  <div class="col-sm-5 total">Byn 30</div>
+                  <div class="col-sm-3 vertical-middle no-right-padding category-column" [ngClass]="{'text-nowrap': categoryGroup.length === 1}">{{categoryGroup[0].category}}</div>
+                  <div class="col-sm-9 no-padding">
+                    <div *ngFor="let item of categoryGroup; let lastItem = last">
+                      <div class="row table-row">
+                        <div class="col-sm-5 small-left-padding">{{item.subCategory}}</div>
+                        <div class="col-sm-2 no-padding text-center">{{item.percent}}%</div>
+                        <div class="col-sm-5 no-right-padding">
+                          <div *ngFor="let currency of item.values | keyvalue; let lastValue = last">
+                            <div class="row table-row small-left-padding">
+                              <span>
+                                <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency.key"></bk-currency-symbol></span> {{currency.value | currencyValue:2}}
+                              </span>
+                            </div>
+                            <hr *ngIf="!lastValue"/>
+                          </div>
+                        </div>
+                      </div>
+                      <hr *ngIf="!lastItem"/>
+                    </div>
+                  </div>
                 </div>
+                <hr *ngIf="!lastGroup"/>
               </div>
             </div>
-            <hr/>
-          </table>
+          </div>
         </div>
       </div>
     </div>

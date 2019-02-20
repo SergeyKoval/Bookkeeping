@@ -16,6 +16,8 @@ export class MultiLevelDropdownComponent {
   public stopPropagation: boolean;
   @Input()
   public checkAllButton: boolean = false;
+  @Input()
+  public alternativeSelection: boolean = false;
   @Output()
   public stateChange: EventEmitter<boolean> = new EventEmitter();
 

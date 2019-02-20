@@ -28,6 +28,22 @@ export class ReportService {
     });
   }
 
+  public getSummaryForPeriodReport(periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[],
+                                   accountsFilter: MultiLevelDropdownItem[], currenciesFilter: MultiLevelDropdownItem[]): Observable<SummaryReport[]> {
+    const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
+    const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
+    const selectedCurrencies: string[] = currenciesFilter
+      .filter(currency => currency.state === CheckboxState.CHECKED)
+      .map(currency => currency.alias);
+    return this._http.post<SummaryReport[]>('/api/report/period-summary', {
+      'startPeriod': periodFilter.beginDate,
+      'endPeriod': periodFilter.endDate,
+      'operations': selectedOperations,
+      'accounts': selectedAccounts,
+      'currencies': selectedCurrencies
+    });
+  }
+
   private prepareFilteredItems(items: MultiLevelDropdownItem[]): string[][] {
     if (items.filter(operation => operation.state === CheckboxState.CHECKED).length === items.length) {
       return [];

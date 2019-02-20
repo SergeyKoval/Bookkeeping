@@ -2,6 +2,7 @@ package by.bk.entity.history;
 
 import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.controller.model.response.SummaryReportResponse;
 import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.exception.HistoryItemMissedException;
 import by.bk.entity.currency.Currency;
@@ -11,6 +12,7 @@ import by.bk.entity.user.UserAPI;
 import by.bk.entity.user.UserRepository;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
+import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,8 +30,10 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Sergey Koval
@@ -37,6 +41,13 @@ import java.util.stream.Collectors;
 @Service
 public class HistoryService implements HistoryAPI {
     private static final Log LOG = LogFactory.getLog(HistoryService.class);
+
+    private static final BinaryOperator<SummaryReportResponse> SUMMARY_REPORT_MERGE_FUNCTION = (SummaryReportResponse oldItem, SummaryReportResponse newItem) -> {
+        Map<Currency, Double> newValues = newItem.getValues();
+        Currency newCurrency = newValues.keySet().iterator().next();
+        oldItem.getValues().compute(newCurrency, (currency, value) -> value == null ? newValues.get(newCurrency) : value + newValues.get(newCurrency));
+        return oldItem;
+    };
 
     @Autowired
     private HistoryRepository historyRepository;
@@ -152,45 +163,78 @@ public class HistoryService implements HistoryAPI {
         pipes.add(Aggregation.match(periodCriteria));
 
         if (!operations.isEmpty()) {
-            List<Criteria> orCategories = new ArrayList<>();
-            operations.forEach(operationsHierarchy -> {
-                Iterator<String> iterator = operationsHierarchy.iterator();
-                Criteria criteria = Criteria.where("type").is(iterator.next());
-                if (iterator.hasNext()) {
-                    criteria.and("category").is(iterator.next());
-                    if (iterator.hasNext()) {
-                        criteria.and("subCategory").is(iterator.next());
-                    }
-                }
-                orCategories.add(criteria);
-            });
-            Criteria operationsCriteria = new Criteria().orOperator(orCategories.toArray(new Criteria[0]));
-            pipes.add(Aggregation.match(operationsCriteria));
+            pipes.add(Aggregation.match(prepareOperationsCriteria(operations)));
         }
 
         if (!accounts.isEmpty()) {
-            List<Criteria> orAccounts = new ArrayList<>();
-            accounts.forEach(accountsHierarchy -> {
-                Iterator<String> iterator = accountsHierarchy.iterator();
-                String account = iterator.next();
-                Criteria criteria = Criteria.where("balance.account").is(account);
-                Criteria criteriaTo = Criteria.where("balance.accountTo").is(account);
-                if (iterator.hasNext()) {
-                    String subAccount = iterator.next();
-                    criteria.and("balance.subAccount").is(subAccount);
-                    criteriaTo.and("balance.subAccountTo").is(subAccount);
-                }
-                orAccounts.add(criteria);
-                orAccounts.add(criteriaTo);
-            });
-            Criteria operationsCriteria = new Criteria().orOperator(orAccounts.toArray(new Criteria[0]));
-            pipes.add(Aggregation.match(operationsCriteria));
+            pipes.add(Aggregation.match(prepareAccountsCriteria(accounts, true)));
         }
 
         pipes.add(Aggregation.sort(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"))));
 
         Aggregation aggregation = Aggregation.newAggregation(pipes);
         return mongoTemplate.aggregate(aggregation, "history", HistoryItem.class).getMappedResults();
+    }
+
+    @Override
+    public Collection<SummaryReportResponse> getPeriodSummary(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> currencies) {
+        List<AggregationOperation> pipes = new ArrayList<>();
+
+        Criteria initialFilter = preparePeriodsCriteria(login, startPeriod, endPeriod);
+        initialFilter.and("type").is(operations.get(0).get(0));
+        if (!currencies.isEmpty()) {
+            initialFilter.and("balance.currency").in(currencies);
+        }
+        pipes.add(Aggregation.match(initialFilter));
+
+        if (!operations.isEmpty()) {
+            pipes.add(Aggregation.match(prepareOperationsCriteria(operations)));
+        }
+        if (!accounts.isEmpty()) {
+            pipes.add(Aggregation.match(prepareAccountsCriteria(accounts, false)));
+        }
+
+        pipes.add(Aggregation.group("category", "subCategory", "balance.currency").sum("balance.value").as("balanceValue"));
+
+        Aggregation aggregation = Aggregation.newAggregation(pipes);
+        List<SummaryReportItem> items = mongoTemplate.aggregate(aggregation, "history", SummaryReportItem.class).getMappedResults();
+        //just one operation hierarchy provided
+        if (operations.size() == 1) {
+            return operations.get(0).size() == 1 ? collectSummaryReportCategories(items.stream()) : collectSummaryReportSubCategories(items.stream());
+        } else {
+            //separate operations where full category was provided and just some sub categories
+            Map<Boolean, List<List<String>>> categorySubCategoryItems = operations.stream().collect(Collectors.partitioningBy(item -> item.size() < 3));
+            return CollectionUtils.union(
+                    //process operations with full categories
+                    collectSummaryReportCategories(
+                            categorySubCategoryItems.get(Boolean.TRUE).stream()
+                                    .flatMap(hierarchy -> items.stream().filter(item -> StringUtils.equals(item.getCategory(), hierarchy.get(1))))
+                    ),
+                    //process operations with some specific sub categories
+                    collectSummaryReportSubCategories(
+                            categorySubCategoryItems.get(Boolean.FALSE).stream()
+                                    .flatMap(hierarchy -> items.stream()
+                                            .filter(item -> StringUtils.equals(item.getCategory(), hierarchy.get(1)))
+                                            .filter(item -> StringUtils.equals(item.getSubCategory(), hierarchy.get(2))))
+                    )
+            );
+        }
+    }
+
+    private Collection<SummaryReportResponse> collectSummaryReportCategories(Stream<SummaryReportItem> items) {
+        return items.collect(Collectors.toMap(
+                SummaryReportItem::getCategory,
+                item -> new SummaryReportResponse(item, true),
+                SUMMARY_REPORT_MERGE_FUNCTION)
+        ).values();
+    }
+
+    private Collection<SummaryReportResponse> collectSummaryReportSubCategories(Stream<SummaryReportItem> items) {
+        return items.collect(Collectors.toMap(
+                item -> new Pair<>(item.getCategory(), item.getSubCategory()),
+                item -> new SummaryReportResponse(item, false),
+                SUMMARY_REPORT_MERGE_FUNCTION)
+        ).values();
     }
 
     private boolean affectBudget(HistoryType type) {
@@ -275,6 +319,49 @@ public class HistoryService implements HistoryAPI {
             }
         }
         return criteria.orOperator(orPeriods.toArray(new Criteria[0]));
+    }
+
+    private Criteria prepareOperationsCriteria(List<List<String>> operations) {
+        List<Criteria> orCategories = new ArrayList<>();
+        operations.forEach(operationsHierarchy -> {
+            Iterator<String> iterator = operationsHierarchy.iterator();
+            Criteria criteria = Criteria.where("type").is(iterator.next());
+            if (iterator.hasNext()) {
+                criteria.and("category").is(iterator.next());
+                if (iterator.hasNext()) {
+                    criteria.and("subCategory").is(iterator.next());
+                }
+            }
+            orCategories.add(criteria);
+        });
+
+        return new Criteria().orOperator(orCategories.toArray(new Criteria[0]));
+    }
+
+    private Criteria prepareAccountsCriteria(List<List<String>> accounts, boolean includeToAlternative) {
+        List<Criteria> orAccounts = new ArrayList<>();
+        accounts.forEach(accountsHierarchy -> {
+            Criteria criteriaTo = null;
+            Iterator<String> iterator = accountsHierarchy.iterator();
+            String account = iterator.next();
+            Criteria criteria = Criteria.where("balance.account").is(account);
+            if (includeToAlternative) {
+                criteriaTo = Criteria.where("balance.accountTo").is(account);
+            }
+            if (iterator.hasNext()) {
+                String subAccount = iterator.next();
+                criteria.and("balance.subAccount").is(subAccount);
+                if (includeToAlternative) {
+                    criteriaTo.and("balance.subAccountTo").is(subAccount);
+                }
+            }
+            orAccounts.add(criteria);
+            if (includeToAlternative) {
+                orAccounts.add(criteriaTo);
+            }
+        });
+
+        return new Criteria().orOperator(orAccounts.toArray(new Criteria[0]));
     }
 
     private boolean nearPeriods(DateRequest startPeriod, DateRequest endPeriod) {

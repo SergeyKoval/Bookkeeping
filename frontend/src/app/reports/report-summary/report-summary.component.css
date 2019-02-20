@@ -35,6 +35,19 @@
 
 .filter-row {
   display: inline-flex;
+  float: left;
+  padding-bottom: 5px;
+}
+
+.chart-row {
+  display: block;
+  padding-bottom: 10px;
+}
+
+.currency-wrapper {
+  min-width: 27px;
+  display: inline-block;
+  font-weight: bold;
 }
 
 hr {

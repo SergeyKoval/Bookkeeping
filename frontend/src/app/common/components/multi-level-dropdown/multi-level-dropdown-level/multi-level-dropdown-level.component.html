@@ -1,16 +1,17 @@
-<ul class="dropdown-menu" [attr.role]="!nextLevels ? 'menu' : null" [attr.aria-labelledby]="!nextLevels ? 'dropdownMenu' : null" [bkStopPropagation]="stopPropagation">
+<ul class="dropdown-menu" [ngClass]="{'check-all-width': checkAllButton && !nextLevels}"
+    [attr.role]="!nextLevels ? 'menu' : null" [attr.aria-labelledby]="!nextLevels ? 'dropdownMenu' : null" [bkStopPropagation]="stopPropagation">
   <li *ngIf="checkAllButton && !nextLevels"><a class="element-title check-all" (click)="checkAll()">
     <span *ngIf="isAllChecked()">Снять выделения</span>
     <span *ngIf="!isAllChecked()">Выделить все</span>
   </a></li>
-  <li role="separator" class="divider" *ngIf="!nextLevels"></li>
+  <li role="separator" class="divider" *ngIf="checkAllButton && !nextLevels"></li>
   <li *ngFor="let item of dataModel" [ngClass]="{'dropdown-submenu': item.children}">
     <a>
       <bk-three-state-checkbox class="bk-checkbox" [state]="item.state" (stateChanged)="changeCheckboxState(item, $event)"></bk-three-state-checkbox>
       <img class="icon" *ngIf="item.icon" [src]="item.icon">
       <span class="vertical-middle element-title" (click)="changeState(item)">{{item.title}}</span>
     </a>
-    <bk-multi-level-dropdown-level *ngIf="item.children" [dataModel]="item.children" [nextLevels]="true" [stopPropagation]="stopPropagation"
+    <bk-multi-level-dropdown-level *ngIf="item.children" [dataModel]="item.children" [nextLevels]="true" [stopPropagation]="stopPropagation" [alternativeSelection]="false"
                                    (childStateChange)="onChildStateChange($event)"></bk-multi-level-dropdown-level>
   </li>
 </ul>

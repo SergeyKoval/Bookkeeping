@@ -1,3 +1,7 @@
+.check-all-width {
+  min-width: 138px !important;
+}
+
 .dropdown-menu {
   min-width: 100px;
 }

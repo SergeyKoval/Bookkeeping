@@ -10,13 +10,14 @@ import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ReportService } from '../../common/service/report.service';
+import { BaseReport } from '../BaseReport';
 
 @Component({
   selector: 'bk-report-actions',
   templateUrl: './report-actions.component.html',
   styleUrls: ['./report-actions.component.css']
 })
-export class ReportActionsComponent implements OnInit {
+export class ReportActionsComponent extends BaseReport implements OnInit {
   public datePickerOptions: IMyDrpOptions = {
     dateFormat: 'dd.mm.yyyy',
     inline: false,
@@ -30,22 +31,24 @@ export class ReportActionsComponent implements OnInit {
     disableSince: {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() + 1}
   };
   public loading: boolean;
-  public operationsFilter: MultiLevelDropdownItem[] = [];
-  public accountsFilter: MultiLevelDropdownItem[] = [];
+  public operationsFilter: MultiLevelDropdownItem[];
+  public accountsFilter: MultiLevelDropdownItem[];
   public periodFilter: IMyDateRangeModel;
   public historyItems: HistoryType[];
 
   public constructor(
-    private _profileService: ProfileService,
-    private _imagePipe: AssetImagePipe,
+    protected _profileService: ProfileService,
+    protected _imagePipe: AssetImagePipe,
     private _alertService: AlertService,
     private _reportService: ReportService
-  ) {}
+  ) {
+    super(_profileService, _imagePipe);
+  }
 
   public ngOnInit(): void {
     const profile: Profile = this._profileService.authenticatedProfile;
-    this.populateCategoriesFilter(profile.categories);
-    this.populateAccountsFilter(profile.accounts);
+    this.operationsFilter = this.populateCategoriesFilter(profile.categories);
+    this.accountsFilter = this.populateAccountsFilter(profile.accounts);
   }
 
   public onDateRangeChanged(dateRange: IMyDateRangeModel): void {
@@ -75,43 +78,12 @@ export class ReportActionsComponent implements OnInit {
     });
   }
 
-  private populateCategoriesFilter(categories: Category[]): void {
-    const incomeCategories: MultiLevelDropdownItem[] = [];
-    const expenseCategories: MultiLevelDropdownItem[] = [];
+  protected populateCategoriesFilter(categories: Category[]): MultiLevelDropdownItem[] {
+    const categoriesFilter: MultiLevelDropdownItem[] = super.populateCategoriesFilter(categories)
+    categoriesFilter.push(new MultiLevelDropdownItem('Перевод', CheckboxState.CHECKED, null, null, 'transfer'));
+    categoriesFilter.push(new MultiLevelDropdownItem('Обмен', CheckboxState.CHECKED, null, null, 'exchange'));
+    categoriesFilter.push(new MultiLevelDropdownItem('Изм. ост.', CheckboxState.CHECKED, null, null, 'balance'));
 
-    categories.forEach((category: Category) => {
-      const income: MultiLevelDropdownItem[] = [];
-      const expense: MultiLevelDropdownItem[] = [];
-      category.subCategories.forEach(subCategory => {
-        if (subCategory.type === 'income') {
-          income.push(new MultiLevelDropdownItem(subCategory.title, CheckboxState.CHECKED));
-        } else {
-          expense.push(new MultiLevelDropdownItem(subCategory.title, CheckboxState.CHECKED));
-        }
-      });
-
-      if (income.length > 0) {
-        incomeCategories.push(new MultiLevelDropdownItem(category.title, CheckboxState.CHECKED, this._imagePipe.transform(category.icon, 'category'), income));
-      }
-      if (expense.length > 0) {
-        expenseCategories.push(new MultiLevelDropdownItem(category.title, CheckboxState.CHECKED, this._imagePipe.transform(category.icon, 'category'), expense));
-      }
-    });
-
-    this.operationsFilter.push(new MultiLevelDropdownItem('Доход', CheckboxState.CHECKED, null, incomeCategories, 'income'));
-    this.operationsFilter.push(new MultiLevelDropdownItem('Расход', CheckboxState.CHECKED, null, expenseCategories, 'expense'));
-    this.operationsFilter.push(new MultiLevelDropdownItem('Перевод', CheckboxState.CHECKED, null, null, 'transfer'));
-    this.operationsFilter.push(new MultiLevelDropdownItem('Обмен', CheckboxState.CHECKED, null, null, 'exchange'));
-    this.operationsFilter.push(new MultiLevelDropdownItem('Изм. ост.', CheckboxState.CHECKED, null, null, 'balance'));
-  }
-
-  private populateAccountsFilter(accounts: FinAccount[]): void {
-    accounts.forEach(account => {
-      const subAccounts: MultiLevelDropdownItem[] = [];
-      account.subAccounts.forEach(subAccount => {
-        subAccounts.push(new MultiLevelDropdownItem(subAccount.title, CheckboxState.CHECKED, this._imagePipe.transform(subAccount.icon, 'account')));
-      });
-      this.accountsFilter.push(new MultiLevelDropdownItem(account.title, CheckboxState.CHECKED, null, subAccounts));
-    });
+    return categoriesFilter;
   }
 }

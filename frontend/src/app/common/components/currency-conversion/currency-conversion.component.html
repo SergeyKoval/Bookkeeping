@@ -1,7 +1,7 @@
 <span class="summary-to-currency" *ngIf="profile.currencies">
   <div class="dropdown">
     <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      к валюте: <strong><bk-currency-symbol [currencyName]="selectedCurrency?.name"></bk-currency-symbol></strong>
+      {{label}} <strong><bk-currency-symbol [currencyName]="selectedCurrency?.name"></bk-currency-symbol></strong>
     </span>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
       <li *ngFor="let currency of profile.currencies">
@@ -9,8 +9,8 @@
           <bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol>
         </a>
       </li>
-      <li role="separator" class="divider"></li>
-      <li><a (click)="chooseCurrency(null)" class="static-line">Без приведения</a></li>
+      <li role="separator" class="divider" *ngIf="!denyNoChoice"></li>
+      <li><a (click)="chooseCurrency(null)" class="static-line" *ngIf="!denyNoChoice">Без приведения</a></li>
     </ul>
   </div>
 </span>

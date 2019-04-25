@@ -93,7 +93,7 @@ hr {
   }
 }
 
-@media (min-width: 992px) and (max-width: 1200px) {
+@media (min-width: 992px) and (max-width: 1199px) {
   .page-title {
     font-size: 14px;
   }

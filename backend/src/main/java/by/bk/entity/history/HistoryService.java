@@ -1,6 +1,7 @@
 package by.bk.entity.history;
 
 import by.bk.controller.model.request.DateRequest;
+import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.response.SummaryReportResponse;
 import by.bk.entity.budget.BudgetAPI;
@@ -27,10 +28,11 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,13 +43,7 @@ import java.util.stream.Stream;
 @Service
 public class HistoryService implements HistoryAPI {
     private static final Log LOG = LogFactory.getLog(HistoryService.class);
-
-    private static final BinaryOperator<SummaryReportResponse> SUMMARY_REPORT_MERGE_FUNCTION = (SummaryReportResponse oldItem, SummaryReportResponse newItem) -> {
-        Map<Currency, Double> newValues = newItem.getValues();
-        Currency newCurrency = newValues.keySet().iterator().next();
-        oldItem.getValues().compute(newCurrency, (currency, value) -> value == null ? newValues.get(newCurrency) : value + newValues.get(newCurrency));
-        return oldItem;
-    };
+    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
 
     @Autowired
     private HistoryRepository historyRepository;
@@ -198,20 +194,23 @@ public class HistoryService implements HistoryAPI {
 
         Aggregation aggregation = Aggregation.newAggregation(pipes);
         List<SummaryReportItem> items = mongoTemplate.aggregate(aggregation, "history", SummaryReportItem.class).getMappedResults();
+
         //just one operation hierarchy provided
         if (operations.size() == 1) {
-            return operations.get(0).size() == 1 ? collectSummaryReportCategories(items.stream()) : collectSummaryReportSubCategories(items.stream());
+            return collectSummaryReport(operations.get(0).size() == 1, items.stream());
         } else {
             //separate operations where full category was provided and just some sub categories
             Map<Boolean, List<List<String>>> categorySubCategoryItems = operations.stream().collect(Collectors.partitioningBy(item -> item.size() < 3));
             return CollectionUtils.union(
                     //process operations with full categories
-                    collectSummaryReportCategories(
+                    collectSummaryReport(
+                            true,
                             categorySubCategoryItems.get(Boolean.TRUE).stream()
                                     .flatMap(hierarchy -> items.stream().filter(item -> StringUtils.equals(item.getCategory(), hierarchy.get(1))))
                     ),
                     //process operations with some specific sub categories
-                    collectSummaryReportSubCategories(
+                    collectSummaryReport(
+                            false,
                             categorySubCategoryItems.get(Boolean.FALSE).stream()
                                     .flatMap(hierarchy -> items.stream()
                                             .filter(item -> StringUtils.equals(item.getCategory(), hierarchy.get(1)))
@@ -221,20 +220,102 @@ public class HistoryService implements HistoryAPI {
         }
     }
 
-    private Collection<SummaryReportResponse> collectSummaryReportCategories(Stream<SummaryReportItem> items) {
+    @Override
+    public Collection<DynamicReportResponse> getPeriodDynamic(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, Currency currency) {
+        List<AggregationOperation> pipes = new ArrayList<>();
+        int month = startPeriod.getMonth();
+        int year = startPeriod.getYear();
+        List<Criteria> orPeriods = new ArrayList<>();
+        while (year < endPeriod.getYear() || month <= endPeriod.getMonth()) {
+            orPeriods.add(Criteria.where("year").is(year).and("month").is(month));
+            if (month == 12) {
+                year++;
+                month = 1;
+            } else {
+                month++;
+            }
+        }
+
+        Criteria initialFilter = Criteria.where("user").is(login)
+                .and("type").is(operations.get(0).get(0))
+                .orOperator(orPeriods.toArray(new Criteria[0]));
+        pipes.add(Aggregation.match(initialFilter));
+        pipes.add(Aggregation.match(prepareOperationsCriteria(operations)));
+        pipes.add(Aggregation.group("year", "month", "category", "subCategory", "balance.currency").sum("balance.value").as("balanceValue"));
+
+        Aggregation aggregation = Aggregation.newAggregation(pipes);
+        List<DynamicReportItem> items = mongoTemplate.aggregate(aggregation, "history", DynamicReportItem.class).getMappedResults();
+
+        LocalDate today = LocalDate.now();
+        Map<Currency, CurrencyDetail> currencies = currencyRepository.getByYearAndMonthAndDay(today.getYear(), today.getMonth().getValue(), today.getDayOfMonth()).stream()
+                .collect(Collectors.toMap(CurrencyDetail::getName, currencyDetail -> currencyDetail));
+
+        //just one operation hierarchy provided
+        if (operations.size() == 1) {
+            return collectDynamicReport(operations.get(0).size() == 1, currency, currencies, items.stream());
+        } else {
+            //separate operations where full category was provided and just some sub categories
+            Map<Boolean, List<List<String>>> categorySubCategoryItems = operations.stream().collect(Collectors.partitioningBy(item -> item.size() < 3));
+            return CollectionUtils.union(
+                    //process operations with full categories
+                    collectDynamicReport(
+                            true,
+                            currency,
+                            currencies,
+                            categorySubCategoryItems.get(Boolean.TRUE).stream()
+                                    .flatMap(hierarchy -> items.stream().filter(item -> StringUtils.equals(item.getCategory(), hierarchy.get(1))))
+                    ),
+                    //process operations with some specific sub categories
+                    collectDynamicReport(
+                            false,
+                            currency,
+                            currencies,
+                            categorySubCategoryItems.get(Boolean.FALSE).stream()
+                                    .flatMap(hierarchy -> items.stream()
+                                            .filter(item -> StringUtils.equals(item.getCategory(), hierarchy.get(1)))
+                                            .filter(item -> StringUtils.equals(item.getSubCategory(), hierarchy.get(2))))
+                    )
+            );
+        }
+    }
+
+    private Collection<SummaryReportResponse> collectSummaryReport(boolean ignoreSubCategories, Stream<SummaryReportItem> items) {
         return items.collect(Collectors.toMap(
-                SummaryReportItem::getCategory,
-                item -> new SummaryReportResponse(item, true),
-                SUMMARY_REPORT_MERGE_FUNCTION)
+                item -> ignoreSubCategories ? item.getCategory() : new MutablePair<>(item.getCategory(), item.getSubCategory()),
+                item -> new SummaryReportResponse(item, ignoreSubCategories),
+                (SummaryReportResponse oldItem, SummaryReportResponse newItem) -> {
+                    Map<Currency, Double> newValues = newItem.getValues();
+                    Currency newCurrency = newValues.keySet().iterator().next();
+                    oldItem.getValues().compute(newCurrency, (currency, value) -> value == null ? newValues.get(newCurrency) : value + newValues.get(newCurrency));
+                    return oldItem;
+                })
         ).values();
     }
 
-    private Collection<SummaryReportResponse> collectSummaryReportSubCategories(Stream<SummaryReportItem> items) {
-        return items.collect(Collectors.toMap(
-                item -> new MutablePair<>(item.getCategory(), item.getSubCategory()),
-                item -> new SummaryReportResponse(item, false),
-                SUMMARY_REPORT_MERGE_FUNCTION)
-        ).values();
+    private Collection<DynamicReportResponse> collectDynamicReport(boolean ignoreSubCategories, Currency currency, Map<Currency, CurrencyDetail> currencies, Stream<DynamicReportItem> items) {
+        return items
+                .peek(item -> {
+                    if(!currency.equals(item.getCurrency())) {
+                        Double currencyConversion = currencies.get(item.getCurrency()).getConversions().get(currency);
+                        item.setBalanceValue(item.getBalanceValue() * currencyConversion);
+                        item.setCurrency(currency);
+                    }
+                }).collect(
+                        Collectors.groupingBy(
+                            item -> new MutablePair<>(item.getYear(), item.getMonth()),
+                            Collectors.toMap(
+                                    item -> ignoreSubCategories ? item.getCategory() : new MutablePair<>(item.getCategory(), item.getSubCategory()),
+                                    item -> new DynamicReportResponse(item, ignoreSubCategories),
+                                    (DynamicReportResponse oldItem, DynamicReportResponse newItem) -> {
+                                        oldItem.setValue(oldItem.getValue() + newItem.getValue());
+                                        return oldItem;
+                                    }
+                            )
+                        )
+                ).values().stream()
+                    .flatMap(dynamicReportResponseMap -> dynamicReportResponseMap.values().stream())
+                    .peek(item -> item.setValue(Double.parseDouble(CURRENCY_FORMAT.format(item.getValue()))))
+                    .collect(Collectors.toList());
     }
 
     private boolean affectBudget(HistoryType type) {

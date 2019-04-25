@@ -2,7 +2,7 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 @media (min-width: 768px) and (max-width: 992px) {}
-@media (min-width: 992px) and (max-width: 1200px) {}
+@media (min-width: 992px) and (max-width: 1199px) {}
 
 .history-add-edit-dialog mat-dialog-container, .budget-plan-dialog mat-dialog-container, .move-goal-dialog mat-dialog-container, .move-sub-category-dialog mat-dialog-container, .budget-close-month-dialog mat-dialog-container {
   overflow: visible !important;

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IMyDateRangeModel, IMyDrpOptions } from 'mydaterangepicker';
 import { from } from 'rxjs';
 import { groupBy, mergeMap, tap, toArray } from 'rxjs/operators';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
-import { DateUtils } from '../../common/utils/date-utils';
 import { ProfileService } from '../../common/service/profile.service';
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 import { BaseReport } from '../BaseReport';
@@ -23,23 +21,11 @@ import { CurrencyService } from '../../common/service/currency.service';
 })
 export class ReportSummaryComponent extends BaseReport implements OnInit {
   public pieChartType: string = 'pie';
-  public datePickerOptions: IMyDrpOptions = {
-    dateFormat: 'dd.mm.yyyy',
-    inline: false,
-    dayLabels: DateUtils.DAY_LABELS,
-    monthLabels: DateUtils.MONTH_LABELS,
-    selectBeginDateTxt: 'Выберите начало периода',
-    selectEndDateTxt: 'Выберите конец периода',
-    width: '225px',
-    height: '32px',
-    selectorWidth: '225px',
-    disableSince: {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() + 1}
-  };
   public loading: boolean;
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
   public currenciesFilter: MultiLevelDropdownItem[] = [];
-  public periodFilter: IMyDateRangeModel;
+
   public items: SummaryReport[][] = [];
   public pieChartLabels: string[];
   public pieChartData: number[];
@@ -66,10 +52,6 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     profile.currencies.forEach(currency => {
       this.currenciesFilter.push(new MultiLevelDropdownItem(CurrencyUtils.convertCodeToSymbol(currency.symbol), CheckboxState.CHECKED, null, null, currency.name));
     });
-  }
-
-  public onDateRangeChanged(dateRange: IMyDateRangeModel): void {
-    this.periodFilter = dateRange;
   }
 
   public search(): void {

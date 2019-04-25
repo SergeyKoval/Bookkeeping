@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IMyDateRangeModel, IMyDrpOptions } from 'mydaterangepicker';
-
-import { DateUtils } from '../../common/utils/date-utils';
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 import { ProfileService } from '../../common/service/profile.service';
@@ -18,22 +15,9 @@ import { BaseReport } from '../BaseReport';
   styleUrls: ['./report-actions.component.css']
 })
 export class ReportActionsComponent extends BaseReport implements OnInit {
-  public datePickerOptions: IMyDrpOptions = {
-    dateFormat: 'dd.mm.yyyy',
-    inline: false,
-    dayLabels: DateUtils.DAY_LABELS,
-    monthLabels: DateUtils.MONTH_LABELS,
-    selectBeginDateTxt: 'Выберите начало периода',
-    selectEndDateTxt: 'Выберите конец периода',
-    width: '225px',
-    height: '32px',
-    selectorWidth: '225px',
-    disableSince: {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() + 1}
-  };
   public loading: boolean;
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
-  public periodFilter: IMyDateRangeModel;
   public historyItems: HistoryType[];
 
   public constructor(
@@ -49,10 +33,6 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     const profile: Profile = this._profileService.authenticatedProfile;
     this.operationsFilter = this.populateCategoriesFilter(profile.categories);
     this.accountsFilter = this.populateAccountsFilter(profile.accounts);
-  }
-
-  public onDateRangeChanged(dateRange: IMyDateRangeModel): void {
-    this.periodFilter = dateRange;
   }
 
   public search(): void {

@@ -148,7 +148,7 @@
   }
 }
 
-@media (min-width: 992px) and (max-width: 1200px) {
+@media (min-width: 992px) and (max-width: 1199px) {
   .exchange-account {
     min-width: 95px;
   }

@@ -1,0 +1,43 @@
+.spinner-wrapper {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-body {
+  padding: 10px;
+}
+
+.panel-heading {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-weight: bold;
+}
+
+.filter {
+  padding-right: 10px;
+}
+
+.filters {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .filter-row-wrapper {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  .filter {
+    padding-right: 5px;
+  }
+
+  .filter-row {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  .search-button, :host ::ng-deep bk-multi-level-dropdown .btn {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}

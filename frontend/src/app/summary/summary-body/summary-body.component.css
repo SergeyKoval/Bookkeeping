@@ -55,7 +55,7 @@
   }
 }
 
-@media (min-width: 992px) and (max-width: 1200px) {
+@media (min-width: 992px) and (max-width: 1199px) {
   .col-md-7 {
     padding-left: 0;
   }

@@ -44,6 +44,16 @@ export class ReportService {
     });
   }
 
+  public getDynamicForPeriodReport (currency: string, periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[]): Observable<DynamicReport[]> {
+    const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
+    return this._http.post<DynamicReport[]>('/api/report/period-dynamic', {
+      'startPeriod': periodFilter.beginDate,
+      'endPeriod': periodFilter.endDate,
+      'operations': selectedOperations,
+      'currency': currency
+    });
+  }
+
   private prepareFilteredItems(items: MultiLevelDropdownItem[]): string[][] {
     if (items.filter(operation => operation.state === CheckboxState.CHECKED).length === items.length) {
       return [];

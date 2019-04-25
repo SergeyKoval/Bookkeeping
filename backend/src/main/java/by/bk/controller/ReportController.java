@@ -1,6 +1,7 @@
 package by.bk.controller;
 
-import by.bk.controller.model.request.HistoryReportRequest;
+import by.bk.controller.model.request.ReportRequest;
+import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SummaryReportResponse;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
@@ -21,12 +22,17 @@ public class ReportController {
     private HistoryAPI historyAPI;
 
     @PostMapping("/history-actions")
-    public List<HistoryItem> getHistoryActionsReport(@RequestBody HistoryReportRequest request, Principal principal) {
+    public List<HistoryItem> getHistoryActionsReport(@RequestBody ReportRequest request, Principal principal) {
         return historyAPI.getFiltered(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getAccounts());
     }
 
     @PostMapping("/period-summary")
-    public Collection<SummaryReportResponse> getPeriodSummaryReport(@RequestBody HistoryReportRequest request, Principal principal) {
+    public Collection<SummaryReportResponse> getPeriodSummaryReport(@RequestBody ReportRequest request, Principal principal) {
         return historyAPI.getPeriodSummary(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getAccounts(), request.getCurrencies());
+    }
+
+    @PostMapping("/period-dynamic")
+    public Collection<DynamicReportResponse> getPeriodDynamicReport(@RequestBody ReportRequest request, Principal principal) {
+        return historyAPI.getPeriodDynamic(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getCurrency());
     }
 }

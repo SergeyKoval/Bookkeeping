@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ProfileService } from '../../service/profile.service';
@@ -12,11 +12,16 @@ import { AlertType } from '../../model/alert/AlertType';
   styleUrls: ['./currency-conversion.component.css']
 })
 export class CurrencyConversionComponent implements OnInit {
+  @Input()
+  public label: string = 'к валюте:';
+  @Input()
+  public selectedCurrency: CurrencyDetail = null;
+  @Input()
+  public denyNoChoice: boolean = false;
   @Output()
   public currencyConversion: EventEmitter<CurrencyDetail> = new EventEmitter();
 
   public profile: Profile;
-  public selectedCurrency: CurrencyDetail = null;
 
   public constructor(
     private _router: Router,

@@ -13,6 +13,7 @@ import { UsersComponent } from './users/users.component';
 import { ProfileService } from './common/service/profile.service';
 import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
+import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -55,6 +56,11 @@ export const BOOKKEEPING_ROUTES: Route[] = [
         path: 'summary',
         component: ReportSummaryComponent,
         data: {title: 'Бухгалтерия - отчеты - итоги за период'}
+      },
+      {
+        path: 'dynamic',
+        component: ReportDynamicComponent,
+        data: {title: 'Бухгалтерия - отчеты - динамика за период'}
       }
     ]
   },

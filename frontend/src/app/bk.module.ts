@@ -90,6 +90,7 @@ import { ThreeStateCheckboxComponent } from './common/components/three-state-che
 import { StopPropagationDirective } from './common/directives/stop-propagation.directive';
 import { MultiLevelDropdownComponent } from './common/components/multi-level-dropdown/multi-level-dropdown.component';
 import { MultiLevelDropdownLevelComponent } from './common/components/multi-level-dropdown/multi-level-dropdown-level/multi-level-dropdown-level.component';
+import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.component';
 
 @NgModule({
   declarations: [
@@ -157,7 +158,8 @@ import { MultiLevelDropdownLevelComponent } from './common/components/multi-leve
     ThreeStateCheckboxComponent,
     StopPropagationDirective,
     MultiLevelDropdownComponent,
-    MultiLevelDropdownLevelComponent
+    MultiLevelDropdownLevelComponent,
+    ReportDynamicComponent
   ],
   imports: [
     BrowserModule,

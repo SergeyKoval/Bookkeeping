@@ -51,7 +51,6 @@ export class InputCalculatorComponent implements OnInit {
 
   public changeInput(): void {
     let inputValue: string = this._INPUT.value.replace(/\s/g, '');
-    console.log(inputValue)
     if (CurrencyUtils.ILLEGAL_CALCULATION_SYMBOLS_PATTERN.test(inputValue)) {
       this._INPUT.value = inputValue = inputValue.slice(0, -1);
     }

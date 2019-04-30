@@ -65,7 +65,18 @@
               </div>
             </div>
             <div class="panel-footer">
-
+              <div class="row vertical-middle-wrapper">
+                <div class="col-sm-3 vertical-middle"><strong>Итог</strong></div>
+                <div class="col-sm-9">
+                  <div class="row" *ngFor="let currency of totals | mapKeys | currencySort">
+                    <div class="col-sm-5 col-sm-offset-7">
+                      <div class="small-left-padding">
+                        <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span> {{totals[currency] | currencyValue:2}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -86,6 +86,16 @@ hr {
   padding-left: 20px;
 }
 
+.panel-footer {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.vertical-middle-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .filter-row-wrapper {
     margin-left: -20px;

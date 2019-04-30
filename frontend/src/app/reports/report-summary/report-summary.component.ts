@@ -31,6 +31,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
   public pieChartData: number[];
   public type: string;
   public onlyCategories: boolean = true;
+  public totals: {[key: string]: number};
 
   private reportSum: number = 0;
   private reportCurrency: string;
@@ -80,6 +81,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     this.pieChartData = [];
     this.reportSum = 0;
     this.items = [];
+    this.totals = {};
     this.type = this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED)[0].getAlias();
     this.onlyCategories = true;
 
@@ -92,8 +94,10 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter)
       .pipe(tap(items => {
         items.map(item => item.values).forEach((valueMap: {[currency: string]: number}) => {
-          Object.keys(valueMap)
-            .forEach(currency => this.reportSum = this.reportSum + this._currencyService.convertToCurrency(valueMap[currency], currency, this.reportCurrency));
+          Object.keys(valueMap).forEach(currency => {
+            this.reportSum = this.reportSum + this._currencyService.convertToCurrency(valueMap[currency], currency, this.reportCurrency);
+            this.totals[currency] = valueMap[currency] + (this.totals[currency] | 0);
+          });
         });
 
         items.forEach(item => {

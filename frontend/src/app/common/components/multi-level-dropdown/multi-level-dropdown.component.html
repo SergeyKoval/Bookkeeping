@@ -2,6 +2,7 @@
   <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-default" data-target="#">
     {{buttonTitle}} <span class="caret"></span>
   </a>
-  <bk-multi-level-dropdown-level [checkAllButton]="checkAllButton" [dataModel]="dataModel" [stopPropagation]="stopPropagation" [alternativeSelection]="alternativeSelection"
+  <bk-multi-level-dropdown-level [checkAllButton]="checkAllButton" [dataModel]="dataModel" [stopPropagation]="stopPropagation"
+                                 [alternativeSelection]="alternativeSelection" [alternativeSelectionIndex]="alternativeSelectionIndex"
                                  (childStateChange)="onChildStateChange($event)"></bk-multi-level-dropdown-level>
 </div>

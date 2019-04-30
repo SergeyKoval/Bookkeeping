@@ -19,12 +19,15 @@ export class MultiLevelDropdownLevelComponent implements OnInit {
   public checkAllButton: boolean = false;
   @Input()
   public alternativeSelection: boolean = false;
+  @Input()
+  public alternativeSelectionIndex: number = 0;
   @Output()
   public childStateChange: EventEmitter<MultiLevelDropdownItem> = new EventEmitter();
 
   public ngOnInit (): void {
     if (this.alternativeSelection) {
-      const firstSelected: MultiLevelDropdownItem = this.dataModel.filter(item => item.state !== CheckboxState.UNCHECKED)[0];
+      const filteredItems: MultiLevelDropdownItem[] = this.dataModel.filter(item => item.state !== CheckboxState.UNCHECKED);
+      const firstSelected: MultiLevelDropdownItem = filteredItems[this.alternativeSelectionIndex > filteredItems.length - 1 ? 0 : this.alternativeSelectionIndex];
       this.uncheckOther(firstSelected);
     }
   }

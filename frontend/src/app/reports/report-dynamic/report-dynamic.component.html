@@ -3,7 +3,8 @@
   <div class="panel-body" *ngIf="!loading; else loadingIndicator">
     <div class="row filter-row">
       <div class="col-sm-11 filters">
-        <bk-multi-level-dropdown class="filter" alternativeSelection="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        <bk-multi-level-dropdown class="filter" alternativeSelection="true" alternativeSelectionIndex="1" buttonTitle="Операции"
+                                 [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <bk-currency-conversion label="К валюте:" denyNoChoice="true" [selectedCurrency]="defaultCurrency" class="filter" (currencyConversion)="changeCurrency($event)"></bk-currency-conversion>
         <span><my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker></span>
       </div>

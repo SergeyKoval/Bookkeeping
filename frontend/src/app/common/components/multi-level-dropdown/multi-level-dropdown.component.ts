@@ -18,6 +18,8 @@ export class MultiLevelDropdownComponent {
   public checkAllButton: boolean = false;
   @Input()
   public alternativeSelection: boolean = false;
+  @Input()
+  public alternativeSelectionIndex: number = 0;
   @Output()
   public stateChange: EventEmitter<boolean> = new EventEmitter();
 

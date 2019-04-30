@@ -65,5 +65,9 @@ body {
   width: 100%;
 }
 
+.mat-dialog-title {
+  cursor: move;
+}
+
 
 /*:host ::ng-deep bk-popover .action*/

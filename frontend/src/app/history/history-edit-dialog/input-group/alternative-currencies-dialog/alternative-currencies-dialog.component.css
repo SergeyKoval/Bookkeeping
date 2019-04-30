@@ -35,3 +35,7 @@
 .middle-column {
   width: 198px !important;
 }
+
+.alternative-currencies-title {
+  cursor: move;
+}

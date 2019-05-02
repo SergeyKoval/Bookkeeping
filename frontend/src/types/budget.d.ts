@@ -52,7 +52,8 @@ type GoalDetails = {
 type BudgetStatistic = {
   year: number,
   month: number,
-  category: BudgetCategory
+  category: BudgetCategory,
+  used: boolean
 };
 
 type CloseMonthGoalPlan = {

@@ -11,3 +11,17 @@
   display: inline-block;
   font-weight: bold;
 }
+
+.toggle-column {
+  padding-left: 5px;
+  padding-right: 0;
+}
+
+mat-slide-toggle {
+  height: 20px;
+}
+
+.month-year-column {
+  padding-left: 10px;
+  padding-right: 0;
+}

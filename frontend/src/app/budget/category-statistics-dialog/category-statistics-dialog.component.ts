@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatSlideToggleChange } from '@angular/material';
 
 import { BudgetService } from '../../common/service/budget.service';
 import { DateUtils } from '../../common/utils/date-utils';
@@ -29,6 +29,7 @@ export class CategoryStatisticsDialogComponent implements OnInit {
 
   public ngOnInit(): void {
     this._budgetService.categoryStatistics(this.data).subscribe(categoryStatistics => {
+      categoryStatistics.forEach(categoryStatistic => categoryStatistic.used = true);
       this.statistics = this.categoryStatistics = categoryStatistics;
       this.calculateMaxAndAverageValues();
       this.loading = false;
@@ -61,22 +62,29 @@ export class CategoryStatisticsDialogComponent implements OnInit {
     this._dialogRef.close([]);
   }
 
+  public recalculateStatistics (event: MatSlideToggleChange, categoryStatistic: BudgetStatistic): void {
+    categoryStatistic.used = event.checked;
+    this.calculateMaxAndAverageValues();
+  }
+
   private calculateMaxAndAverageValues(): void {
     const averageValues: Map<string, number> = new Map<string, number>();
     this.maxCurrencyValues = new Map<string, number>();
-    this.categoryStatistics.map(categoryStatistic => categoryStatistic.category.balance).forEach(balance => {
-      Object.keys(balance).forEach(currency => {
-        if (balance[currency].value > (this.maxCurrencyValues.get(currency) || 0)) {
-          this.maxCurrencyValues.set(currency, balance[currency].value);
-        }
+    const usedCategoryStatistics: BudgetStatistic[] = this.categoryStatistics.filter(categoryStatistic => categoryStatistic.used);
+    usedCategoryStatistics.map(categoryStatistic => categoryStatistic.category.balance)
+      .forEach(balance => {
+        Object.keys(balance).forEach(currency => {
+          if (balance[currency].value > (this.maxCurrencyValues.get(currency) || 0)) {
+            this.maxCurrencyValues.set(currency, balance[currency].value);
+          }
 
-        averageValues.set(currency, balance[currency].value + (averageValues.get(currency) | 0));
+          averageValues.set(currency, balance[currency].value + (averageValues.get(currency) | 0));
+        });
       });
-    });
 
     this.currencyBalance = [];
     averageValues.forEach((value, currency) => {
-      const completeValue: number = Number((value / this.statistics.length).toFixed(2));
+      const completeValue: number = Number((value / usedCategoryStatistics.length).toFixed(2));
       this.currencyBalance.push({'currency': currency, 'completeValue': completeValue, 'selectedValue': true});
     });
   }

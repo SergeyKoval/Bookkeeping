@@ -4,6 +4,7 @@
 
 .year-aria {
   min-width: 100px;
+  border-right-width: 0;
 }
 
 .full-width, .month-dropdown-menu {
@@ -14,9 +15,9 @@
   left: 0;
 }
 
-.glyphicon-menu-left {
-  border-radius: 0;
-  margin-left: -1px;
+.month-left {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
   margin-right: -1px;
 }
 
@@ -41,4 +42,21 @@
 .month-dropdown {
   height: 34px;
   padding-right: 15px;
+  border-radius: 0;
+  margin-right: -1px;
+}
+
+.month-right {
+  border-radius: 0;
+  margin-left: -2px;
+}
+
+.year-left {
+  border-radius: 0;
+  margin-left: -2px;
+  margin-right: -1px;
+}
+
+.year-right {
+  /*margin-left: -3px;*/
 }

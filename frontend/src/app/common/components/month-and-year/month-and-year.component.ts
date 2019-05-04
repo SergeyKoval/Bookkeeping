@@ -59,6 +59,27 @@ export class MonthAndYearComponent {
     }
   }
 
+  public decreaseMonth(): void {
+    if (!this.disabled) {
+      if (this._selectedMonth === 0) {
+        this.decreaseYear();
+      } else {
+        this.changeMonth.next(this._selectedMonth);
+      }
+    }
+  }
+
+  public increaseMonth(): void {
+    if (!this.disabled) {
+      if (this._selectedMonth === 11) {
+        this.increaseYear();
+      } else {
+        this._selectedMonth = this._selectedMonth + 1;
+        this.changeMonth.next(this._selectedMonth + 1);
+      }
+    }
+  }
+
   public get selectedMonth(): number {
     return this._selectedMonth;
   }

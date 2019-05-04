@@ -1,4 +1,5 @@
 <div class="input-group right-button-group">
+  <span class="btn btn-default glyphicon glyphicon-chevron-left button-icon month-left" [ngClass]="{'disabled': disabled}" type="button" (click)="decreaseMonth()"></span>
   <span class="input-group-btn full-width">
     <span type="button" class="btn btn-default dropdown-toggle month-dropdown full-width" [ngClass]="{'disabled': disabled}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span class="button-title" [ngClass]="{'disabled': disabled}">{{getSelectedMonthTitle()}}</span>
@@ -8,9 +9,12 @@
       <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
     </ul>
   </span>
-  <span class="btn btn-default glyphicon glyphicon-menu-left button-icon" [ngClass]="{'disabled': disabled}" type="button" (click)="decreaseYear()"></span>
+  <span class="input-group-btn float-left">
+    <span class="btn btn-default glyphicon glyphicon-chevron-right button-icon month-right" [ngClass]="{'disabled': disabled}" type="button" (click)="increaseMonth()"></span>
+  </span>
+  <span class="btn btn-default glyphicon glyphicon-menu-left button-icon year-left" [ngClass]="{'disabled': disabled}" type="button" (click)="decreaseYear()"></span>
   <span class="input-group-addon year-aria">{{selectedYear}}</span>
   <span class="input-group-btn float-left">
-    <span class="btn btn-default glyphicon glyphicon-menu-right button-icon" [ngClass]="{'disabled': disabled}" type="button" (click)="increaseYear()"></span>
+    <span class="btn btn-default glyphicon glyphicon-menu-right button-icon year-right" [ngClass]="{'disabled': disabled}" type="button" (click)="increaseYear()"></span>
   </span>
 </div>

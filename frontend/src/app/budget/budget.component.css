@@ -4,25 +4,34 @@
 
 .right-button-group {
   float: right;
-  width: 283px;
+  width: 363px;
 }
 
 :host ::ng-deep bk-month-and-year .button-title {
   font-weight: bold;
 }
 
+@media (min-width: 992px) and (max-width: 1199px) {
+  .right-button-group {
+    width: 350px;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .right-button-group {
-    width: 220px;
+    width: 225px;
   }
 
   :host ::ng-deep bk-month-and-year .year-aria {
-    min-width: 50px;
+    min-width: 40px;
+    max-width: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 
   :host ::ng-deep bk-month-and-year .button-icon {
-    width: 35px;
-    padding-left: 9px;
+    width: 25px;
+    padding-left: 5px;
   }
 
   .left-button {

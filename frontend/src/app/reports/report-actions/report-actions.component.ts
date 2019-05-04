@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { of } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
+
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 import { ProfileService } from '../../common/service/profile.service';
@@ -8,6 +11,16 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ReportService } from '../../common/service/report.service';
 import { BaseReport } from '../BaseReport';
+import { HistoryItem } from '../../common/model/history/HistoryItem';
+import { HistoryEditDialogComponent } from '../../history/history-edit-dialog/history-edit-dialog.component';
+import { DialogService } from '../../common/service/dialog.service';
+import { MatDialogRef } from '@angular/material';
+import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
+import { CurrencyUtils } from '../../common/utils/currency-utils';
+import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { LoadingService } from '../../common/service/loading.service';
+import { BudgetService } from '../../common/service/budget.service';
+import { HistoryService } from '../../common/service/history.service';
 
 @Component({
   selector: 'bk-report-actions',
@@ -24,6 +37,12 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     protected _profileService: ProfileService,
     protected _imagePipe: AssetImagePipe,
     private _alertService: AlertService,
+    private _dialogService: DialogService,
+    private _confirmDialogService: ConfirmDialogService,
+    private _loadingService: LoadingService,
+    private _budgetService: BudgetService,
+    private _historyService: HistoryService,
+    private _authenticationService: ProfileService,
     private _reportService: ReportService
   ) {
     super(_profileService, _imagePipe);
@@ -58,8 +77,61 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     });
   }
 
+  public editHistoryItem(historyItem: HistoryItem): void {
+    this._dialogService.openDialog(HistoryEditDialogComponent, {
+      width: '720px',
+      position: {top: 'top'},
+      panelClass: 'history-add-edit-dialog',
+      data: {
+        'historyItem': historyItem.cloneOriginalItem(),
+        'editMode': true
+      }
+    }).afterClosed()
+      .pipe(filter((result: boolean) => result === true))
+      .subscribe(() => this.search());
+  }
+
+  public deleteHistoryItem(historyItem: HistoryItem): void {
+    let loadingDialog: MatDialogRef<LoadingDialogComponent>;
+    this._confirmDialogService.openConfirmDialog('Подтверждение', 'Точно удалить?')
+      .afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => loadingDialog = this._loadingService.openLoadingDialog('Проверка цели...')),
+        switchMap(() => historyItem.goal ? this._budgetService.reviewBudgetGoalBeforeDelete(historyItem.originalItem.id, historyItem.originalItem.goal) : of({})),
+        switchMap((simpleResponse: SimpleResponse) => {
+          loadingDialog.close();
+          if (simpleResponse.status === 'FAIL') {
+            const result: {} = simpleResponse.result;
+            return this._confirmDialogService.openConfirmDialogWithHtml('Изменение статуса цели',
+              /* tslint:disable:max-line-length */
+              `<div>Удаляемая операция является частью выполненной цели.</div>
+              <div>После ее удаления прогресс цели будет <strong>${CurrencyUtils.convertCodeToSymbol(this._profileService.getCurrencyDetails(result['currency']).symbol)} ${result['value']} / ${result['completeValue']}.</strong></div>
+              <div>Пометить цель невыполненной?</div>`).afterClosed();
+            /* tslint:enable */
+          } else {
+            return of(false);
+          }
+        }),
+        tap(result => loadingDialog = this._loadingService.openLoadingDialog('Удаление...')),
+        switchMap(changeGoalStatus => this._historyService.deleteHistoryItem(historyItem.originalItem.id, changeGoalStatus)),
+        tap(simpleResponse => {
+          loadingDialog.close();
+          if (simpleResponse.status === 'FAIL') {
+            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при удалении');
+            this.search();
+          }
+        }),
+        filter(simpleResponse => simpleResponse.status === 'SUCCESS')
+      ).subscribe(() => {
+      this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена');
+      this._authenticationService.quiteReloadAccounts();
+      this.search();
+    });
+  }
+
   protected populateCategoriesFilter(categories: Category[]): MultiLevelDropdownItem[] {
-    const categoriesFilter: MultiLevelDropdownItem[] = super.populateCategoriesFilter(categories)
+    const categoriesFilter: MultiLevelDropdownItem[] = super.populateCategoriesFilter(categories);
     categoriesFilter.push(new MultiLevelDropdownItem('Перевод', CheckboxState.CHECKED, null, null, 'transfer'));
     categoriesFilter.push(new MultiLevelDropdownItem('Обмен', CheckboxState.CHECKED, null, null, 'exchange'));
     categoriesFilter.push(new MultiLevelDropdownItem('Изм. ост.', CheckboxState.CHECKED, null, null, 'balance'));

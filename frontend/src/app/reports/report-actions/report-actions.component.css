@@ -86,6 +86,15 @@ hr {
   display: inline-flex;
 }
 
+:host ::ng-deep bk-popover .glyphicon {
+  padding-right: 5px;
+}
+
+.actions-column {
+  padding-right: 0;
+  padding-left: 10px;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .filter-row {
     margin-left: -20px;
@@ -99,6 +108,10 @@ hr {
   .search-button, :host ::ng-deep bk-multi-level-dropdown .btn {
     padding-left: 8px;
     padding-right: 8px;
+  }
+
+  .actions-column {
+    padding-left: 0;
   }
 }
 

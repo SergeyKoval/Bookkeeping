@@ -41,7 +41,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     private _alertService: AlertService,
     private _budgetService: BudgetService,
     private _profileService: ProfileService,
-    private _loadingService: LoadingService,
+    private _loadingService: LoadingService
   ) {}
 
   public ngOnInit(): void {

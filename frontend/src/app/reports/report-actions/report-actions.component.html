@@ -38,10 +38,14 @@
                 <span>{{historyItem.balance.account}} >> </span>
                 <span class="text-nowrap">{{historyItem.balance.subAccount}}</span>
               </div>
-              <div class="col-sm-5 sm-category-column default-style">
+              <div class="col-sm-4 sm-category-column default-style">
                 <img class="icon" *ngIf="historyItem.icon" [src]="historyItem.icon | assetImage:'category'">
                 <span class="description">{{historyItem.category}} >> </span>
                 <span class="footnote text-nowrap">{{historyItem.subCategory}}</span>
+              </div>
+              <div class="col-sm-1 actions-column">
+                <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
+                <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
               </div>
             </div>
             <div class="row footnote-row" *ngIf="historyItem.goal || historyItem.description">

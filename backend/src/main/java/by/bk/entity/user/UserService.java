@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -40,7 +41,7 @@ import java.util.function.Supplier;
 @Service
 public class UserService implements UserAPI, UserDetailsService {
     private static final Log LOG = LogFactory.getLog(UserService.class);
-    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00");
+    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
 
     @Autowired
     private UserRepository userRepository;

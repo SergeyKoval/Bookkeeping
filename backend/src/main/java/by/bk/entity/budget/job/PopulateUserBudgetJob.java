@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class PopulateUserBudgetJob {
-    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00");
+    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
 
     @Autowired
     private BudgetRepository budgetRepository;

@@ -13,10 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -32,7 +34,7 @@ public class NbrbJob {
     private static final String USD_URL = "http://www.nbrb.by/API/ExRates/Rates/USD?ParamMode=2";
     private static final String EUR_URL = "http://www.nbrb.by/API/ExRates/Rates/EUR?ParamMode=2";
     private static final String RUB_URL = "http://www.nbrb.by/API/ExRates/Rates/RUB?ParamMode=2";
-    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.0000");
+    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.0000", DecimalFormatSymbols.getInstance(Locale.US));
     private static final BiFunction<Currency, Double, Map.Entry<Currency, Double>> CONVERSION_ENTRY =
             (currency, value) -> new AbstractMap.SimpleEntry<>(currency, Double.parseDouble(CURRENCY_FORMAT.format(value)));
 

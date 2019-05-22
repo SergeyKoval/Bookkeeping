@@ -1,5 +1,6 @@
 package by.bk;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -8,7 +9,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.util.ErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -22,9 +26,19 @@ import org.springframework.web.client.RestTemplate;
         @PropertySource(value = "file:/opt/bk/server.properties", ignoreResourceNotFound = true)
 })
 public class Bookkeeper extends SpringBootServletInitializer {
+    @Autowired
+    private ErrorHandler errorHandler;
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
+    }
+
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ConcurrentTaskScheduler scheduler = new ConcurrentTaskScheduler();
+        scheduler.setErrorHandler(errorHandler);
+        return scheduler;
     }
 
     @Override

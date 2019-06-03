@@ -63,7 +63,7 @@ public class AuthenticationController {
         String email = StringUtils.lowerCase(loginRequest.getEmail());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword());
         authenticationManager.authenticate(authenticationToken);
-        return Collections.singletonMap("token", tokenUtil.generateToken(email));
+        return Collections.singletonMap("token", tokenUtil.generateToken(email, loginRequest.getScope()));
     }
 
     @PostMapping("/send-registration-code")

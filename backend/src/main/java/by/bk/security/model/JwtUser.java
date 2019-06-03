@@ -4,8 +4,7 @@ import by.bk.entity.user.UserPermission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Sergey Koval
@@ -22,6 +21,13 @@ public class JwtUser implements UserDetails {
     public JwtUser(String username, String password, boolean enabled, List<UserPermission> permissions) {
         this.username = username;
         this.authorities = permissions;
+        this.password = password;
+        this.enabled = enabled;
+    }
+
+    public JwtUser(String username, String password, boolean enabled, List<UserPermission> permissions, Optional<UserPermission> overridePermission) {
+        this.username = username;
+        this.authorities = overridePermission.map(Collections::singletonList).orElse(permissions);
         this.password = password;
         this.enabled = enabled;
     }

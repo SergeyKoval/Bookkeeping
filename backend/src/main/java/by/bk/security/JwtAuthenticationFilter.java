@@ -1,7 +1,6 @@
 package by.bk.security;
 
 import by.bk.security.model.JwtToken;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,16 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String requestHeader = request.getHeader(JwtToken.TOKEN_HEADER);
 
         if (StringUtils.startsWith(requestHeader, JwtToken.TOKEN_PREFIX)) {
-            try {
                 JwtToken token = JwtToken.from(requestHeader, tokenUtil);
                 if (securityContext.getAuthentication() == null && !token.isExpired()) {
-                    Authentication authentication = authenticationAPI.getAuthentication(token.getUsername());
+                    Authentication authentication = authenticationAPI.getAuthentication(token.getUsername(), token.getAdditionalPermission());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "EXPIRED");
+                    return;
                 }
-            } catch (ExpiredJwtException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "EXPIRED");
-                return;
-            }
         }
 
         chain.doFilter(request, response);

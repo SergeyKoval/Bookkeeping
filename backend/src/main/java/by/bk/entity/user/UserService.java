@@ -126,9 +126,9 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public Authentication getAuthentication(String login) {
+    public Authentication getAuthentication(String login, Optional<UserPermission> overridePermission) {
         return userRepository.getAuthenticatedUser(login)
-                .map(user -> new JwtUser(login, null, user.isEnabled(), user.getRoles()))
+                .map(user -> new JwtUser(login, null, user.isEnabled(), user.getRoles(), overridePermission))
                 .map(jwtUser -> new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities()))
                 .orElseThrow(() -> new RuntimeException("UserService.getAuthentication doesn't have user retrieved"));
     }

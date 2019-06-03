@@ -5,13 +5,16 @@ import by.bk.controller.model.request.UpdateCurrencyRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.request.UserPasswordChangeRequest;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
+import by.bk.entity.user.model.Account;
 import by.bk.entity.user.model.User;
 import by.bk.entity.user.UserAPI;
+import by.bk.security.role.RoleMobile;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 /**
  * @author Sergey Koval
@@ -27,7 +30,6 @@ public class ProfileController extends BaseAPIController {
         LOG.error(e.getErrorMessage());
         return e.getSimpleResponse();
     }
-
 
     @GetMapping("/full")
     public User loadFullProfile(Principal principal) {
@@ -54,6 +56,12 @@ public class ProfileController extends BaseAPIController {
     @PostMapping("/update-user-currency-move")
     public SimpleResponse updateProfileMoveCurrency(@RequestBody UpdateCurrencyRequest request, Principal principal) {
         return userAPI.moveCurrency(principal.getName(), request.getName(), request.getDirection());
+    }
+
+    @RoleMobile
+    @GetMapping("/account")
+    public List<Account> getAccounts(Principal principal) {
+        return userAPI.getFullUserProfile(principal.getName()).getAccounts();
     }
 
     @PostMapping("/add-account")

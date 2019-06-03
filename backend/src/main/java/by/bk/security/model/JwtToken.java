@@ -1,11 +1,13 @@
 package by.bk.security.model;
 
+import by.bk.entity.user.UserPermission;
 import by.bk.security.JwtTokenUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * @author Sergey Koval
@@ -15,23 +17,27 @@ public class JwtToken {
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer \"";
 
-    private final Claims CLAIMS;
+    private final DecodedJWT JWT;
 
-    private JwtToken(Claims claims) {
-        this.CLAIMS = claims;
+    private JwtToken(DecodedJWT decodedJWT) {
+        this.JWT = decodedJWT;
     }
 
-    public static JwtToken from(String requestHeader, JwtTokenUtil tokenUtil) throws ExpiredJwtException {
+    public static JwtToken from(String requestHeader, JwtTokenUtil tokenUtil) {
         final String authToken = StringUtils.substringBetween(requestHeader, TOKEN_PREFIX, TOKEN_SUFFIX);
         return new JwtToken(tokenUtil.getAllClaimsFromToken(authToken));
     }
 
     public boolean isExpired() {
-        final Instant expiration = this.CLAIMS.getExpiration().toInstant();
+        final Instant expiration = this.JWT.getExpiresAt().toInstant();
         return expiration.isBefore(Instant.now());
     }
 
     public String getUsername() {
-        return this.CLAIMS.getSubject();
+        return this.JWT.getSubject();
+    }
+
+    public Optional<UserPermission> getAdditionalPermission() {
+        return Optional.ofNullable(EnumUtils.getEnum(UserPermission.class, this.JWT.getClaim(JwtTokenUtil.ADDITIONAL_SCOPE).asString()));
     }
 }

@@ -1,9 +1,10 @@
 package by.bk.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,26 +17,32 @@ import java.time.temporal.ChronoUnit;
  */
 @Component
 public class JwtTokenUtil {
+    public static final String ADDITIONAL_SCOPE = "additionalScope";
+    private static final String ISSUER = "https://deplake.tk";
+
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public Claims getAllClaimsFromToken(String token) throws ExpiredJwtException {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+    public DecodedJWT getAllClaimsFromToken(String token) {
+        return JWT.decode(token);
+    }
+
+    public String generateToken(String subject, String scope) {
+        Instant now = Instant.now();
+        JWTCreator.Builder builder = JWT.create()
+                .withSubject(subject)
+                .withIssuer(ISSUER)
+                .withIssuedAt(Date.from(now))
+                .withExpiresAt(Date.from(now.plus(expiration, ChronoUnit.MINUTES)));
+        if (StringUtils.isNotBlank(scope)) {
+            builder.withClaim(ADDITIONAL_SCOPE, scope);
+        }
+        return builder.sign(Algorithm.HMAC256(secret));
     }
 
     public String generateToken(String subject) {
-        Instant now = Instant.now();
-        return Jwts.builder()
-                .setSubject(subject)
-                .setIssuer("https://deplake.tk")
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(expiration, ChronoUnit.MINUTES)))
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
+        return generateToken(subject, null);
     }
 }

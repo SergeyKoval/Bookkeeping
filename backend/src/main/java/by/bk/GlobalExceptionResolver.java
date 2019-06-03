@@ -1,7 +1,6 @@
 package by.bk;
 
 import by.bk.mail.EmailPreparator;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +42,8 @@ public class GlobalExceptionResolver extends SimpleMappingExceptionResolver impl
 
     @Override
     protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        String stackTrace = RegExUtils.replaceAll(ExceptionUtils.getStackTrace(ex), REPLACE_PATTERN, REPLACEMENT);
+//        String stackTrace = RegExUtils.replaceAll(ExceptionUtils.getStackTrace(ex), REPLACE_PATTERN, REPLACEMENT);
+        String stackTrace = ExceptionUtils.getStackTrace(ex);
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (notify) {
             exceptionNotificationEmailPreparator.prepareAndSend(toEmail, LocalDateTime.now(), principal, stackTrace);
@@ -54,7 +54,8 @@ public class GlobalExceptionResolver extends SimpleMappingExceptionResolver impl
     @Override
     public void handleError(Throwable t) {
         LOG.error(t.getMessage(), t);
-        String stackTrace = RegExUtils.replaceAll(ExceptionUtils.getStackTrace(t), REPLACE_PATTERN, REPLACEMENT);
+//        String stackTrace = RegExUtils.replaceAll(ExceptionUtils.getStackTrace(t), REPLACE_PATTERN, REPLACEMENT);
+        String stackTrace = ExceptionUtils.getStackTrace(t);
         if (notify) {
             exceptionNotificationEmailPreparator.prepareAndSend(toEmail, LocalDateTime.now(), SYSTEM_USER, stackTrace);
         }

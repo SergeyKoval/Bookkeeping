@@ -35,7 +35,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       // tslint:disable-next-line:no-any
       tap((response: HttpResponse<any>) => {
-        if (response.url && !req.url.match(/token\/server\/version/) && response.headers.get('bk-version') !== environment.VERSION) {
+        if (response.url && !req.url.match(/token\/server\/version/) && !response.headers.get('bk-version').startsWith(environment.VERSION)) {
           console.error(`Versions mismatch. Server version = ${response.headers.get('bk-version')}, ui version = ${environment.VERSION}`);
           this._dialogService.closeAllDialogs();
           this._alertService.addAlert(AlertType.DANGER, 'Версия устарела. Обновите страницу.');

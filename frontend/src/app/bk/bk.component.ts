@@ -38,7 +38,7 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this._authenticationService.getServerVersion().subscribe(response => {
-      if (response.message === environment.VERSION) {
+      if (response.message.startsWith(environment.VERSION)) {
         this.versionCheckIndicator = this.versionError = false;
       } else {
         this.versionCheckIndicator = false;

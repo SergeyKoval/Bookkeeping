@@ -182,7 +182,7 @@ import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.
     MyDateRangePickerModule,
     ChartsModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
-    LocalStorageModule.withConfig({
+    LocalStorageModule.forRoot({
       prefix: 'Bookkeeper',
       storageType: 'localStorage'
     })

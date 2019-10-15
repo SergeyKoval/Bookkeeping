@@ -32,7 +32,7 @@ export class InputCalculatorComponent implements OnInit {
   @Output()
   public changeConfirmValue: EventEmitter<boolean> = new EventEmitter();
 
-  @ViewChild ('inputValue')
+  @ViewChild ('inputValue', {static : true})
   private _INPUT_ELEMENT_REF: ElementRef;
   private _INPUT: HTMLInputElement;
   private _focused: boolean = false;

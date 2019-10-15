@@ -34,7 +34,7 @@ export class HistoryEditDialogComponent implements OnInit {
   public selectedCategory: SelectItem[];
   public alternativeCurrencyLoading: boolean;
 
-  @ViewChild('title')
+  @ViewChild('title', {static : true})
   private _titleElement: ElementRef;
   private _allCategories: Category[];
   private _originalGoalDetails: GoalDetails;

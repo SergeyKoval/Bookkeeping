@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("hasAuthority(T(by.bk.entity.user.UserPermission).ADMIN.name())")
+//@PreAuthorize("hasPermission(T(by.bk.entity.user.UserPermission).ADMIN, T(by.bk.entity.user.UserPermission).USER)")
 public @interface RoleAdmin {
 }

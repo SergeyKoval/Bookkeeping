@@ -23,7 +23,7 @@ export class SelectComponent {
   public opened: boolean = false;
   public displayItems: SelectItem[];
   private originalItem: SelectItem[];
-  @ViewChild(FocusDirective)
+  @ViewChild(FocusDirective, {static : true})
   private searchInput: FocusDirective;
 
   public constructor(private _elementRef: ElementRef) {}

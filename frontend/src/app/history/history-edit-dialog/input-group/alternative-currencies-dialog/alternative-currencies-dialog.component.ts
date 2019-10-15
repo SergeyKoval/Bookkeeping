@@ -29,7 +29,7 @@ export class AlternativeCurrenciesDialogComponent {
 
   public blurValueInCurrency(currency: string, amountInput: HTMLInputElement): void {
     if (isNumeric(amountInput.value) && amountInput.value !== '0') {
-      this.data.balance.alternativeCurrency[currency] = Number(this._currencyValuePipe.transform(amountInput.value, 2, true));
+      this.data.balance.alternativeCurrency[currency] = Number(this._currencyValuePipe.transform(Number(amountInput.value), 2, true));
     } else {
       amountInput.value = this.data.balance.alternativeCurrency[currency].toString();
     }

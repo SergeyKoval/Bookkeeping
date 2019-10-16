@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -8,7 +9,6 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
-import { DialogService } from '../../common/service/dialog.service';
 import { MoveSubCategoryDialogComponent } from './move-sub-category-dialog/move-sub-category-dialog.component';
 
 @Component({
@@ -21,7 +21,7 @@ export class CategoriesComponent implements OnInit {
   public profile: Profile;
 
   public constructor(
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _profileService: ProfileService,
     private _alertService: AlertService,
     private _confirmDialogService: ConfirmDialogService
@@ -97,7 +97,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   public moveSubCategory(category: Category, subCategory: SubCategory): void {
-    const dialogResult: Observable<boolean> = this._dialogService.openDialog(MoveSubCategoryDialogComponent, {
+    const dialogResult: Observable<boolean> = this._dialog.open(MoveSubCategoryDialogComponent, {
       panelClass: 'move-sub-category-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -148,7 +148,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   private openCategoryDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialogService.openDialog(AccountCategoryDialogComponent, {
+    const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
       width: '550px',
       position: {top: 'top'},
       data: dialogData

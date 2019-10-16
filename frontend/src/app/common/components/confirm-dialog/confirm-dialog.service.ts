@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
-import { DialogService } from '../../service/dialog.service';
 
 @Injectable()
 export class ConfirmDialogService {
 
-  public constructor(private _dialogService: DialogService) { }
+  public constructor(private _dialog: MatDialog) { }
 
   public openConfirmDialog(title: string, body: string): MatDialogRef<ConfirmDialogComponent> {
-    return this._dialogService.openDialog(ConfirmDialogComponent, {
+    return this._dialog.open(ConfirmDialogComponent, {
       id: 'confirm-dialog',
       data: {
         'title': title,
@@ -20,7 +20,7 @@ export class ConfirmDialogService {
   }
 
   public openConfirmDialogWithHtml(title: string, htmlBody: string): MatDialogRef<ConfirmDialogComponent> {
-    return this._dialogService.openDialog(ConfirmDialogComponent, {
+    return this._dialog.open(ConfirmDialogComponent, {
       id: 'confirm-dialog',
       data: {
         'title': title,

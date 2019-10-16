@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import { Observable } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { of, Subject } from 'rxjs/index';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
@@ -11,7 +11,6 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
-import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-accounts',
@@ -27,7 +26,7 @@ export class AccountsComponent implements OnInit {
   public constructor(
     private _loadingService: LoadingService,
     private _profileService: ProfileService,
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _alertService: AlertService,
     private _confirmDialogService: ConfirmDialogService
   ) { }
@@ -84,7 +83,7 @@ export class AccountsComponent implements OnInit {
   }
 
   public editSubAccountBalance(finAccount: FinAccount, subAccount: SubAccount): void {
-    this._dialogService.openDialog(BalanceDialogComponent, {
+    this._dialog.open(BalanceDialogComponent, {
       id: 'balance-dialog',
       position: {top: 'top'},
       width: '350px',
@@ -173,7 +172,7 @@ export class AccountsComponent implements OnInit {
   }
 
   private openAccountDialog(dialogData: {}): void {
-    const dialogResult: Observable<boolean> = this._dialogService.openDialog(AccountCategoryDialogComponent, {
+    const dialogResult: Observable<boolean> = this._dialog.open(AccountCategoryDialogComponent, {
       width: '550px',
       position: {top: 'top'},
       data: dialogData

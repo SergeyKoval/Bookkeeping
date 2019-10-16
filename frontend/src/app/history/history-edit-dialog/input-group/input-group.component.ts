@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
-import { DialogService } from '../../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-input-group',
@@ -30,7 +30,7 @@ export class InputGroupComponent implements OnInit {
 
   public enableCurrencies: boolean;
 
-  public constructor(private _dialogService: DialogService) {}
+  public constructor(private _dialog: MatDialog) {}
 
   public ngOnInit(): void {
     this.enableCurrencies = this.inputValue && this.inputValue > 0;
@@ -68,7 +68,7 @@ export class InputGroupComponent implements OnInit {
 
   public openCurrenciesPopup(): void {
     if (!this.alternativeCurrencyLoading && this.enableCurrencies && this.inputValue > 0) {
-      this._dialogService.openDialog(AlternativeCurrenciesDialogComponent, {
+      this._dialog.open(AlternativeCurrenciesDialogComponent, {
         id: 'alternative-currencies-dialog',
         disableClose: true,
         width: '470px',

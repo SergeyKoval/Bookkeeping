@@ -1,5 +1,6 @@
 import { AfterViewChecked, Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -11,7 +12,6 @@ import { HistoryItem } from '../common/model/history/HistoryItem';
 import { AlertService } from '../common/service/alert.service';
 import { AlertType } from '../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
-import { DialogService } from '../common/service/dialog.service';
 import { BudgetService } from '../common/service/budget.service';
 import { CurrencyUtils } from '../common/utils/currency-utils';
 import { LoadingService } from '../common/service/loading.service';
@@ -34,7 +34,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   private _lastElementId: string;
 
   public constructor(
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _historyService: HistoryService,
     private _authenticationService: ProfileService,
     private _confirmDialogService: ConfirmDialogService,
@@ -63,7 +63,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   }
 
   public editHistoryItem(historyItem: HistoryItem): void {
-    this._dialogService.openDialog(HistoryEditDialogComponent, {
+    this._dialog.open(HistoryEditDialogComponent, {
       width: '720px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',

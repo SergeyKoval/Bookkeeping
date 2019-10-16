@@ -1,13 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
-import { Observable } from 'rxjs/index';
+import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { isNullOrUndefined } from 'util';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { BalanceDialogComponent } from '../accounts/balance-dialog/balance-dialog.component';
-import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-account-category-dialog',
@@ -29,7 +28,7 @@ export class AccountCategoryDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, parentTitle: string, title: string, icon: string, balance: {[currency: string]: number}, subCategoryType: string},
     private _dialogRef: MatDialogRef<AccountCategoryDialogComponent>,
     private _profileService: ProfileService,
-    private _dialogService: DialogService
+    private _dialog: MatDialog
   ) { }
 
   public ngOnInit(): void {
@@ -45,7 +44,7 @@ export class AccountCategoryDialogComponent implements OnInit {
   }
 
   public editSubAccountBalance(): void {
-    this._dialogService.openDialog(BalanceDialogComponent, {
+    this._dialog.open(BalanceDialogComponent, {
       id: 'balance-dialog',
       position: {top: 'top'},
       width: '350px',
@@ -60,7 +59,7 @@ export class AccountCategoryDialogComponent implements OnInit {
   public save(): void {
     this.loading = true;
 
-    if (isNullOrUndefined(this.title) || this.title === '') {
+    if (this.title === null || this.title === undefined || this.title === '') {
       this.errorMessage = 'Название обязательно для заполнения';
       this.loading = false;
       return;
@@ -96,7 +95,7 @@ export class AccountCategoryDialogComponent implements OnInit {
 
     if (this.isSubCategoryType()) {
       if (!this.data.editMode) {
-        if (isNullOrUndefined(this.data.subCategoryType)) {
+        if (this.data.subCategoryType === null || this.data.subCategoryType === undefined) {
           this.errorMessage = 'Необходимо выбрать тип';
           this.loading = false;
           return;

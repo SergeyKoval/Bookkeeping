@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter } from 'rxjs/operators';
 
 import { DateUtils } from '../common/utils/date-utils';
 import { BudgetService } from '../common/service/budget.service';
-import { DialogService } from '../common/service/dialog.service';
 import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dialog.component';
 import { CloseMonthDialogComponent } from './close-month-dialog/close-month-dialog.component';
 import { LoadingService } from '../common/service/loading.service';
@@ -21,7 +21,7 @@ export class BudgetComponent implements OnInit {
 
   public constructor(
     private _budgetService: BudgetService,
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _loadingService: LoadingService
   ) {}
 
@@ -40,7 +40,7 @@ export class BudgetComponent implements OnInit {
 
   public openPlanDialog(): void {
     if (!this.loading) {
-      this._dialogService.openDialog(PlanBudgetDialogComponent, {
+      this._dialog.open(PlanBudgetDialogComponent, {
         panelClass: 'budget-plan-dialog',
         width: '400px',
         position: {top: 'top'},
@@ -61,7 +61,7 @@ export class BudgetComponent implements OnInit {
 
   public openCloseMonthDialog(): void {
     if (!this.loading && !this.isFuturePeriod()) {
-      this._dialogService.openDialog(CloseMonthDialogComponent, {
+      this._dialog.open(CloseMonthDialogComponent, {
         panelClass: 'budget-close-month-dialog',
         width: '650px',
         position: {top: 'top'},

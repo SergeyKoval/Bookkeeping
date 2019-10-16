@@ -2,18 +2,17 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, NavigationExtras, Router, RouterStateSnapshot } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
 
 import { LocalStorageService } from 'angular-2-local-storage';
-import { Observable, Subject } from 'rxjs/index';
+import { Observable, Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { isNullOrUndefined } from 'util';
 import { tap } from 'rxjs/internal/operators';
 import { switchMap } from 'rxjs/operators';
 
 import { LoadingService } from './loading.service';
 import { ProfileService } from './profile.service';
 import { CurrencyService } from './currency.service';
-import { DialogService } from './dialog.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +33,7 @@ export class AuthenticationService implements CanActivate {
     private _http: HttpClient,
     private _localStorageService: LocalStorageService,
     private _jwtHelper: JwtHelperService,
-    private _dialogService: DialogService
+    private _dialogRef: MatDialog
   ) {}
 
   public initAuthenticationForm(): FormGroup {
@@ -79,7 +78,7 @@ export class AuthenticationService implements CanActivate {
 
   public refreshTokenIfRequired(): void {
     const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
-    if (!isNullOrUndefined(token)) {
+    if (token !== null && token !== undefined) {
       const now: Date = new Date();
       const tokenExpirationDate: Date = this._jwtHelper.getTokenExpirationDate(token);
       if ((tokenExpirationDate.getTime() - now.getTime()) < 300000) {
@@ -91,7 +90,7 @@ export class AuthenticationService implements CanActivate {
 
   public validateToken(): boolean {
     const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
-    if (isNullOrUndefined(token) || this._jwtHelper.isTokenExpired(token)) {
+    if (token === null || token === undefined || this._jwtHelper.isTokenExpired(token)) {
       this.exit();
       return false;
     }
@@ -124,6 +123,7 @@ export class AuthenticationService implements CanActivate {
   }
 
   public exit(expiredSession: boolean = false): void {
+    this.closeAllDialogs();
     this._profileService.initialDataLoaded = false;
     this._localStorageService.remove(AuthenticationService.TOKEN);
     this._profileService.clearProfile();
@@ -156,11 +156,15 @@ export class AuthenticationService implements CanActivate {
     return this._http.get<SimpleResponse>(`/token/server/version?timestamp=${new Date().getTime()}`);
   }
 
+  public closeAllDialogs(): void {
+    this._dialogRef.closeAll();
+  }
+
   private startAuthenticationExpirationJob(): void {
     if (this.validateToken()) {
       setTimeout(this.startAuthenticationExpirationJob.bind(this), 30000);
     } else {
-      this._dialogService.closeAllDialogs();
+      this.closeAllDialogs();
       console.log('Authentication expiration job execute logoff');
     }
   }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/internal/operators';
 import { Observable, Subject } from 'rxjs';
@@ -12,7 +13,6 @@ import { LoadingService } from '../../common/service/loading.service';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
-import { DialogService } from '../../common/service/dialog.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
 
@@ -43,7 +43,7 @@ export class BudgetDetailsComponent implements OnInit {
     private _budgetService: BudgetService,
     private _loadingService: LoadingService,
     private _alertService: AlertService,
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _confirmDialogService: ConfirmDialogService
   ) {}
 
@@ -139,7 +139,7 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   public openCategoryEditDialog(category: BudgetCategory): void {
-    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+    this._dialog.open(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -159,7 +159,7 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   public openGoalEditDialog(category: BudgetCategory, goal: BudgetGoal): void {
-    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+    this._dialog.open(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -190,7 +190,7 @@ export class BudgetDetailsComponent implements OnInit {
       return;
     }
 
-    this._dialogService.openDialog(MoveGoalDialogComponent, {
+    this._dialog.open(MoveGoalDialogComponent, {
       panelClass: 'move-goal-dialog',
       width: '400px',
       position: {top: 'top'},

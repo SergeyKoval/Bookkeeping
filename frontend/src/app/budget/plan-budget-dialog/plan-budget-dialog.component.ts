@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { distinct, filter, map, scan } from 'rxjs/operators';
 import { tap } from 'rxjs/internal/operators';
@@ -11,7 +12,6 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
-import { DialogService } from '../../common/service/dialog.service';
 import { CategoryStatisticsDialogComponent } from '../category-statistics-dialog/category-statistics-dialog.component';
 
 @Component({
@@ -53,7 +53,7 @@ export class PlanBudgetDialogComponent implements OnInit {
     private _loadingService: LoadingService,
     private _budgetService: BudgetService,
     private _confirmDialogService: ConfirmDialogService,
-    private _dialogService: DialogService
+    private _dialog: MatDialog
   ) {}
 
   public ngOnInit(): void {
@@ -223,7 +223,7 @@ export class PlanBudgetDialogComponent implements OnInit {
 
   public showStatistics(): void {
     if (this.categoryTitle) {
-      this._dialogService.openDialog(CategoryStatisticsDialogComponent, {
+      this._dialog.open(CategoryStatisticsDialogComponent, {
         id: 'category-statistics-dialog',
         panelClass: 'budget-plan-dialog',
         width: '450px',

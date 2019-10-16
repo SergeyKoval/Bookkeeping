@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter } from 'rxjs/operators';
 
 import { HistoryEditDialogComponent } from '../history-edit-dialog/history-edit-dialog.component';
 import { HistoryComponent } from '../history.component';
-import { DialogService } from '../../common/service/dialog.service';
 
 @Component({
   selector: 'bk-history-page-actions',
@@ -19,13 +19,13 @@ export class HistoryPageActionsComponent implements OnInit {
   @Output()
   public loadMore: EventEmitter<number> = new EventEmitter();
 
-  public constructor(private _dialogService: DialogService) { }
+  public constructor(private _dialog: MatDialog) { }
 
   public ngOnInit(): void {
   }
 
   public addHistoryItem(): void {
-    this._dialogService.openDialog(HistoryEditDialogComponent, {
+    this._dialog.open(HistoryEditDialogComponent, {
       width: '720px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',

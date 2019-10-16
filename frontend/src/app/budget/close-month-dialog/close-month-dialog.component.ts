@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter } from 'rxjs/operators';
 
 import { GoalWrapper } from '../../common/model/budget/GoalWrapper';
 import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
-import { DialogService } from '../../common/service/dialog.service';
 import { DateUtils } from '../../common/utils/date-utils';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
 import { CloseMonthFilter } from '../../common/model/budget/CloseMonthFilter';
@@ -39,7 +39,7 @@ export class CloseMonthDialogComponent implements OnInit {
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {budget: Budget},
     private _dialogRef: MatDialogRef<CloseMonthDialogComponent>,
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _confirmDialogService: ConfirmDialogService,
     private _profileService: ProfileService,
     private _budgetService: BudgetService,
@@ -66,7 +66,7 @@ export class CloseMonthDialogComponent implements OnInit {
   }
 
   public moveGoal(goalWrapper: GoalWrapper): void {
-    this._dialogService.openDialog(MoveGoalDialogComponent, {
+    this._dialog.open(MoveGoalDialogComponent, {
       panelClass: 'move-goal-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -94,7 +94,7 @@ export class CloseMonthDialogComponent implements OnInit {
   }
 
   public showStatistics(categoryWrapper: CategoryWrapper): void {
-    this._dialogService.openDialog(CategoryStatisticsDialogComponent, {
+    this._dialog.open(CategoryStatisticsDialogComponent, {
       id: 'category-statistics-dialog',
       panelClass: 'budget-plan-dialog',
       width: '450px',
@@ -113,7 +113,7 @@ export class CloseMonthDialogComponent implements OnInit {
     const value: number = goalWrapper.goal.balance.value;
     const completeValue: number = goalWrapper.goal.balance.completeValue;
     const repeatValue: number = value > completeValue ? value : completeValue;
-    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+    this._dialog.open(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -143,7 +143,7 @@ export class CloseMonthDialogComponent implements OnInit {
       }
     });
 
-    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+    this._dialog.open(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -161,7 +161,7 @@ export class CloseMonthDialogComponent implements OnInit {
   }
 
   public editCategory(categoryWrapper: CategoryWrapper): void {
-    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+    this._dialog.open(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
       position: {top: 'top'},
@@ -179,7 +179,7 @@ export class CloseMonthDialogComponent implements OnInit {
   }
 
   public editGoal(goalWrapper: GoalWrapper): void {
-    this._dialogService.openDialog(PlanBudgetDialogComponent, {
+    this._dialog.open(PlanBudgetDialogComponent, {
       panelClass: 'budget-plan-dialog',
       width: '400px',
       position: {top: 'top'},

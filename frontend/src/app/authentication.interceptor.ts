@@ -5,7 +5,6 @@ import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/internal/operators';
 
 import { AuthenticationService } from './common/service/authentication.service';
-import { DialogService } from './common/service/dialog.service';
 import { AlertService } from './common/service/alert.service';
 import { AlertType } from './common/model/alert/AlertType';
 import { environment } from '../environments/environment';
@@ -15,8 +14,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
 
   public constructor(
     private _alertService: AlertService,
-    private _authenticationService: AuthenticationService,
-    private _dialogService: DialogService
+    private _authenticationService: AuthenticationService
   ) {}
 
   // tslint:disable-next-line:no-any
@@ -37,7 +35,6 @@ export class AuthenticationInterceptor implements HttpInterceptor {
       tap((response: HttpResponse<any>) => {
         if (response.url && !req.url.match(/token\/server\/version/) && !response.headers.get('bk-version').startsWith(environment.VERSION)) {
           console.error(`Versions mismatch. Server version = ${response.headers.get('bk-version')}, ui version = ${environment.VERSION}`);
-          this._dialogService.closeAllDialogs();
           this._alertService.addAlert(AlertType.DANGER, 'Версия устарела. Обновите страницу.');
           this._authenticationService.exit(false);
         }
@@ -51,11 +48,10 @@ export class AuthenticationInterceptor implements HttpInterceptor {
           }
         } else if (err.status === 401) {
           console.log(err);
-          this._dialogService.closeAllDialogs();
           this._authenticationService.exit(true);
         } else {
           console.log(err);
-          this._dialogService.closeAllDialogs();
+          this._authenticationService.closeAllDialogs();
           this._alertService.addAlert(AlertType.DANGER, 'Возникла ошибка при обработке запроса, обратитесь к администратору');
         }
 

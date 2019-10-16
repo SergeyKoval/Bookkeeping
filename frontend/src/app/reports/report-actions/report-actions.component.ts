@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material';
 
 import { of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -13,8 +15,6 @@ import { ReportService } from '../../common/service/report.service';
 import { BaseReport } from '../BaseReport';
 import { HistoryItem } from '../../common/model/history/HistoryItem';
 import { HistoryEditDialogComponent } from '../../history/history-edit-dialog/history-edit-dialog.component';
-import { DialogService } from '../../common/service/dialog.service';
-import { MatDialogRef } from '@angular/material';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
@@ -37,7 +37,7 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     protected _profileService: ProfileService,
     protected _imagePipe: AssetImagePipe,
     private _alertService: AlertService,
-    private _dialogService: DialogService,
+    private _dialog: MatDialog,
     private _confirmDialogService: ConfirmDialogService,
     private _loadingService: LoadingService,
     private _budgetService: BudgetService,
@@ -78,7 +78,7 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
   }
 
   public editHistoryItem(historyItem: HistoryItem): void {
-    this._dialogService.openDialog(HistoryEditDialogComponent, {
+    this._dialog.open(HistoryEditDialogComponent, {
       width: '720px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',

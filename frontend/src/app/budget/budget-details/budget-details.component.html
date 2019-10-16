@@ -30,8 +30,8 @@
         <bk-month-progress [height]="10" *ngIf="firstCategory" [progress]="monthProgress"></bk-month-progress>
         <div class="row body-row">
           <span class="no-goals" *ngIf="category.goals.length === 0"></span>
-          <span class="glyphicon glyphicon-chevron-down expand-icon vertical-middle" *ngIf="category.goals.length > 0 && category.opened" (click)="category.opened = !category.opened"></span>
-          <span class="glyphicon glyphicon-chevron-right expand-icon vertical-middle" *ngIf="category.goals.length > 0 && !category.opened" (click)="category.opened = !category.opened"></span>
+          <span class="glyphicon glyphicon-chevron-down expand-icon vertical-middle" [ngClass]="{'done': isAllGoalsDone(category)}" *ngIf="category.goals.length > 0 && category.opened" (click)="category.opened = !category.opened"></span>
+          <span class="glyphicon glyphicon-chevron-right expand-icon vertical-middle" [ngClass]="{'done': isAllGoalsDone(category)}" *ngIf="category.goals.length > 0 && !category.opened" (click)="category.opened = !category.opened"></span>
           <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'"></span>
 
           <div class="progress category-progress" [style.height.px]="getNumberOfCurrencies(category.balance) * 20">

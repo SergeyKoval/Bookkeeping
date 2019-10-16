@@ -7,7 +7,7 @@
   color: #999;
 }
 
-:host ::ng-deep bk-popover .done {
+:host ::ng-deep bk-popover .done, .done {
   color: #5cb85c;
 }
 

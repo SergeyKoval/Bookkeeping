@@ -227,6 +227,10 @@ export class BudgetDetailsComponent implements OnInit {
     return Object.values(category.balance).filter(budgetBalance => budgetBalance.completeValue > 0).length > 0;
   }
 
+  public isAllGoalsDone(category: BudgetCategory): boolean {
+    return category.goals.map(goal => goal.done).every(done => done);
+  }
+
   private removeItem(removeType: string, callback: Observable<SimpleResponse>): void {
     let loadingDialog: MatDialogRef<LoadingDialogComponent>;
     this._confirmDialogService.openConfirmDialog(`Удаление ${removeType === 'category' ? 'категории' : 'цели'}`, `Уверены что хотите удалить ${removeType === 'category' ? 'категорию' : 'цель'}`)

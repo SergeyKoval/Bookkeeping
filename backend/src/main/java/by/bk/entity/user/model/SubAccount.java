@@ -4,6 +4,7 @@ import by.bk.entity.currency.Currency;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,6 +17,7 @@ public class SubAccount implements Orderable, Selectable {
     private int order;
     private String icon;
     private Map<Currency, Double> balance;
+    private Map<String, DeviceAssociation> device = new HashMap<>();
 
     public SubAccount() {
     }

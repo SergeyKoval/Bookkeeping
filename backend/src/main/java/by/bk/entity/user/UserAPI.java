@@ -1,6 +1,7 @@
 package by.bk.entity.user;
 
 import by.bk.controller.model.request.Direction;
+import by.bk.controller.model.request.SubAccountAssignmentRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.history.Balance;
@@ -55,4 +56,7 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse deleteUser(String email);
 
     SimpleResponse updateUserBalance(String login, HistoryType type, Balance historyBalance);
+
+    SimpleResponse assignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment);
+    SimpleResponse deassignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment);
 }

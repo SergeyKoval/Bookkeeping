@@ -1,6 +1,7 @@
 package by.bk.entity.user;
 
 import by.bk.controller.model.request.Direction;
+import by.bk.controller.model.request.SubAccountAssignmentRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.budget.model.Budget;
@@ -127,7 +128,7 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public JwtUser loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.authenticateUser(username)
-                .map(user -> new JwtUser(username, user.getPassword(), user.isEnabled(), user.getRoles()))
+                .map(user -> new JwtUser(username, user.getPassword(), user.isEnabled(), user.getRoles(), null))
                 .orElseThrow(() -> new MissedUserException(username));
     }
 
@@ -150,19 +151,19 @@ public class UserService implements UserAPI, UserDetailsService {
         User authenticatedUser = userRepository.getAuthenticatedUser(token.getUsername());
         if (authenticatedUser == null) {
             LOG.warn("UserService.getAuthentication doesn't have user retrieved or user doesn't suit");
-            return new AnonymousAuthenticationToken(token.getUsername(), token.getUsername(), Collections.singletonList(UserPermission.ANONUMOUS));
+            return new UsernamePasswordAuthenticationToken(null, null);
         }
 
         if (StringUtils.isNotBlank(token.getDeviceId())) {
             Device device = authenticatedUser.getDevices().get(token.getDeviceId());
             if (device == null || !StringUtils.equals(device.getDeviceId(), token.getToken())) {
                 LOG.error(StringUtils.join("User ", token.getUsername(), " with deviceId ", token.getDeviceId(), " is trying to call API. Device authenticated = ", device != null));
-                return new AnonymousAuthenticationToken(token.getUsername(), token.getUsername(), Collections.singletonList(UserPermission.ANONUMOUS));
+                return new UsernamePasswordAuthenticationToken(null, null);
             }
         }
 
         List<UserPermission> permissions = StringUtils.isBlank(token.getDeviceId()) ? authenticatedUser.getRoles() : List.of(UserPermission.MOBILE);
-        JwtUser jwtUser = new JwtUser(token.getUsername(), null, authenticatedUser.isEnabled(), permissions);
+        JwtUser jwtUser = new JwtUser(token.getUsername(), null, authenticatedUser.isEnabled(), permissions, token.getDeviceId());
         return new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
     }
 
@@ -720,6 +721,51 @@ public class UserService implements UserAPI, UserDetailsService {
         }
 
         return updateUser(query, update);
+    }
+
+    @Override
+    public SimpleResponse assignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment) {
+        String accountTitle = subAccountAssignment.getAccount();
+        String subAccountTitle = subAccountAssignment.getSubAccount();
+        DeviceAssociation deviceAssociation = new DeviceAssociation(subAccountAssignment.getSender(), subAccountAssignment.getSubAccountIdentifier());
+
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
+        List<SubAccount> subAccounts = account.getSubAccounts();
+        SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        String setKey = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".device.", deviceId);
+        Update update = new Update().set(setKey, deviceAssociation);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - assign sub account. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse deassignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment) {
+        String accountTitle = subAccountAssignment.getAccount();
+        String subAccountTitle = subAccountAssignment.getSubAccount();
+
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
+        List<SubAccount> subAccounts = account.getSubAccounts();
+        SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
+
+        Query query = Query.query(Criteria.where("email").is(login));
+        String setKey = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".device.", deviceId);
+        Update update = new Update().unset(setKey);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - assign sub account. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
     }
 
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {

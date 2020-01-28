@@ -1,5 +1,6 @@
 package by.bk.controller;
 
+import by.bk.controller.model.request.SubAccountAssignmentRequest;
 import by.bk.controller.model.request.UpdateAccountCategoryRequest;
 import by.bk.controller.model.request.UpdateCurrencyRequest;
 import by.bk.controller.model.response.SimpleResponse;
@@ -59,9 +60,21 @@ public class ProfileController extends BaseAPIController {
     }
 
     @RoleMobile
-    @GetMapping("/account")
+    @GetMapping("/accounts")
     public List<Account> getAccounts(Principal principal) {
         return userAPI.getAccountsSummary(principal.getName());
+    }
+
+    @RoleMobile
+    @PostMapping("/assign-sub-account")
+    public SimpleResponse assignSubAccount(@RequestBody SubAccountAssignmentRequest request, Principal principal) {
+        return userAPI.assignSubAccount(principal.getName(), getDeviceId(principal), request);
+    }
+
+    @RoleMobile
+    @PostMapping("/deassign-sub-account")
+    public SimpleResponse deassignSubAccount(@RequestBody SubAccountAssignmentRequest request, Principal principal) {
+        return userAPI.deassignSubAccount(principal.getName(), getDeviceId(principal), request);
     }
 
     @PostMapping("/add-account")

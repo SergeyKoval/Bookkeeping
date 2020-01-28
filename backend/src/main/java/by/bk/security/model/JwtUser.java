@@ -14,22 +14,17 @@ public class JwtUser implements UserDetails {
     private String password;
     private List<UserPermission> authorities;
     private boolean enabled;
+    private String deviceId;
 
     public JwtUser() {
     }
 
-    public JwtUser(String username, String password, boolean enabled, List<UserPermission> permissions) {
+    public JwtUser(String username, String password, boolean enabled, List<UserPermission> permissions, String deviceId) {
         this.username = username;
         this.authorities = permissions;
         this.password = password;
         this.enabled = enabled;
-    }
-
-    public JwtUser(String username, String password, boolean enabled, List<UserPermission> permissions, Optional<UserPermission> overridePermission) {
-        this.username = username;
-        this.authorities = overridePermission.map(Collections::singletonList).orElse(permissions);
-        this.password = password;
-        this.enabled = enabled;
+        this.deviceId = deviceId;
     }
 
     @Override
@@ -65,5 +60,9 @@ public class JwtUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
     }
 }

@@ -5,6 +5,7 @@ import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.history.Balance;
 import by.bk.entity.history.HistoryType;
+import by.bk.entity.user.model.Account;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 public interface UserAPI extends AuthenticationAPI {
     User getFullUserProfile(String login);
+    List<Account> getAccountsSummary(String login);
     SimpleResponse updateUserPassword(String login, String oldPassword, String newPassword);
 
     SimpleResponse includeCurrency(String login, Currency currency);

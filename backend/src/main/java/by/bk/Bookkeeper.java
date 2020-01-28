@@ -1,5 +1,7 @@
 package by.bk;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +17,8 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.util.ErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author Sergey Koval
  */
@@ -28,6 +32,13 @@ import org.springframework.web.client.RestTemplate;
 public class Bookkeeper extends SpringBootServletInitializer {
     @Autowired
     private ErrorHandler errorHandler;
+    @Autowired
+    private ObjectMapper mapper;
+
+    @PostConstruct
+    public void init() {
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {

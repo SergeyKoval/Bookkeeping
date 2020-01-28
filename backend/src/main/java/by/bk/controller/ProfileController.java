@@ -61,7 +61,7 @@ public class ProfileController extends BaseAPIController {
     @RoleMobile
     @GetMapping("/account")
     public List<Account> getAccounts(Principal principal) {
-        return userAPI.getFullUserProfile(principal.getName()).getAccounts();
+        return userAPI.getAccountsSummary(principal.getName());
     }
 
     @PostMapping("/add-account")

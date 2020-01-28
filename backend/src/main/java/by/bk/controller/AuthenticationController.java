@@ -63,7 +63,20 @@ public class AuthenticationController {
         String email = StringUtils.lowerCase(loginRequest.getEmail());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword());
         authenticationManager.authenticate(authenticationToken);
-        return Collections.singletonMap("token", tokenUtil.generateToken(email, loginRequest.getScope()));
+        return Collections.singletonMap("token", tokenUtil.generateToken(email));
+    }
+
+    @PostMapping("/generate-token-mobile")
+    public Map<String, String> registerMobile(@RequestBody LoginRequest loginRequest) {
+        if (StringUtils.isBlank(loginRequest.getDeviceId())) {
+            throw new BadCredentialsException("Device id is missed on mobile login for user " + loginRequest.getEmail());
+        }
+        String email = StringUtils.lowerCase(loginRequest.getEmail());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword());
+        authenticationManager.authenticate(authenticationToken);
+        String token = tokenUtil.generateTokenMobile(email, loginRequest.getDeviceId());
+        authenticationAPI.registerDevice(loginRequest.getEmail(), loginRequest.getDeviceId(), token);
+        return Collections.singletonMap("token", token);
     }
 
     @PostMapping("/send-registration-code")

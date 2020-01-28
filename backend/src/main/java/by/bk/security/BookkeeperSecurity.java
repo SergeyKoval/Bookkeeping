@@ -58,6 +58,7 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/token/server/version").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/generate-token").permitAll()
+                .antMatchers(HttpMethod.POST, "/token/generate-token-mobile").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/send-registration-code").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/review-registration-code").permitAll()
                 .antMatchers(HttpMethod.GET).permitAll()

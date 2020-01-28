@@ -8,7 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Sergey Koval
@@ -27,6 +29,7 @@ public class User {
     private List<UserCurrency> currencies;
     private List<Category> categories;
     private List<Account> accounts;
+    private Map<String, Device> devices = new HashMap<>();
 
     public User() {
     }

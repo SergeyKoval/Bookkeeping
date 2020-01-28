@@ -11,6 +11,7 @@ import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
 import by.bk.mail.EmailPreparator;
 import by.bk.security.MissedUserException;
+import by.bk.security.model.JwtToken;
 import by.bk.security.model.JwtUser;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.collections4.CollectionUtils;
@@ -23,6 +24,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -90,6 +92,15 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
+    public void registerDevice(String email, String deviceId, String token) {
+        Query query = Query.query(Criteria.where("email").is(email));
+        Update update = Update.update(StringUtils.join("devices.", deviceId, ".deviceId"), token);
+        if (mongoTemplate.updateFirst(query, update, User.class).getModifiedCount() != 1) {
+            throw new RuntimeException("Fail to store device authentication for the user " + email);
+        }
+    }
+
+    @Override
     public SimpleResponse updateUserPassword(String login, String oldPassword, String newPassword) {
         User userPassword = userRepository.getUserPassword(login);
         if (!passwordEncoder.matches(oldPassword, userPassword.getPassword())) {
@@ -126,11 +137,33 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public Authentication getAuthentication(String login, Optional<UserPermission> overridePermission) {
-        return userRepository.getAuthenticatedUser(login)
-                .map(user -> new JwtUser(login, null, user.isEnabled(), user.getRoles(), overridePermission))
-                .map(jwtUser -> new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities()))
-                .orElseThrow(() -> new RuntimeException("UserService.getAuthentication doesn't have user retrieved"));
+    public List<Account> getAccountsSummary(String login) {
+        List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
+        accounts.stream()
+                .flatMap(account -> account.getSubAccounts().stream())
+                .forEach(subAccount -> subAccount.setBalance(null));
+        return accounts;
+    }
+
+    @Override
+    public Authentication getAuthentication(JwtToken token) {
+        User authenticatedUser = userRepository.getAuthenticatedUser(token.getUsername());
+        if (authenticatedUser == null) {
+            LOG.warn("UserService.getAuthentication doesn't have user retrieved or user doesn't suit");
+            return new AnonymousAuthenticationToken(token.getUsername(), token.getUsername(), Collections.singletonList(UserPermission.ANONUMOUS));
+        }
+
+        if (StringUtils.isNotBlank(token.getDeviceId())) {
+            Device device = authenticatedUser.getDevices().get(token.getDeviceId());
+            if (device == null || !StringUtils.equals(device.getDeviceId(), token.getToken())) {
+                LOG.error(StringUtils.join("User ", token.getUsername(), " with deviceId ", token.getDeviceId(), " is trying to call API. Device authenticated = ", device != null));
+                return new AnonymousAuthenticationToken(token.getUsername(), token.getUsername(), Collections.singletonList(UserPermission.ANONUMOUS));
+            }
+        }
+
+        List<UserPermission> permissions = StringUtils.isBlank(token.getDeviceId()) ? authenticatedUser.getRoles() : List.of(UserPermission.MOBILE);
+        JwtUser jwtUser = new JwtUser(token.getUsername(), null, authenticatedUser.isEnabled(), permissions);
+        return new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
     }
 
     @Override

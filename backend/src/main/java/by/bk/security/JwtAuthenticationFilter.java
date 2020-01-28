@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.startsWith(requestHeader, JwtToken.TOKEN_PREFIX)) {
                 JwtToken token = JwtToken.from(requestHeader, tokenUtil);
                 if (securityContext.getAuthentication() == null && !token.isExpired()) {
-                    Authentication authentication = authenticationAPI.getAuthentication(token.getUsername(), token.getAdditionalPermission());
+                    Authentication authentication = authenticationAPI.getAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "EXPIRED");

@@ -30,8 +30,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -44,6 +46,7 @@ import java.util.stream.Stream;
 public class HistoryService implements HistoryAPI {
     private static final Log LOG = LogFactory.getLog(HistoryService.class);
     private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
+    private static final ZoneId MINSK_TIMEZONE = ZoneId.of("Europe/Minsk");
 
     @Autowired
     private HistoryRepository historyRepository;
@@ -60,7 +63,7 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public List<HistoryItem> getPagePortion(String login, int page, int limit) {
-        Query query = Query.query(Criteria.where("user").is(login))
+        Query query = Query.query(Criteria.where("user").is(login).and("notProcessed").ne(true))
                 .with(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day")))
                 .skip((page -1) * limit)
                 .limit(limit);
@@ -95,6 +98,20 @@ public class HistoryService implements HistoryAPI {
         }
 
         return affectBudget(historyItem.getType()) ? budgetAPI.addHistoryItem(login, savedHistoryItem, changeGoalStatus) : response;
+    }
+
+    @Override
+    public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<Sms> smsItems) {
+        Set<String> ids = smsItems.stream()
+                .peek(sms -> sms.setDeviceId(deviceId))
+                .map(sms -> {
+                    Instant instant = Instant.ofEpochMilli(sms.getSmsTimestamp());
+                    LocalDate smsDate = LocalDate.ofInstant(instant, MINSK_TIMEZONE);
+                    return new HistoryItem(login, smsDate.getYear(), smsDate.getMonthValue(), smsDate.getDayOfMonth(), true, sms);
+                })
+                .map(historyItem -> saveHistoryItem(login, historyItem).getId())
+                .collect(Collectors.toSet());
+        return smsItems.size() == ids.size() ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     @Override

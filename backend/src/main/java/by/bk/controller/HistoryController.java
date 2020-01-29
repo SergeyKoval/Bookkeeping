@@ -5,6 +5,8 @@ import by.bk.controller.model.request.HistoryPageRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
+import by.bk.entity.history.Sms;
+import by.bk.security.role.RoleMobile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,5 +43,11 @@ public class HistoryController extends BaseAPIController {
     @PostMapping("/delete")
     public SimpleResponse deleteHistoryItem(@RequestBody HistoryItemRequest request, Principal principal) {
         return historyAPI.deleteHistoryItem(principal.getName(), request.getId(), request.isChangeGoalStatus());
+    }
+
+    @RoleMobile
+    @PostMapping("/sms")
+    public SimpleResponse addHistoryItemsFromSms(@RequestBody List<Sms> request, Principal principal) {
+        return historyAPI.addHistoryItemsFromSms(principal.getName(), getDeviceId(principal), request);
     }
 }

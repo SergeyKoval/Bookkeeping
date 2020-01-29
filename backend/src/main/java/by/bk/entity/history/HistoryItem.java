@@ -2,6 +2,7 @@ package by.bk.entity.history;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class HistoryItem {
     @Id
     private String id;
@@ -31,7 +33,9 @@ public class HistoryItem {
     private String description;
     private Balance balance;
     private boolean archived;
+    private boolean notProcessed;
     private String goal;
+    private Sms sms;
 
     @JsonIgnore
     Balance cloneBalance() {
@@ -49,5 +53,14 @@ public class HistoryItem {
         }
 
         return clonedBalance;
+    }
+
+    public HistoryItem(String user, int year, int month, int day, boolean notProcessed, Sms sms) {
+        this.user = user;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.notProcessed = notProcessed;
+        this.sms = sms;
     }
 }

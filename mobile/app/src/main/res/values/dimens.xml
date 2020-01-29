@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="content_default_padding">12dp</dimen>
+    <dimen name="view_default_padding">8dp</dimen>
+    <dimen name="logo_min_height">48dp</dimen>
+</resources>

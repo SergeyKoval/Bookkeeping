@@ -1,0 +1,24 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+    </style>
+
+    <!-- Login screen theme -->
+    <style name="AppTheme.Login" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="android:windowBackground">@color/color_primary</item>
+        <item name="colorControlNormal">@color/color_white_high_emphasis</item>
+        <item name="colorControlActivated">@color/color_white_high_emphasis</item>
+        <item name="colorControlHighlight">@color/color_white_high_emphasis</item>
+        <item name="android:textColorHint">@color/color_white_high_emphasis</item>
+        <item name="colorButtonNormal">@color/color_primary_dark</item>
+        <item name="colorError">@color/color_red_high_emphasis</item>
+    </style>
+
+</resources>

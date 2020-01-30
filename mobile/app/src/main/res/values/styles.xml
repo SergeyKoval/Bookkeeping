@@ -12,6 +12,7 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="android:autofilledHighlight">@android:color/transparent</item>
         <item name="android:windowBackground">@color/color_primary</item>
         <item name="colorControlNormal">@color/color_white_high_emphasis</item>
         <item name="colorControlActivated">@color/color_white_high_emphasis</item>
@@ -20,5 +21,14 @@
         <item name="colorButtonNormal">@color/color_primary_dark</item>
         <item name="colorError">@color/color_red_high_emphasis</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

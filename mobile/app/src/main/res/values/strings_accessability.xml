@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="content_description_application_logo">Application logo</string>
+    <string name="content_description_navigation_drawer_open">Open navigation drawer</string>
+    <string name="content_description_navigation_drawer_close">Close navigation drawer</string>
 </resources>

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import by.bk.bookkeeper.android.BuildConfig
 import by.bk.bookkeeper.android.network.auth.TokenAuthenticator
 import by.bk.bookkeeper.android.network.auth.TokenInterceptor
+import by.bk.bookkeeper.android.network.response.SubAccount
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -33,10 +35,15 @@ object ServiceGenerator {
     private fun createDefaultRetrofitBuilder(baseUrl: String) = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(createConfiguredGson()))
 
     private fun createLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
+
+    private fun createConfiguredGson() = GsonBuilder()
+            .registerTypeAdapter(SubAccount::class.java, SubAccount.createJsonDeserializer())
+            .setPrettyPrinting()
+            .create()
 
     /**
      * OkHttp Client that trust self-signed certificates

@@ -16,4 +16,14 @@
     <string name="btn_confirm">Confirm</string>
     <string name="btn_cancel">Cancel</string>
 
+    <string name="action_retry_loading">Retry</string>
+
+    <string name="msg_no_accounts">No accounts found</string>
+    <string name="action_add_association">Add association</string>
+    <string name="action_remove_association">Remove association</string>
+    <string name="action_edit_association">Edit association</string>
+    <string name="title_association">Association:</string>
+    <string name="association_sender">Sender: %s</string>
+    <string name="association_sms_template">SMS template: %s</string>
+
 </resources>

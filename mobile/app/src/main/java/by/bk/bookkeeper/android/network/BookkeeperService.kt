@@ -4,7 +4,7 @@ import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.request.AuthRequest
 import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.request.SendSMSRequest
-import by.bk.bookkeeper.android.network.response.AccountsResponse
+import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.AuthResponse
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import io.reactivex.Single
@@ -22,7 +22,7 @@ interface BookkeeperService {
     fun login(@Body authRequest: AuthRequest): Single<AuthResponse>
 
     @GET("/api/profile/accounts")
-    fun getAccounts(): Single<AccountsResponse>
+    fun getAccounts(): Single<List<Account>>
 
     @POST("/api/profile/assign-sub-account")
     fun associateWithAccount(@Body associationRequest: AssociationRequest): Single<BaseResponse>

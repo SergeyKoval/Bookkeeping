@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import by.bk.bookkeeper.android.network.BookkeeperService
+import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import by.bk.bookkeeper.android.ui.home.AccountingActivityViewModel
 import by.bk.bookkeeper.android.ui.login.LoginViewModel
 
@@ -19,6 +20,7 @@ class ViewModelFactory(private val bkService: BookkeeperService) : ViewModelProv
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = when {
         modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(bkService) as T
         modelClass.isAssignableFrom(AccountingActivityViewModel::class.java) -> AccountingActivityViewModel(bkService) as T
+        modelClass.isAssignableFrom(AccountsViewModel::class.java) -> AccountsViewModel(bkService) as T
         else -> throw IllegalArgumentException("Cannot instantiate ${modelClass.canonicalName}")
     }
 }

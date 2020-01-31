@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="content_default_padding">12dp</dimen>
+    <dimen name="content_default_margin">12dp</dimen>
+    <dimen name="icons_default_padding">8dp</dimen>
     <dimen name="view_default_padding">8dp</dimen>
     <dimen name="logo_min_height">48dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_horizontal_spacing">3dp</dimen>
     <dimen name="nav_header_height">174dp</dimen>
+    <dimen name="toolbar_progress_bar_negative_margin">-7dp</dimen>
+    <dimen name="list_item_element_space">8dp</dimen>
 </resources>

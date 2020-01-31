@@ -2,6 +2,7 @@ package by.bk.bookkeeper.android.network
 
 import android.annotation.SuppressLint
 import by.bk.bookkeeper.android.BuildConfig
+import by.bk.bookkeeper.android.network.auth.TokenAuthenticator
 import by.bk.bookkeeper.android.network.auth.TokenInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,6 +20,7 @@ object ServiceGenerator {
 
     fun <T> createService(clazz: Class<T>, baseUrl: String): T {
         val tokenOkHttpClient: OkHttpClient = OkHttpClient.Builder()
+                .authenticator(TokenAuthenticator())
                 .addInterceptor(TokenInterceptor())
                 .addInterceptor(createLoggingInterceptor())
                 .build()

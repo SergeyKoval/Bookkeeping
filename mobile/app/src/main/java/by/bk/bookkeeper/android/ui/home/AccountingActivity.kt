@@ -6,16 +6,23 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import by.bk.bookkeeper.android.R
-import by.bk.bookkeeper.android.network.auth.SessionDataProvider
-import by.bk.bookkeeper.android.ui.login.LoginActivity
+import by.bk.bookkeeper.android.ui.BaseActivity
+import by.bk.bookkeeper.android.ui.BookkeeperNavigation
+import by.bk.bookkeeper.android.ui.BookkeeperNavigator
+import by.bk.bookkeeper.android.ui.LogoutConfirmationDialog
+import by.bk.bookkeeper.android.ui.accounts.AccountsFragment
 import com.google.android.material.navigation.NavigationView
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_accounting.*
 
-class AccountingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
+    NavigationView.OnNavigationItemSelectedListener,
+    LogoutConfirmationDialog.OnLogoutConfirmedListener {
+
+    private val navigator: BookkeeperNavigation.Navigator = BookkeeperNavigator(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +38,15 @@ class AccountingActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         })
     }
 
-    override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+    override fun onResume() {
+        super.onResume()
+        subscriptionsDisposable.addAll(
+            viewModel.isSessionValid()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { sessionValid ->
+                    if (!sessionValid) navigator.showLoginActivity()
+                }
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -47,14 +56,32 @@ class AccountingActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.nav_accounts -> {
+                navigator.showContentFragment(AccountsFragment.TAG)
+            }
+            R.id.nav_status -> {
+            }
             R.id.nav_logout -> {
-                SessionDataProvider.clearSessionData()
-                startActivity(LoginActivity.getStartIntent(this@AccountingActivity))
+                LogoutConfirmationDialog.show(this)
             }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onLogoutConfirmed() {
+        viewModel.logout()
+    }
+
+    override fun getViewModelClass(): Class<AccountingActivityViewModel> = AccountingActivityViewModel::class.java
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 
     companion object {

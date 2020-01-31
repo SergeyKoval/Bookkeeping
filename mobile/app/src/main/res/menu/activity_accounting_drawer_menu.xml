@@ -2,6 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
       tools:showIn="navigation_view">
+
+    <item
+            android:id="@+id/nav_accounts"
+            android:title="@string/menu_accounts"/>
+
+    <item
+            android:id="@+id/nav_status"
+            android:title="@string/menu_status"/>
+
     <group
             android:id="@+id/nav_group_other_actions"
             android:checkableBehavior="single">

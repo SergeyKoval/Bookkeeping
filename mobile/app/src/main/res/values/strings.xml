@@ -27,4 +27,10 @@
     <string name="association_sender">Sender: %s</string>
     <string name="association_sms_template">SMS template: %s</string>
 
+    <string name="err_association_removal_failed">Association removal failed</string>
+    <string name="err_association_adding_failed">Association adding failed</string>
+    <string name="err_association_editing_failed">Association editing failed</string>
+    <string name="err_unable_to_get_sms">Unable to get sms</string>
+    <string name="err_no_permissions">No permissions granted. Unable to proceed</string>
+
 </resources>

@@ -12,7 +12,7 @@ import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.SubAccount
 import by.bk.bookkeeper.android.ui.BaseViewHolder
-import by.bk.bookkeeper.android.ui.RecyclerClick
+import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.item_account.view.*
 import kotlinx.android.synthetic.main.item_sub_account.view.*
@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.item_sub_account.view.*
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
-class AccountViewHolder(private val clicksSubject: PublishSubject<RecyclerClick>, view: View) : BaseViewHolder<Account>(view) {
+class AccountViewHolder(private val clicksSubject: PublishSubject<SubAccountRecyclerClick>, view: View) : BaseViewHolder<Account>(view) {
 
     private val title: TextView = itemView.account_title
     private val recyclerSubAccount: RecyclerView = itemView.recycler_sub_account
@@ -30,7 +30,7 @@ class AccountViewHolder(private val clicksSubject: PublishSubject<RecyclerClick>
         title.text = item.title
         recyclerSubAccount.run {
             layoutManager = LinearLayoutManager(itemView.context)
-            adapter = SubAccountsAdapter(item.subAccounts, clicksSubject)
+            adapter = SubAccountsAdapter(item, item.subAccounts, clicksSubject)
         }
     }
 }
@@ -38,7 +38,10 @@ class AccountViewHolder(private val clicksSubject: PublishSubject<RecyclerClick>
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
-class SubAccountViewHolder(private val clickObservable: PublishSubject<RecyclerClick>, view: View) : BaseViewHolder<SubAccount>(view) {
+class SubAccountViewHolder(private val account: Account,
+                           private val clickObservable: PublishSubject<SubAccountRecyclerClick>,
+                           view: View)
+    : BaseViewHolder<SubAccount>(view) {
 
     private val title: TextView = itemView.tv_sub_account_title
     private val sender: TextView = itemView.tv_sender
@@ -68,15 +71,15 @@ class SubAccountViewHolder(private val clickObservable: PublishSubject<RecyclerC
         actionsPopup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_add -> {
-                    clickObservable.onNext(RecyclerClick.AddAssociation(adapterPosition))
+                    clickObservable.onNext(SubAccountRecyclerClick.AddAssociation(account, item))
                     return@setOnMenuItemClickListener true
                 }
                 R.id.action_remove -> {
-                    clickObservable.onNext(RecyclerClick.RemoveAssociation(adapterPosition))
+                    clickObservable.onNext(SubAccountRecyclerClick.RemoveAssociation(account, item))
                     return@setOnMenuItemClickListener true
                 }
                 R.id.action_edit -> {
-                    clickObservable.onNext(RecyclerClick.EditAssociation(adapterPosition))
+                    clickObservable.onNext(SubAccountRecyclerClick.EditAssociation(account, item))
                     return@setOnMenuItemClickListener true
                 }
                 else -> return@setOnMenuItemClickListener false

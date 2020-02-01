@@ -19,6 +19,7 @@
     <string name="action_retry_loading">Retry</string>
 
     <string name="msg_no_accounts">No accounts found</string>
+    <string name="msg_operation_successful">Operation successful</string>
     <string name="action_add_association">Add association</string>
     <string name="action_remove_association">Remove association</string>
     <string name="action_edit_association">Edit association</string>

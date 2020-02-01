@@ -19,9 +19,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_accounting.*
 
 class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
-    NavigationView.OnNavigationItemSelectedListener,
-    LogoutConfirmationDialog.OnLogoutConfirmedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        LogoutConfirmationDialog.OnLogoutConfirmedListener {
 
+    private var navMenuSelectedItemId: Int? = null
     private val navigator: BookkeeperNavigation.Navigator = BookkeeperNavigator(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +30,12 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         setContentView(R.layout.activity_accounting)
         setSupportActionBar(toolbar)
         nav_view.setNavigationItemSelectedListener(this)
+        onNavigationItemSelected(nav_view.menu.findItem(savedInstanceState?.getInt(ARG_NAV_MENU_SELECTION)
+                ?: R.id.nav_accounts))
         drawer_layout.addDrawerListener(ActionBarDrawerToggle(
-            this, drawer_layout, toolbar,
-            R.string.content_description_navigation_drawer_open,
-            R.string.content_description_navigation_drawer_close
+                this, drawer_layout, toolbar,
+                R.string.content_description_navigation_drawer_open,
+                R.string.content_description_navigation_drawer_close
         ).also {
             it.syncState()
         })
@@ -41,11 +44,11 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
     override fun onResume() {
         super.onResume()
         subscriptionsDisposable.addAll(
-            viewModel.isSessionValid()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { sessionValid ->
-                    if (!sessionValid) navigator.showLoginActivity()
-                }
+                viewModel.isSessionValid()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { sessionValid ->
+                            if (!sessionValid) navigator.showLoginActivity()
+                        }
         )
     }
 
@@ -76,20 +79,30 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     override fun getViewModelClass(): Class<AccountingActivityViewModel> = AccountingActivityViewModel::class.java
 
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        navMenuSelectedItemId?.let {
+            outState.putInt(ARG_NAV_MENU_SELECTION, it)
+        }
+    }
+
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            supportFragmentManager.backStackEntryCount > 0 -> supportFragmentManager.popBackStack()
+            drawer_layout.isDrawerOpen(GravityCompat.START) -> drawer_layout.closeDrawer(GravityCompat.START)
+            else -> super.onBackPressed()
         }
     }
 
     companion object {
 
+        private const val ARG_NAV_MENU_SELECTION = "arg_nav_menu_selection"
+
         fun getStartIntent(fromPackageContext: Context): Intent =
-            Intent(fromPackageContext, AccountingActivity::class.java).also {
-                it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+                Intent(fromPackageContext, AccountingActivity::class.java).also {
+                    it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
     }
 
 }

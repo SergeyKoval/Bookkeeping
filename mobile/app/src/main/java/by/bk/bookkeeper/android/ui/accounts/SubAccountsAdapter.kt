@@ -4,18 +4,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.SubAccount
-import by.bk.bookkeeper.android.ui.RecyclerClick
+import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
 import io.reactivex.subjects.PublishSubject
 
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
-class SubAccountsAdapter(private val subAccounts: List<SubAccount>,
-                         private val clicksSubject: PublishSubject<RecyclerClick>) : RecyclerView.Adapter<SubAccountViewHolder>() {
+class SubAccountsAdapter(private val account: Account,
+                         private val subAccounts: List<SubAccount>,
+                         private val clicksSubject: PublishSubject<SubAccountRecyclerClick>
+) : RecyclerView.Adapter<SubAccountViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubAccountViewHolder =
-            SubAccountViewHolder(clicksSubject, LayoutInflater.from(parent.context).inflate(R.layout.item_sub_account, parent, false))
+            SubAccountViewHolder(account, clicksSubject,
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_sub_account, parent, false))
 
     override fun getItemCount(): Int = subAccounts.size
 

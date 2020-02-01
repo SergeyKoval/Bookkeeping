@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
+import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
+import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_accounts.*
@@ -20,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_accounts.*
 class AccountsFragment : BaseFragment() {
 
     private val accountsViewModel: AccountsViewModel by activityScopeViewModel()
+    private val accountAdapter: AccountsAdapter by lazy { AccountsAdapter() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_accounts, container, false)
@@ -27,9 +30,12 @@ class AccountsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycler_accounts.layoutManager = LinearLayoutManager(context)
+        recycler_accounts.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = accountAdapter
+        }
         account_swipe_refresh.setOnRefreshListener {
-            accountsViewModel.retryLoading()
+            accountsViewModel.refreshAccounts()
         }
     }
 
@@ -39,9 +45,7 @@ class AccountsFragment : BaseFragment() {
                 accountsViewModel.accounts()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            recycler_accounts.adapter = AccountsAdapter(it)
-                        },
+                        .subscribe { accountAdapter.setData(it) },
                 accountsViewModel.accountsRequestState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { dataStatus ->
@@ -50,10 +54,33 @@ class AccountsFragment : BaseFragment() {
                             if (dataStatus is DataStatus.Empty) {
                                 Toast.makeText(context, getString(R.string.msg_no_accounts), Toast.LENGTH_LONG).show()
                             }
-                        })
+                        },
+                accountsViewModel.associationRequestState()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { associationState ->
+                            if (associationState.dataState is DataStatus.Success) {
+                                accountsViewModel.refreshAccounts()
+                                Toast.makeText(context, getString(R.string.msg_operation_successful), Toast.LENGTH_SHORT).show()
+                            }
+                            if (associationState.dataState is DataStatus.Error) {
+                                Toast.makeText(context, associationState.dataState.failure.messageStringRes, Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                accountAdapter.subAccountItemClick()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { clickInfo ->
+                            when (clickInfo) {
+                                is SubAccountRecyclerClick.RemoveAssociation -> {
+                                    accountsViewModel.removeAssociation(DissociationRequest(
+                                            accountName = clickInfo.account.title,
+                                            subAccountName = clickInfo.subAccount.title))
+                                }
+                            }
+                        }
+        )
     }
 
-    override fun retryLoading() = accountsViewModel.retryLoading()
+    override fun retryLoading() = accountsViewModel.refreshAccounts()
 
     override fun getTAG() = TAG
 

@@ -17,7 +17,7 @@ abstract class BaseViewHolder<T>(view: View) : RecyclerView.ViewHolder(view) {
 
     abstract fun setItem(item: T?)
 
-    open fun setClickObservable(observable: Observable<RecyclerClick>): Disposable? = null
+    open fun setClickObservable(observable: Observable<SubAccountRecyclerClick>): Disposable? = null
 
     /**
      * @param anchor Anchor view the popup will appear below

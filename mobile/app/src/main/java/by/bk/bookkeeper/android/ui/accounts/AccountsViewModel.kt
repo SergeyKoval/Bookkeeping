@@ -1,14 +1,18 @@
 package by.bk.bookkeeper.android.ui.accounts
 
 import AccountsInteraction
+import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
+import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.response.Account
+import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 
 /**
@@ -22,6 +26,9 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
 
     private val accountsRequestState: BehaviorSubject<DataStatus> = BehaviorSubject.createDefault(DataStatus.Loading)
     override fun accountsRequestState(): Observable<DataStatus> = accountsRequestState
+
+    private val associationRequestState: PublishSubject<AssociationRequestLoadingState> = PublishSubject.create()
+    override fun associationRequestState(): Observable<AssociationRequestLoadingState> = associationRequestState
 
     init {
         getAccounts()
@@ -41,6 +48,27 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
         )
     }
 
-    override fun retryLoading() = getAccounts()
+    override fun removeAssociation(dissociationRequest: DissociationRequest) {
+        subscriptions.add(
+                bkService.dissociateFromAccount(dissociationRequest)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({ response ->
+                            associationRequestState.onNext(
+                                    if (BaseResponse.STATUS_SUCCESS == response.status)
+                                        AssociationRequestLoadingState.RemoveAssociation(DataStatus.Success)
+                                    else AssociationRequestLoadingState.RemoveAssociation(DataStatus.Error(
+                                            FailureWrapper.Generic(R.string.err_association_removal_failed, null, response.message)))
+                            )
+                        }, { error ->
+                            Timber.e(error)
+                            associationRequestState.onNext(
+                                    AssociationRequestLoadingState.RemoveAssociation(DataStatus.Error(FailureWrapper.getFailureType(error)))
+                            )
+                        })
+        )
+
+    }
+
+    override fun refreshAccounts() = getAccounts()
 
 }

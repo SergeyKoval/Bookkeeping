@@ -10,4 +10,9 @@ data class BaseResponse(@SerializedName("message")
                         val message: String? = null,
                         @SerializedName("status")
                         val status: String? = null
-)
+) {
+    companion object {
+        const val STATUS_SUCCESS = "SUCCESS"
+        const val STATUS_FAIL = "FAIL"
+    }
+}

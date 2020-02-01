@@ -11,4 +11,7 @@
     <string name="err_unknown">Something went wrong. Please, try again later</string>
     <string name="err_not_found">Not found. Please, check input data</string>
     <string name="err_unauthorized">Unauthorized</string>
+    <string name="err_association_removal_failed">Association removal failed</string>
+    <string name="err_association_adding_failed">Association adding failed</string>
+    <string name="err_association_editing_failed">Association editing failed</string>
 </resources>

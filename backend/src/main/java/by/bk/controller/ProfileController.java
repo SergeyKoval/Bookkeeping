@@ -62,7 +62,7 @@ public class ProfileController extends BaseAPIController {
     @RoleMobile
     @GetMapping("/accounts")
     public List<Account> getAccounts(Principal principal) {
-        return userAPI.getAccountsSummary(principal.getName());
+        return userAPI.getAccountsSummary(principal.getName(), getDeviceId(principal));
     }
 
     @RoleMobile

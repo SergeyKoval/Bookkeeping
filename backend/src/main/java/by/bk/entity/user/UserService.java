@@ -138,11 +138,15 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public List<Account> getAccountsSummary(String login) {
+    public List<Account> getAccountsSummary(String login, String deviceId) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         accounts.stream()
                 .flatMap(account -> account.getSubAccounts().stream())
-                .forEach(subAccount -> subAccount.setBalance(null));
+                .forEach(subAccount -> {
+                    subAccount.setBalance(null);
+                    DeviceAssociation device = subAccount.getDevice().get(deviceId);
+                    subAccount.setDevice(device != null ? Collections.singletonMap(deviceId, device) : null);
+                });
         return accounts;
     }
 

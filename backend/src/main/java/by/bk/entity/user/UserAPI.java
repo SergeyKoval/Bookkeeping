@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public interface UserAPI extends AuthenticationAPI {
     User getFullUserProfile(String login);
-    List<Account> getAccountsSummary(String login);
+    List<Account> getAccountsSummary(String login, String deviceId);
     SimpleResponse updateUserPassword(String login, String oldPassword, String newPassword);
 
     SimpleResponse includeCurrency(String login, Currency currency);

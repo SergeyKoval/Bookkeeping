@@ -68,6 +68,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
                 LogoutConfirmationDialog.show(this)
             }
         }
+        navMenuSelectedItemId = item.itemId
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

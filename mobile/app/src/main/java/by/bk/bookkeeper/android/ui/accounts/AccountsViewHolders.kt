@@ -12,7 +12,6 @@ import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.SubAccount
 import by.bk.bookkeeper.android.ui.BaseViewHolder
-import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.item_account.view.*
 import kotlinx.android.synthetic.main.item_sub_account.view.*

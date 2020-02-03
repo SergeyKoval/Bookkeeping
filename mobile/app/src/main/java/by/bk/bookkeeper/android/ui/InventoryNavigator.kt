@@ -22,7 +22,7 @@ class BookkeeperNavigator(private val activity: AppCompatActivity) : BookkeeperN
 
     private fun replaceFragment(fragment: BaseFragment) {
         activity.supportFragmentManager.beginTransaction()
-            .replace(R.id.section_fragment_container, fragment, fragment.getTAG())
+            .replace(R.id.fragment_container, fragment, fragment.getTAG())
             .commit()
     }
 

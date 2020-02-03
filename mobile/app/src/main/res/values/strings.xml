@@ -31,6 +31,9 @@
     <string name="err_association_adding_failed">Association adding failed</string>
     <string name="err_association_editing_failed">Association editing failed</string>
     <string name="err_unable_to_get_sms">Unable to get sms</string>
+    <string name="err_unable_to_get_conversations">Unable to get conversations</string>
     <string name="err_no_permissions">No permissions granted. Unable to proceed</string>
+
+    <string name="msg_select_sms_sender">Please, select SMS sender from the list</string>
 
 </resources>

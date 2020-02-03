@@ -7,7 +7,7 @@ import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
-import by.bk.bookkeeper.android.sms.SMS
+import by.bk.bookkeeper.android.sms.Conversation
 import by.bk.bookkeeper.android.sms.SMSHandler
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import by.bk.bookkeeper.android.ui.accounts.AssociationRequestLoadingState
@@ -23,28 +23,30 @@ import timber.log.Timber
 class AssociationViewModel(private val bkService: BookkeeperService) : BaseViewModel(),
         AssociationInteraction.Inputs, AssociationInteraction.Outputs {
 
-    private val sms: BehaviorSubject<Map<String, List<SMS>>> = BehaviorSubject.create()
-    override fun sms(): Observable<Map<String, List<SMS>>> = sms
+    private val conversations: BehaviorSubject<List<Conversation>> = BehaviorSubject.create()
+    override fun conversations(): Observable<List<Conversation>> = conversations
 
-    private val smsLoadingState: BehaviorSubject<DataStatus> = BehaviorSubject.createDefault(DataStatus.Loading)
-    override fun storedSmsLoadingState(): Observable<DataStatus> = smsLoadingState
+    private val conversationsLoadingState: BehaviorSubject<DataStatus> = BehaviorSubject.createDefault(DataStatus.Loading)
+    override fun conversationsLoadingState(): Observable<DataStatus> = conversationsLoadingState
 
     private val associationRequestState: PublishSubject<AssociationRequestLoadingState> = PublishSubject.create()
     override fun associationRequestState(): Observable<AssociationRequestLoadingState> = associationRequestState
 
     init {
-        loadAllSms()
+        loadAllConversations()
     }
 
-    private fun loadAllSms() {
+    private fun loadAllConversations() {
         subscriptions.add(
-                SMSHandler.allSmsObservable()
+                SMSHandler.allConversationsObservable()
                         .subscribeOn(Schedulers.io())
-                        .subscribe({
-                            sms.onNext(it)
-                            smsLoadingState.onNext(DataStatus.Success)
+                        .subscribe({ conversationsList ->
+                            conversations.onNext(conversationsList)
+                            conversationsLoadingState.onNext(if (conversationsList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)
                         }, { error ->
-                            smsLoadingState.onNext(DataStatus.Error(FailureWrapper.Generic(R.string.err_unable_to_get_sms, error, null)))
+                            conversationsLoadingState.onNext(DataStatus.Error(
+                                    FailureWrapper.Generic(R.string.err_unable_to_get_conversations, error, null))
+                            )
                             Timber.e(error)
                         })
 
@@ -70,4 +72,6 @@ class AssociationViewModel(private val bkService: BookkeeperService) : BaseViewM
                         })
         )
     }
+
+    override fun reloadConversations() = loadAllConversations()
 }

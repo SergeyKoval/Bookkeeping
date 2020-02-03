@@ -11,7 +11,6 @@ import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
-import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
 import by.bk.bookkeeper.android.ui.association.AssociationsFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

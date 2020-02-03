@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
@@ -22,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_asociation.*
 class AssociationsFragment : BaseFragment() {
 
     private val associationViewModel: AssociationViewModel by activityScopeViewModel()
+    private val conversationAdapter by lazy { ConversationAdapter() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_asociation, container, false)
@@ -29,6 +32,11 @@ class AssociationsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        recycler_conversations.run {
+            layoutManager = LinearLayoutManager(context)
+            adapter = conversationAdapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        }
     }
 
     override fun onResume() {
@@ -48,20 +56,26 @@ class AssociationsFragment : BaseFragment() {
 
     private fun proceedToSMSHandling() {
         subscriptionsDisposable.addAll(
-                associationViewModel.sms()
+                associationViewModel.conversations()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
+                        .subscribe { data ->
+                            conversationAdapter.setData(data)
                         },
-                associationViewModel.storedSmsLoadingState()
+                associationViewModel.conversationsLoadingState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { dataStatus ->
                             sms_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
+                            if (dataStatus is DataStatus.Error) {
+                                showErrorSnackbar(dataStatus.failure)
+                            }
                         }
         )
     }
 
-    override fun retryLoading() {}
+    override fun retryLoading() {
+        associationViewModel.reloadConversations()
+    }
 
     override fun getTAG() = TAG
 
@@ -77,7 +91,8 @@ class AssociationsFragment : BaseFragment() {
                 val fragment: AssociationsFragment = activity.supportFragmentManager.findFragmentByTag(TAG) as? AssociationsFragment
                         ?: newInstance()
                 activity.supportFragmentManager.beginTransaction()
-                        .replace(R.id.section_fragment_container, fragment, fragment.getTAG())
+                        .replace(R.id.fragment_container, fragment, fragment.getTAG())
+                        .addToBackStack(TAG)
                         .commit()
             } ?: throw java.lang.IllegalStateException("Activity can not be null")
         }

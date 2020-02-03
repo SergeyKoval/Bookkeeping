@@ -4,6 +4,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.Telephony
+import android.util.Patterns
 import androidx.annotation.WorkerThread
 import by.bk.bookkeeper.android.BookkeeperApp
 import io.reactivex.Observable
@@ -14,13 +15,43 @@ import timber.log.Timber
  **/
 object SMSHandler {
 
-    private val projection = arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
+    private val conversationUri: Uri = Uri.parse("content://mms-sms/conversations?simple=true")
+    private val recipientsUri: Uri = Uri.parse("content://mms-sms/canonical-addresses")
+
+    private val conversationProjection = arrayOf(Telephony.Threads._ID, Telephony.Threads.RECIPIENT_IDS)
+    private val smsMessageProjection = arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
+
+    fun allConversationsObservable(): Observable<List<Conversation>> = Observable.fromCallable {
+        getAllConversations()
+    }
 
     fun allSmsObservable(): Observable<Map<String, List<SMS>>> = Observable.fromCallable {
         getAllSms()
     }
 
-    // TODO make separate queries
+    @WorkerThread
+    fun getAllConversations(): List<Conversation> {
+        Timber.d("Getting conversations in ${Thread.currentThread()}")
+        val conversationsList: ArrayList<Conversation> = arrayListOf()
+        getConversationsCursor()?.use { conversationCursor ->
+            while (conversationCursor.moveToNext()) {
+                var sender: Sender? = null
+                val threadId = conversationCursor.getLong(conversationCursor.getColumnIndex(Telephony.Threads._ID))
+                val recipientId: String = conversationCursor.getString(conversationCursor.getColumnIndex(Telephony.Threads.RECIPIENT_IDS))
+                        .split(" ").first { it.isNotBlank() }
+                getRecipientCursor(recipientId)?.use { recipientCursor ->
+                    while (recipientCursor.moveToNext()) {
+                        val address = recipientCursor.getString(recipientCursor.getColumnIndex(Telephony.Sms.ADDRESS))
+                        val addressBookName = if (Patterns.PHONE.matcher(address).matches()) getContactName(address) else null
+                        sender = Sender(id = recipientId, address = address, addressBookDisplayableName = addressBookName)
+                    }
+                }
+                conversationsList.add(Conversation(threadId, sender))
+            }
+        }
+        return conversationsList
+    }
+
     @WorkerThread
     fun getAllSms(): Map<String, List<SMS>> {
         Timber.d("Getting sms list in ${Thread.currentThread()}")
@@ -50,5 +81,12 @@ object SMSHandler {
     }
 
     private fun getInboxSmsCursor(): Cursor? = BookkeeperApp.getContext().contentResolver
-            .query(Telephony.Sms.Inbox.CONTENT_URI, projection, null, null, null)
+            .query(Telephony.Sms.Inbox.CONTENT_URI, smsMessageProjection, null, null, null)
+
+    private fun getConversationsCursor() = BookkeeperApp.getContext().contentResolver
+            .query(conversationUri, conversationProjection, null, null, null)
+
+    private fun getRecipientCursor(id: String) = BookkeeperApp.getContext().contentResolver
+            .query(recipientsUri, null, "_id=?", arrayOf(id), null)
+
 }

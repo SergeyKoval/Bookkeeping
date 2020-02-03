@@ -3,6 +3,7 @@ package by.bk.bookkeeper.android.ui
 import androidx.appcompat.app.AppCompatActivity
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.ui.accounts.AccountsFragment
+import by.bk.bookkeeper.android.ui.association.AssociationsFragment
 import by.bk.bookkeeper.android.ui.login.LoginActivity
 
 /**
@@ -11,19 +12,23 @@ import by.bk.bookkeeper.android.ui.login.LoginActivity
 
 class BookkeeperNavigator(private val activity: AppCompatActivity) : BookkeeperNavigation.Navigator {
 
-    override fun showContentFragment(fragmentTag: String) {
-        val fragment = activity.supportFragmentManager.findFragmentByTag(fragmentTag)
-            ?: when (fragmentTag) {
-                AccountsFragment.TAG -> AccountsFragment.newInstance()
-                else -> throw IllegalArgumentException("Unknown Fragment")
-            }
+    override fun showAccountsFragment() {
+        val fragment = activity.supportFragmentManager.findFragmentByTag(AccountsFragment.TAG)
+                ?: AccountsFragment.newInstance()
         replaceFragment(fragment as BaseFragment)
     }
 
-    private fun replaceFragment(fragment: BaseFragment) {
+    override fun showAssociationsFragment() {
+        val fragment = activity.supportFragmentManager.findFragmentByTag(AssociationsFragment.TAG)
+                ?: AssociationsFragment.newInstance()
+        replaceFragment(fragment as BaseFragment, true)
+    }
+
+    private fun replaceFragment(fragment: BaseFragment, addToBackStack: Boolean = false) {
         activity.supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment, fragment.getTAG())
-            .commit()
+                .replace(R.id.fragment_container, fragment, fragment.getTAG())
+                .also { if (addToBackStack) it.addToBackStack(fragment.getTAG()) }
+                .commit()
     }
 
     override fun showLoginActivity() {

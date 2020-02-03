@@ -18,7 +18,7 @@ object SMSHandler {
     private val conversationUri: Uri = Uri.parse("content://mms-sms/conversations?simple=true")
     private val recipientsUri: Uri = Uri.parse("content://mms-sms/canonical-addresses")
 
-    private val conversationProjection = arrayOf(Telephony.Threads._ID, Telephony.Threads.RECIPIENT_IDS)
+    private val conversationProjection = arrayOf(Telephony.Threads._ID, Telephony.Threads.RECIPIENT_IDS, Telephony.Threads.SNIPPET)
     private val smsMessageProjection = arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
 
     fun allConversationsObservable(): Observable<List<Conversation>> = Observable.fromCallable {
@@ -37,13 +37,15 @@ object SMSHandler {
             while (conversationCursor.moveToNext()) {
                 var sender: Sender? = null
                 val threadId = conversationCursor.getLong(conversationCursor.getColumnIndex(Telephony.Threads._ID))
+                val snippet = conversationCursor.getString(conversationCursor.getColumnIndex(Telephony.Threads.SNIPPET))
                 val recipientId: String = conversationCursor.getString(conversationCursor.getColumnIndex(Telephony.Threads.RECIPIENT_IDS))
                         .split(" ").first { it.isNotBlank() }
                 getRecipientCursor(recipientId)?.use { recipientCursor ->
                     while (recipientCursor.moveToNext()) {
                         val address = recipientCursor.getString(recipientCursor.getColumnIndex(Telephony.Sms.ADDRESS))
                         val addressBookName = if (Patterns.PHONE.matcher(address).matches()) getContactName(address) else null
-                        sender = Sender(id = recipientId, address = address, addressBookDisplayableName = addressBookName)
+                        sender = Sender(id = recipientId, address = address,
+                                addressBookDisplayableName = addressBookName ?: "", snippet = snippet ?: "")
                     }
                 }
                 conversationsList.add(Conversation(threadId, sender))
@@ -84,7 +86,7 @@ object SMSHandler {
             .query(Telephony.Sms.Inbox.CONTENT_URI, smsMessageProjection, null, null, null)
 
     private fun getConversationsCursor() = BookkeeperApp.getContext().contentResolver
-            .query(conversationUri, conversationProjection, null, null, null)
+            .query(conversationUri, conversationProjection, null, null, Telephony.Sms.DEFAULT_SORT_ORDER)
 
     private fun getRecipientCursor(id: String) = BookkeeperApp.getContext().contentResolver
             .query(recipientsUri, null, "_id=?", arrayOf(id), null)

@@ -40,6 +40,9 @@ class AssociationViewModel(private val bkService: BookkeeperService) : BaseViewM
         subscriptions.add(
                 SMSHandler.allConversationsObservable()
                         .subscribeOn(Schedulers.io())
+                        .doOnSubscribe {
+                            conversationsLoadingState.onNext(DataStatus.Loading)
+                        }
                         .subscribe({ conversationsList ->
                             conversations.onNext(conversationsList)
                             conversationsLoadingState.onNext(if (conversationsList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)

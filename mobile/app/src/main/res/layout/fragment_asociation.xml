@@ -7,14 +7,15 @@
     android:padding="@dimen/content_default_padding">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_select_sms_from_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/content_default_margin"
-        android:text="@string/msg_select_sms_sender" />
+        android:text="@string/msg_select_sms_sender"
+        android:visibility="visible" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/sms_swipe_refresh"
+        android:id="@+id/conversations_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.accounts.AccountsFragment">

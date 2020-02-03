@@ -3,23 +3,21 @@ package by.bk.bookkeeper.android.ui.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.ui.BaseActivity
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.BookkeeperNavigator
 import by.bk.bookkeeper.android.ui.LogoutConfirmationDialog
-import by.bk.bookkeeper.android.ui.accounts.AccountsFragment
 import com.google.android.material.navigation.NavigationView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_accounting.*
 
 class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         NavigationView.OnNavigationItemSelectedListener,
+        BookkeeperNavigation.NavigatorProvider,
         LogoutConfirmationDialog.OnLogoutConfirmedListener {
 
     private var navMenuSelectedItemId: Int? = null
@@ -30,8 +28,6 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         setContentView(R.layout.activity_accounting)
         setSupportActionBar(toolbar)
         nav_view.setNavigationItemSelectedListener(this)
-        onNavigationItemSelected(nav_view.menu.findItem(savedInstanceState?.getInt(ARG_NAV_MENU_SELECTION)
-                ?: R.id.nav_accounts))
         drawer_layout.addDrawerListener(ActionBarDrawerToggle(
                 this, drawer_layout, toolbar,
                 R.string.content_description_navigation_drawer_open,
@@ -39,6 +35,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         ).also {
             it.syncState()
         })
+        savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
     }
 
     override fun onResume() {
@@ -52,25 +49,21 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         )
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.activity_accounting_toolbar_menu, menu)
-        return true
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_accounts -> {
-                navigator.showContentFragment(AccountsFragment.TAG)
+                navigator.showAccountsFragment()
             }
             R.id.nav_status -> {
+                navigator.showAssociationsFragment()
             }
             R.id.nav_logout -> {
                 LogoutConfirmationDialog.show(this)
             }
         }
         navMenuSelectedItemId = item.itemId
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
+        nav_view.setCheckedItem(item.itemId)
+        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -80,13 +73,17 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     override fun getViewModelClass(): Class<AccountingActivityViewModel> = AccountingActivityViewModel::class.java
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        navMenuSelectedItemId?.let {
-            outState.putInt(ARG_NAV_MENU_SELECTION, it)
-        }
+        navMenuSelectedItemId?.let { outState.putInt(KEY_NAV_MENU_SELECTION, it) }
     }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        navMenuSelectedItemId?.let { nav_view.setCheckedItem(it) }
+    }
+
+    override fun getNavigator(): BookkeeperNavigation.Navigator = navigator
 
     override fun onBackPressed() {
         when {
@@ -98,7 +95,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     companion object {
 
-        private const val ARG_NAV_MENU_SELECTION = "arg_nav_menu_selection"
+        private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 
         fun getStartIntent(fromPackageContext: Context): Intent =
                 Intent(fromPackageContext, AccountingActivity::class.java).also {

@@ -2,6 +2,8 @@ package by.bk.bookkeeper.android.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.action
@@ -23,6 +25,11 @@ abstract class BaseFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.title = getString(getToolbarTitle())
+    }
+
     override fun onDestroyView() {
         subscriptionsDisposable.clear()
         super.onDestroyView()
@@ -41,4 +48,6 @@ abstract class BaseFragment : Fragment() {
     abstract fun retryLoading()
 
     abstract fun getTAG(): String
+    @StringRes
+    abstract fun getToolbarTitle(): Int
 }

@@ -6,5 +6,6 @@ package by.bk.bookkeeper.android.sms
 
 data class Sender(val id: String,
                   val address: String = "",
-                  val addressBookDisplayableName: String? = null
+                  val addressBookDisplayableName: String = "",
+                  val snippet: String = ""
 )

@@ -11,10 +11,11 @@ import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
-import by.bk.bookkeeper.android.ui.association.AssociationsFragment
+import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_accounts.*
+
 
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
@@ -76,7 +77,7 @@ class AccountsFragment : BaseFragment() {
                                             subAccountName = clickInfo.subAccount.title))
                                 }
                                 is SubAccountRecyclerClick.AddAssociation -> {
-                                    AssociationsFragment.show(this)
+                                    (activity as BookkeeperNavigation.NavigatorProvider).getNavigator().showAssociationsFragment()
                                 }
                             }
                         }
@@ -84,6 +85,8 @@ class AccountsFragment : BaseFragment() {
     }
 
     override fun retryLoading() = accountsViewModel.refreshAccounts()
+
+    override fun getToolbarTitle(): Int = R.string.toolbar_title_accounts
 
     override fun getTAG() = TAG
 

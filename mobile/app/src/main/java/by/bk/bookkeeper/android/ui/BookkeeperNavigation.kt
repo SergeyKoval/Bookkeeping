@@ -8,7 +8,8 @@ interface BookkeeperNavigation {
 
     interface Navigator {
         fun showLoginActivity()
-        fun showContentFragment(fragmentTag: String)
+        fun showAccountsFragment()
+        fun showAssociationsFragment()
         fun onBackPressed()
     }
 

@@ -26,12 +26,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_item_element_space"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_snippet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_sender_name"
         tools:text="Phone number"
         tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_snippet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_phone_number"
+        tools:text="Snippet message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Bookkeeper</string>
+    <string name="action_login">Login</string>
+    <string name="str_copyright" translatable="false">© %s, Bookkeeper</string>
+    <string name="str_version" translatable="false">Version %s</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="err_empty_email">Please, enter email</string>
+    <string name="err_invalid_email">Please, enter valid email</string>
+    <string name="err_empty_password">Please, enter password</string>
+    <string name="title_activity_accounting">AccountingActivity</string>
+    <string name="str_welcome">Welcome!</string>
+
+    <string name="dialog_logout_title">Logout</string>
+    <string name="dialog_logout_message">Do you really want to logout?</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <string name="action_retry_loading">Retry</string>
+
+    <string name="msg_no_accounts">No accounts found</string>
+    <string name="msg_operation_successful">Operation successful</string>
+    <string name="action_add_association">Add association</string>
+    <string name="action_remove_association">Remove association</string>
+    <string name="action_edit_association">Edit association</string>
+    <string name="title_association">Association:</string>
+    <string name="association_sender">Sender: %s</string>
+    <string name="association_sms_template">SMS template: %s</string>
+
+    <string name="err_association_removal_failed">Association removal failed</string>
+    <string name="err_association_adding_failed">Association adding failed</string>
+    <string name="err_association_editing_failed">Association editing failed</string>
+    <string name="err_unable_to_get_sms">Unable to get sms</string>
+    <string name="err_no_permissions">No permissions granted. Unable to proceed</string>
+
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="color_primary">#3F51B5</color>
+    <color name="color_primary_dark">#303F9F</color>
+    <color name="primary_light">#c5cae9</color>
+    <color name="color_accent">#448AFF</color>
+    <color name="color_red_high_emphasis">#f44336</color>
+
+    <color name="color_launcher_background">@color/color_primary</color>
+
+    <color name="color_white_high_emphasis">#DEFFFFFF</color>
+    <color name="color_white_medium_emphasis">#99FFFFFF</color>
+    <color name="color_white_disabled">#61FFFFFF</color>
+
+</resources>

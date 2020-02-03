@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/content_default_padding"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/content_default_padding"
+    android:paddingBottom="@dimen/content_default_padding">
+
+    <TextView
+        android:id="@+id/tv_sub_account_title"
+        style="@style/SubAccountItemHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Account title" />
+
+    <ImageView
+        android:id="@+id/iv_action_association"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_btn_add_association"
+        android:padding="@dimen/icons_default_padding"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_sub_account_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_sub_account_title"
+        app:layout_constraintTop_toTopOf="@+id/tv_sub_account_title"
+        app:srcCompat="@drawable/ic_item_action" />
+
+    <TextView
+        android:id="@+id/tv_sender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_default_margin"
+        android:layout_marginEnd="8dp"
+        android:text="@string/association_sender"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sub_account_title" />
+
+    <TextView
+        android:id="@+id/tv_sms_body_template"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        android:text="@string/association_sms_template"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sender" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_association"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_sms_body_template, tv_sender, tv_sms_body_template"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

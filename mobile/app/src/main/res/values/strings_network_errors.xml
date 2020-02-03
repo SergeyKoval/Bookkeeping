@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="err_placeholder" translatable="false">%s</string>
+    <string name="err_no_internet_connection">No network connection. Please, check network connection and try again</string>
+    <string name="err_invalid_credentials">Invalid username or password</string>
+    <string name="err_bad_request">Please, check that input data is correct </string>
+    <string name="err_unknown_host">Please, make sure that you are connected to network</string>
+    <string name="err_forbidden">Access forbidden</string>
+    <string name="err_timeout">Connection timeout. Please, try again later</string>
+    <string name="err_internal_server_error">Internal server error. Please, try again later</string>
+    <string name="err_unknown">Something went wrong. Please, try again later</string>
+    <string name="err_not_found">Not found. Please, check input data</string>
+    <string name="err_unauthorized">Unauthorized</string>
+</resources>

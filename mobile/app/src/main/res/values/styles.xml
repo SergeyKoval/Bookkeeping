@@ -1,0 +1,53 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- Login screen theme -->
+    <style name="AppTheme.Login" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="android:autofilledHighlight">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/color_primary</item>
+        <item name="colorControlNormal">@color/color_white_high_emphasis</item>
+        <item name="colorControlActivated">@color/color_white_high_emphasis</item>
+        <item name="colorControlHighlight">@color/color_white_high_emphasis</item>
+        <item name="android:textColorHint">@color/color_white_high_emphasis</item>
+        <item name="colorButtonNormal">@color/color_primary_dark</item>
+        <item name="colorError">@color/color_red_high_emphasis</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="ProgressBar.Toolbar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_marginTop">@dimen/toolbar_progress_bar_negative_margin</item>
+        <item name="android:layout_marginBottom">@dimen/toolbar_progress_bar_negative_margin</item>
+        <item name="android:indeterminateTintMode">src_atop</item>
+        <item name="android:indeterminateTint">@color/primary_light</item>
+        <item name="android:indeterminate">true</item>
+    </style>
+
+    <style name="AccountItemHeader" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/color_primary_dark</item>
+        <item name="android:padding">@dimen/list_item_element_space</item>
+    </style>
+
+    <style name="SubAccountItemHeader" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/color_primary_dark</item>
+    </style>
+
+
+</resources>

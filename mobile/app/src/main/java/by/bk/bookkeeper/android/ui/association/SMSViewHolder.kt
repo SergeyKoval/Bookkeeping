@@ -21,6 +21,8 @@ class SMSViewHolder(view: View) : BaseViewHolder<SMS>(view) {
     override fun setItem(item: SMS?) {
         item ?: return
         smsBodyTextView.text = item.body
+        smsBodyTextView.setTextIsSelectable(true)
+        smsBodyTextView.isLongClickable = true
         dateSentTextView.text = dateFormat.format(Date(item.dateReceived))
     }
 }

@@ -9,6 +9,7 @@ import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 interface BookkeeperNavigation {
 
     interface Navigator {
+        fun popBackStackToRoot()
         fun showLoginActivity()
         fun showAccountsFragment()
         fun showAssociationsFragment(accountInfoHolder: AccountInfoHolder)

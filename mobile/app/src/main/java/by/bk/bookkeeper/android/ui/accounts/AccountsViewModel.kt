@@ -3,6 +3,7 @@ package by.bk.bookkeeper.android.ui.accounts
 import AccountsInteraction
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
+import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.BaseResponse
@@ -48,10 +49,36 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
         )
     }
 
+    override fun addAssociation(associationRequest: AssociationRequest) {
+        subscriptions.add(
+                bkService.associateWithAccount(associationRequest)
+                        .subscribeOn(Schedulers.io())
+                        .doOnSubscribe {
+                            associationRequestState.onNext(AssociationRequestLoadingState.AddAssociation(DataStatus.Loading))
+                        }
+                        .subscribe({ response ->
+                            associationRequestState.onNext(
+                                    if (BaseResponse.STATUS_SUCCESS == response.status)
+                                        AssociationRequestLoadingState.AddAssociation(DataStatus.Success)
+                                    else AssociationRequestLoadingState.AddAssociation(DataStatus.Error(
+                                            FailureWrapper.Generic(R.string.err_association_adding_failed, null, response.message)))
+                            )
+                        }, { error ->
+                            Timber.e(error)
+                            associationRequestState.onNext(
+                                    AssociationRequestLoadingState.AddAssociation(DataStatus.Error(FailureWrapper.getFailureType(error)))
+                            )
+                        })
+        )
+    }
+
     override fun removeAssociation(dissociationRequest: DissociationRequest) {
         subscriptions.add(
                 bkService.dissociateFromAccount(dissociationRequest)
                         .subscribeOn(Schedulers.io())
+                        .doOnSubscribe {
+                            associationRequestState.onNext(AssociationRequestLoadingState.RemoveAssociation(DataStatus.Loading))
+                        }
                         .subscribe({ response ->
                             associationRequestState.onNext(
                                     if (BaseResponse.STATUS_SUCCESS == response.status)

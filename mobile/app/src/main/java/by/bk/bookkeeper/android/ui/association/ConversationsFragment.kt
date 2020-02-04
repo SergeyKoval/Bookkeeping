@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.fragment_asociation.*
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
-class AssociationsFragment : BaseFragment() {
+class ConversationsFragment : BaseFragment() {
 
-    private val associationViewModel: AssociationViewModel by activityScopeViewModel()
+    private val inboxSmsViewModel: InboxSmsViewModel by activityScopeViewModel()
     private val conversationAdapter by lazy { ConversationAdapter() }
 
     private lateinit var accountInfoHolder: AccountInfoHolder
@@ -48,7 +48,7 @@ class AssociationsFragment : BaseFragment() {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
         conversations_swipe_refresh.setOnRefreshListener {
-            associationViewModel.reloadConversations()
+            inboxSmsViewModel.reloadConversations()
         }
     }
 
@@ -62,7 +62,7 @@ class AssociationsFragment : BaseFragment() {
                                 proceedToSMSHandling()
                             } else {
                                 Toast.makeText(context, getString(R.string.err_no_permissions), Toast.LENGTH_SHORT).show()
-                                activity?.supportFragmentManager?.popBackStack()
+                                (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.onBackPressed()
                             }
                         })
     }
@@ -100,13 +100,13 @@ class AssociationsFragment : BaseFragment() {
 
     private fun proceedToSMSHandling() {
         subscriptionsDisposable.addAll(
-                associationViewModel.conversations()
+                inboxSmsViewModel.conversations()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { data ->
                             conversationAdapter.setData(data)
                         },
-                associationViewModel.conversationsLoadingState()
+                inboxSmsViewModel.conversationsLoadingState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { dataStatus ->
                             conversations_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
@@ -125,7 +125,7 @@ class AssociationsFragment : BaseFragment() {
     }
 
     override fun retryLoading() {
-        associationViewModel.reloadConversations()
+        inboxSmsViewModel.reloadConversations()
     }
 
     override fun getTAG() = TAG
@@ -134,11 +134,11 @@ class AssociationsFragment : BaseFragment() {
 
     companion object {
 
-        val TAG = AssociationsFragment::class.java.simpleName
+        val TAG = ConversationsFragment::class.java.simpleName
         private const val KEY_QUERY = "key_query"
         private const val ARG_INFO_HOLDER = "arg_info_holder"
 
-        fun newInstance(infoHolder: AccountInfoHolder) = AssociationsFragment().apply {
+        fun newInstance(infoHolder: AccountInfoHolder) = ConversationsFragment().apply {
             arguments = Bundle().apply { putParcelable(ARG_INFO_HOLDER, infoHolder) }
         }
     }

@@ -63,7 +63,8 @@ object SMSHandler {
             while (smsCursor.moveToNext()) {
                 val dateReceived: Long = smsCursor.getLong(smsCursor.getColumnIndex(Telephony.Sms.DATE))
                 val body = smsCursor.getString(smsCursor.getColumnIndex(Telephony.Sms.BODY))
-                smsList.add(SMS(body = body, dateReceived = dateReceived))
+                val sender = smsCursor.getString(smsCursor.getColumnIndex(Telephony.Sms.ADDRESS))
+                smsList.add(SMS(body = body, dateReceived = dateReceived, senderName = sender))
             }
         }
         return smsList

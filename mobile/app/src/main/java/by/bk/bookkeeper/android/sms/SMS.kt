@@ -9,5 +9,7 @@ import com.google.gson.annotations.SerializedName
 data class SMS(@SerializedName("fullSms")
                val body: String,
                @SerializedName("smsTimestamp")
-               val dateReceived: Long
+               val dateReceived: Long,
+               @Expose
+               val senderName: String
 )

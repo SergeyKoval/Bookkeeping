@@ -60,12 +60,13 @@ class AccountsFragment : BaseFragment() {
                 accountsViewModel.associationRequestState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { associationState ->
-                            if (associationState.dataState is DataStatus.Success) {
+                            account_swipe_refresh.isRefreshing = associationState.dataStatus is DataStatus.Loading
+                            if (associationState.dataStatus is DataStatus.Success) {
                                 accountsViewModel.refreshAccounts()
                                 Toast.makeText(context, getString(R.string.msg_operation_successful), Toast.LENGTH_SHORT).show()
                             }
-                            if (associationState.dataState is DataStatus.Error) {
-                                Toast.makeText(context, associationState.dataState.failure.messageStringRes, Toast.LENGTH_SHORT).show()
+                            if (associationState.dataStatus is DataStatus.Error) {
+                                Toast.makeText(context, associationState.dataStatus.failure.messageStringRes, Toast.LENGTH_SHORT).show()
                             }
                         },
                 accountAdapter.subAccountItemClick()
@@ -77,7 +78,8 @@ class AccountsFragment : BaseFragment() {
                                             accountName = clickInfo.account.title,
                                             subAccountName = clickInfo.subAccount.title))
                                 }
-                                is SubAccountRecyclerClick.AddAssociation -> {
+                                is SubAccountRecyclerClick.AddAssociation,
+                                is SubAccountRecyclerClick.EditAssociation -> {
                                     (activity as BookkeeperNavigation.NavigatorProvider).getNavigator()
                                             .showAssociationsFragment(AccountInfoHolder(accountName = clickInfo.account.title,
                                                     subAccountName = clickInfo.subAccount.title))

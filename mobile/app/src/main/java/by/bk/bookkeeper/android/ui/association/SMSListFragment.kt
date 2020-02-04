@@ -8,8 +8,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
+import by.bk.bookkeeper.android.hideKeyboard
+import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
+import by.bk.bookkeeper.android.ui.BookkeeperNavigation
+import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
+import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_sms.*
 
@@ -18,7 +23,8 @@ import kotlinx.android.synthetic.main.fragment_sms.*
  **/
 class SMSListFragment : BaseFragment() {
 
-    private val associationViewModel: AssociationViewModel by activityScopeViewModel()
+    private val inboxSmsViewModel: InboxSmsViewModel by activityScopeViewModel()
+    private val accountViewModel: AccountsViewModel by activityScopeViewModel()
     private val smsAdapter by lazy { SMSAdapter() }
 
     private var threadId: Long = 0
@@ -30,7 +36,7 @@ class SMSListFragment : BaseFragment() {
                 ?: throw  IllegalStateException("SMS Thread ID can not be null")
         accountInfoHolder = arguments?.getParcelable(ARG_INFO_HOLDER)
                 ?: throw  IllegalStateException("Account info can not be null")
-        associationViewModel.loadInboxSMSByThreadId(threadId)
+        inboxSmsViewModel.loadInboxSMSByThreadId(threadId)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,28 +50,47 @@ class SMSListFragment : BaseFragment() {
             adapter = smsAdapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
+        sms_swipe_refresh.setOnRefreshListener {
+            inboxSmsViewModel.loadInboxSMSByThreadId(threadId)
+        }
+        btn_associate.setOnClickListener {
+            if (edit_text_template.text.isNullOrEmpty()) {
+                text_input_template.error = getString(R.string.err_empty_template)
+            } else {
+                accountViewModel.addAssociation(AssociationRequest(accountName = accountInfoHolder.accountName,
+                        subAccountName = accountInfoHolder.subAccountName,
+                        sender = smsAdapter.getSenderAddress(),
+                        associationString = edit_text_template.text.toString()))
+                hideKeyboard(sms_layout_root)
+                (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         subscriptionsDisposable.addAll(
-                associationViewModel.sms()
+                inboxSmsViewModel.sms()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { smsList ->
                             smsAdapter.setData(smsList)
                         },
-                associationViewModel.smsLoadingState()
+                inboxSmsViewModel.smsLoadingState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { dataStatus ->
+                            sms_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
                             if (dataStatus is DataStatus.Error) {
                                 showErrorSnackbar(dataStatus.failure)
                             }
-                        }
+                        },
+                edit_text_template.textChanges()
+                        .skipInitialValue()
+                        .subscribe { text_input_template.error = null }
         )
     }
 
     override fun retryLoading() {
-        associationViewModel.loadInboxSMSByThreadId(threadId)
+        inboxSmsViewModel.loadInboxSMSByThreadId(threadId)
     }
 
     override fun getTAG() = TAG

@@ -19,6 +19,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def postfix = (variant.buildType.name == "debug") ? "dev-" : ""
+            output.outputFileName = "bookkeeper-" + postfix + defaultConfig.versionName + "." + defaultConfig.versionCode + ".apk"
+        }
+    }
 }
 
 dependencies {

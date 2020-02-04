@@ -8,6 +8,7 @@ import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import by.bk.bookkeeper.android.sms.Conversation
+import by.bk.bookkeeper.android.sms.SMS
 import by.bk.bookkeeper.android.sms.SMSHandler
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import by.bk.bookkeeper.android.ui.accounts.AssociationRequestLoadingState
@@ -26,8 +27,14 @@ class AssociationViewModel(private val bkService: BookkeeperService) : BaseViewM
     private val conversations: BehaviorSubject<List<Conversation>> = BehaviorSubject.create()
     override fun conversations(): Observable<List<Conversation>> = conversations
 
+    private val sms: BehaviorSubject<List<SMS>> = BehaviorSubject.create()
+    override fun sms(): Observable<List<SMS>> = sms
+
     private val conversationsLoadingState: BehaviorSubject<DataStatus> = BehaviorSubject.createDefault(DataStatus.Loading)
     override fun conversationsLoadingState(): Observable<DataStatus> = conversationsLoadingState
+
+    private val smsLoadingState: BehaviorSubject<DataStatus> = BehaviorSubject.createDefault(DataStatus.Loading)
+    override fun smsLoadingState(): Observable<DataStatus> = smsLoadingState
 
     private val associationRequestState: PublishSubject<AssociationRequestLoadingState> = PublishSubject.create()
     override fun associationRequestState(): Observable<AssociationRequestLoadingState> = associationRequestState
@@ -53,6 +60,25 @@ class AssociationViewModel(private val bkService: BookkeeperService) : BaseViewM
                             Timber.e(error)
                         })
 
+        )
+    }
+
+    fun loadInboxSMSByThreadId(threadId: Long) {
+        subscriptions.add(
+                SMSHandler.threadSmsObservable(threadId)
+                        .subscribeOn(Schedulers.io())
+                        .doOnSubscribe {
+                            smsLoadingState.onNext(DataStatus.Loading)
+                        }
+                        .subscribe({ smsList ->
+                            sms.onNext(smsList)
+                            smsLoadingState.onNext(if (smsList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)
+                        }, { error ->
+                            smsLoadingState.onNext(DataStatus.Error(
+                                    FailureWrapper.Generic(R.string.err_unable_to_get_sms, error, null))
+                            )
+                            Timber.e(error)
+                        })
         )
     }
 

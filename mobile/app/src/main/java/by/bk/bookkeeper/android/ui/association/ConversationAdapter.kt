@@ -30,6 +30,8 @@ class ConversationAdapter : RecyclerView.Adapter<ConversationViewHolder>(), Filt
         notifyDataSetChanged()
     }
 
+    fun getItem (position: Int): Conversation = conversations[position]
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationViewHolder =
             ConversationViewHolder(clicksSubject, LayoutInflater.from(parent.context).inflate(R.layout.item_conversation, parent, false))
 

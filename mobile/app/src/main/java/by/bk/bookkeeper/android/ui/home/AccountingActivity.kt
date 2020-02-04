@@ -55,7 +55,6 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
                 navigator.showAccountsFragment()
             }
             R.id.nav_status -> {
-                navigator.showAssociationsFragment()
             }
             R.id.nav_logout -> {
                 LogoutConfirmationDialog.show(this)

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical"
+    android:padding="@dimen/content_default_padding">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_template"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/list_item_element_space">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_template"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_paste_template" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_sms"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="@dimen/view_default_padding" />
+
+    <Button
+        android:id="@+id/btn_associate"
+        style="@style/ActionButtonColored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        android:clickable="true"
+        android:text="@string/action_add_association" />
+
+</LinearLayout>

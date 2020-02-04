@@ -6,10 +6,16 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *  Created by Evgenia Grinkevich on 29, January, 2020
  **/
+
+fun getListItemDateFormat() = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).apply {
+    timeZone = TimeZone.getTimeZone("UTC")
+}
 
 fun View.snackbar(@StringRes messageRes: Int, length: Int = Snackbar.LENGTH_SHORT) = Snackbar
         .make(this, resources.getString(messageRes), length).show()

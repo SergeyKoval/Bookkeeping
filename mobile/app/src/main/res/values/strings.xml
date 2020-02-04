@@ -39,5 +39,6 @@
     <string name="toolbar_title_accounts">Accounts</string>
     <string name="toolbar_title_sms_status">SMS Status</string>
     <string name="toolbar_title_associating">Associating</string>
+    <string name="hint_paste_template">Paste sms template here</string>
 
 </resources>

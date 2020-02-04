@@ -1,6 +1,7 @@
 import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.sms.Conversation
+import by.bk.bookkeeper.android.sms.SMS
 import by.bk.bookkeeper.android.ui.accounts.AssociationRequestLoadingState
 import io.reactivex.Observable
 
@@ -16,7 +17,9 @@ interface AssociationInteraction {
 
     interface Outputs {
         fun conversations(): Observable<List<Conversation>>
+        fun sms(): Observable<List<SMS>>
         fun conversationsLoadingState(): Observable<DataStatus>
+        fun smsLoadingState(): Observable<DataStatus>
         fun associationRequestState(): Observable<AssociationRequestLoadingState>
     }
 }

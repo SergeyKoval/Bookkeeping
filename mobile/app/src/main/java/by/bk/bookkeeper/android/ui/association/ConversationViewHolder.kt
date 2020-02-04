@@ -18,6 +18,12 @@ class ConversationViewHolder(private val clicksSubject: PublishSubject<RecyclerC
     private val phoneNumberTextView: TextView = itemView.tv_phone_number
     private val snippetTextView: TextView = itemView.tv_snippet
 
+    init {
+        itemView.setOnClickListener {
+            clicksSubject.onNext(RecyclerClick.Row(adapterPosition))
+        }
+    }
+
     override fun setItem(item: Conversation?) {
         val sender = item?.sender ?: return
         snippetTextView.text = sender.snippet

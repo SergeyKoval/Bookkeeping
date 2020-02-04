@@ -1,6 +1,5 @@
 package by.bk.bookkeeper.android.sms
 
-import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.Telephony
@@ -17,16 +16,17 @@ object SMSHandler {
 
     private val conversationUri: Uri = Uri.parse("content://mms-sms/conversations?simple=true")
     private val recipientsUri: Uri = Uri.parse("content://mms-sms/canonical-addresses")
+    private val inboxSmsUri: Uri = Telephony.Sms.Inbox.CONTENT_URI
 
     private val conversationProjection = arrayOf(Telephony.Threads._ID, Telephony.Threads.RECIPIENT_IDS, Telephony.Threads.SNIPPET)
-    private val smsMessageProjection = arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
+    private val inboxSMSProjection = arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
 
     fun allConversationsObservable(): Observable<List<Conversation>> = Observable.fromCallable {
         getAllConversations()
     }
 
-    fun allSmsObservable(): Observable<Map<String, List<SMS>>> = Observable.fromCallable {
-        getAllSms()
+    fun threadSmsObservable(threadId: Long): Observable<List<SMS>> = Observable.fromCallable {
+        getThreadInboxSms(threadId)
     }
 
     @WorkerThread
@@ -45,7 +45,8 @@ object SMSHandler {
                         val address = recipientCursor.getString(recipientCursor.getColumnIndex(Telephony.Sms.ADDRESS))
                         val addressBookName = if (Patterns.PHONE.matcher(address).matches()) getContactName(address) else null
                         sender = Sender(id = recipientId, address = address,
-                                addressBookDisplayableName = addressBookName ?: "", snippet = snippet ?: "")
+                                addressBookDisplayableName = addressBookName
+                                        ?: "", snippet = snippet ?: "")
                     }
                 }
                 conversationsList.add(Conversation(threadId, sender))
@@ -55,19 +56,17 @@ object SMSHandler {
     }
 
     @WorkerThread
-    fun getAllSms(): Map<String, List<SMS>> {
-        Timber.d("Getting sms list in ${Thread.currentThread()}")
+    fun getThreadInboxSms(threadId: Long): List<SMS> {
+        Timber.d("Getting thread sms in ${Thread.currentThread()}")
         val smsList: ArrayList<SMS> = arrayListOf()
-        getInboxSmsCursor()?.use { cursor ->
-            while (cursor.moveToNext()) {
-                val sender = cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS))
-                smsList.add(SMS(senderAddress = sender,
-                        body = cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY)),
-                        dateReceived = cursor.getLong(cursor.getColumnIndex(Telephony.Sms.DATE)),
-                        displayablePersonName = getContactName(sender)))
+        getThreadSmsCursor(threadId)?.use { smsCursor ->
+            while (smsCursor.moveToNext()) {
+                val dateReceived: Long = smsCursor.getLong(smsCursor.getColumnIndex(Telephony.Sms.DATE))
+                val body = smsCursor.getString(smsCursor.getColumnIndex(Telephony.Sms.BODY))
+                smsList.add(SMS(body = body, dateReceived = dateReceived))
             }
         }
-        return smsList.groupBy { it.senderAddress }
+        return smsList
     }
 
     @WorkerThread
@@ -82,13 +81,13 @@ object SMSHandler {
         return null
     }
 
-    private fun getInboxSmsCursor(): Cursor? = BookkeeperApp.getContext().contentResolver
-            .query(Telephony.Sms.Inbox.CONTENT_URI, smsMessageProjection, null, null, null)
-
     private fun getConversationsCursor() = BookkeeperApp.getContext().contentResolver
             .query(conversationUri, conversationProjection, null, null, Telephony.Sms.DEFAULT_SORT_ORDER)
 
     private fun getRecipientCursor(id: String) = BookkeeperApp.getContext().contentResolver
             .query(recipientsUri, null, "_id=?", arrayOf(id), null)
+
+    private fun getThreadSmsCursor(id: Long) = BookkeeperApp.getContext().contentResolver
+            .query(inboxSmsUri, inboxSMSProjection, "thread_id=?", arrayOf(id.toString()), Telephony.Sms.DEFAULT_SORT_ORDER)
 
 }

@@ -3,7 +3,9 @@ package by.bk.bookkeeper.android.ui
 import androidx.appcompat.app.AppCompatActivity
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.ui.accounts.AccountsFragment
+import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import by.bk.bookkeeper.android.ui.association.AssociationsFragment
+import by.bk.bookkeeper.android.ui.association.SMSListFragment
 import by.bk.bookkeeper.android.ui.login.LoginActivity
 
 /**
@@ -18,9 +20,15 @@ class BookkeeperNavigator(private val activity: AppCompatActivity) : BookkeeperN
         replaceFragment(fragment as BaseFragment)
     }
 
-    override fun showAssociationsFragment() {
+    override fun showAssociationsFragment(accountInfoHolder: AccountInfoHolder) {
         val fragment = activity.supportFragmentManager.findFragmentByTag(AssociationsFragment.TAG)
-                ?: AssociationsFragment.newInstance()
+                ?: AssociationsFragment.newInstance(accountInfoHolder)
+        replaceFragment(fragment as BaseFragment, true)
+    }
+
+    override fun showSmsListFragment(threadId: Long, accountInfoHolder: AccountInfoHolder) {
+        val fragment = activity.supportFragmentManager.findFragmentByTag(SMSListFragment.TAG)
+                ?: SMSListFragment.newInstance(threadId, accountInfoHolder)
         replaceFragment(fragment as BaseFragment, true)
     }
 

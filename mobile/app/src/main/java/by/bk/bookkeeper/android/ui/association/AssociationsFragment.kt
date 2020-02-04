@@ -12,6 +12,7 @@ import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.hideKeyboard
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
+import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -25,11 +26,14 @@ class AssociationsFragment : BaseFragment() {
     private val associationViewModel: AssociationViewModel by activityScopeViewModel()
     private val conversationAdapter by lazy { ConversationAdapter() }
 
+    private lateinit var accountInfoHolder: AccountInfoHolder
     private var userQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userQuery = savedInstanceState?.getString(KEY_QUERY)
+        accountInfoHolder = arguments?.getParcelable(ARG_INFO_HOLDER)
+                ?: throw  IllegalStateException("Account info can not be null")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -83,11 +87,10 @@ class AssociationsFragment : BaseFragment() {
             userQuery?.let {
                 setQuery(it, true)
                 isIconified = false
+                clearFocus()
                 hideKeyboard(rootView)
             }
         }
-
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -110,6 +113,13 @@ class AssociationsFragment : BaseFragment() {
                             if (dataStatus is DataStatus.Error) {
                                 showErrorSnackbar(dataStatus.failure)
                             }
+                        },
+                conversationAdapter.itemClick()
+                        .subscribe {
+                            (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.showSmsListFragment(
+                                    threadId = conversationAdapter.getItem(it.position).threadId,
+                                    accountInfoHolder = accountInfoHolder
+                            )
                         }
         )
     }
@@ -126,8 +136,10 @@ class AssociationsFragment : BaseFragment() {
 
         val TAG = AssociationsFragment::class.java.simpleName
         private const val KEY_QUERY = "key_query"
+        private const val ARG_INFO_HOLDER = "arg_info_holder"
 
-        fun newInstance() = AssociationsFragment()
-
+        fun newInstance(infoHolder: AccountInfoHolder) = AssociationsFragment().apply {
+            arguments = Bundle().apply { putParcelable(ARG_INFO_HOLDER, infoHolder) }
+        }
     }
 }

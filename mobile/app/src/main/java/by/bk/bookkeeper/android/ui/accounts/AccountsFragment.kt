@@ -12,6 +12,7 @@ import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
+import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_accounts.*
@@ -77,7 +78,9 @@ class AccountsFragment : BaseFragment() {
                                             subAccountName = clickInfo.subAccount.title))
                                 }
                                 is SubAccountRecyclerClick.AddAssociation -> {
-                                    (activity as BookkeeperNavigation.NavigatorProvider).getNavigator().showAssociationsFragment()
+                                    (activity as BookkeeperNavigation.NavigatorProvider).getNavigator()
+                                            .showAssociationsFragment(AccountInfoHolder(accountName = clickInfo.account.title,
+                                                    subAccountName = clickInfo.subAccount.title))
                                 }
                             }
                         }

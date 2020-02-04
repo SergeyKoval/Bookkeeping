@@ -5,7 +5,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
-import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.bk.bookkeeper.android.R
@@ -42,10 +41,9 @@ class SubAccountViewHolder(private val account: Account,
                            view: View)
     : BaseViewHolder<SubAccount>(view) {
 
-    private val title: TextView = itemView.tv_sub_account_title
-    private val sender: TextView = itemView.tv_sender
-    private val smsBodyTemplate: TextView = itemView.tv_sms_body_template
-    private val associationGroup: Group = itemView.group_association
+    private val titleTextView: TextView = itemView.tv_sub_account_title
+    private val senderTextView: TextView = itemView.tv_sender
+    private val smsBodyTemplateTextView: TextView = itemView.tv_sms_body_template
     private val actionIcon: ImageView = itemView.iv_action_association
 
     private val actionsPopup: PopupMenu = createActionsPopup(actionIcon, R.menu.account_item_action)
@@ -58,12 +56,13 @@ class SubAccountViewHolder(private val account: Account,
 
     override fun setItem(item: SubAccount?) {
         item ?: return
-        title.text = item.title
-        item.association?.let {
-            sender.text = itemView.context.getString(R.string.association_sender, it.sender)
-            smsBodyTemplate.text = itemView.context.getString(R.string.association_sms_template, it.smsBodyTemplate)
+        titleTextView.text = item.title
+        senderTextView.visibility = if (item.association != null) View.VISIBLE else View.GONE
+        smsBodyTemplateTextView.visibility = if (!item.association?.smsBodyTemplate.isNullOrEmpty()) View.VISIBLE else View.GONE
+        item.association?.let { association ->
+            senderTextView.text = itemView.context.getString(R.string.association_sender, association.sender)
+            smsBodyTemplateTextView.text = association.smsBodyTemplate
         }
-        associationGroup.visibility = if (item.association != null) View.VISIBLE else View.GONE
         actionsPopup.menu.findItem(R.id.action_add).isVisible = item.association == null
         actionsPopup.menu.findItem(R.id.action_remove).isVisible = item.association != null
         actionsPopup.menu.findItem(R.id.action_edit).isVisible = item.association != null

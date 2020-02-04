@@ -49,7 +49,7 @@ object SMSHandler {
                                         ?: "", snippet = snippet ?: "")
                     }
                 }
-                conversationsList.add(Conversation(threadId, sender))
+                sender?.let { conversationsList.add(Conversation(threadId, it)) }
             }
         }
         return conversationsList

@@ -13,5 +13,5 @@ data class AssociationRequest(@SerializedName("account")
                               @SerializedName("sender")
                               val sender: String,
                               @SerializedName("subAccountIdentifier")
-                              val associationString: String
+                              val associationString: String? = null
 )

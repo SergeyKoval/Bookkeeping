@@ -3,6 +3,7 @@ package by.bk.bookkeeper.android.ui
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.sms.Conversation
 import by.bk.bookkeeper.android.ui.accounts.AccountsFragment
 import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import by.bk.bookkeeper.android.ui.association.ConversationsFragment
@@ -21,16 +22,12 @@ class BookkeeperNavigator(private val activity: AppCompatActivity) : BookkeeperN
         replaceFragment(fragment as BaseFragment)
     }
 
-    override fun showAssociationsFragment(accountInfoHolder: AccountInfoHolder) {
-        val fragment = activity.supportFragmentManager.findFragmentByTag(ConversationsFragment.TAG)
-                ?: ConversationsFragment.newInstance(accountInfoHolder)
-        replaceFragment(fragment as BaseFragment, true)
+    override fun showConversationsFragment(accountInfoHolder: AccountInfoHolder) {
+        replaceFragment(ConversationsFragment.newInstance(accountInfoHolder) as BaseFragment, true)
     }
 
-    override fun showSmsListFragment(threadId: Long, accountInfoHolder: AccountInfoHolder) {
-        val fragment = activity.supportFragmentManager.findFragmentByTag(SMSListFragment.TAG)
-                ?: SMSListFragment.newInstance(threadId, accountInfoHolder)
-        replaceFragment(fragment as BaseFragment, true)
+    override fun showSmsListFragment(conversation: Conversation, accountInfoHolder: AccountInfoHolder) {
+        replaceFragment(SMSListFragment.newInstance(conversation, accountInfoHolder) as BaseFragment, true)
     }
 
     private fun replaceFragment(fragment: BaseFragment, addToBackStack: Boolean = false) {

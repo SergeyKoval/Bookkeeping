@@ -33,7 +33,7 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_root)
         text_view_copyright.text =
-            String.format(getString(R.string.str_copyright), Calendar.getInstance().get(Calendar.YEAR))
+                String.format(getString(R.string.str_copyright), Calendar.getInstance().get(Calendar.YEAR))
         text_view_version.text = String.format(getString(R.string.str_version), getBuildConfigAppVersion())
         savedInstanceState?.getBoolean(KEY_SHOW_SPLASH_VIEW)?.let { showSplash ->
             if (!showSplash) performLoginViewsTransition()
@@ -43,45 +43,46 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
     override fun onStart() {
         super.onStart()
         subscriptionsDisposable.addAll(
-            viewModel.isAuthorized()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { isAlreadyLoggedIn ->
-                    shouldShowSplash = false
-                    performScreensTransition(isAlreadyLoggedIn)
+                viewModel.isAuthorized()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .take(1)
+                        .subscribe { isAlreadyLoggedIn ->
+                            shouldShowSplash = false
+                            performScreensTransition(isAlreadyLoggedIn)
+                        },
+                viewModel.authRequestState()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { status ->
+                            progress_login.visibility = if (status is DataStatus.Loading) View.VISIBLE else View.GONE
+                            text_view_error.visibility = if (status is DataStatus.Error) View.VISIBLE else View.GONE
+                            button_login.isEnabled = status !is DataStatus.Loading
+                            when (status) {
+                                is DataStatus.Success -> {
+                                    startActivity(AccountingActivity.getStartIntent(this@LoginActivity))
+                                }
+                                is DataStatus.Error -> {
+                                    text_view_error.text = status.failure.serverErrorMessage
+                                            ?: getString(status.failure.messageStringRes)
+                                }
+                            }
+                        },
+                viewModel.inputValidation()
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { validationWrapper ->
+                            (validationWrapper as? InputValidationWrapper.Invalid)?.let {
+                                handleValidationErrors(it.validationError)
+                            }
+                        },
+                button_login.clicks().subscribe {
+                    viewModel.login(edit_text_email.text.toString(), edit_text_password.text.toString())
                 },
-            viewModel.authRequestState()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { status ->
-                    progress_login.visibility = if (status is DataStatus.Loading) View.VISIBLE else View.GONE
-                    text_view_error.visibility = if (status is DataStatus.Error) View.VISIBLE else View.GONE
-                    button_login.isEnabled = status !is DataStatus.Loading
-                    when (status) {
-                        is DataStatus.Success -> {
-                            startActivity(AccountingActivity.getStartIntent(this@LoginActivity))
-                        }
-                        is DataStatus.Error -> {
-                            text_view_error.text = status.failure.serverErrorMessage
-                                ?: getString(status.failure.messageStringRes)
-                        }
-                    }
-                },
-            viewModel.inputValidation()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { validationWrapper ->
-                    (validationWrapper as? InputValidationWrapper.Invalid)?.let {
-                        handleValidationErrors(it.validationError)
-                    }
-                },
-            button_login.clicks().subscribe {
-                viewModel.login(edit_text_email.text.toString(), edit_text_password.text.toString())
-            },
-            edit_text_email.textChanges()
-                .skipInitialValue()
-                .subscribe { text_input_email.error = null },
-            edit_text_password.textChanges()
-                .skipInitialValue()
-                .subscribe { text_input_password.error = null }
+                edit_text_email.textChanges()
+                        .skipInitialValue()
+                        .subscribe { text_input_email.error = null },
+                edit_text_password.textChanges()
+                        .skipInitialValue()
+                        .subscribe { text_input_password.error = null }
         )
     }
 
@@ -129,10 +130,8 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         private const val KEY_SHOW_SPLASH_VIEW = "should_show_splash"
 
         fun getStartIntent(fromPackageContext: Context): Intent =
-            Intent(fromPackageContext, LoginActivity::class.java).also {
-                it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+                Intent(fromPackageContext, LoginActivity::class.java).also {
+                    it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
     }
-
-
 }

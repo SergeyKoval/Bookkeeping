@@ -39,6 +39,9 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
         subscriptions.add(
                 bkService.getAccounts()
                         .subscribeOn(Schedulers.io())
+                        .doOnSubscribe {
+                            accountsRequestState.onNext(DataStatus.Loading)
+                        }
                         .subscribe({ responseList ->
                             accounts.onNext(responseList)
                             accountsRequestState.onNext(if (responseList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)

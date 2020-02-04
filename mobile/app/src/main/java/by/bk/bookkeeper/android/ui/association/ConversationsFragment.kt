@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_asociation.*
 class ConversationsFragment : BaseFragment() {
 
     private val inboxSmsViewModel: InboxSmsViewModel by activityScopeViewModel()
-    private val conversationAdapter by lazy { ConversationAdapter() }
+    private val conversationAdapter by lazy { ConversationFilterableAdapter() }
 
     private lateinit var accountInfoHolder: AccountInfoHolder
     private var userQuery: String? = null
@@ -116,10 +116,10 @@ class ConversationsFragment : BaseFragment() {
                         },
                 conversationAdapter.itemClick()
                         .subscribe {
+                            hideKeyboard(view?.rootView)
                             (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.showSmsListFragment(
-                                    threadId = conversationAdapter.getItem(it.position).threadId,
-                                    accountInfoHolder = accountInfoHolder
-                            )
+                                    conversation = conversationAdapter.getItem(it.position),
+                                    accountInfoHolder = accountInfoHolder)
                         }
         )
     }

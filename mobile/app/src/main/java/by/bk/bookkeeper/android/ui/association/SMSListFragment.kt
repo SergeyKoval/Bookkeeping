@@ -11,6 +11,7 @@ import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.hideKeyboard
 import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
+import by.bk.bookkeeper.android.sms.Conversation
 import by.bk.bookkeeper.android.ui.BaseFragment
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
@@ -27,16 +28,16 @@ class SMSListFragment : BaseFragment() {
     private val accountViewModel: AccountsViewModel by activityScopeViewModel()
     private val smsAdapter by lazy { SMSAdapter() }
 
-    private var threadId: Long = 0
     private lateinit var accountInfoHolder: AccountInfoHolder
+    private lateinit var conversation: Conversation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        threadId = arguments?.getLong(ARG_THREAD_ID)
-                ?: throw  IllegalStateException("SMS Thread ID can not be null")
         accountInfoHolder = arguments?.getParcelable(ARG_INFO_HOLDER)
                 ?: throw  IllegalStateException("Account info can not be null")
-        inboxSmsViewModel.loadInboxSMSByThreadId(threadId)
+        conversation = arguments?.getParcelable(ARG_CONVERSATION)
+                ?: throw  IllegalStateException("Conversation can not be null")
+        inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,19 +52,15 @@ class SMSListFragment : BaseFragment() {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
         sms_swipe_refresh.setOnRefreshListener {
-            inboxSmsViewModel.loadInboxSMSByThreadId(threadId)
+            inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
         }
         btn_associate.setOnClickListener {
-            if (edit_text_template.text.isNullOrEmpty()) {
-                text_input_template.error = getString(R.string.err_empty_template)
-            } else {
-                accountViewModel.addAssociation(AssociationRequest(accountName = accountInfoHolder.accountName,
-                        subAccountName = accountInfoHolder.subAccountName,
-                        sender = smsAdapter.getSenderAddress(),
-                        associationString = edit_text_template.text.toString()))
-                hideKeyboard(sms_layout_root)
-                (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
-            }
+            accountViewModel.addAssociation(AssociationRequest(accountName = accountInfoHolder.accountName,
+                    subAccountName = accountInfoHolder.subAccountName,
+                    sender = conversation.sender.address,
+                    associationString = edit_text_template.text?.toString()))
+            hideKeyboard(sms_layout_root)
+            (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
         }
     }
 
@@ -90,7 +87,7 @@ class SMSListFragment : BaseFragment() {
     }
 
     override fun retryLoading() {
-        inboxSmsViewModel.loadInboxSMSByThreadId(threadId)
+        inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
     }
 
     override fun getTAG() = TAG
@@ -101,12 +98,12 @@ class SMSListFragment : BaseFragment() {
 
         val TAG = SMSListFragment::class.java.simpleName
         private const val ARG_INFO_HOLDER = "arg_info_holder"
-        private const val ARG_THREAD_ID = "arg_thread_id"
+        private const val ARG_CONVERSATION = "arg_conversation"
 
-        fun newInstance(threadId: Long, infoHolder: AccountInfoHolder) = SMSListFragment().apply {
+        fun newInstance(conversation: Conversation, infoHolder: AccountInfoHolder) = SMSListFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(ARG_INFO_HOLDER, infoHolder)
-                putLong(ARG_THREAD_ID, threadId)
+                putParcelable(ARG_CONVERSATION, conversation)
             }
         }
     }

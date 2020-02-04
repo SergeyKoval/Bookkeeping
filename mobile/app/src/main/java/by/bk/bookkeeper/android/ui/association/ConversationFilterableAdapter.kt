@@ -16,7 +16,7 @@ import io.reactivex.subjects.PublishSubject
  *  Created by Evgenia Grinkevich on 03, February, 2020
  **/
 
-class ConversationAdapter : RecyclerView.Adapter<ConversationViewHolder>(), Filterable {
+class ConversationFilterableAdapter : RecyclerView.Adapter<ConversationViewHolder>(), Filterable {
 
     private var conversations: List<Conversation> = arrayListOf()
     private var conversationsFiltered: List<Conversation> = arrayListOf()
@@ -30,7 +30,7 @@ class ConversationAdapter : RecyclerView.Adapter<ConversationViewHolder>(), Filt
         notifyDataSetChanged()
     }
 
-    fun getItem (position: Int): Conversation = conversations[position]
+    fun getItem(position: Int): Conversation = conversationsFiltered[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationViewHolder =
             ConversationViewHolder(clicksSubject, LayoutInflater.from(parent.context).inflate(R.layout.item_conversation, parent, false))
@@ -47,10 +47,9 @@ class ConversationAdapter : RecyclerView.Adapter<ConversationViewHolder>(), Filt
             if (!constraint.isNullOrEmpty()) {
                 val filteredResults: ArrayList<Conversation> = arrayListOf()
                 for (item in conversations) {
-                    val sender = item.sender ?: break
-                    if (sender.address.contains(constraint, ignoreCase = true)
-                            || sender.addressBookDisplayableName.contains(constraint, ignoreCase = true)
-                            || sender.snippet.contains(constraint, ignoreCase = true)) {
+                    if (item.sender.address.contains(constraint, ignoreCase = true)
+                            || item.sender.addressBookDisplayableName.contains(constraint, ignoreCase = true)
+                            || item.sender.snippet.contains(constraint, ignoreCase = true)) {
                         filteredResults.add(item)
                     }
                 }

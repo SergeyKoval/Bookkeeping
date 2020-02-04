@@ -9,4 +9,5 @@ import com.google.gson.annotations.SerializedName
 data class Association(@SerializedName("sender")
                        val sender: String,
                        @SerializedName("subAccountIdentifier")
-                       val smsBodyTemplate: String)
+                       val smsBodyTemplate: String
+)

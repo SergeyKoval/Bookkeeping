@@ -81,7 +81,7 @@ class AccountsFragment : BaseFragment() {
                                 is SubAccountRecyclerClick.AddAssociation,
                                 is SubAccountRecyclerClick.EditAssociation -> {
                                     (activity as BookkeeperNavigation.NavigatorProvider).getNavigator()
-                                            .showAssociationsFragment(AccountInfoHolder(accountName = clickInfo.account.title,
+                                            .showConversationsFragment(AccountInfoHolder(accountName = clickInfo.account.title,
                                                     subAccountName = clickInfo.subAccount.title))
                                 }
                             }

@@ -1,5 +1,6 @@
 package by.bk.bookkeeper.android.ui
 
+import by.bk.bookkeeper.android.sms.Conversation
 import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 
 /**
@@ -12,8 +13,8 @@ interface BookkeeperNavigation {
         fun popBackStackToRoot()
         fun showLoginActivity()
         fun showAccountsFragment()
-        fun showAssociationsFragment(accountInfoHolder: AccountInfoHolder)
-        fun showSmsListFragment(threadId: Long, accountInfoHolder: AccountInfoHolder)
+        fun showConversationsFragment(accountInfoHolder: AccountInfoHolder)
+        fun showSmsListFragment(conversation: Conversation, accountInfoHolder: AccountInfoHolder)
         fun onBackPressed()
     }
 

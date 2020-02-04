@@ -15,6 +15,7 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_accounting.view.*
 import kotlinx.android.synthetic.main.fragment_accounts.*
 
 
@@ -32,6 +33,7 @@ class AccountsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_menu)
         recycler_accounts.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = accountAdapter

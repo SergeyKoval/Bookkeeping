@@ -17,6 +17,7 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.activity_accounting.view.*
 import kotlinx.android.synthetic.main.fragment_sms.*
 
 /**
@@ -46,6 +47,7 @@ class SMSListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_back)
         recycler_sms.run {
             layoutManager = LinearLayoutManager(context)
             adapter = smsAdapter

@@ -35,6 +35,10 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         ).also {
             it.syncState()
         })
+        toolbar.setNavigationOnClickListener {
+            if (supportFragmentManager.backStackEntryCount > 0) onBackPressed()
+            else drawer_layout.openDrawer(GravityCompat.START)
+        }
         savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
     }
 

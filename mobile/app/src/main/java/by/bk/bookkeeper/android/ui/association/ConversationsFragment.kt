@@ -16,6 +16,7 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_accounting.view.*
 import kotlinx.android.synthetic.main.fragment_asociation.*
 
 /**
@@ -42,6 +43,7 @@ class ConversationsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_back)
         recycler_conversations.run {
             layoutManager = LinearLayoutManager(context)
             adapter = conversationAdapter

@@ -42,4 +42,8 @@
     <string name="toolbar_title_associating">Associating</string>
     <string name="hint_paste_template">Paste sms template here (optional)</string>
 
+    <string name="msg_service_notification_sms_processing">SMS processing</string>
+    <string name="msg_service_notification_waiting_for_sms">Waiting for incoming sms</string>
+    <string name="msg_service_notification_running">SMS processing service running</string>
+
 </resources>

@@ -9,6 +9,7 @@ import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
+import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -44,6 +45,10 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
                         }
                         .subscribe({ responseList ->
                             accounts.onNext(responseList)
+                            val associations = responseList.flatMap { acc ->
+                                acc.subAccounts.mapNotNull { it.association }
+                            }
+                            SmsPreferenceProvider.saveAssociationsToStorage(associations)
                             accountsRequestState.onNext(if (responseList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)
                         }, { error ->
                             Timber.e(error)

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.sms.SMSProcessingService
 import by.bk.bookkeeper.android.ui.BaseActivity
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.BookkeeperNavigator
@@ -46,7 +47,13 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         subscriptionsDisposable.add(RxPermissions(this)
                 .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
                 .subscribe { granted ->
-                    if (!granted) Toast.makeText(this, getString(R.string.err_no_permissions), Toast.LENGTH_SHORT).show()
+                    if (granted) {
+                        startForegroundService(Intent(this, SMSProcessingService::class.java).apply {
+                            action = INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED
+                        })
+                    } else {
+                        Toast.makeText(this, getString(R.string.err_no_permissions), Toast.LENGTH_SHORT).show()
+                    }
                 }
         )
     }
@@ -107,6 +114,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     companion object {
 
+        const val INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED = "activity_launched"
         private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 
         fun getStartIntent(fromPackageContext: Context): Intent =

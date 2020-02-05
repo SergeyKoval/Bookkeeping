@@ -1,5 +1,6 @@
 package by.bk.bookkeeper.android.sms.preferences
 
+import by.bk.bookkeeper.android.network.response.Association
 import by.bk.bookkeeper.android.sms.SMS
 
 /**
@@ -10,9 +11,15 @@ interface ISmsPreferenceProvider {
 
     fun getPendingSmsFromStorage(): List<SMS>
 
-    fun saveSMSToStorage(vararg sms: SMS)
+    fun saveSMSToStorage(sms: List<SMS>)
 
-    fun deleteSMSFromStorage(vararg sms: SMS)
+    fun saveAssociationsToStorage(association: List<Association>)
+
+    fun deleteAssociationsFromStorage(association: List<Association>)
+
+    fun getAssociationsFromStorage(): List<Association>
+
+    fun deleteSMSFromStorage(sms: List<SMS>)
 
     fun setShouldProcessReceivedSms(shouldProcess: Boolean)
 

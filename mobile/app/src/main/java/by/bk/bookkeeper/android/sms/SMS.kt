@@ -1,6 +1,5 @@
 package by.bk.bookkeeper.android.sms
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -10,6 +9,6 @@ data class SMS(@SerializedName("fullSms")
                val body: String,
                @SerializedName("smsTimestamp")
                val dateReceived: Long,
-               @Expose
+               @SerializedName("sender")
                val senderName: String
 )

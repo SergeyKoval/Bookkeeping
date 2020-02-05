@@ -2,12 +2,11 @@ package by.bk.bookkeeper.android.ui.association
 
 import SMSProviderInteraction
 import by.bk.bookkeeper.android.R
-import by.bk.bookkeeper.android.network.BookkeeperService
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import by.bk.bookkeeper.android.sms.Conversation
 import by.bk.bookkeeper.android.sms.SMS
-import by.bk.bookkeeper.android.sms.SMSHandler
+import by.bk.bookkeeper.android.sms.SMSContentProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -38,7 +37,7 @@ class InboxSmsViewModel : BaseViewModel(),
 
     private fun loadAllConversations() {
         subscriptions.add(
-                SMSHandler.allConversationsObservable()
+                SMSContentProvider.allConversationsObservable()
                         .subscribeOn(Schedulers.io())
                         .doOnSubscribe {
                             conversationsLoadingState.onNext(DataStatus.Loading)
@@ -58,7 +57,7 @@ class InboxSmsViewModel : BaseViewModel(),
 
     fun loadInboxSMSByThreadId(threadId: Long) {
         subscriptions.add(
-                SMSHandler.threadSmsObservable(threadId)
+                SMSContentProvider.threadSmsObservable(threadId)
                         .subscribeOn(Schedulers.io())
                         .doOnSubscribe {
                             smsLoadingState.onNext(DataStatus.Loading)

@@ -12,7 +12,7 @@ import timber.log.Timber
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
-object SMSHandler {
+object SMSContentProvider {
 
     private val conversationUri: Uri = Uri.parse("content://mms-sms/conversations?simple=true")
     private val recipientsUri: Uri = Uri.parse("content://mms-sms/canonical-addresses")
@@ -44,9 +44,7 @@ object SMSHandler {
                     while (recipientCursor.moveToNext()) {
                         val address = recipientCursor.getString(recipientCursor.getColumnIndex(Telephony.Sms.ADDRESS))
                         val addressBookName = if (Patterns.PHONE.matcher(address).matches()) getContactName(address) else null
-                        sender = Sender(id = recipientId, address = address,
-                                addressBookDisplayableName = addressBookName
-                                        ?: "", snippet = snippet ?: "")
+                        sender = Sender(id = recipientId, address = address, addressBookDisplayableName = addressBookName ?: "", snippet = snippet ?: "")
                     }
                 }
                 sender?.let { conversationsList.add(Conversation(threadId, it)) }

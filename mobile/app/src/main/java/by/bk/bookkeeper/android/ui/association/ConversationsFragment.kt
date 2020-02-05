@@ -58,7 +58,7 @@ class ConversationsFragment : BaseFragment() {
         super.onResume()
         subscriptionsDisposable.addAll(
                 RxPermissions(this)
-                        .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS)
+                        .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
                         .subscribe { granted ->
                             if (granted) {
                                 proceedToSMSHandling()

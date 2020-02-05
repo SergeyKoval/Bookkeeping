@@ -9,6 +9,7 @@ import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import by.bk.bookkeeper.android.network.wrapper.InputValidationError
 import by.bk.bookkeeper.android.network.wrapper.InputValidationWrapper
+import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -45,6 +46,7 @@ class LoginViewModel(private val bkService: BookkeeperService) : BaseViewModel()
                 }
                 .subscribe({ tokenResponse ->
                     SessionDataProvider.saveSessionData(SessionData(tokenResponse.token))
+                    SmsPreferenceProvider.setShouldProcessReceivedSms(true)
                     authRequestState.onNext(DataStatus.Success)
                 }, { error ->
                     authRequestState.onNext(DataStatus.Error(FailureWrapper.getFailureType(error)))

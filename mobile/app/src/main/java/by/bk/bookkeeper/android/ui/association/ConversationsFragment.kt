@@ -56,17 +56,13 @@ class ConversationsFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        subscriptionsDisposable.addAll(
-                RxPermissions(this)
-                        .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
-                        .subscribe { granted ->
-                            if (granted) {
-                                proceedToSMSHandling()
-                            } else {
-                                Toast.makeText(context, getString(R.string.err_no_permissions), Toast.LENGTH_SHORT).show()
-                                (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.onBackPressed()
-                            }
-                        })
+        if (RxPermissions(this).isGranted(Manifest.permission.READ_SMS)
+                && RxPermissions(this).isGranted(Manifest.permission.READ_CONTACTS)) {
+            proceedToSMSHandling()
+        } else {
+            Toast.makeText(context, getString(R.string.err_no_permissions), Toast.LENGTH_SHORT).show()
+            (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.onBackPressed()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

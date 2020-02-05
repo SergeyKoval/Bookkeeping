@@ -1,9 +1,11 @@
 package by.bk.bookkeeper.android.ui.home
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
@@ -12,6 +14,7 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.BookkeeperNavigator
 import by.bk.bookkeeper.android.ui.LogoutConfirmationDialog
 import com.google.android.material.navigation.NavigationView
+import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_accounting.*
 
@@ -40,6 +43,12 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
             else drawer_layout.openDrawer(GravityCompat.START)
         }
         savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
+        subscriptionsDisposable.add(RxPermissions(this)
+                .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
+                .subscribe { granted ->
+                    if (!granted) Toast.makeText(this, getString(R.string.err_no_permissions), Toast.LENGTH_SHORT).show()
+                }
+        )
     }
 
     override fun onResume() {

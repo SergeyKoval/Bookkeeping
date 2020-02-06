@@ -20,6 +20,7 @@ object SessionDataProvider : ISessionDataProvider {
 
     private const val SESSION_DATA_PREFERENCE_FILE_KEY = "by.bk.bookkeeper.data"
     private const val KEY_SESSION_DATA = "session_data"
+    private const val KEY_USER = "user_email"
     private const val KEY_DEVICE_ID = "device_id"
 
     private val dataPrefSubject = BehaviorSubject.createDefault(getSessionPreferences())
@@ -61,6 +62,12 @@ object SessionDataProvider : ISessionDataProvider {
             getSessionPreferences().edit().putString(KEY_SESSION_DATA, Gson().toJson(sessionData)).apply()
 
     override fun clearSessionData() = getSessionPreferences().edit().remove(KEY_SESSION_DATA).apply()
+
+    override fun setCurrentUser(email: String?) =
+            getSessionPreferences().edit().putString(KEY_USER, email).apply()
+
+    override fun getCurrentUser(): String? =
+            getSessionPreferences().getString(KEY_USER, null)
 
     private fun getSessionPreferences(): SharedPreferences =
             BookkeeperApp.getContext().getSharedPreferences(SESSION_DATA_PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)

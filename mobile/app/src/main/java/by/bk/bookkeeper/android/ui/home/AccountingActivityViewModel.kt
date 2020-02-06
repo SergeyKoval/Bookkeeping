@@ -12,7 +12,7 @@ import io.reactivex.Observable
  **/
 
 class AccountingActivityViewModel(private val bkService: BookkeeperService) : BaseViewModel(),
-    AccountingInteraction.Inputs, AccountingInteraction.Outputs {
+        AccountingInteraction.Inputs, AccountingInteraction.Outputs {
 
     override fun isSessionValid(): Observable<Boolean> = SessionDataProvider.getCurrentSessionDataObservable().map {
         it.isSuccess
@@ -20,6 +20,7 @@ class AccountingActivityViewModel(private val bkService: BookkeeperService) : Ba
 
     override fun logout() {
         SessionDataProvider.clearSessionData()
+        SessionDataProvider.setCurrentUser(null)
         SmsPreferenceProvider.setShouldProcessReceivedSms(false)
     }
 

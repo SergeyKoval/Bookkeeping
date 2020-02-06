@@ -9,6 +9,7 @@ import android.telephony.SmsMessage
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
+import by.bk.bookkeeper.android.network.auth.SessionDataProvider
 import by.bk.bookkeeper.android.network.response.Association
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
@@ -31,7 +32,9 @@ class SMSProcessingService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("On start command invoked with action ${intent.action}")
-        if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
+                || intent.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
+            stopForeground(true)
             stopSelf()
         }
         val notificationMessage: String
@@ -47,7 +50,7 @@ class SMSProcessingService : Service() {
             else -> notificationMessage = applicationContext.getString(R.string.msg_service_notification_running)
         }
         createNotificationChannel()
-        startForeground(SERVICE_NOTIFICATION_IDENTIFIER, createNotification(notificationMessage))
+        startForeground(SERVICE_NOTIFICATION_ID, createNotification(notificationMessage))
         return START_REDELIVER_INTENT
     }
 
@@ -55,12 +58,15 @@ class SMSProcessingService : Service() {
         val contentPendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, AccountingActivity::class.java), 0)
         return Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(NOTIFICATION_TITLE)
+                // .setContentTitle(NOTIFICATION_TITLE)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_send)
                 .setContentIntent(contentPendingIntent)
                 .build()
     }
+
+    private fun updateNotification(message: String) =
+            getSystemService(NotificationManager::class.java).notify(SERVICE_NOTIFICATION_ID, createNotification(message))
 
     private fun processSms(pdus: Array<*>?, format: String?) {
         val associations: List<Association> = SmsPreferenceProvider.getAssociationsFromStorage()
@@ -92,6 +98,7 @@ class SMSProcessingService : Service() {
     private fun sendSMSRequest(matchedSms: List<SMS>) {
         disposables.add(bkService.sendSmsToServer(matchedSms)
                 .subscribeOn(Schedulers.io())
+                .doFinally { updateNotification(applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)) }
                 .subscribeWith(smsRequestSingleDisposableObserver(matchedSms))
         )
     }
@@ -122,7 +129,7 @@ class SMSProcessingService : Service() {
     }
 
     companion object {
-        private const val SERVICE_NOTIFICATION_IDENTIFIER = 1209
+        private const val SERVICE_NOTIFICATION_ID = 1209
         private val NOTIFICATION_CHANNEL_ID = SMSProcessingService::class.java.canonicalName
         private const val NOTIFICATION_CHANNEL_NAME = "Bookkeeper sms processing service"
         private const val NOTIFICATION_TITLE = "Bookkeeper SMS Service"

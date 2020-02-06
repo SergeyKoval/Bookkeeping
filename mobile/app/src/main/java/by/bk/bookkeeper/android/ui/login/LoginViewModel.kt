@@ -45,7 +45,8 @@ class LoginViewModel(private val bkService: BookkeeperService) : BaseViewModel()
                     authRequestState.onNext(DataStatus.Loading)
                 }
                 .subscribe({ tokenResponse ->
-                    SessionDataProvider.saveSessionData(SessionData(tokenResponse.token))
+                    SessionDataProvider.saveSessionData(SessionData(token = tokenResponse.token))
+                    SessionDataProvider.setCurrentUser(email)
                     SmsPreferenceProvider.setShouldProcessReceivedSms(true)
                     authRequestState.onNext(DataStatus.Success)
                 }, { error ->

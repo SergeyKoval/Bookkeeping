@@ -88,6 +88,9 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     override fun onLogoutConfirmed() {
         viewModel.logout()
+        startForegroundService(Intent(this, SMSProcessingService::class.java).apply {
+            action = INTENT_ACTION_USER_LOGGED_OUT
+        })
     }
 
     override fun getViewModelClass(): Class<AccountingActivityViewModel> = AccountingActivityViewModel::class.java
@@ -115,6 +118,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
     companion object {
 
         const val INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED = "activity_launched"
+        const val INTENT_ACTION_USER_LOGGED_OUT = "user_logged_out"
         private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 
         fun getStartIntent(fromPackageContext: Context): Intent =

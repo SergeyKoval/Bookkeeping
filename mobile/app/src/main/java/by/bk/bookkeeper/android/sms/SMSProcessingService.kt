@@ -6,10 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.IBinder
 import android.telephony.SmsMessage
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
-import by.bk.bookkeeper.android.network.auth.SessionDataProvider
 import by.bk.bookkeeper.android.network.response.Association
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
@@ -20,6 +23,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 /**
  *  Created by Evgenia Grinkevich on 05, February, 2020
@@ -29,6 +33,8 @@ class SMSProcessingService : Service() {
 
     private val bkService: BookkeeperService = Injection.provideBookkeeperService()
     private val disposables = CompositeDisposable()
+
+    private val periodicPendingSmsRequest = createPeriodicSmsRequest()
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("On start command invoked with action ${intent.action}")
@@ -51,22 +57,38 @@ class SMSProcessingService : Service() {
         }
         createNotificationChannel()
         startForeground(SERVICE_NOTIFICATION_ID, createNotification(notificationMessage))
+        WorkManager.getInstance().enqueue(periodicPendingSmsRequest)
+        observePendingSms()
         return START_REDELIVER_INTENT
     }
 
-    private fun createNotification(message: String): Notification {
-        val contentPendingIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, AccountingActivity::class.java), 0)
+    private fun observePendingSms() {
+        disposables.add(SmsPreferenceProvider.getPendingSmsObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe { pendingSms ->
+                    updateNotification(
+                            title = if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size) else null,
+                            message = applicationContext.getString(R.string.msg_service_notification_waiting_for_sms),
+                            pendingIntent = PendingIntent.getActivity(this, AccountingActivity.REQUEST_CODE_EXTERNAL_SMS_STATUS,
+                                    Intent(this, AccountingActivity::class.java), 0))
+                }
+        )
+    }
+
+    private fun createNotification(message: String, subText: String? = null, pendingIntent: PendingIntent? = null): Notification {
+        val contentPendingIntent = pendingIntent
+                ?: PendingIntent.getActivity(this, AccountingActivity.REQUEST_CODE_EXTERNAL_HOME,
+                        Intent(this, AccountingActivity::class.java), 0)
         return Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-                // .setContentTitle(NOTIFICATION_TITLE)
                 .setContentText(message)
+                .setContentTitle(subText)
                 .setSmallIcon(R.drawable.ic_send)
                 .setContentIntent(contentPendingIntent)
                 .build()
     }
 
-    private fun updateNotification(message: String) =
-            getSystemService(NotificationManager::class.java).notify(SERVICE_NOTIFICATION_ID, createNotification(message))
+    private fun updateNotification(title: String? = null, message: String, pendingIntent: PendingIntent? = null) =
+            getSystemService(NotificationManager::class.java).notify(SERVICE_NOTIFICATION_ID, createNotification(message, title, pendingIntent))
 
     private fun processSms(pdus: Array<*>?, format: String?) {
         val associations: List<Association> = SmsPreferenceProvider.getAssociationsFromStorage()
@@ -96,9 +118,9 @@ class SMSProcessingService : Service() {
     }
 
     private fun sendSMSRequest(matchedSms: List<SMS>) {
-        disposables.add(bkService.sendSmsToServer(matchedSms)
+        disposables.add(bkService.sendSmsToServerSingle(matchedSms)
                 .subscribeOn(Schedulers.io())
-                .doFinally { updateNotification(applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)) }
+                .doFinally { updateNotification(message = applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)) }
                 .subscribeWith(smsRequestSingleDisposableObserver(matchedSms))
         )
     }
@@ -116,6 +138,23 @@ class SMSProcessingService : Service() {
         }
     }
 
+    private fun createNotificationChannel() {
+        getSystemService(NotificationManager::class.java)
+                .createNotificationChannel(NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                        NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
+    }
+
+    private fun createPeriodicSmsRequest(): PeriodicWorkRequest = PeriodicWorkRequest.Builder(
+            PendingSmsProcessingWorker::class.java,
+            PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
+            .setConstraints(createNetworkConstraint())
+            .build()
+
+    private fun createNetworkConstraint(): Constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
     override fun onDestroy() {
         super.onDestroy()
         disposables.clear()
@@ -123,16 +162,10 @@ class SMSProcessingService : Service() {
 
     override fun onBind(intent: Intent): IBinder? = null
 
-    private fun createNotificationChannel() {
-        getSystemService(NotificationManager::class.java)
-                .createNotificationChannel(NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
-    }
-
     companion object {
         private const val SERVICE_NOTIFICATION_ID = 1209
         private val NOTIFICATION_CHANNEL_ID = SMSProcessingService::class.java.canonicalName
         private const val NOTIFICATION_CHANNEL_NAME = "Bookkeeper sms processing service"
-        private const val NOTIFICATION_TITLE = "Bookkeeper SMS Service"
         const val INTENT_PDU_EXTRA = "pdu_extra"
         const val INTENT_PDU_FORMAT = "pdu_format"
     }

@@ -119,6 +119,9 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
         const val INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED = "activity_launched"
         const val INTENT_ACTION_USER_LOGGED_OUT = "user_logged_out"
+        const val REQUEST_CODE_EXTERNAL_HOME = 178
+        const val REQUEST_CODE_EXTERNAL_SMS_STATUS = 198
+
         private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 
         fun getStartIntent(fromPackageContext: Context): Intent =

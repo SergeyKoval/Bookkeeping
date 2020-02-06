@@ -8,6 +8,7 @@ import by.bk.bookkeeper.android.network.response.AuthResponse
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.sms.SMS
 import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -31,6 +32,8 @@ interface BookkeeperService {
     fun dissociateFromAccount(@Body dissociationRequest: DissociationRequest): Single<BaseResponse>
 
     @POST("/api/history/sms")
-    fun sendSmsToServer(@Body sms: List<SMS>): Single<BaseResponse>
+    fun sendSmsToServerSingle(@Body sms: List<SMS>): Single<BaseResponse>
 
+    @POST("/api/history/sms")
+    fun sendSmsToServer(@Body sms: List<SMS>): Call<BaseResponse>
 }

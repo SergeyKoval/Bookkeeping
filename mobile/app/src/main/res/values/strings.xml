@@ -22,7 +22,6 @@
     <string name="action_add_association">Add association</string>
     <string name="action_remove_association">Remove association</string>
     <string name="action_edit_association">Edit association</string>
-    <string name="title_association">Association:</string>
     <string name="association_sender">Sender: %s</string>
     <string name="association_sms_template">SMS template: %s</string>
 
@@ -34,7 +33,6 @@
     <string name="err_no_permissions">No permissions granted. Unable to proceed to sms handling</string>
 
     <string name="msg_select_sms_sender">Please, select SMS sender from the list:</string>
-    <string name="err_empty_template">Please,paste SMS template for association</string>
 
     <string name="toolbar_title_accounts">Accounts</string>
     <string name="toolbar_title_sms_status">SMS Status</string>

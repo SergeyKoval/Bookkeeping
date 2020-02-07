@@ -61,7 +61,7 @@ class SubAccountViewHolder(private val account: Account,
         smsBodyTemplateTextView.visibility = if (!item.association?.smsBodyTemplate.isNullOrEmpty()) View.VISIBLE else View.GONE
         item.association?.let { association ->
             senderTextView.text = itemView.context.getString(R.string.association_sender, association.sender)
-            smsBodyTemplateTextView.text = association.smsBodyTemplate
+            smsBodyTemplateTextView.text = itemView.context.getString(R.string.association_sms_template, association.smsBodyTemplate)
         }
         actionsPopup.menu.findItem(R.id.action_add).isVisible = item.association == null
         actionsPopup.menu.findItem(R.id.action_remove).isVisible = item.association != null

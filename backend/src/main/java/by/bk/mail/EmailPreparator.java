@@ -7,7 +7,7 @@ import javax.mail.internet.MimeMessage;
  */
 public interface EmailPreparator {
     String UTF_8 = "UTF-8";
-    String FROM_ALIAS = "Домашеяя бухгалтерия";
+    String FROM_ALIAS = "Домашняя бухгалтерия";
 
     MimeMessage prepare(String to, Object... substitutions) throws MessagePreparationException;
     boolean prepareAndSend(String to, Object... substitutions);

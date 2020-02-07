@@ -2,6 +2,8 @@ package by.bk.bookkeeper.android.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.action
@@ -17,15 +19,16 @@ import io.reactivex.disposables.CompositeDisposable
 abstract class BaseFragment : Fragment() {
 
     protected val subscriptionsDisposable: CompositeDisposable = CompositeDisposable()
+    private var errorSnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-    override fun onDestroyView() {
-        subscriptionsDisposable.clear()
-        super.onDestroyView()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.title = getString(getToolbarTitle())
     }
 
     protected fun showErrorSnackbar(failure: FailureWrapper) {
@@ -35,10 +38,19 @@ abstract class BaseFragment : Fragment() {
             action(R.string.action_retry_loading) {
                 retryLoading()
             }
-        }
+        }.also { errorSnackbar = it }
+    }
+
+    override fun onDestroyView() {
+        subscriptionsDisposable.clear()
+        errorSnackbar?.dismiss()
+        errorSnackbar = null
+        super.onDestroyView()
     }
 
     abstract fun retryLoading()
 
     abstract fun getTAG(): String
+    @StringRes
+    abstract fun getToolbarTitle(): Int
 }

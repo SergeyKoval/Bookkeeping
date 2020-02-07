@@ -3,10 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="@dimen/content_default_padding">
 
+    <TextView
+        android:id="@+id/tv_select_sms_from_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/content_default_margin"
+        android:text="@string/msg_select_sms_sender"
+        android:visibility="visible" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/sms_swipe_refresh"
+        android:id="@+id/conversations_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.accounts.AccountsFragment">
@@ -18,9 +27,10 @@
             android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_sms"
+                android:id="@+id/recycler_conversations"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:padding="@dimen/view_default_padding" />
 
         </FrameLayout>
 

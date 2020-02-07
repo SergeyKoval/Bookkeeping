@@ -49,5 +49,9 @@
         <item name="android:textColor">@color/color_primary_dark</item>
     </style>
 
+    <style name="ActionButtonColored" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:padding">@dimen/view_default_padding</item>
+        <item name="android:background">@color/color_primary_dark</item>
+    </style>
 
 </resources>

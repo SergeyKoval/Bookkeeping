@@ -1,4 +1,4 @@
-package by.bk.bookkeeper.android.ui
+package by.bk.bookkeeper.android.ui.accounts
 
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.SubAccount

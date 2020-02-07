@@ -18,4 +18,8 @@ interface ISessionDataProvider {
 
     fun clearSessionData()
 
+    fun setCurrentUser(email: String?)
+
+    fun getCurrentUser(): String?
+
 }

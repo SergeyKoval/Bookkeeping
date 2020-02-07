@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion 29
@@ -10,13 +11,32 @@ android {
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        def storeProperties = new Properties()
+        storeProperties.load(new FileInputStream(file("keystore/keystore.properties")))
+        release {
+            storeFile file(storeProperties['store.path'])
+            storePassword storeProperties['store.password']
+            keyAlias storeProperties['key.alias']
+            keyPassword storeProperties['key.password']
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def postfix = (variant.buildType.name == "debug") ? "dev-" : ""
+            output.outputFileName = "bookkeeper-" + postfix + defaultConfig.versionName + "." + defaultConfig.versionCode + ".apk"
         }
     }
 }
@@ -47,8 +67,8 @@ dependencies {
 
     //Architecture Components
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
-
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
+    implementation "android.arch.work:work-runtime-ktx:1.0.1"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

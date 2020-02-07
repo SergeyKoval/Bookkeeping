@@ -11,11 +11,13 @@ import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
-import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
-import by.bk.bookkeeper.android.ui.association.AssociationsFragment
+import by.bk.bookkeeper.android.ui.BookkeeperNavigation
+import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_accounting.view.*
 import kotlinx.android.synthetic.main.fragment_accounts.*
+
 
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
@@ -31,6 +33,7 @@ class AccountsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_menu)
         recycler_accounts.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = accountAdapter
@@ -59,12 +62,13 @@ class AccountsFragment : BaseFragment() {
                 accountsViewModel.associationRequestState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { associationState ->
-                            if (associationState.dataState is DataStatus.Success) {
+                            account_swipe_refresh.isRefreshing = associationState.dataStatus is DataStatus.Loading
+                            if (associationState.dataStatus is DataStatus.Success) {
                                 accountsViewModel.refreshAccounts()
                                 Toast.makeText(context, getString(R.string.msg_operation_successful), Toast.LENGTH_SHORT).show()
                             }
-                            if (associationState.dataState is DataStatus.Error) {
-                                Toast.makeText(context, associationState.dataState.failure.messageStringRes, Toast.LENGTH_SHORT).show()
+                            if (associationState.dataStatus is DataStatus.Error) {
+                                Toast.makeText(context, associationState.dataStatus.failure.messageStringRes, Toast.LENGTH_SHORT).show()
                             }
                         },
                 accountAdapter.subAccountItemClick()
@@ -76,8 +80,11 @@ class AccountsFragment : BaseFragment() {
                                             accountName = clickInfo.account.title,
                                             subAccountName = clickInfo.subAccount.title))
                                 }
-                                is SubAccountRecyclerClick.AddAssociation -> {
-                                    AssociationsFragment.show(this)
+                                is SubAccountRecyclerClick.AddAssociation,
+                                is SubAccountRecyclerClick.EditAssociation -> {
+                                    (activity as BookkeeperNavigation.NavigatorProvider).getNavigator()
+                                            .showConversationsFragment(AccountInfoHolder(accountName = clickInfo.account.title,
+                                                    subAccountName = clickInfo.subAccount.title))
                                 }
                             }
                         }
@@ -85,6 +92,8 @@ class AccountsFragment : BaseFragment() {
     }
 
     override fun retryLoading() = accountsViewModel.refreshAccounts()
+
+    override fun getToolbarTitle(): Int = R.string.toolbar_title_accounts
 
     override fun getTAG() = TAG
 

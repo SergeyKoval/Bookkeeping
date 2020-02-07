@@ -41,7 +41,6 @@
         android:text="@string/association_sender"
         android:textStyle="italic"
         app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_sub_account_title" />
@@ -55,16 +54,7 @@
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_sender" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group_association"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:constraint_referenced_ids="tv_sms_body_template, tv_sender, tv_sms_body_template"
-        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

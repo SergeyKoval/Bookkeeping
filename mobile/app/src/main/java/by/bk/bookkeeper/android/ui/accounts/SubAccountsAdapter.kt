@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.SubAccount
-import by.bk.bookkeeper.android.ui.SubAccountRecyclerClick
 import io.reactivex.subjects.PublishSubject
 
 /**

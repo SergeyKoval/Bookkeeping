@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/content_default_padding"
+    android:paddingBottom="@dimen/content_default_padding">
+
+    <TextView
+        android:id="@+id/tv_date_sent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="DateSent" />
+
+    <TextView
+        android:id="@+id/tv_sms_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        android:textIsSelectable="true"
+        tools:text="Account title" />
+
+</LinearLayout>

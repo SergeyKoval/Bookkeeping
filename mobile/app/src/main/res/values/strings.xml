@@ -9,7 +9,6 @@
     <string name="err_invalid_email">Please, enter valid email</string>
     <string name="err_empty_password">Please, enter password</string>
     <string name="title_activity_accounting">AccountingActivity</string>
-    <string name="str_welcome">Welcome!</string>
 
     <string name="dialog_logout_title">Logout</string>
     <string name="dialog_logout_message">Do you really want to logout?</string>

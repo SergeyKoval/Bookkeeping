@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.network.auth.SessionDataProvider
 import by.bk.bookkeeper.android.sms.SMSProcessingService
 import by.bk.bookkeeper.android.ui.BaseActivity
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
@@ -18,6 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_accounting.*
+import kotlinx.android.synthetic.main.activity_accounting_nav_header.view.*
 
 class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         NavigationView.OnNavigationItemSelectedListener,
@@ -52,6 +54,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
             savedInstanceState
                     ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
         }
+        nav_view.getHeaderView(0)?.tv_user_email?.text = SessionDataProvider.getCurrentUser()
         subscriptionsDisposable.add(RxPermissions(this)
                 .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
                 .subscribe { granted ->

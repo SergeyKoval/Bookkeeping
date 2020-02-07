@@ -10,12 +10,24 @@ android {
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        def storeProperties = new Properties()
+        storeProperties.load(new FileInputStream(file("keystore/keystore.properties")))
+        release {
+            storeFile file(storeProperties['store.path'])
+            storePassword storeProperties['store.password']
+            keyAlias storeProperties['key.alias']
+            keyPassword storeProperties['key.password']
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

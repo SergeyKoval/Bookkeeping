@@ -47,4 +47,8 @@
     <string name="msg_service_notification_waiting_for_sms">Waiting for incoming sms</string>
     <string name="msg_service_notification_running">SMS processing service running</string>
 
+    <string name="msg_sms_status_pending_sms_count">%d sms are pending, press button to send now</string>
+    <string name="msg_sms_status_no_pending_sms">No pending sms</string>
+
+
 </resources>

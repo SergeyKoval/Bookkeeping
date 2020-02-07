@@ -9,6 +9,7 @@ import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import by.bk.bookkeeper.android.ui.association.ConversationsFragment
 import by.bk.bookkeeper.android.ui.association.SMSListFragment
 import by.bk.bookkeeper.android.ui.login.LoginActivity
+import by.bk.bookkeeper.android.ui.status.PendingSMSFragment
 
 /**
  *  Created by Evgenia Grinkevich on 29, January, 2020
@@ -19,6 +20,12 @@ class BookkeeperNavigator(private val activity: AppCompatActivity) : BookkeeperN
     override fun showAccountsFragment() {
         val fragment = activity.supportFragmentManager.findFragmentByTag(AccountsFragment.TAG)
                 ?: AccountsFragment.newInstance()
+        replaceFragment(fragment as BaseFragment)
+    }
+
+    override fun showSmsStatusFragment() {
+        val fragment = activity.supportFragmentManager.findFragmentByTag(PendingSMSFragment.TAG)
+                ?: PendingSMSFragment.newInstance()
         replaceFragment(fragment as BaseFragment)
     }
 

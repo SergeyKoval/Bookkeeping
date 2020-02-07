@@ -13,6 +13,7 @@ interface BookkeeperNavigation {
         fun popBackStackToRoot()
         fun showLoginActivity()
         fun showAccountsFragment()
+        fun showSmsStatusFragment()
         fun showConversationsFragment(accountInfoHolder: AccountInfoHolder)
         fun showSmsListFragment(conversation: Conversation, accountInfoHolder: AccountInfoHolder)
         fun onBackPressed()

@@ -9,6 +9,7 @@ import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import by.bk.bookkeeper.android.ui.association.InboxSmsViewModel
 import by.bk.bookkeeper.android.ui.home.AccountingActivityViewModel
 import by.bk.bookkeeper.android.ui.login.LoginViewModel
+import by.bk.bookkeeper.android.ui.status.PendingSmsViewModel
 
 
 /**
@@ -23,6 +24,7 @@ class ViewModelFactory(private val bkService: BookkeeperService) : ViewModelProv
         modelClass.isAssignableFrom(AccountingActivityViewModel::class.java) -> AccountingActivityViewModel(bkService) as T
         modelClass.isAssignableFrom(AccountsViewModel::class.java) -> AccountsViewModel(bkService) as T
         modelClass.isAssignableFrom(InboxSmsViewModel::class.java) -> InboxSmsViewModel() as T
+        modelClass.isAssignableFrom(PendingSmsViewModel::class.java) -> PendingSmsViewModel(bkService) as T
         else -> throw IllegalArgumentException("Cannot instantiate ${modelClass.canonicalName}")
     }
 }

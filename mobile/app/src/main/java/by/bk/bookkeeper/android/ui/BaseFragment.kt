@@ -19,6 +19,7 @@ import io.reactivex.disposables.CompositeDisposable
 abstract class BaseFragment : Fragment() {
 
     protected val subscriptionsDisposable: CompositeDisposable = CompositeDisposable()
+    private var errorSnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +31,6 @@ abstract class BaseFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = getString(getToolbarTitle())
     }
 
-    override fun onDestroyView() {
-        subscriptionsDisposable.clear()
-        super.onDestroyView()
-    }
-
     protected fun showErrorSnackbar(failure: FailureWrapper) {
         activity?.findViewById<View>(R.id.accounting_root_coordinator_layout)?.actionSnackbar(
                 messageRes = failure.messageStringRes,
@@ -42,7 +38,14 @@ abstract class BaseFragment : Fragment() {
             action(R.string.action_retry_loading) {
                 retryLoading()
             }
-        }
+        }.also { errorSnackbar = it }
+    }
+
+    override fun onDestroyView() {
+        subscriptionsDisposable.clear()
+        errorSnackbar?.dismiss()
+        errorSnackbar = null
+        super.onDestroyView()
     }
 
     abstract fun retryLoading()

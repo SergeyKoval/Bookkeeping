@@ -43,7 +43,15 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
             if (supportFragmentManager.backStackEntryCount > 0) onBackPressed()
             else drawer_layout.openDrawer(GravityCompat.START)
         }
-        savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
+        if (intent?.action != null) {
+            when (intent.action) {
+                ACTION_EXTERNAL_SHOW_SMS_STATUS -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_status))
+                else -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
+            }
+        } else {
+            savedInstanceState
+                    ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
+        }
         subscriptionsDisposable.add(RxPermissions(this)
                 .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
                 .subscribe { granted ->
@@ -75,6 +83,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
                 navigator.showAccountsFragment()
             }
             R.id.nav_status -> {
+                navigator.showSmsStatusFragment()
             }
             R.id.nav_logout -> {
                 LogoutConfirmationDialog.show(this)
@@ -119,8 +128,8 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
         const val INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED = "activity_launched"
         const val INTENT_ACTION_USER_LOGGED_OUT = "user_logged_out"
-        const val REQUEST_CODE_EXTERNAL_HOME = 178
-        const val REQUEST_CODE_EXTERNAL_SMS_STATUS = 198
+        const val ACTION_EXTERNAL_HOME = "by.bk.bookkeeper.android.home"
+        const val ACTION_EXTERNAL_SHOW_SMS_STATUS = "by.bk.bookkeeper.android.sms.status"
 
         private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 

@@ -16,7 +16,6 @@ import by.bk.bookkeeper.android.network.BookkeeperService
 import by.bk.bookkeeper.android.network.response.Association
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
-import by.bk.bookkeeper.android.sms.receiver.BootReceiver
 import by.bk.bookkeeper.android.sms.receiver.SMSReceiver
 import by.bk.bookkeeper.android.ui.home.AccountingActivity
 import io.reactivex.disposables.CompositeDisposable
@@ -34,6 +33,7 @@ class SMSProcessingService : Service() {
     private val periodicPendingSmsRequest = createPeriodicSmsRequest()
     private val bkService: BookkeeperService = Injection.provideBookkeeperService()
     private val disposables = CompositeDisposable()
+    private val notificationBuilder by lazy { createNotificationBuilder() }
 
     override fun onCreate() {
         super.onCreate()
@@ -50,19 +50,10 @@ class SMSProcessingService : Service() {
             stopForeground(true)
             stopSelf()
         }
-        val notificationMessage: String
-        when (intent.action) {
-            BootReceiver.INTENT_ACTION_BOOT_RECEIVED,
-            AccountingActivity.INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED -> {
-                notificationMessage = applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)
-            }
-            SMSReceiver.INTENT_ACTION_SMS_RECEIVED -> {
-                notificationMessage = applicationContext.getString(R.string.msg_service_notification_sms_processing)
-                processSms(intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>, intent.extras?.getString(INTENT_PDU_FORMAT))
-            }
-            else -> notificationMessage = applicationContext.getString(R.string.msg_service_notification_running)
+        if (intent.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
+            processSms(intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>, intent.extras?.getString(INTENT_PDU_FORMAT))
         }
-        startForeground(SERVICE_NOTIFICATION_ID, createNotification(message = notificationMessage))
+        startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
         return START_REDELIVER_INTENT
     }
 
@@ -70,34 +61,29 @@ class SMSProcessingService : Service() {
         disposables.add(SmsPreferenceProvider.getPendingSmsObservable()
                 .subscribeOn(Schedulers.io())
                 .subscribe { pendingSms ->
-                    updateNotification(
-                            title = if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size) else null,
-                            message = applicationContext.getString(R.string.msg_service_notification_waiting_for_sms),
-                            pendingIntent = if (pendingSms.isNotEmpty()) PendingIntent.getActivity(this, SERVICE_REQUEST_CODE,
-                                    Intent(this, AccountingActivity::class.java).apply {
-                                        action = AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
-
-                                    }, 0) else null)
+                    updateNotification(notificationBuilder
+                            .setContentTitle(if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size) else null)
+                            .setContentIntent(createPendingIntent(
+                                    if (pendingSms.isNotEmpty()) AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
+                                    else AccountingActivity.ACTION_EXTERNAL_HOME))
+                            .build()
+                    )
                 }
         )
     }
 
-    private fun createNotification(title: String? = null, message: String, pendingIntent: PendingIntent? = null): Notification {
-        val contentPendingIntent = pendingIntent
-                ?: PendingIntent.getActivity(this, SERVICE_REQUEST_CODE,
-                        Intent(this, AccountingActivity::class.java).apply {
-                            action = AccountingActivity.ACTION_EXTERNAL_HOME
-                        }, 0)
-        return Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setContentText(message)
-                .setContentTitle(title)
-                .setSmallIcon(R.drawable.ic_send)
-                .setContentIntent(contentPendingIntent)
-                .build()
-    }
+    private fun createNotificationBuilder(): Notification.Builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentIntent(createPendingIntent(AccountingActivity.ACTION_EXTERNAL_HOME))
+            .setContentText(applicationContext.getString(R.string.msg_service_notification_waiting_for_sms))
+            .setSmallIcon(R.drawable.ic_running_service)
 
-    private fun updateNotification(title: String? = null, message: String, pendingIntent: PendingIntent? = null) =
-            getSystemService(NotificationManager::class.java)?.notify(SERVICE_NOTIFICATION_ID, createNotification(title, message, pendingIntent))
+    private fun updateNotification(notification: Notification) =
+            getSystemService(NotificationManager::class.java)?.notify(SERVICE_NOTIFICATION_ID, notification)
+
+    private fun createPendingIntent(targetAction: String): PendingIntent = PendingIntent.getActivity(this, SERVICE_REQUEST_CODE,
+            Intent(this, AccountingActivity::class.java).apply {
+                action = targetAction
+            }, 0)
 
     private fun processSms(pdus: Array<*>?, format: String?) {
         val associations: List<Association> = SmsPreferenceProvider.getAssociationsFromStorage()
@@ -129,19 +115,6 @@ class SMSProcessingService : Service() {
     private fun sendSMSRequest(matchedSms: List<SMS>) {
         disposables.add(bkService.sendSmsToServerSingle(matchedSms)
                 .subscribeOn(Schedulers.io())
-                .doFinally {
-                    if (SmsPreferenceProvider.getPendingSmsFromStorage().isNotEmpty()) {
-                        updateNotification(
-                                title = applicationContext.getString(R.string.msg_service_pending_sms, SmsPreferenceProvider.getPendingSmsFromStorage().size),
-                                message = applicationContext.getString(R.string.msg_service_notification_waiting_for_sms),
-                                pendingIntent = PendingIntent.getActivity(this, SERVICE_REQUEST_CODE,
-                                        Intent(this, AccountingActivity::class.java).apply {
-                                            action = AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
-                                        }, 0))
-                    } else {
-                        updateNotification(message = applicationContext.getString(R.string.msg_service_notification_waiting_for_sms))
-                    }
-                }
                 .subscribeWith(smsRequestSingleDisposableObserver(matchedSms))
         )
     }

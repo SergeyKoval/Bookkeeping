@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="err_placeholder" translatable="false">%s</string>
+    <string name="err_no_internet_connection">Отсутсвует подключение к сети</string>
+    <string name="err_invalid_credentials">Неверный логин или пароль</string>
+    <string name="err_bad_request">Ошибка в запросе</string>
+    <string name="err_unknown_host">Неизвестный хост</string>
+    <string name="err_forbidden">Доступ запрещен</string>
+    <string name="err_timeout">Таймаут соединения</string>
+    <string name="err_internal_server_error">Произошла непредвиденная ошибка</string>
+    <string name="err_unknown">Произошла неизвестная ошибка</string>
+    <string name="err_not_found">Не найдено, попробуйте позже</string>
+    <string name="err_unauthorized">Необходимо авторизоваться</string>
+</resources>

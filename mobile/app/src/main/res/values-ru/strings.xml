@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Бухгалтерия</string>
+    <string name="action_login">Войти</string>
+    <string name="str_copyright" translatable="false">© %s, Deplake</string>
+    <string name="str_version" translatable="false">Версия %s</string>
+    <string name="prompt_email">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="err_empty_email">Логин не заполнен</string>
+    <string name="err_invalid_email">Невалидный логин</string>
+    <string name="err_empty_password">Пароль не заполнен</string>
+    <string name="title_activity_accounting">AccountingActivity</string>
+
+    <string name="dialog_logout_title">Выход</string>
+    <string name="dialog_logout_message">Точно выйти? Отслеживание и отправка SMS будет приостановлена.</string>
+    <string name="btn_confirm">Выйти</string>
+    <string name="btn_cancel">Отмена</string>
+
+    <string name="action_retry_loading">Повторить</string>
+
+    <string name="msg_no_accounts">Счета не найдены</string>
+    <string name="msg_operation_successful">Оперция выполнена</string>
+    <string name="action_add_association">Ассоциировать</string>
+    <string name="action_remove_association">Удалить ассоциацию</string>
+    <string name="action_edit_association">Изменить ассоциацию</string>
+    <string name="association_sender">Отправитель: %s</string>
+    <string name="association_sms_template">SMS шаблон: %s</string>
+
+    <string name="err_association_removal_failed">Не удалось удалить ассоциацию</string>
+    <string name="err_association_adding_failed">Не удалось добавить ассоциацию</string>
+    <string name="err_association_editing_failed">Не удалось отредактировать ассоциацию</string>
+    <string name="err_unable_to_get_sms">Не удалось получить SMS</string>
+    <string name="err_unable_to_get_conversations">Не удалось получить цепочку сообщений</string>
+    <string name="err_no_permissions">Не хватает прав для работы с SMS</string>
+
+    <string name="msg_select_sms_sender">Выберите отправителя SMS:</string>
+
+    <string name="toolbar_title_accounts">Счета</string>
+    <string name="toolbar_title_sms_status">Статус SMS</string>
+    <string name="toolbar_title_associating">Ассоциация</string>
+    <string name="hint_paste_template">Вставьте шаблон SMS для ассоциации (опционально)</string>
+
+    <string name="msg_service_notification_sms_processing">Обработка SMS</string>
+    <string name="msg_service_pending_sms">%d SMS находятся в очереди</string>
+    <string name="msg_service_notification_waiting_for_sms">Ожидание новых SMS</string>
+    <string name="msg_service_notification_running">Сервис по обработке SMS запущен</string>
+
+    <string name="msg_sms_status_pending_sms_count">%d SMS находятся в очереди, для отправки нажмите кнопку</string>
+    <string name="msg_sms_status_no_pending_sms">Нет SMS, находящихся в очереди</string>
+
+
+</resources>

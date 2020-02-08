@@ -10,7 +10,9 @@
 
     <TextView
         android:id="@+id/tv_pending_status"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:textStyle="bold"
+        android:layout_marginEnd="@dimen/content_default_margin"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/button_send_sms"
         app:layout_constraintEnd_toStartOf="@+id/button_send_sms"

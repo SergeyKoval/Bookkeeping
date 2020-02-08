@@ -11,6 +11,7 @@ import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
 import by.bk.bookkeeper.android.sms.SMSProcessingService
+import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.ui.BaseActivity
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.BookkeeperNavigator
@@ -51,8 +52,9 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
                 else -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
             }
         } else {
-            savedInstanceState
-                    ?: onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
+            savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(
+                    if (SmsPreferenceProvider.getPendingSmsFromStorage().isNotEmpty()) R.id.nav_status
+                    else R.id.nav_accounts))
         }
         nav_view.getHeaderView(0)?.tv_user_email?.text = SessionDataProvider.getCurrentUser()
         subscriptionsDisposable.add(RxPermissions(this)

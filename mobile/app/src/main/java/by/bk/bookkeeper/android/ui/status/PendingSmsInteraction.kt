@@ -1,5 +1,5 @@
+import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
-import by.bk.bookkeeper.android.sms.SMS
 import io.reactivex.Observable
 
 /**
@@ -12,7 +12,7 @@ interface PendingSmsInteraction {
     }
 
     interface Outputs {
-        fun pendingSms(): Observable<List<SMS>>
+        fun pendingSms(): Observable<List<MatchedSms>>
         fun smsLoadingState(): Observable<DataStatus>
     }
 }

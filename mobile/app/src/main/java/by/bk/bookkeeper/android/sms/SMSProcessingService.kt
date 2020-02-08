@@ -13,8 +13,9 @@ import androidx.work.WorkManager
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
-import by.bk.bookkeeper.android.network.response.Association
+import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.BaseResponse
+import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.sms.receiver.SMSReceiver
 import by.bk.bookkeeper.android.ui.home.AccountingActivity
@@ -86,22 +87,22 @@ class SMSProcessingService : Service() {
             }, 0)
 
     private fun processSms(pdus: Array<*>?, format: String?) {
-        val associations: List<Association> = SmsPreferenceProvider.getAssociationsFromStorage()
-        val matchedSms: ArrayList<SMS> = arrayListOf()
+        val associationInfo: List<AssociationInfo> = SmsPreferenceProvider.getAssociationsFromStorage()
+        val matchedSms: ArrayList<MatchedSms> = arrayListOf()
         pdus?.forEach { pdu ->
             val receivedSMS = SmsMessage.createFromPdu(pdu as ByteArray, format)
             val sender = receivedSMS.displayOriginatingAddress
             val message = receivedSMS.displayMessageBody
             val dateReceived = receivedSMS.timestampMillis
             Timber.d("SMS processing from $sender")
-            associations.forEach { association ->
-                if (association.sender.equals(sender, ignoreCase = true)) {
+            associationInfo.forEach { association ->
+                if (association.sms.senderName.equals(sender, ignoreCase = true)) {
                     val sms = SMS(senderName = sender, body = message, dateReceived = dateReceived)
-                    association.smsBodyTemplate?.let {
-                        if (message.contains(association.smsBodyTemplate, ignoreCase = true)) {
-                            matchedSms.add(sms)
+                    association.sms.bodyTemplate?.let {
+                        if (message.contains(association.sms.bodyTemplate, ignoreCase = true)) {
+                            matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
                         }
-                    } ?: matchedSms.add(sms)
+                    } ?: matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
                 }
             }
         }
@@ -112,14 +113,14 @@ class SMSProcessingService : Service() {
         }
     }
 
-    private fun sendSMSRequest(matchedSms: List<SMS>) {
+    private fun sendSMSRequest(matchedSms: List<MatchedSms>) {
         disposables.add(bkService.sendSmsToServerSingle(matchedSms)
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(smsRequestSingleDisposableObserver(matchedSms))
         )
     }
 
-    private fun smsRequestSingleDisposableObserver(matchedSms: List<SMS>): DisposableSingleObserver<BaseResponse> {
+    private fun smsRequestSingleDisposableObserver(matchedSms: List<MatchedSms>): DisposableSingleObserver<BaseResponse> {
         return object : DisposableSingleObserver<BaseResponse>() {
             override fun onSuccess(t: BaseResponse) {
                 Timber.d("Sms successfully sent")

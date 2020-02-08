@@ -1,6 +1,6 @@
 package by.bk.bookkeeper.android.sms.preferences
 
-import by.bk.bookkeeper.android.network.response.Association
+import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.sms.SMS
 import io.reactivex.Observable
 
@@ -10,21 +10,21 @@ import io.reactivex.Observable
 
 interface ISmsPreferenceProvider {
 
-    fun getPendingSmsFromStorage(): List<SMS>
+    fun getPendingSmsFromStorage(): List<MatchedSms>
 
-    fun saveSMSToStorage(sms: List<SMS>)
+    fun saveSMSToStorage(sms: List<MatchedSms>)
 
-    fun saveAssociationsToStorage(association: List<Association>)
+    fun saveAssociationsToStorage(association: List<AssociationInfo>)
 
-    fun deleteAssociationsFromStorage(association: List<Association>)
+    fun deleteAssociationsFromStorage(association: List<AssociationInfo>)
 
-    fun getAssociationsFromStorage(): List<Association>
+    fun getAssociationsFromStorage(): List<AssociationInfo>
 
-    fun deleteSMSFromStorage(sms: List<SMS>)
+    fun deleteSMSFromStorage(sms: List<MatchedSms>)
 
     fun setShouldProcessReceivedSms(shouldProcess: Boolean)
 
-    fun getPendingSmsObservable(): Observable<List<SMS>>
+    fun getPendingSmsObservable(): Observable<List<MatchedSms>>
 
     /** Indicates whether app should process receiving sms.
      *  In case of user manual logout, this value should return false

@@ -9,6 +9,8 @@ import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
+import by.bk.bookkeeper.android.sms.preferences.AssociatedSMSInfo
+import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
@@ -44,11 +46,21 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
                             accountsRequestState.onNext(DataStatus.Loading)
                         }
                         .subscribe({ responseList ->
-                            accounts.onNext(responseList)
-                            val associations = responseList.flatMap { acc ->
-                                acc.subAccounts.mapNotNull { it.association }
+                            val sortedResponseList: List<Account> = responseList.sortedBy { it.order }.also {
+                                it.forEach { account ->
+                                    account.subAccounts.sortedBy { subAccount -> subAccount.order }
+                                }
                             }
-                            SmsPreferenceProvider.saveAssociationsToStorage(associations)
+                            accounts.onNext(sortedResponseList)
+                            val smsAssociations = responseList.flatMap { account ->
+                                account.subAccounts.mapNotNull { subAccount ->
+                                    subAccount.association?.let { association ->
+                                        AssociationInfo(accountName = account.title, subAccountName = subAccount.title,
+                                                sms = AssociatedSMSInfo(senderName = association.sender, bodyTemplate = association.smsBodyTemplate))
+                                    }
+                                }
+                            }
+                            SmsPreferenceProvider.saveAssociationsToStorage(smsAssociations)
                             accountsRequestState.onNext(if (responseList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)
                         }, { error ->
                             Timber.e(error)

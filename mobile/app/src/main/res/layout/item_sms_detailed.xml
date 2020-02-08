@@ -16,18 +16,25 @@
         tools:text="DateSent" />
 
     <TextView
+        android:id="@+id/tv_account_subaccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        tools:text="Account and subaccount" />
+
+    <TextView
         android:id="@+id/tv_sms_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_item_element_space"
         android:textIsSelectable="true"
-        tools:text="Account title" />
+        tools:text="Sender" />
 
     <TextView
         android:id="@+id/tv_sms_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_item_element_space"
-        tools:text="Account title" />
+        tools:text="SMS Body" />
 
 </LinearLayout>

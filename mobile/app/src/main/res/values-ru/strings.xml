@@ -46,6 +46,6 @@
 
     <string name="msg_sms_status_pending_sms_count">%d SMS находятся в очереди, для отправки нажмите кнопку</string>
     <string name="msg_sms_status_no_pending_sms">Нет SMS, находящихся в очереди</string>
-
+    <string name="msg_sms_status_account_subaccount_info">Счет: %s, субсчет: %s</string>
 
 </resources>

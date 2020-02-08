@@ -3,10 +3,10 @@ package by.bk.bookkeeper.android.ui.status
 import PendingSmsInteraction
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
+import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
-import by.bk.bookkeeper.android.sms.SMS
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
@@ -23,7 +23,7 @@ class PendingSmsViewModel(private val bkService: BookkeeperService) : BaseViewMo
     private val smsLoadingState: BehaviorSubject<DataStatus> = BehaviorSubject.createDefault(DataStatus.Loading)
     override fun smsLoadingState(): Observable<DataStatus> = smsLoadingState
 
-    override fun pendingSms(): Observable<List<SMS>> = SmsPreferenceProvider.getPendingSmsObservable()
+    override fun pendingSms(): Observable<List<MatchedSms>> = SmsPreferenceProvider.getPendingSmsObservable()
 
     override fun sendSmsToServer() = sendSendToServer()
 

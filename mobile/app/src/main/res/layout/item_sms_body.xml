@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="DateSent" />
+        tools:text="Date sent" />
 
     <TextView
         android:id="@+id/tv_sms_body"
@@ -21,6 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_item_element_space"
         android:textIsSelectable="true"
-        tools:text="Account title" />
+        tools:text="SMS body" />
 
 </LinearLayout>

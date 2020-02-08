@@ -35,7 +35,6 @@ class AccountsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_menu)
         recycler_accounts.apply {
-            layoutManager = LinearLayoutManager(context)
             adapter = accountAdapter
         }
         account_swipe_refresh.setOnRefreshListener {

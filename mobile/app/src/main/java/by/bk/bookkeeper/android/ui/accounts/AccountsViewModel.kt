@@ -46,9 +46,9 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
                             accountsRequestState.onNext(DataStatus.Loading)
                         }
                         .subscribe({ responseList ->
-                            val sortedResponseList: List<Account> = responseList.sortedBy { it.order }.also {
-                                it.forEach { account ->
-                                    account.subAccounts.sortedBy { subAccount -> subAccount.order }
+                            val sortedResponseList: List<Account> = responseList.sortedBy { it.order }.also {accountList ->
+                                accountList.forEach { account ->
+                                    account.subAccounts = account.subAccounts.sortedBy { subAccount -> subAccount.order }
                                 }
                             }
                             accounts.onNext(sortedResponseList)

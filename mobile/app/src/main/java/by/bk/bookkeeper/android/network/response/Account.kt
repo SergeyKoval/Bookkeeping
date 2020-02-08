@@ -11,7 +11,7 @@ data class Account(@SerializedName("opened")
                    @SerializedName("order")
                    val order: Int,
                    @SerializedName("subAccounts")
-                   val subAccounts: List<SubAccount>,
+                   var subAccounts: List<SubAccount>,
                    @SerializedName("title")
                    val title: String
 )

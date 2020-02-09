@@ -55,12 +55,13 @@ public class HistoryItem {
         return clonedBalance;
     }
 
-    public HistoryItem(String user, int year, int month, int day, boolean notProcessed, Sms sms) {
+    public HistoryItem(String user, int year, int month, int day, Balance balance, Sms sms) {
         this.user = user;
         this.year = year;
         this.month = month;
         this.day = day;
-        this.notProcessed = notProcessed;
+        this.notProcessed = Boolean.TRUE;
         this.sms = sms;
+        this.balance = balance;
     }
 }

@@ -2,10 +2,10 @@ package by.bk.controller;
 
 import by.bk.controller.model.request.HistoryItemRequest;
 import by.bk.controller.model.request.HistoryPageRequest;
+import by.bk.controller.model.request.SmsRequest;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
-import by.bk.entity.history.Sms;
 import by.bk.security.role.RoleMobile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +47,7 @@ public class HistoryController extends BaseAPIController {
 
     @RoleMobile
     @PostMapping("/sms")
-    public SimpleResponse addHistoryItemsFromSms(@RequestBody List<Sms> request, Principal principal) {
+    public SimpleResponse addHistoryItemsFromSms(@RequestBody List<SmsRequest> request, Principal principal) {
         return historyAPI.addHistoryItemsFromSms(principal.getName(), getDeviceId(principal), request);
     }
 }

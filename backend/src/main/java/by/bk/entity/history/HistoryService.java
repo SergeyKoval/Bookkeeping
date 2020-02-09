@@ -1,6 +1,7 @@
 package by.bk.entity.history;
 
 import by.bk.controller.model.request.DateRequest;
+import by.bk.controller.model.request.SmsRequest;
 import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.response.SummaryReportResponse;
@@ -101,13 +102,14 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<Sms> smsItems) {
+    public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<SmsRequest> smsItems) {
         Set<String> ids = smsItems.stream()
-                .peek(sms -> sms.setDeviceId(deviceId))
-                .map(sms -> {
+                .peek(smsRequest -> smsRequest.getSms().setDeviceId(deviceId))
+                .map(smsRequest -> {
+                    Sms sms = smsRequest.getSms();
                     Instant instant = Instant.ofEpochMilli(sms.getSmsTimestamp());
                     LocalDate smsDate = LocalDate.ofInstant(instant, MINSK_TIMEZONE);
-                    return new HistoryItem(login, smsDate.getYear(), smsDate.getMonthValue(), smsDate.getDayOfMonth(), true, sms);
+                    return new HistoryItem(login, smsDate.getYear(), smsDate.getMonthValue(), smsDate.getDayOfMonth(), new Balance(smsRequest.getAccount(), smsRequest.getSubAccount()), sms);
                 })
                 .map(historyItem -> saveHistoryItem(login, historyItem).getId())
                 .collect(Collectors.toSet());

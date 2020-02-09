@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.network.request.DissociationRequest
@@ -42,8 +41,8 @@ class AccountsFragment : BaseFragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         subscriptionsDisposable.addAll(
                 accountsViewModel.accounts()
                         .subscribeOn(Schedulers.io())

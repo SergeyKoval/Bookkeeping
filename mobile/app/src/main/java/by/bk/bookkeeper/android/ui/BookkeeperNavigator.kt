@@ -30,12 +30,10 @@ class BookkeeperNavigator(private val activity: AppCompatActivity) : BookkeeperN
     }
 
     override fun showConversationsFragment(accountInfoHolder: AccountInfoHolder) {
-        activity.supportFragmentManager.popBackStackImmediate(ConversationsFragment.TAG, 0)
         replaceFragment(ConversationsFragment.newInstance(accountInfoHolder) as BaseFragment, true)
     }
 
     override fun showSmsListFragment(conversation: Conversation, accountInfoHolder: AccountInfoHolder) {
-        activity.supportFragmentManager.popBackStackImmediate(SMSListFragment.TAG, 0)
         replaceFragment(SMSListFragment.newInstance(conversation, accountInfoHolder) as BaseFragment, true)
     }
 

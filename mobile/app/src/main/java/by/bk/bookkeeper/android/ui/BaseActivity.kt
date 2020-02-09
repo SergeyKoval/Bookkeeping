@@ -22,8 +22,8 @@ abstract class BaseActivity<VM : ViewModel> : AppCompatActivity() {
     }
 
     override fun onStop() {
-        super.onStop()
         subscriptionsDisposable.clear()
+        super.onStop()
     }
 
     abstract fun getViewModelClass(): Class<VM>

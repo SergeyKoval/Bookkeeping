@@ -5,7 +5,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.response.Account
@@ -27,7 +26,6 @@ class AccountViewHolder(private val clicksSubject: PublishSubject<SubAccountRecy
         item ?: return
         title.text = item.title
         recyclerSubAccount.run {
-            layoutManager = LinearLayoutManager(itemView.context)
             adapter = SubAccountsAdapter(item, item.subAccounts, clicksSubject)
         }
     }
@@ -83,6 +81,5 @@ class SubAccountViewHolder(private val account: Account,
                 else -> return@setOnMenuItemClickListener false
             }
         }
-
     }
 }

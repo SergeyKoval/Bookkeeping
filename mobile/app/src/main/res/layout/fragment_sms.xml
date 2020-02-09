@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sms_layout_root"
     android:layout_width="match_parent"
-    android:focusableInTouchMode="true"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_template"
@@ -28,7 +28,6 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/sms_swipe_refresh"
         android:layout_width="match_parent"
-        android:textIsSelectable="true"
         android:layout_height="wrap_content"
         android:padding="@dimen/content_default_padding"
         app:layout_constrainedHeight="true"
@@ -41,8 +40,8 @@
             android:id="@+id/recycler_sms"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:padding="@dimen/view_default_padding"
+            android:textIsSelectable="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constrainedHeight="true" />
 

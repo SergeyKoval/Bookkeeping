@@ -12,7 +12,6 @@ import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 
-
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
@@ -41,8 +40,12 @@ abstract class BaseFragment : Fragment() {
         }.also { errorSnackbar = it }
     }
 
-    override fun onDestroyView() {
+    override fun onStop() {
         subscriptionsDisposable.clear()
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
         errorSnackbar?.dismiss()
         errorSnackbar = null
         super.onDestroyView()

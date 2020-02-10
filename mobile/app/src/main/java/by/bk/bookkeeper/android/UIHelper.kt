@@ -13,8 +13,8 @@ import java.util.*
  *  Created by Evgenia Grinkevich on 29, January, 2020
  **/
 
-fun getListItemDateFormat() = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).apply {
-    timeZone = TimeZone.getTimeZone("UTC")
+fun getListItemDateFormat() = SimpleDateFormat("dd.MM.yyyy H:mm", Locale.getDefault()).apply {
+    timeZone = TimeZone.getDefault()
 }
 
 fun View.snackbar(@StringRes messageRes: Int, length: Int = Snackbar.LENGTH_SHORT) = Snackbar

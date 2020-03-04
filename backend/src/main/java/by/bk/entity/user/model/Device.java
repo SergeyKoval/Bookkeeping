@@ -7,6 +7,6 @@ import lombok.Getter;
  */
 @Getter
 public class Device {
-    private String deviceId;
+    private String token;
     private String name;
 }

@@ -69,5 +69,9 @@ body {
   cursor: move;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 
 /*:host ::ng-deep bk-popover .action*/

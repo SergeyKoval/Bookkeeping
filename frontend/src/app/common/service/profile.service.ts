@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Observable, of, ReplaySubject, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { catchError, filter, map, tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/internal/operators';
 
 import { LoadingService } from 'app/common/service/loading.service';
@@ -123,6 +123,10 @@ export class ProfileService implements CanActivate {
           });
           this._authenticatedProfile.categories = profile.categories;
         }));
+  }
+
+  public reloadDevicesInProfile(): Observable<Profile> {
+    return this.getUserProfile().pipe(tap(profile => this.authenticatedProfile.devices = profile.devices));
   }
 
   public clearProfile(): void {
@@ -374,6 +378,26 @@ export class ProfileService implements CanActivate {
     }, {
       validator: ProfileService.validateNewPassword
     });
+  }
+
+  public downloadAndroidApplication(): Observable<Blob> {
+    return this._http.get(`/mobile-app/android`, {observe: 'response', responseType: 'blob'})
+      .pipe(
+        filter((response: HttpResponse<Blob>) => response.status === 200),
+        map((response: HttpResponse<Blob>) => response.body),
+        catchError(() => {
+          this._alertService.addAlert(AlertType.DANGER, `Error loading`);
+          return of(null);
+        })
+      );
+  }
+
+  public sendApplicationEmail (email: {}): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/send-application-link', email);
+  }
+
+  public changeDeviceName(deviceDetails: {}): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/change-device-name', deviceDetails);
   }
 
   public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {

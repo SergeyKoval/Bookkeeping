@@ -1,0 +1,18 @@
+<h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Имя девайса</h2>
+<mat-dialog-content  id="device-name-dialog">
+  <div class="table">
+    <div class="row title">
+      <div class="col-sm-3 left-column">Имя:</div>
+      <div class="col-sm-9">
+        <input type="text" [(ngModel)]="data.name" class="form-control">
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="actions">
+    <button class="btn btn-default action-item" (click)="close()">Отмена</button>
+    <span class="action-item">&nbsp;</span>
+    <button class="btn btn-default action-item" (click)="save()">Сохранить</button>
+  </span>
+</mat-dialog-actions>

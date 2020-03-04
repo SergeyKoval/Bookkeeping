@@ -134,7 +134,7 @@ export class AccountsComponent implements OnInit {
   }
 
   public deleteSubAccount(account: FinAccount, subAccount: SubAccount): void {
-    let removeCallback = () => this._profileService.deleteSubAccount(account.title, subAccount.title);
+    const removeCallback = () => this._profileService.deleteSubAccount(account.title, subAccount.title);
     this.deleteAccountOrSubAccount(removeCallback, 'При удалении субсчета все существующие операции с использованием этого субсчета будут удалены. Остатки на удаляемом субсчете будут утерены. Продолжить?');
   }
 

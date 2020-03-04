@@ -27,6 +27,7 @@
     "angular-2-local-storage": "^3.0.2",
     "chart.js": "^2.7.3",
     "core-js": "^2.5.4",
+    "file-saver": "^2.0.2",
     "jquery": "^3.3.1",
     "mydatepicker": "^2.0.21",
     "mydaterangepicker": "^4.2.1",

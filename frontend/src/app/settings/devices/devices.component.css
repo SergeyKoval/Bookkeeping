@@ -1,0 +1,88 @@
+.action {
+  cursor: pointer;
+  color: #999;
+}
+
+.action:hover {
+  color: #5e5e5e;
+}
+
+.header {
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  font-weight: bolder;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.row {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.page-title {
+  padding-bottom: 10px;
+  font-size: 16px;
+}
+
+hr {
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
+
+.no-left-padding {
+  padding-left: 0;
+}
+
+:host ::ng-deep bk-popover .action{
+  padding-left: 5px;
+}
+
+.sm-padding {
+  padding-right: 0;
+}
+
+.android {
+  height: 40px;
+}
+
+.application-option {
+  padding-left: 10px;
+}
+
+@media (min-width: 1200px) {
+  .row-wrapper::before {
+    content: none;
+  }
+
+  .row-wrapper {
+    display: flex;
+  }
+
+  .application-column {
+    display: flex;
+    align-items: center;
+  }
+
+  .android {
+    height: 64px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .sm-padding {
+    padding-left: 0;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .header .sm-padding {
+    padding-left: 0;
+  }
+}

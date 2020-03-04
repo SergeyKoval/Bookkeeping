@@ -1,14 +1,12 @@
 package by.bk.controller;
 
-import by.bk.controller.model.request.SubAccountAssignmentRequest;
-import by.bk.controller.model.request.UpdateAccountCategoryRequest;
-import by.bk.controller.model.request.UpdateCurrencyRequest;
+import by.bk.controller.model.request.*;
 import by.bk.controller.model.response.SimpleResponse;
-import by.bk.controller.model.request.UserPasswordChangeRequest;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.Account;
 import by.bk.entity.user.model.User;
 import by.bk.entity.user.UserAPI;
+import by.bk.mail.EmailPreparator;
 import by.bk.security.role.RoleMobile;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,8 @@ import java.util.List;
 public class ProfileController extends BaseAPIController {
     @Autowired
     private UserAPI userAPI;
+    @Autowired
+    private EmailPreparator applicationLinkEmailPreparator;
 
     @ExceptionHandler({SelectableItemMissedSettingUpdateException.class})
     public SimpleResponse handleAuthenticationException(SelectableItemMissedSettingUpdateException e) {
@@ -177,4 +177,15 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse moveSubCategoryToAnotherCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
         return userAPI.moveSubCategoryToAnotherCategory(principal.getName(), request.getOldTitle(), request.getParentTitle(), request.getTitle(), request.getSubCategoryType());
     }
+
+    @PostMapping("/send-application-link")
+    public SimpleResponse sendApplicationLink(@RequestBody SendApplicationRequest request) {
+        return applicationLinkEmailPreparator.prepareAndSend(request.getEmail()) ? SimpleResponse.success() : SimpleResponse.fail();
+    }
+
+    @PostMapping("/change-device-name")
+    public SimpleResponse changeDeviceName(@RequestBody ChangeDeviceNameRequest request, Principal principal) {
+        return userAPI.changeDeviceName(principal.getName(), request);
+    }
+
 }

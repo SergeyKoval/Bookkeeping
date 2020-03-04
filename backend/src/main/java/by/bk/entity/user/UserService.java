@@ -1,5 +1,6 @@
 package by.bk.entity.user;
 
+import by.bk.controller.model.request.ChangeDeviceNameRequest;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.request.SubAccountAssignmentRequest;
 import by.bk.controller.model.response.SimpleResponse;
@@ -95,7 +96,7 @@ public class UserService implements UserAPI, UserDetailsService {
     @Override
     public void registerDevice(String email, String deviceId, String token) {
         Query query = Query.query(Criteria.where("email").is(email));
-        Update update = Update.update(StringUtils.join("devices.", deviceId, ".deviceId"), token);
+        Update update = Update.update(StringUtils.join("devices.", deviceId, ".token"), token);
         if (mongoTemplate.updateFirst(query, update, User.class).getModifiedCount() != 1) {
             throw new RuntimeException("Fail to store device authentication for the user " + email);
         }
@@ -160,7 +161,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         if (StringUtils.isNotBlank(token.getDeviceId())) {
             Device device = authenticatedUser.getDevices().get(token.getDeviceId());
-            if (device == null || !StringUtils.equals(device.getDeviceId(), token.getToken())) {
+            if (device == null || !StringUtils.equals(device.getToken(), token.getToken())) {
                 LOG.error(StringUtils.join("User ", token.getUsername(), " with deviceId ", token.getDeviceId(), " is trying to call API. Device authenticated = ", device != null));
                 return new UsernamePasswordAuthenticationToken(null, null);
             }
@@ -766,6 +767,20 @@ public class UserService implements UserAPI, UserDetailsService {
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - assign sub account. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse changeDeviceName(String login, ChangeDeviceNameRequest deviceDetails) {
+        Query query = Query.query(Criteria.where("_id").is(login));
+        String setKey = StringUtils.join("devices.", deviceDetails.getDeviceId(), ".name");
+        Update update = new Update().set(setKey, deviceDetails.getName());
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - change device name. Number of updated items " + updateResult.getModifiedCount());
             return SimpleResponse.fail();
         }
 

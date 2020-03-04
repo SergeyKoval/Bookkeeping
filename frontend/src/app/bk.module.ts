@@ -91,6 +91,9 @@ import { StopPropagationDirective } from './common/directives/stop-propagation.d
 import { MultiLevelDropdownComponent } from './common/components/multi-level-dropdown/multi-level-dropdown.component';
 import { MultiLevelDropdownLevelComponent } from './common/components/multi-level-dropdown/multi-level-dropdown-level/multi-level-dropdown-level.component';
 import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.component';
+import { DevicesComponent } from './settings/devices/devices.component';
+import { DeviceMailDialogComponent } from './settings/devices/device-mail-dialog/device-mail-dialog.component';
+import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog/device-name-dialog.component';
 
 @NgModule({
   declarations: [
@@ -159,7 +162,10 @@ import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.
     StopPropagationDirective,
     MultiLevelDropdownComponent,
     MultiLevelDropdownLevelComponent,
-    ReportDynamicComponent
+    ReportDynamicComponent,
+    DevicesComponent,
+    DeviceMailDialogComponent,
+    DeviceNameDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -199,7 +205,9 @@ import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.
     MoveGoalDialogComponent,
     MoveSubCategoryDialogComponent,
     CategoryStatisticsDialogComponent,
-    CloseMonthDialogComponent
+    CloseMonthDialogComponent,
+    DeviceMailDialogComponent,
+    DeviceNameDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

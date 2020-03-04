@@ -10,7 +10,12 @@ type Profile = {
   roles: string[],
   currencies: CurrencyDetail[],
   categories: Category[],
-  accounts: FinAccount[]
+  accounts: FinAccount[],
+  devices: {[deviceId: string]: Device}
+};
+
+type Device = {
+  name: string
 };
 
 type CurrencyDetail = {

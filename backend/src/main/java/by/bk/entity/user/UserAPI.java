@@ -1,5 +1,6 @@
 package by.bk.entity.user;
 
+import by.bk.controller.model.request.ChangeDeviceNameRequest;
 import by.bk.controller.model.request.Direction;
 import by.bk.controller.model.request.SubAccountAssignmentRequest;
 import by.bk.controller.model.response.SimpleResponse;
@@ -59,4 +60,6 @@ public interface UserAPI extends AuthenticationAPI {
 
     SimpleResponse assignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment);
     SimpleResponse deassignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment);
+
+    SimpleResponse changeDeviceName(String login, ChangeDeviceNameRequest deviceDetails);
 }

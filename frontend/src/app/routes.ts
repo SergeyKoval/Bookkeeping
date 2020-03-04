@@ -14,6 +14,7 @@ import { ProfileService } from './common/service/profile.service';
 import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.component';
+import { DevicesComponent } from './settings/devices/devices.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -99,6 +100,11 @@ export const BOOKKEEPING_ROUTES: Route[] = [
         path: 'categories',
         component: CategoriesComponent,
         data: {title: 'Бухгалтерия - настройки - категории'}
+      },
+      {
+        path: 'devices',
+        component: DevicesComponent,
+        data: {title: 'Бухгалтерия - настройки - Девайсы'}
       }
     ]
   }

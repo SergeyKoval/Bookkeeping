@@ -57,6 +57,7 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/token/server/version").permitAll()
+                .antMatchers(HttpMethod.GET, "/mobile-app/android").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/generate-token").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/generate-token-mobile").permitAll()
                 .antMatchers(HttpMethod.POST, "/token/send-registration-code").permitAll()
@@ -73,7 +74,7 @@ public class BookkeeperSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(HttpMethod.GET, "/*.html", "/favicon.png", "/**/*.html", "/**/*.css", "/**/*.js", "/**/*.gif", "/**/*.woff", "/**/*.woff2", "/**/*.ttf");
+        web.ignoring().antMatchers(HttpMethod.GET, "/*.html", "/favicon.png", "/**/*.html", "/**/*.css", "/**/*.js", "/**/*.gif", "/**/*.woff", "/**/*.woff2", "/**/*.ttf", "/**/*.txt");
     }
 
     @Bean

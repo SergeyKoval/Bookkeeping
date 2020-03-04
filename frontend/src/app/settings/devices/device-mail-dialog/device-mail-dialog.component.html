@@ -1,0 +1,23 @@
+<h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Отправка приложения на мэил</h2>
+<mat-dialog-content  id="device-mail-dialog">
+  <div *ngIf="showErrorMessage" class="alert alert-dismissable fade in alert-danger error">
+    <strong>Невалидный мэил</strong>
+  </div>
+  <form [formGroup]="emailForm">
+    <div class="table">
+      <div class="row title">
+        <div class="col-sm-3 left-column">Мэил:</div>
+        <div class="col-sm-9">
+          <input type="email" formControlName="email" class="form-control">
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="actions">
+    <button class="btn btn-default action-item" (click)="close()">Отмена</button>
+    <span class="action-item">&nbsp;</span>
+    <button class="btn btn-default action-item" (click)="save()">Отправить</button>
+  </span>
+</mat-dialog-actions>

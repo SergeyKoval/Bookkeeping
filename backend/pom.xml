@@ -80,7 +80,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-ui</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -90,6 +90,25 @@
                             <resources>
                                 <resource>
                                     <directory>../frontend/dist</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-apk</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/mobile-app/android/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <filtering>false</filtering>
+                                    <directory>../mobile/app/build/outputs/apk/release</directory>
+                                    <includes>
+                                        <include>**/*.apk</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>

@@ -14,9 +14,9 @@
     <version>1.0</version>
 
     <modules>
+        <module>mobile</module>
         <module>frontend</module>
         <module>backend</module>
-        <module>mobile</module>
     </modules>
 
     <properties>

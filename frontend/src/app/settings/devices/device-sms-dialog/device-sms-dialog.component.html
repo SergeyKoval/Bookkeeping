@@ -1,0 +1,41 @@
+<h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Обработанные смс</h2>
+<mat-dialog-content  id="device-sms-dialog">
+  <ng-container *ngIf="!loading; else loadingIndicator">
+    <div *ngIf="!sms">У девайса нет Sms</div>
+    <div class="table" *ngIf="sms">
+      <div class="row">
+        <div class="col-sm-3 left-column">ID:</div>
+        <div class="col-sm-9">{{sms.deviceId}}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3 left-column">Имя:</div>
+        <div class="col-sm-9">{{data.name}}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3 left-column">Отправитель:</div>
+        <div class="col-sm-9">{{sms.sender}}</div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3 left-column">Время:</div>
+        <div class="col-sm-9">{{getSmsTimestamp()}}</div>
+      </div>
+      <div class="row sms-margin">
+        <div class="col-sm-3 left-column">Sms:</div>
+        <div class="col-sm-9" [innerHTML]="getSubstitutedFullSmsText()"></div>
+      </div>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="actions" *ngIf="!loading">
+    <button class="btn btn-default action-item" (click)="close()">Закрыть</button>
+    <span class="action-item">&nbsp;</span>
+    <button class="btn btn-default action-item" *ngIf="smsIndex != maxSmsIndex" (click)="loadSms(1)">Следующее Sms</button>
+    <span class="action-item">&nbsp;</span>
+    <button class="btn btn-default action-item" *ngIf="smsIndex > 0" (click)="loadSms(-1)">Предыдущее Sms</button>
+  </span>
+</mat-dialog-actions>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="80"></bk-spinner>
+</ng-template>

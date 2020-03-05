@@ -11,6 +11,7 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { DeviceNameDialogComponent } from './device-name-dialog/device-name-dialog.component';
+import { DeviceSmsDialogComponent } from './device-sms-dialog/device-sms-dialog.component';
 
 @Component({
   selector: 'bk-devices',
@@ -32,7 +33,9 @@ export class DevicesComponent implements OnInit {
   }
 
   public downloadApplication(): void {
+    const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Загрузка приложения...');
     this._profileService.downloadAndroidApplication().subscribe(file => {
+      loadingDialog.close();
       if (file) {
         fileSaver.saveAs(file, `bookkeeper.apk`);
       }
@@ -82,5 +85,15 @@ export class DevicesComponent implements OnInit {
           });
         });
       });
+  }
+
+  public openProcessedSmsDialog(device: Device, deviceId: string): void {
+    this._dialog.open(DeviceSmsDialogComponent, {
+      width: '550px',
+      position: {top: 'top'},
+      data: {'name': device.name, 'deviceId': deviceId}
+    })
+      .afterClosed()
+      .subscribe();
   }
 }

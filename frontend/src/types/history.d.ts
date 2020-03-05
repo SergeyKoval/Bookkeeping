@@ -24,3 +24,10 @@ type HistoryBalanceType = {
   newCurrency?: string,
   alternativeCurrency?: {[currncy: string]: number}
 };
+
+type Sms = {
+  deviceId: string;
+  sender: string;
+  fullSms: string;
+  smsTimestamp: number;
+};

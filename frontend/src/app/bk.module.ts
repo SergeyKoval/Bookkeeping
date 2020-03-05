@@ -94,6 +94,7 @@ import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.
 import { DevicesComponent } from './settings/devices/devices.component';
 import { DeviceMailDialogComponent } from './settings/devices/device-mail-dialog/device-mail-dialog.component';
 import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog/device-name-dialog.component';
+import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/device-sms-dialog.component';
 
 @NgModule({
   declarations: [
@@ -165,7 +166,8 @@ import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog
     ReportDynamicComponent,
     DevicesComponent,
     DeviceMailDialogComponent,
-    DeviceNameDialogComponent
+    DeviceNameDialogComponent,
+    DeviceSmsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -207,7 +209,8 @@ import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog
     CategoryStatisticsDialogComponent,
     CloseMonthDialogComponent,
     DeviceMailDialogComponent,
-    DeviceNameDialogComponent
+    DeviceNameDialogComponent,
+    DeviceSmsDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

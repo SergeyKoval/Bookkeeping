@@ -1,0 +1,19 @@
+#device-sms-dialog {
+  min-height: 100px;
+}
+
+.actions {
+  width: 100%;
+}
+
+.action-item {
+  float: right;
+}
+
+.left-column {
+  font-size: 16px;
+}
+
+.sms-margin {
+  margin-top: 15px;
+}

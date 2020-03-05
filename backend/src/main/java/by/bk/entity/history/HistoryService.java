@@ -298,6 +298,16 @@ public class HistoryService implements HistoryAPI {
         }
     }
 
+    @Override
+    public SimpleResponse getDeviceSms(String login, String deviceId, Integer smsIndex) {
+        Query query = Query.query(Criteria.where("user").is(login).and("sms.deviceId").is(deviceId))
+                .with(new Sort(Sort.Direction.DESC, "sms.smsTimestamp"))
+                .skip(smsIndex)
+                .limit(1);
+        HistoryItem historyItem = mongoTemplate.findOne(query, HistoryItem.class);
+        return historyItem != null ? SimpleResponse.successWithDetails(historyItem.getSms()) : SimpleResponse.fail("MISSED");
+    }
+
     private Collection<SummaryReportResponse> collectSummaryReport(boolean ignoreSubCategories, Stream<SummaryReportItem> items) {
         return items.collect(Collectors.toMap(
                 item -> ignoreSubCategories ? item.getCategory() : new MutablePair<>(item.getCategory(), item.getSubCategory()),

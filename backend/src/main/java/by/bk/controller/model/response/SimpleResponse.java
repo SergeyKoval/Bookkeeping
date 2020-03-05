@@ -35,6 +35,12 @@ public class SimpleResponse {
         return new SimpleResponse(Status.SUCCESS, message);
     }
 
+    public static SimpleResponse successWithDetails(Object result) {
+        SimpleResponse response = SimpleResponse.success();
+        response.setResult(result);
+        return response;
+    }
+
     public static SimpleResponse fail(String message) {
         return new SimpleResponse(Status.FAIL, message);
     }

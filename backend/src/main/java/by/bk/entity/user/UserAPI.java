@@ -62,4 +62,6 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse deassignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment);
 
     SimpleResponse changeDeviceName(String login, ChangeDeviceNameRequest deviceDetails);
+    SimpleResponse logoutDevice(String login, String deviceId);
+    SimpleResponse removeDevice(String login, String deviceId);
 }

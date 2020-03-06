@@ -787,6 +787,32 @@ public class UserService implements UserAPI, UserDetailsService {
         return SimpleResponse.success();
     }
 
+    @Override
+    public SimpleResponse logoutDevice(String login, String deviceId) {
+        Query query = Query.query(Criteria.where("_id").is(login));
+        Update update = new Update().unset(StringUtils.join("devices.", deviceId, ".token"));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - logout device. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
+    @Override
+    public SimpleResponse removeDevice(String login, String deviceId) {
+        Query query = Query.query(Criteria.where("_id").is(login));
+        Update update = new Update().unset(StringUtils.join("devices.", deviceId));
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+        if (updateResult.getModifiedCount() != 1) {
+            LOG.error("Error updating user profile - remove device. Number of updated items " + updateResult.getModifiedCount());
+            return SimpleResponse.fail();
+        }
+
+        return SimpleResponse.success();
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

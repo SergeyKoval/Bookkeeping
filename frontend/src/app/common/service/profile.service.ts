@@ -404,6 +404,14 @@ export class ProfileService implements CanActivate {
     return this._http.get<SimpleResponse>(`/api/history/devices/${deviceId}/sms/${smsIndex}`);
   }
 
+  public logoutDevice(deviceId: string): Observable<SimpleResponse> {
+    return this._http.get<SimpleResponse>(`/api/profile/devices/${deviceId}/logout`);
+  }
+
+  public removeDevice(deviceId: string): Observable<SimpleResponse> {
+    return this._http.delete<SimpleResponse>(`/api/profile/devices/${deviceId}`);
+  }
+
   public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {
     const selectedItem: SelectItem[] = [];
     items.forEach((item: SelectItem) => {

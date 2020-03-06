@@ -188,4 +188,13 @@ public class ProfileController extends BaseAPIController {
         return userAPI.changeDeviceName(principal.getName(), request);
     }
 
+    @GetMapping("/devices/{deviceId}/logout")
+    public SimpleResponse logoutDevice(Principal principal, @PathVariable("deviceId") String deviceId) {
+        return userAPI.logoutDevice(principal.getName(), deviceId);
+    }
+
+    @DeleteMapping("/devices/{deviceId}")
+    public SimpleResponse removeDevice(Principal principal, @PathVariable("deviceId") String deviceId) {
+        return userAPI.removeDevice(principal.getName(), deviceId);
+    }
 }

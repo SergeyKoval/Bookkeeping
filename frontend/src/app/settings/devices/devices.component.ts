@@ -12,6 +12,7 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { DeviceNameDialogComponent } from './device-name-dialog/device-name-dialog.component';
 import { DeviceSmsDialogComponent } from './device-sms-dialog/device-sms-dialog.component';
+import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'bk-devices',
@@ -25,7 +26,8 @@ export class DevicesComponent implements OnInit {
     private _profileService: ProfileService,
     private _dialog: MatDialog,
     private _loadingService: LoadingService,
-    private _alertService: AlertService
+    private _alertService: AlertService,
+    private _confirmDialogService: ConfirmDialogService
   ) { }
 
   public ngOnInit(): void {
@@ -95,5 +97,42 @@ export class DevicesComponent implements OnInit {
     })
       .afterClosed()
       .subscribe();
+  }
+
+  public confirmDeviceLogout(deviceId: string): void {
+    this._confirmDialogService.openConfirmDialog('Подтверждение действия', 'Точно разлогинить девайс?')
+      .afterClosed()
+      .pipe(filter((result: boolean) => result === true))
+      .subscribe(() => {
+        const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Разлогинивание девайса...');
+        this._profileService.logoutDevice(deviceId).subscribe(response => {
+          loadingDialog.close();
+          if (response.status === 'SUCCESS') {
+            this._alertService.addAlert(AlertType.SUCCESS, 'Девайс разлогинен');
+          } else {
+            this._alertService.addAlert(AlertType.WARNING, 'Произошла ошибка при попытке разлогинить девайс');
+          }
+        });
+      });
+  }
+
+  public confirmDeviceRemove(deviceId: string): void {
+    this._confirmDialogService.openConfirmDialog('Подтверждение действия', 'Точно удалить девайс?')
+      .afterClosed()
+      .pipe(filter((result: boolean) => result === true))
+      .subscribe(() => {
+        const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Удаление девайса...');
+        this._profileService.removeDevice(deviceId).subscribe(response => {
+          this._profileService.reloadDevicesInProfile().subscribe(profile => {
+            this.devices = profile.devices;
+            loadingDialog.close();
+            if (response.status === 'SUCCESS') {
+              this._alertService.addAlert(AlertType.SUCCESS, 'Девайс удален');
+            } else {
+              this._alertService.addAlert(AlertType.WARNING, 'Произошла ошибка при попытке удалить девайс');
+            }
+          });
+        });
+      });
   }
 }

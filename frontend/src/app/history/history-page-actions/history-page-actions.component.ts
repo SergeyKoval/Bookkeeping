@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 import { filter } from 'rxjs/operators';
 
@@ -16,8 +17,12 @@ export class HistoryPageActionsComponent implements OnInit {
   public loading: boolean;
   @Input()
   public disableMoreButton: boolean;
+  @Input()
+  public showSms: boolean;
   @Output()
   public loadMore: EventEmitter<number> = new EventEmitter();
+  @Output()
+  public onShowSmsChanged: EventEmitter<boolean> = new EventEmitter();
 
   public constructor(private _dialog: MatDialog) { }
 
@@ -46,5 +51,9 @@ export class HistoryPageActionsComponent implements OnInit {
 
   public moreButtonDisabledValue(): string {
     return this.disableMoreButton ? 'true' : null;
+  }
+
+  public changeShowSms(event: MatSlideToggleChange): void {
+    this.onShowSmsChanged.next(event.checked);
   }
 }

@@ -63,8 +63,12 @@ public class HistoryService implements HistoryAPI {
     private UserRepository userRepository;
 
     @Override
-    public List<HistoryItem> getPagePortion(String login, int page, int limit) {
-        Query query = Query.query(Criteria.where("user").is(login).and("notProcessed").ne(true))
+    public List<HistoryItem> getPagePortion(String login, int page, int limit, boolean withUnprocessedSms) {
+        Criteria criteria = Criteria.where("user").is(login);
+        if (!withUnprocessedSms) {
+            criteria = criteria.and("notProcessed").ne(true);
+        }
+        Query query = Query.query(criteria)
                 .with(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day")))
                 .skip((page -1) * limit)
                 .limit(limit);
@@ -155,6 +159,11 @@ public class HistoryService implements HistoryAPI {
     @Override
     public SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus) {
         HistoryItem originalHistoryItem = getById(login, historyItemId);
+        if (originalHistoryItem.isNotProcessed()) {
+            historyRepository.deleteById(historyItemId);
+            return SimpleResponse.success();
+        }
+
         SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
         if (response.isSuccess()) {
             historyRepository.deleteById(historyItemId);

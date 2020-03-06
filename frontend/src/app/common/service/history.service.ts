@@ -14,8 +14,8 @@ export class HistoryService {
     @Inject(HOST) private _host: string
   ) {}
 
-  public loadHistoryItems(page: number, pageLimit: number): Observable<HistoryType[]> {
-    return this._http.post<HistoryType[]>('/api/history/page-portion', {'page': page, 'limit': pageLimit});
+  public loadHistoryItems(page: number, pageLimit: number, showSms: boolean): Observable<HistoryType[]> {
+    return this._http.post<HistoryType[]>('/api/history/page-portion', {'page': page, 'limit': pageLimit, 'withUnprocessedSms': showSms});
   }
 
   public addHistoryItem(historyItem: HistoryType, changeGoalStatus: boolean): Observable<SimpleResponse> {

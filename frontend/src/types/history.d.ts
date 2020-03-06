@@ -10,7 +10,9 @@ type HistoryType = {
   goal?: string,
   description?: string,
   id?: string,
-  archived: boolean
+  archived: boolean,
+  notProcessed?: boolean,
+  sms: Sms
 };
 
 type HistoryBalanceType = {

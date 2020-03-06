@@ -4,6 +4,12 @@
      (click)="showMoreHistoryItems()" [attr.disabled]="moreButtonDisabledValue()">Показать больше операций</a>
 </div>
 
+<span class="show-sms">
+  <mat-slide-toggle color="primary" [checked]="showSms" (change)="changeShowSms($event)"></mat-slide-toggle>
+  <span class="sms-label">Sms</span>
+</span>
+
+
 <ng-template #loadingIndicator>
   <bk-spinner [size]="35" class="more-history-items"></bk-spinner>
 </ng-template>

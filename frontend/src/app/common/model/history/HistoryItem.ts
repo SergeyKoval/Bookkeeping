@@ -9,6 +9,8 @@ export class HistoryItem {
     public balance: HistoryBalanceType,
     public goal?: string,
     public archived?: boolean,
+    public notProcessed?: boolean,
+    public sms?: Sms,
     public icon?: string,
     public additionalIcon?: string
   ) {}

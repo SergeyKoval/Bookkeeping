@@ -23,15 +23,17 @@ import { LoadingDialogComponent } from '../common/components/loading-dialog/load
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit, AfterViewChecked {
-  public static readonly PAGE_LIMIT: number = 15;
+  public static readonly PAGE_LIMIT: number = 20;
 
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;
   public disableMoreButton: boolean = false;
+  public showSms: boolean = true;
 
   public historyItems: HistoryType[] = [];
 
   private _lastElementId: string;
+  private _devices: {[deviceId: string]: Device};
 
   public constructor(
     private _dialog: MatDialog,
@@ -45,6 +47,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   ) {}
 
   public ngOnInit(): void {
+    this._devices = this._authenticationService.authenticatedProfile.devices;
     this.init(1, HistoryComponent.PAGE_LIMIT);
   }
 
@@ -118,9 +121,28 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
       });
   }
 
+  public changeShowSms(event: boolean): void {
+    this.showSms = event;
+    const moreItems: number = this.historyItems.length >= HistoryComponent.PAGE_LIMIT ? 0 : HistoryComponent.PAGE_LIMIT - this.historyItems.length;
+    this.loadMoreItems(moreItems);
+  }
+
+  public getFormattedSms(sms: string): string {
+    return sms.split('\n').join('<br>');
+  }
+
+  public getSmsDateTime(smsTimestamp: number): string {
+    return new Date(smsTimestamp).toLocaleTimeString('ru-RU');
+  }
+
+  public getDeviceName(deviceId: string): string {
+    const device: Device = this._devices[deviceId];
+    return !device ? deviceId : device.name || deviceId;
+  }
+
   private init(page: number, limit: number): void {
     this.loading = true;
-    this._historyService.loadHistoryItems(page, limit).subscribe((historyItems: HistoryType[]) => {
+    this._historyService.loadHistoryItems(page, limit, this.showSms).subscribe((historyItems: HistoryType[]) => {
       if (historyItems.length < limit) {
         this.disableMoreButton = true;
       }

@@ -24,7 +24,7 @@ public class HistoryController extends BaseAPIController {
 
     @PostMapping("/page-portion")
     public List<HistoryItem> getPagePortion(@RequestBody HistoryPageRequest request, Principal principal) {
-        return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit());
+        return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit(), request.isWithUnprocessedSms());
     }
 
     @PostMapping("/add")

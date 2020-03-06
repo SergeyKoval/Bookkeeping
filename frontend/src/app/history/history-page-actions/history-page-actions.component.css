@@ -2,3 +2,18 @@
   float: right;
   margin-left: 80px;
 }
+
+.show-sms {
+  position: absolute;
+  right: 55px;
+}
+
+mat-slide-toggle {
+  margin-top: 5px;
+}
+
+.sms-label {
+  position: absolute;
+  top: 7px;
+  margin-left: 5px;
+}

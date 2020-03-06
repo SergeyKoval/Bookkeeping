@@ -1,6 +1,7 @@
 <div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
   <div class="panel-body">
-    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="loadMoreItems($event)"></bk-history-page-actions>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" [showSms]="showSms"
+                             (loadMore)="loadMoreItems($event)" (onShowSmsChanged)="changeShowSms($event)"></bk-history-page-actions>
 
     <div class="table">
       <div class="row header">
@@ -43,7 +44,7 @@
           </div>
 
           <!--not exchange, second column-->
-          <div [ngClass]="{'col-sm-2 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type !== 'exchange'">
+          <div [ngClass]="{'col-sm-2 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type !== 'exchange' && !historyItem.notProcessed">
             <bk-popover spanClass="goal-icon col-sm-1 no-left-right-padding" glyphiconClass="screenshot" [text]="historyItem.goal" placement="top" *ngIf="historyItem.goal"></bk-popover>
             <div class="no-left-padding no-right-padding">
               <div [ngClass]="historyItem.type">
@@ -56,6 +57,16 @@
               </span>
             </div>
           </div>
+
+          <!--Unprocessed SMS, second column-->
+          <div [ngClass]="{'col-sm-3 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.notProcessed">
+            <bk-popover spanClass="unprocessed-sms-icon col-sm-1 no-left-right-padding" glyphiconClass="envelope" [text]="getDeviceName(historyItem.sms.deviceId)" placement="top"></bk-popover>
+            <div>{{getSmsDateTime(historyItem.sms.smsTimestamp)}}</div>
+            <div>{{historyItem.sms.sender}}</div>
+          </div>
+
+          <!--Unprocessed SMS, third column-->
+          <div class="col-sm-5 sm-category-column" *ngIf="historyItem.notProcessed" [innerHTML]="getFormattedSms(historyItem.sms.fullSms)"></div>
 
           <!--expense or income third column-->
           <div class="col-sm-3 sm-category-column" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">
@@ -92,14 +103,15 @@
 
           <!--last column-->
           <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
-            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="top" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="top" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived && !historyItem.notProcessed"></bk-popover>
             <bk-popover glyphiconClass="remove" text="Удалить" placement="top" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
           </div>
         </div>
         <hr *ngIf="!lastGroup">
       </div>
     </div>
-    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" (loadMore)="loadMoreItems($event)"></bk-history-page-actions>
+    <bk-history-page-actions [loading]="loadingMoreIndicator" [disableMoreButton]="disableMoreButton" [showSms]="showSms"
+                             (loadMore)="loadMoreItems($event)" (onShowSmsChanged)="changeShowSms($event)"></bk-history-page-actions>
   </div>
 </div>
 

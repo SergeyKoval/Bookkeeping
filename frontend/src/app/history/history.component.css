@@ -70,6 +70,12 @@
   margin-right: 12px;
 }
 
+:host ::ng-deep bk-popover .unprocessed-sms-icon {
+  color: #3f51b5;
+  margin-right: 12px;
+  padding-left: 0;
+}
+
 .transfer-exchange-icon {
   padding-right: 10px;
   top: 3px;
@@ -127,6 +133,10 @@
 
 .exchange-from {
   padding-right: 7px;
+}
+
+bk-history-page-actions {
+  display: flex;
 }
 
 @media (min-width: 768px) and (max-width: 992px) {

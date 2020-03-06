@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * @author Sergey Koval
  */
 public interface HistoryAPI {
-    List<HistoryItem> getPagePortion(String login, int page, int limit);
+    List<HistoryItem> getPagePortion(String login, int page, int limit, boolean withUnprocessedSms);
     List<HistoryItem> getSuitable(String login, String category, String subCategory, SubCategoryType subCategoryType);
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
     SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<SmsRequest> smsItems);

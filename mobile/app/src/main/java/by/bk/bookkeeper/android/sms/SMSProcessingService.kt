@@ -15,6 +15,7 @@ import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
 import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.BaseResponse
+import by.bk.bookkeeper.android.sms.ReceivedSms.Companion.createFromPdu
 import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.sms.receiver.SMSReceiver
@@ -88,21 +89,30 @@ class SMSProcessingService : Service() {
 
     private fun processSms(pdus: Array<*>?, format: String?) {
         val associationInfo: List<AssociationInfo> = SmsPreferenceProvider.getAssociationsFromStorage()
+        val receivedSms: HashMap<String, ReceivedSms> = hashMapOf()
         val matchedSms: ArrayList<MatchedSms> = arrayListOf()
         pdus?.forEach { pdu ->
-            val receivedSMS = SmsMessage.createFromPdu(pdu as ByteArray, format)
-            val sender = receivedSMS.displayOriginatingAddress
-            val message = receivedSMS.displayMessageBody
-            val dateReceived = receivedSMS.timestampMillis
-            Timber.d("SMS processing from $sender")
-            associationInfo.forEach { association ->
-                if (association.sms.senderName.equals(sender, ignoreCase = true)) {
-                    val sms = SMS(senderName = sender, body = message, dateReceived = dateReceived)
-                    association.sms.bodyTemplate?.let {
-                        if (message.contains(association.sms.bodyTemplate, ignoreCase = true)) {
-                            matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
+            val sms = createFromPdu(pdu as ByteArray, format) ?: return
+            val originatingAddress = sms.originatingAddress
+            if (!receivedSms.containsKey(originatingAddress)) {
+                receivedSms[originatingAddress] = sms
+            } else {
+                receivedSms[originatingAddress]?.apply { body += sms.body }
+            }
+        }
+        receivedSms.forEach { entry ->
+            entry.value.run {
+                Timber.d("SMS processing from $senderName")
+                associationInfo.forEach { association ->
+                    if (association.sms.senderName.equals(senderName, ignoreCase = true)) {
+                        val sms = SMS(senderName = senderName, body = body, dateReceived = dateReceived)
+                        association.sms.bodyTemplate?.let {
+                            if (body.contains(association.sms.bodyTemplate, ignoreCase = true)) {
+                                matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
+                            }
                         }
-                    } ?: matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
+                                ?: matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
+                    }
                 }
             }
         }
@@ -163,5 +173,24 @@ class SMSProcessingService : Service() {
         const val SERVICE_REQUEST_CODE = 1689
         const val INTENT_PDU_EXTRA = "pdu_extra"
         const val INTENT_PDU_FORMAT = "pdu_format"
+    }
+}
+
+
+data class ReceivedSms(val originatingAddress: String,
+                       val senderName: String,
+                       var body: String,
+                       val dateReceived: Long) {
+
+    companion object {
+
+        fun createFromPdu(pdu: ByteArray?, format: String?): ReceivedSms? {
+            val receivedSMS: SmsMessage = SmsMessage.createFromPdu(pdu, format) ?: return null
+            val originatingAddress = receivedSMS.originatingAddress ?: ""
+            val sender = receivedSMS.displayOriginatingAddress
+            val message = receivedSMS.displayMessageBody
+            val dateReceived = receivedSMS.timestampMillis
+            return ReceivedSms(originatingAddress = originatingAddress, senderName = sender, body = message, dateReceived = dateReceived)
+        }
     }
 }

@@ -60,13 +60,13 @@
 
           <!--Unprocessed SMS, second column-->
           <div [ngClass]="{'col-sm-3 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.notProcessed">
-            <bk-popover spanClass="unprocessed-sms-icon col-sm-1 no-left-right-padding" glyphiconClass="envelope" [text]="getDeviceName(historyItem.sms.deviceId)" placement="top"></bk-popover>
-            <div>{{getSmsDateTime(historyItem.sms.smsTimestamp)}}</div>
-            <div>{{historyItem.sms.sender}}</div>
+            <bk-popover spanClass="unprocessed-sms-icon col-sm-1 no-left-right-padding" glyphiconClass="envelope" [text]="getDeviceName(historyItem.sms[0].deviceId)" placement="top"></bk-popover>
+            <div>{{getSmsDateTime(historyItem.sms[0].smsTimestamp)}}</div>
+            <div>{{historyItem.sms[0].sender}}</div>
           </div>
 
           <!--Unprocessed SMS, third column-->
-          <div class="col-sm-5 sm-category-column" *ngIf="historyItem.notProcessed" [innerHTML]="getFormattedSms(historyItem.sms.fullSms)"></div>
+          <div class="col-sm-5 sm-category-column footnote" *ngIf="historyItem.notProcessed" [innerHTML]="getFormattedSms(historyItem.sms[0].fullSms)"></div>
 
           <!--expense or income third column-->
           <div class="col-sm-3 sm-category-column" *ngIf="historyItem.type === 'expense' || historyItem.type === 'income'">
@@ -103,8 +103,10 @@
 
           <!--last column-->
           <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
-            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="top" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived && !historyItem.notProcessed"></bk-popover>
-            <bk-popover glyphiconClass="remove" text="Удалить" placement="top" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived && !historyItem.notProcessed"></bk-popover>
+            <bk-popover glyphiconClass="plus" text="Добавть операцию" placement="left" *ngIf="historyItem.notProcessed"></bk-popover>
+            <bk-popover glyphiconClass="paperclip" text="Ассоциировать с существующей" placement="left" *ngIf="historyItem.notProcessed"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
           </div>
         </div>
         <hr *ngIf="!lastGroup">

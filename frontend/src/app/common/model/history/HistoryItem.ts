@@ -10,7 +10,7 @@ export class HistoryItem {
     public goal?: string,
     public archived?: boolean,
     public notProcessed?: boolean,
-    public sms?: Sms,
+    public sms?: Sms[],
     public icon?: string,
     public additionalIcon?: string
   ) {}

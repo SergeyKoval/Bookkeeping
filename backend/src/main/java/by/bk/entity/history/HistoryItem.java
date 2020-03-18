@@ -8,7 +8,9 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Sergey Koval
@@ -35,7 +37,7 @@ public class HistoryItem {
     private boolean archived;
     private boolean notProcessed;
     private String goal;
-    private Sms sms;
+    private List<Sms> sms;
 
     @JsonIgnore
     Balance cloneBalance() {
@@ -61,7 +63,7 @@ public class HistoryItem {
         this.month = month;
         this.day = day;
         this.notProcessed = Boolean.TRUE;
-        this.sms = sms;
+        this.sms = Collections.singletonList(sms);
         this.balance = balance;
     }
 }

@@ -12,7 +12,7 @@ type HistoryType = {
   id?: string,
   archived: boolean,
   notProcessed?: boolean,
-  sms: Sms
+  sms?: Sms[]
 };
 
 type HistoryBalanceType = {

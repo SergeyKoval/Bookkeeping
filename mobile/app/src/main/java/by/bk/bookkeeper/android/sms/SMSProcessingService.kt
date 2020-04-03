@@ -45,18 +45,18 @@ class SMSProcessingService : Service() {
         observePendingSms()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Timber.d("On start command invoked with action ${intent.action}")
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Timber.d("On start command invoked with action ${intent?.action}")
         if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
-                || intent.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
+                || intent?.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
             stopForeground(true)
             stopSelf()
         }
-        if (intent.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
+        if (intent?.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
             processSms(intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>, intent.extras?.getString(INTENT_PDU_FORMAT))
         }
         startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
-        return START_REDELIVER_INTENT
+        return START_STICKY
     }
 
     private fun observePendingSms() {

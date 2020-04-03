@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 import { filter } from 'rxjs/operators';
 
@@ -12,22 +11,21 @@ import { HistoryComponent } from '../history.component';
   templateUrl: './history-page-actions.component.html',
   styleUrls: ['./history-page-actions.component.css']
 })
-export class HistoryPageActionsComponent implements OnInit {
+export class HistoryPageActionsComponent {
   @Input()
   public loading: boolean;
   @Input()
   public disableMoreButton: boolean;
   @Input()
-  public showSms: boolean;
+  public unprocessedSms: boolean;
+  @Input()
+  public unprocessedSmsCount: number;
   @Output()
   public loadMore: EventEmitter<number> = new EventEmitter();
   @Output()
-  public onShowSmsChanged: EventEmitter<boolean> = new EventEmitter();
+  public onShowUnprocessedSmsChanged: EventEmitter<boolean> = new EventEmitter();
 
   public constructor(private _dialog: MatDialog) { }
-
-  public ngOnInit(): void {
-  }
 
   public addHistoryItem(): void {
     this._dialog.open(HistoryEditDialogComponent, {
@@ -53,7 +51,7 @@ export class HistoryPageActionsComponent implements OnInit {
     return this.disableMoreButton ? 'true' : null;
   }
 
-  public changeShowSms(event: MatSlideToggleChange): void {
-    this.onShowSmsChanged.next(event.checked);
+  public showUnprocessedSms(value: boolean): void {
+    this.onShowUnprocessedSmsChanged.next(value);
   }
 }

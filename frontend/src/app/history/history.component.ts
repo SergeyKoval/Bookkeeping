@@ -16,6 +16,7 @@ import { BudgetService } from '../common/service/budget.service';
 import { CurrencyUtils } from '../common/utils/currency-utils';
 import { LoadingService } from '../common/service/loading.service';
 import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
+import { SmsAssignDialogComponent } from './sms-assign-dialog/sms-assign-dialog.component';
 
 @Component({
   selector: 'bk-history',
@@ -28,9 +29,10 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;
   public disableMoreButton: boolean = false;
-  public showSms: boolean = true;
+  public unprocessedSms: boolean = false;
 
   public historyItems: HistoryType[] = [];
+  public unprocessedSmsCount: number;
 
   private _lastElementId: string;
   private _devices: {[deviceId: string]: Device};
@@ -47,13 +49,17 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   ) {}
 
   public ngOnInit(): void {
+    this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
     this._devices = this._authenticationService.authenticatedProfile.devices;
     this.init(1, HistoryComponent.PAGE_LIMIT);
   }
 
   public ngAfterViewChecked(): void {
     if (!this.loading && this._lastElementId) {
-      document.getElementById(this._lastElementId).scrollIntoView();
+      const htmlElement: HTMLElement = document.getElementById(this._lastElementId);
+      if (htmlElement) {
+        htmlElement.scrollIntoView();
+      }
       this._lastElementId = null;
     }
   }
@@ -122,7 +128,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   }
 
   public changeShowSms(event: boolean): void {
-    this.showSms = event;
+    this.unprocessedSms = event;
     const moreItems: number = this.historyItems.length >= HistoryComponent.PAGE_LIMIT ? 0 : HistoryComponent.PAGE_LIMIT - this.historyItems.length;
     this.loadMoreItems(moreItems);
   }
@@ -140,9 +146,28 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     return !device ? deviceId : device.name || deviceId;
   }
 
+  public openAssignSmsDialog(historyItem: HistoryItem): void {
+    this._dialog.open(SmsAssignDialogComponent, {
+      width: '800px',
+      position: {top: 'top'},
+      panelClass: 'assign-sms-dialog',
+      data: {
+        'smsItem': historyItem.originalItem
+      }
+    }).afterClosed()
+      .pipe(
+        filter((result: boolean) => result === true),
+        tap(() => this._lastElementId = null)
+      ).subscribe(() => this.loadMoreItems(0));
+  }
+
+  public clickOnSms(historyItem: HistoryItem, smsIndex: number): void {
+    historyItem.showSmsIndex = historyItem.showSmsIndex !== smsIndex ? smsIndex : null;
+  }
+
   private init(page: number, limit: number): void {
     this.loading = true;
-    this._historyService.loadHistoryItems(page, limit, this.showSms).subscribe((historyItems: HistoryType[]) => {
+    this._historyService.loadHistoryItems(page, limit, this.unprocessedSms).subscribe((historyItems: HistoryType[]) => {
       if (historyItems.length < limit) {
         this.disableMoreButton = true;
       }

@@ -95,6 +95,8 @@ import { DevicesComponent } from './settings/devices/devices.component';
 import { DeviceMailDialogComponent } from './settings/devices/device-mail-dialog/device-mail-dialog.component';
 import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog/device-name-dialog.component';
 import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/device-sms-dialog.component';
+import { SmsAssignDialogComponent } from './history/sms-assign-dialog/sms-assign-dialog.component';
+import { ToggleComponent } from './common/components/toggle/toggle.component';
 
 @NgModule({
   declarations: [
@@ -167,7 +169,9 @@ import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/d
     DevicesComponent,
     DeviceMailDialogComponent,
     DeviceNameDialogComponent,
-    DeviceSmsDialogComponent
+    DeviceSmsDialogComponent,
+    SmsAssignDialogComponent,
+    ToggleComponent
   ],
   imports: [
     BrowserModule,
@@ -210,7 +214,8 @@ import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/d
     CloseMonthDialogComponent,
     DeviceMailDialogComponent,
     DeviceNameDialogComponent,
-    DeviceSmsDialogComponent
+    DeviceSmsDialogComponent,
+    SmsAssignDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

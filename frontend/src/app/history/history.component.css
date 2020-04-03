@@ -139,6 +139,10 @@ bk-history-page-actions {
   display: flex;
 }
 
+.sms-top-margin {
+  margin-top: 2px;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .sm-small-left-padding {
     padding-left: 5px;

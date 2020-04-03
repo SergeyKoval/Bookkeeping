@@ -1,0 +1,81 @@
+<h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Ассоциация с операцией</h2>
+<mat-dialog-content id="assign-sms-dialog">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">{{sms.sender}}</div>
+        <div class="panel-body" [innerHTML]="getFormattedSms()"></div>
+      </div>
+      <div></div>
+    </div>
+    <div class="col-sm-8 no-left-padding">
+      <ng-container *ngIf="!loading; else loadingIndicator">
+        <div class="row">
+          <div class="col-sm-3">
+            <span class="btn btn-default glyphicon glyphicon-arrow-left" type="button" [ngClass]="{'disabled': !previousAvailable}" (click)="switchToPreviousDate()"></span>
+          </div>
+          <div class="col-sm-6 text-center selected-date">{{getSelectedDate()}}</div>
+          <div class="col-sm-3 text-right">
+            <span class="btn btn-default glyphicon glyphicon-arrow-right" type="button" [ngClass]="{'disabled': !nextAvailable}" (click)="switchToNextDate()"></span>
+          </div>
+        </div>
+
+        <div *ngIf="historyItems.length === 0" class="text-center">Нет операций на выбранную дату</div>
+        <div class="table" *ngIf="historyItems.length > 0">
+          <div class="row header">
+            <div class="col-sm-3 no-padding first-column">Сумма</div>
+            <div class="col-sm-7 no-padding">Детали операции</div>
+            <div class="col-sm-2 no-padding text-right">Действия</div>
+          </div>
+
+          <div class="table-body">
+            <ng-container *ngFor="let historyItem of historyItems; let lastItem = last">
+              <div class="row">
+                <div class="col-sm-3 first-column">
+                  <div [ngClass]="historyItem.type">
+                    {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                    <span class="glyphicon glyphicon-transfer transfer-exchange-icon" *ngIf="historyItem.type === 'exchange'"></span>
+                  </div>
+                  <div class="exchange" *ngIf="historyItem.type === 'exchange'">
+                    {{historyItem.balance.newValue | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.newCurrency"></bk-currency-symbol>
+                  </div>
+                </div>
+                <div class="col-sm-7 no-padding">
+                  <div>
+                    <img class="icon" [src]="getAccountIcon(historyItem.balance) | assetImage:'account'">
+                    <span>{{historyItem.balance.account}}</span>
+                    <span> ({{historyItem.balance.subAccount}})</span>
+                    <span class="glyphicon glyphicon-random transfer-exchange-icon" *ngIf="historyItem.type === 'transfer'"></span>
+                  </div>
+                  <div *ngIf="historyItem.type !== 'transfer' && historyItem.type !== 'exchange'">
+                    <img class="icon" [src]="getCategoryIcon(historyItem) | assetImage:'category'">
+                    <span>{{historyItem.category}}</span>
+                    <span> ({{historyItem.subCategory}})</span>
+                  </div>
+                  <div *ngIf="historyItem.type === 'transfer'">
+                    <img class="icon" [src]="getAccountIcon(historyItem.balance) | assetImage:'account'">
+                    <span>{{historyItem.balance.accountTo}}</span>
+                    <span> ({{historyItem.balance.subAccountTo}})</span>
+                  </div>
+                </div>
+                <div class="col-sm-2 text-center">
+                  <bk-popover glyphiconClass="paperclip" text="Ассоциировать" placement="left" (click)="assignWithHistoryItem(historyItem)"></bk-popover>
+                </div>
+              </div>
+              <hr *ngIf="!lastItem"/>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="actions">
+    <a class="btn btn-default action-item" (click)="close()">Закрыть</a>
+  </span>
+</mat-dialog-actions>
+
+<ng-template #loadingIndicator>
+  <bk-spinner [size]="50"></bk-spinner>
+</ng-template>

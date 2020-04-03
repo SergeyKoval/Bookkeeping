@@ -11,7 +11,7 @@
 
 <ng-template #authenticationContainer>
   <div class="form">
-    <div class="table authentication-check" *ngIf="authenticationCheckIndicator">
+    <div class="table authentication-check" *ngIf="authenticationCheckIndicator && !versionCheckIndicator">
       <div class="row">
         <div class="col-md-2 authentication-check-spinner">
           <bk-spinner [size]="35"></bk-spinner>

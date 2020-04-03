@@ -1,14 +1,10 @@
 <div class="btn-group" role="group">
-  <a class="btn btn-default" (click)="addHistoryItem()">Добавить операцию</a>
+  <a class="btn btn-default" (click)="addHistoryItem()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Добавить</a>
   <a *ngIf="!loading; else loadingIndicator" class="btn btn-default"
-     (click)="showMoreHistoryItems()" [attr.disabled]="moreButtonDisabledValue()">Показать больше операций</a>
+     (click)="showMoreHistoryItems()" [attr.disabled]="moreButtonDisabledValue()"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span> Следующие</a>
 </div>
 
-<span class="show-sms">
-  <mat-slide-toggle color="primary" [checked]="showSms" (change)="changeShowSms($event)"></mat-slide-toggle>
-  <span class="sms-label">Sms</span>
-</span>
-
+<bk-toggle class="sms-toggle" [offBadgeValue]="unprocessedSmsCount" [value]="unprocessedSms" width="160" onValue="Необработанные" offValue="Все операции" (onValueChanged)="showUnprocessedSms($event)"></bk-toggle>
 
 <ng-template #loadingIndicator>
   <bk-spinner [size]="35" class="more-history-items"></bk-spinner>

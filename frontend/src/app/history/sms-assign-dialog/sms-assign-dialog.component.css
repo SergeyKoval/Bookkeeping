@@ -1,0 +1,92 @@
+.panel-heading {
+  padding: 5px 10px;
+}
+
+.panel-body {
+  padding: 7px;
+  font-size: 12px;
+}
+
+.selected-date {
+  margin-top: 7px;
+  font-weight: bold;
+}
+
+.actions {
+  width: 100%;
+}
+
+.action-item {
+  float: right;
+}
+
+.header {
+  color: #333;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  font-weight: bolder;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.row {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.table {
+  margin-bottom: 0;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+.expense {
+  color: #cc0000;
+  white-space: nowrap;
+}
+
+.income {
+  color: #009900;
+  white-space: nowrap;
+}
+
+.transfer, .exchange {
+  color: #0099ff;
+  white-space: nowrap;
+}
+
+.no-padding {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.icon {
+  padding-right: 5px;
+}
+
+.transfer-exchange-icon, .transfer-exchange-icon:hover {
+  color: #82a9c3;
+  padding-left: 5px;
+}
+
+hr {
+  margin: 5px -10px;
+}
+
+.first-column {
+  padding-left: 13px;
+}
+
+.no-left-padding {
+  padding-left: 0;
+}
+
+.table-body {
+  max-height: 300px;
+  overflow: auto;
+  margin-left: -10px;
+  margin-right: -10px;
+  overflow-x: hidden;
+}

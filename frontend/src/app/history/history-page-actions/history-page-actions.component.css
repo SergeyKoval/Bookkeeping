@@ -3,9 +3,9 @@
   margin-left: 80px;
 }
 
-.show-sms {
+.sms-toggle {
   position: absolute;
-  right: 55px;
+  right: 25px;
 }
 
 mat-slide-toggle {

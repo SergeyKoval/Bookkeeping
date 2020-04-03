@@ -1,8 +1,6 @@
 package by.bk.controller;
 
-import by.bk.controller.model.request.HistoryItemRequest;
-import by.bk.controller.model.request.HistoryPageRequest;
-import by.bk.controller.model.request.SmsRequest;
+import by.bk.controller.model.request.*;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
@@ -24,7 +22,7 @@ public class HistoryController extends BaseAPIController {
 
     @PostMapping("/page-portion")
     public List<HistoryItem> getPagePortion(@RequestBody HistoryPageRequest request, Principal principal) {
-        return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit(), request.isWithUnprocessedSms());
+        return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit(), request.isUnprocessedSms());
     }
 
     @PostMapping("/add")
@@ -51,5 +49,20 @@ public class HistoryController extends BaseAPIController {
     @GetMapping("/devices/{deviceId}/sms/{index}")
     public SimpleResponse getDeviceSms(Principal principal, @PathVariable("deviceId") String deviceId, @PathVariable("index") Integer smsIndex) {
         return historyAPI.getDeviceSms(principal.getName(), deviceId, smsIndex);
+    }
+
+    @PostMapping("/day")
+    public SimpleResponse getDayProcessedHistoryItems(@RequestBody DayProcessedHistoryItemsRequest request, Principal principal) {
+        return historyAPI.getDayProcessedHistoryItems(principal.getName(), request);
+    }
+
+    @PostMapping("/assign-sms")
+    public SimpleResponse assignSmsToHistoryItem(@RequestBody AssignSmsRequest request, Principal principal) {
+        return historyAPI.assignSmsToHistoryItem(principal.getName(), request);
+    }
+
+    @GetMapping("/unprocessed-count")
+    public SimpleResponse getUnprocessedHistoryItemsCount(Principal principal) {
+        return historyAPI.getUnprocessedHistoryItemsCount(principal.getName());
     }
 }

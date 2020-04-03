@@ -1,6 +1,8 @@
 package by.bk.entity.history;
 
+import by.bk.controller.model.request.AssignSmsRequest;
 import by.bk.controller.model.request.DateRequest;
+import by.bk.controller.model.request.DayProcessedHistoryItemsRequest;
 import by.bk.controller.model.request.SmsRequest;
 import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SimpleResponse;
@@ -14,6 +16,8 @@ import by.bk.entity.user.UserAPI;
 import by.bk.entity.user.UserRepository;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -25,6 +29,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -63,10 +68,10 @@ public class HistoryService implements HistoryAPI {
     private UserRepository userRepository;
 
     @Override
-    public List<HistoryItem> getPagePortion(String login, int page, int limit, boolean withUnprocessedSms) {
+    public List<HistoryItem> getPagePortion(String login, int page, int limit, boolean unprocessedSms) {
         Criteria criteria = Criteria.where("user").is(login);
-        if (!withUnprocessedSms) {
-            criteria = criteria.and("notProcessed").ne(true);
+        if (unprocessedSms) {
+            criteria = criteria.and("notProcessed").is(true);
         }
         Query query = Query.query(criteria)
                 .with(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day")))
@@ -175,6 +180,34 @@ public class HistoryService implements HistoryAPI {
     @Override
     public HistoryItem getById(String login, String historyItemId) {
         return historyRepository.findById(historyItemId).orElseThrow(() -> new HistoryItemMissedException(login, historyItemId));
+    }
+
+    @Override
+    public SimpleResponse getDayProcessedHistoryItems(String login, DayProcessedHistoryItemsRequest request) {
+        int year = request.getYear();
+        int month = request.getMonth();
+        int day = request.getDay();
+        DayProcessedHistoryItemsRequest.Direction direction = request.getDirection();
+        if (direction == null) {
+            return SimpleResponse.successWithDetails(historyRepository.getProcessedHistoryItemsPerDay(login, year, month, day));
+        }
+
+        Criteria criteria = Criteria.where("user").is(login)
+                .and("notProcessed").ne(true)
+                .orOperator(
+                        direction.filter(Criteria.where("year").is(year).and("month").is(month).and("day"), day),
+                        direction.filter(Criteria.where("year").is(year).and("month"), month),
+                        direction.filter(Criteria.where("year"), year)
+                );
+        Query query = Query.query(criteria)
+                .with(Sort.by(direction.sort("year"), direction.sort("month"), direction.sort("day")))
+                .limit(1);
+        HistoryItem nextDayHistoryItem = mongoTemplate.findOne(query, HistoryItem.class);
+        if (nextDayHistoryItem == null) {
+            return SimpleResponse.fail("MISSED");
+        }
+
+        return SimpleResponse.successWithDetails(historyRepository.getProcessedHistoryItemsPerDay(login, nextDayHistoryItem.getYear(), nextDayHistoryItem.getMonth(), nextDayHistoryItem.getDay()));
     }
 
     @Override
@@ -308,13 +341,38 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
+    public SimpleResponse getUnprocessedHistoryItemsCount(String login) {
+        return SimpleResponse.successWithDetails(historyRepository.countAllByNotProcessedTrueAndUser(login));
+    }
+
+    @Override
     public SimpleResponse getDeviceSms(String login, String deviceId, Integer smsIndex) {
         Query query = Query.query(Criteria.where("user").is(login).and("sms.deviceId").is(deviceId))
                 .with(new Sort(Sort.Direction.DESC, "sms.smsTimestamp"))
                 .skip(smsIndex)
                 .limit(1);
         HistoryItem historyItem = mongoTemplate.findOne(query, HistoryItem.class);
-        return historyItem != null ? SimpleResponse.successWithDetails(historyItem.getSms()) : SimpleResponse.fail("MISSED");
+        return historyItem != null ? SimpleResponse.successWithDetails(historyItem.getSms().get(0)) : SimpleResponse.fail("MISSED");
+    }
+
+    @Override
+    public SimpleResponse assignSmsToHistoryItem(String login, AssignSmsRequest request) {
+        HistoryItem smsHistoryItem = getById(login, request.getSmsItemId());
+        List<Sms> sms = smsHistoryItem.getSms();
+        if (CollectionUtils.isEmpty(sms)) {
+            LOG.error("Source history item doesn't have sms in it");
+            return SimpleResponse.fail();
+        }
+
+        Query query = Query.query(Criteria.where("id").is(request.getHistoryItemId()));
+        UpdateResult result = mongoTemplate.updateFirst(query, new Update().push("sms", sms.get(0)), HistoryItem.class);
+        if (result.getModifiedCount() != 1) {
+            LOG.error("Error assigning sms to the history item with id = " + request.getHistoryItemId());
+            return SimpleResponse.fail();
+        }
+
+        historyRepository.deleteById(smsHistoryItem.getId());
+        return SimpleResponse.success();
     }
 
     private Collection<SummaryReportResponse> collectSummaryReport(boolean ignoreSubCategories, Stream<SummaryReportItem> items) {

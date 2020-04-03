@@ -12,7 +12,8 @@ export class HistoryItem {
     public notProcessed?: boolean,
     public sms?: Sms[],
     public icon?: string,
-    public additionalIcon?: string
+    public additionalIcon?: string,
+    public showSmsIndex?: number
   ) {}
 
   public cloneOriginalItem(): HistoryType {

@@ -9,5 +9,5 @@ import lombok.Getter;
 public class HistoryPageRequest {
     private int page;
     private int limit;
-    private boolean withUnprocessedSms;
+    private boolean unprocessedSms;
 }

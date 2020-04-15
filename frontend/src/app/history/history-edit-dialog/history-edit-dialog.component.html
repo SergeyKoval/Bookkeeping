@@ -12,10 +12,10 @@
     </div>
     <div class="col-sm-8 right-column">
       <ul class="nav nav-tabs nav-justified">
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('expense'), 'disabled': data.editMode}" (click)="onChangeSelectedType('expense')"><a>Расход</a></li>
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('income'), 'disabled': data.editMode}" (click)="onChangeSelectedType('income')"><a>Доход</a></li>
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('transfer'), 'disabled': data.editMode}" (click)="onChangeSelectedType('transfer')"><a>Перевод</a></li>
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('exchange'), 'disabled': data.editMode}" (click)="onChangeSelectedType('exchange')"><a>Обмен</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('expense'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('expense')"><a>Расход</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('income'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('income')"><a>Доход</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('transfer'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('transfer')"><a>Перевод</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('exchange'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('exchange')"><a>Обмен</a></li>
       </ul>
 
       <div class="form-row">
@@ -50,8 +50,9 @@
       </div>
     </div>
   </div>
-  <bk-goals-container [selectedCategory]="selectedCategory[0].title" [selectedDate]="selectedDate" [editMode]="data.editMode" [alternativeCurrencyLoading]="alternativeCurrencyLoading"
-                      [historyItem]="historyItem" (goalDetailsChange)="onGoalDetailsChange($event)" (originalGoalDetailsChange)="onOriginalGoalDetailsChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
+  <bk-goals-container [selectedCategory]="getSelectedCategoryTitle()" [selectedDate]="selectedDate" [editMode]="data.editMode" [fromSms]="data.fromSms"
+                      [alternativeCurrencyLoading]="alternativeCurrencyLoading" [historyItem]="historyItem" [goalCouldBeCalculated]="goalCouldBeCalculated()"
+                      (goalDetailsChange)="onGoalDetailsChange($event)" (originalGoalDetailsChange)="onOriginalGoalDetailsChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="history-actions">

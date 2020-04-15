@@ -5,6 +5,7 @@
 .panel-body {
   padding: 7px;
   font-size: 12px;
+  word-break: break-word;
 }
 
 .selected-date {

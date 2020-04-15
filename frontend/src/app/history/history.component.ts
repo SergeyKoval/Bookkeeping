@@ -71,20 +71,26 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     this.init(1, this.historyItems.length + numberOfNewItems);
   }
 
-  public editHistoryItem(historyItem: HistoryItem): void {
+  public editHistoryItem(historyItem: HistoryItem, fromSms: boolean): void {
     this._dialog.open(HistoryEditDialogComponent, {
       width: '720px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',
       data: {
         'historyItem': historyItem.cloneOriginalItem(),
-        'editMode': true
+        'editMode': true,
+        'fromSms': fromSms
       }
     }).afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
         tap(() => this._lastElementId = historyItem.originalItem.id)
-      ).subscribe(() => this.loadMoreItems(0));
+      ).subscribe(() => {
+        this.loadMoreItems(0);
+        if (fromSms) {
+          this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
+        }
+      });
   }
 
   public deleteHistoryItem(historyItem: HistoryItem): void {
@@ -158,7 +164,10 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
       .pipe(
         filter((result: boolean) => result === true),
         tap(() => this._lastElementId = null)
-      ).subscribe(() => this.loadMoreItems(0));
+      ).subscribe(() => {
+        this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
+        this.loadMoreItems(0);
+      });
   }
 
   public clickOnSms(historyItem: HistoryItem, smsIndex: number): void {

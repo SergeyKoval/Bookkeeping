@@ -42,7 +42,7 @@ export class HistoryEditDialogComponent implements OnInit {
   private _originalHistoryItem: HistoryType;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean},
+    @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean, fromSms: boolean},
     private _dialogRef: MatDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
@@ -62,6 +62,10 @@ export class HistoryEditDialogComponent implements OnInit {
     }
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
     this.selectedDate = {year: this.historyItem.year, month: this.historyItem.month, day: this.historyItem.day};
+    if (this.data.fromSms) {
+      this.historyItem.balance.currency = this._profileService.defaultCurrency.name;
+      this.historyItem.type = 'expense';
+    }
 
     this.alternativeCurrencyLoading = !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate);
     if (this.alternativeCurrencyLoading) {
@@ -117,7 +121,7 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public onChangeSelectedType(type: string): void {
-    if (!this.isTypeSelected(type) && !this.data.editMode) {
+    if (!this.isTypeSelected(type) && (!this.data.editMode || this.data.fromSms)) {
       if (this.selectedCategory) {
         this.selectedCategory.length = 0;
       }
@@ -226,8 +230,16 @@ export class HistoryEditDialogComponent implements OnInit {
     this._dialogRef.close(refreshHistoryItems);
   }
 
-  public showGoalContainer(): boolean {
+  public goalCouldBeCalculated(): boolean {
     return (this.isTypeSelected('expense') || this.isTypeSelected('income')) && this.selectedCategory && this.selectedCategory.length === 2;
+  }
+
+  public showGoalContainer(): boolean {
+    return this.data.fromSms || this.goalCouldBeCalculated();
+  }
+
+  public getSelectedCategoryTitle(): string {
+    return this.selectedCategory && this.selectedCategory.length > 0 ? this.selectedCategory[0].title : null;
   }
 
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,

@@ -64,8 +64,12 @@
 }
 
 .goals-header {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+
+.goals-header-selected {
   font-weight: bold;
-  background-color: #cccccc
 }
 
 .goals-count-indicator {
@@ -89,5 +93,25 @@
 
 hr {
   margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.list-group-item {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.sms-item {
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 12px;
+}
+
+.sms-content {
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.second-row {
   margin-top: 10px;
 }

@@ -26,6 +26,8 @@ export class GoalsContainerComponent implements OnInit {
   @Input()
   public alternativeCurrencyLoading: boolean;
   @Input()
+  public fromSms: boolean;
+  @Input()
   public set selectedCategory(value: string) {
     if (this._selectedCategory !== value && this._budget) {
       Promise.resolve().then(() => {
@@ -59,6 +61,17 @@ export class GoalsContainerComponent implements OnInit {
       this._selectedDate = value;
     }
   }
+  @Input()
+  public set goalCouldBeCalculated(value: boolean) {
+    if (value && !this._goalCouldBeCalculated) {
+      this._originalHistoryItem = Object.assign({}, this.historyItem);
+      this._originalHistoryItem.balance = Object.assign({}, this.historyItem.balance);
+      this.goalFilterType = this.editMode ? GoalFilterType.ALL : GoalFilterType.NOT_DONE;
+      this.updateMonthProgress(this._selectedDate);
+      this.loadBudget(this._selectedDate);
+    }
+    this._goalCouldBeCalculated = value;
+  }
 
   @Output()
   public originalGoalDetailsChange: EventEmitter<GoalDetails> = new EventEmitter();
@@ -70,6 +83,8 @@ export class GoalsContainerComponent implements OnInit {
   public monthProgress: MonthProgress;
   public budgetCategory: BudgetCategory;
   public selectedGoal: BudgetGoal;
+  public smsTabSelected: boolean;
+  public selectedSmsIndex: number;
 
   private _budget: Budget;
   private _selectedCategory: string;
@@ -79,6 +94,7 @@ export class GoalsContainerComponent implements OnInit {
   private _originalCategory: BudgetCategory;
   private _originalGoalDetails: GoalDetails;
   private _goalDetails: GoalDetails;
+  private _goalCouldBeCalculated: boolean;
 
   public constructor(
     private _budgetService: BudgetService,
@@ -87,11 +103,8 @@ export class GoalsContainerComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this._originalHistoryItem = Object.assign({}, this.historyItem);
-    this._originalHistoryItem.balance = Object.assign({}, this.historyItem.balance);
-    this.goalFilterType = this.editMode ? GoalFilterType.ALL : GoalFilterType.NOT_DONE;
-    this.updateMonthProgress(this._selectedDate);
-    this.loadBudget(this._selectedDate);
+    this.smsTabSelected = this.historyItem.sms && this.historyItem.sms.length > 0;
+    this.selectedSmsIndex = this.smsTabSelected ? 0 : null;
   }
 
   public getGoalCount(filterType: GoalFilterType): number {
@@ -183,6 +196,15 @@ export class GoalsContainerComponent implements OnInit {
     return goal.title === this.historyItem.goal;
   }
 
+  public getSmsTimestamp(sms: Sms): string {
+    const date: Date = new Date(sms.smsTimestamp);
+    return `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
+  }
+
+  public getFormattedSms(): string {
+    return this.historyItem.sms[this.selectedSmsIndex].fullSms.split('\n').join('<br>');
+  }
+
   public get selectedCategory(): string {
     return this._selectedCategory;
   }
@@ -191,13 +213,18 @@ export class GoalsContainerComponent implements OnInit {
     return this._selectedDate;
   }
 
+
+  public get goalCouldBeCalculated(): boolean {
+    return this._goalCouldBeCalculated;
+  }
+
   private loadBudget(date: IMyDate): void {
     this.budgetLoading = true;
     this._budgetService.loadBudget(date.year, date.month).subscribe((budget: Budget) => {
       this._budget = budget;
       this.chooseBudgetCategory(budget);
 
-      if (this.editMode) {
+      if (this.editMode && !this.fromSms) {
         if (this.historyItem.goal && !this._originalGoalDetails) {
           this.populateOriginalGoal(budget);
         }

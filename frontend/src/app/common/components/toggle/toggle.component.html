@@ -1,8 +1,8 @@
-<div class="toggle btn" [ngClass]="{'btn-default off': !value, 'btn-primary': value}" [style.width.px]="width" data-toggle="toggle" (click)="changeValue()">
+<div class="toggle btn" [attr.disabled]="isDisabled()" [ngClass]="{'btn-default off': !value, 'btn-primary': value}" [style.width.px]="width" data-toggle="toggle" (click)="changeValue()">
   <input data-toggle="toggle" type="checkbox" [checked]="value" #inputElement>
   <div class="toggle-group" #groupElement>
-    <label class="btn btn-primary toggle-on">{{onValue}} <span class="badge" *ngIf="onBadgeValue">{{onBadgeValue}}</span></label>
-    <label class="btn btn-default active toggle-off">{{offValue}} <span class="badge" *ngIf="offBadgeValue">{{offBadgeValue}}</span></label>
-    <span class="toggle-handle btn btn-default"></span>
+    <label [attr.disabled]="isDisabled()" class="btn btn-primary toggle-on">{{onValue}} <span class="badge" *ngIf="onBadgeValue">{{onBadgeValue}}</span></label>
+    <label [attr.disabled]="isDisabled()" class="btn btn-default active toggle-off">{{offValue}} <span class="badge" *ngIf="offBadgeValue">{{offBadgeValue}}</span></label>
+    <span [attr.disabled]="isDisabled()" class="toggle-handle btn btn-default"></span>
   </div>
 </div>

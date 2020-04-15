@@ -1,40 +1,55 @@
 <hr>
-<bk-goal-budget-category [monthProgress]="monthProgress" [historyItem]="historyItem" [selectedDate]="selectedDate"
+<bk-goal-budget-category [monthProgress]="monthProgress" [historyItem]="historyItem" [selectedDate]="selectedDate" *ngIf="goalCouldBeCalculated"
                          [alternativeCurrencyLoading]="alternativeCurrencyLoading" [budgetLoading]="budgetLoading" [budgetCategory]="budgetCategory"></bk-goal-budget-category>
 
-<div class="row">
+<div class="row" [ngClass]="{'second-row': !goalCouldBeCalculated}">
   <div class="col-sm-4 left-column">
     <ul class="list-group goal-groups">
-      <li class="list-group-item text-center goals-header">Цели</li>
-      <a *ngFor="let filterType of FILTER_TYPES" (click)="goalFilterType = filterType"
-         [ngClass]="{'list-group-item': true, 'goal-group-active': goalFilterType === filterType}">
-        <span *ngIf="!budgetLoading; else numberOfItemsLoadingIndicator" class="badge">{{getGoalCount(filterType)}}</span>{{filterType}}
-      </a>
+      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': smsTabSelected}" (click)="smsTabSelected = true" *ngIf="historyItem.sms">Sms</li>
+      <ng-container *ngIf="smsTabSelected">
+        <a class="list-group-item sms-item" *ngFor="let sms of historyItem.sms; let smsIndex = index" (click)="selectedSmsIndex = smsIndex"
+           [ngClass]="{'goal-group-active': smsIndex === selectedSmsIndex}">
+          {{sms.sender}} ({{getSmsTimestamp(sms)}})
+        </a>
+      </ng-container>
+
+      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': !smsTabSelected}" (click)="smsTabSelected = false" *ngIf="goalCouldBeCalculated">Цели</li>
+      <ng-container *ngIf="!smsTabSelected">
+        <a *ngFor="let filterType of FILTER_TYPES" (click)="goalFilterType = filterType"
+           [ngClass]="{'list-group-item': true, 'goal-group-active': goalFilterType === filterType}">
+          <span *ngIf="!budgetLoading; else numberOfItemsLoadingIndicator" class="badge">{{getGoalCount(filterType)}}</span>{{filterType}}
+        </a>
+      </ng-container>
     </ul>
   </div>
 
   <div class="col-sm-8 right-column">
-    <bk-spinner [display]="budgetLoading || alternativeCurrencyLoading"></bk-spinner>
-    <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
-      <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType" >
-        <div [ngClass]="{'goal-popover-container': true, 'col-sm-11 no-right-padding': isSelectedGoal(goalItem), 'col-sm-12 selectable-goal': !isSelectedGoal(goalItem)}">
-          <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
-                      [text]="getGoalDonePopoverTitle(goalItem)" placement="top" (click)="changeGoalStatus(goalItem)"></bk-popover>
-          <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
-            <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
-                 [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
-            <div *ngIf="isSelectedGoal(goalItem)" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>
-            <div class="goal-name">{{goalItem.title}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>
-            <div class="progress-value">
-              <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem) | currencyValue:2:true}} / {{goalItem.balance.completeValue}}
+    <ng-container *ngIf="!smsTabSelected">
+      <bk-spinner [display]="budgetLoading || alternativeCurrencyLoading"></bk-spinner>
+      <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
+        <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType" >
+          <div [ngClass]="{'goal-popover-container': true, 'col-sm-11 no-right-padding': isSelectedGoal(goalItem), 'col-sm-12 selectable-goal': !isSelectedGoal(goalItem)}">
+            <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
+                        [text]="getGoalDonePopoverTitle(goalItem)" placement="top" (click)="changeGoalStatus(goalItem)"></bk-popover>
+            <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
+              <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
+                   [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+              <div *ngIf="isSelectedGoal(goalItem)" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>
+              <div class="goal-name">{{goalItem.title}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>
+              <div class="progress-value">
+                <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem) | currencyValue:2:true}} / {{goalItem.balance.completeValue}}
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
-          <bk-popover glyphiconClass="remove" text="Не учитывать" placement="left" (click)="uncheckGoal()"></bk-popover>
+          <div class="col-sm-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
+            <bk-popover glyphiconClass="remove" text="Не учитывать" placement="left" (click)="uncheckGoal()"></bk-popover>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+    <ng-container *ngIf="smsTabSelected">
+      <div class="sms-content" [innerHTML]="getFormattedSms()"></div>
+    </ng-container>
   </div>
 </div>
 

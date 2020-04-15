@@ -420,7 +420,7 @@ public class BudgetService implements BudgetAPI {
 
     @Override
     public SimpleResponse editHistoryItem(String login, HistoryItem originalHistoryItem, boolean changeOriginalGoalStatus, HistoryItem historyItem, boolean changeGoalStatus) {
-        SimpleResponse revertResponse = deleteHistoryItem(login, originalHistoryItem, changeOriginalGoalStatus);
+        SimpleResponse revertResponse = originalHistoryItem.isNotProcessed() ? SimpleResponse.success() : deleteHistoryItem(login, originalHistoryItem, changeOriginalGoalStatus);
         if (revertResponse.isSuccess()) {
             SimpleResponse addResponse = addHistoryItem(login, historyItem, changeGoalStatus);
             if (!addResponse.isSuccess()) {

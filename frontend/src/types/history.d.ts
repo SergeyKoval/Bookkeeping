@@ -16,13 +16,13 @@ type HistoryType = {
 };
 
 type HistoryBalanceType = {
-  value: number,
+  value?: number,
   newValue?: number,
   account?: string,
   accountTo?: string,
   subAccount?: string,
   subAccountTo?: string,
-  currency: string,
+  currency?: string,
   newCurrency?: string,
   alternativeCurrency?: {[currncy: string]: number}
 };

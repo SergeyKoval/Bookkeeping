@@ -145,8 +145,15 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public SimpleResponse editHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus, boolean changeOriginalGoalStatus) {
+        SimpleResponse response;
         HistoryItem originalHistoryItem = getById(login, historyItem.getId());
-        SimpleResponse response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
+        if (originalHistoryItem.isNotProcessed()) {
+            historyItem.setNotProcessed(false);
+            response = SimpleResponse.success();
+        } else {
+            response = revertBalanceChange(login, originalHistoryItem.getType(), originalHistoryItem.cloneBalance());
+        }
+
         if (response.isSuccess()) {
             historyItem = saveHistoryItem(login, historyItem);
             response = userAPI.updateUserBalance(login, historyItem.getType(), historyItem.cloneBalance());
@@ -158,7 +165,7 @@ public class HistoryService implements HistoryAPI {
             }
         }
 
-        return affectBudget(originalHistoryItem.getType()) ? budgetAPI.editHistoryItem(login, originalHistoryItem, changeOriginalGoalStatus, historyItem, changeGoalStatus) : response;
+        return affectBudget(historyItem.getType()) ? budgetAPI.editHistoryItem(login, originalHistoryItem, changeOriginalGoalStatus, historyItem, changeGoalStatus) : response;
     }
 
     @Override

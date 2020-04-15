@@ -18,8 +18,12 @@ export class HistoryItem {
 
   public cloneOriginalItem(): HistoryType {
     const clone: HistoryType = Object.assign({}, this.originalItem);
-    clone.balance = Object.assign({}, this.originalItem.balance);
-    clone.balance.alternativeCurrency = Object.assign({}, this.originalItem.balance.alternativeCurrency);
+    if (this.originalItem.balance) {
+      clone.balance = Object.assign({}, this.originalItem.balance);
+      clone.balance.alternativeCurrency = Object.assign({}, this.originalItem.balance.alternativeCurrency);
+    } else {
+      clone.balance = {alternativeCurrency: {}};
+    }
     return clone;
   }
 }

@@ -118,10 +118,10 @@
 
           <!--last column-->
           <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
-            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editHistoryItem(historyItem)" *ngIf="!historyItem.archived && !historyItem.notProcessed"></bk-popover>
-            <bk-popover glyphiconClass="plus" text="Добавть операцию" placement="left" *ngIf="historyItem.notProcessed"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editHistoryItem(historyItem, false)" *ngIf="!historyItem.archived && !historyItem.notProcessed"></bk-popover>
+            <bk-popover glyphiconClass="plus" text="Добавть операцию" placement="left" (click)="editHistoryItem(historyItem, true)" *ngIf="historyItem.notProcessed"></bk-popover>
             <bk-popover glyphiconClass="paperclip" text="Ассоциировать с операцией" placement="left" (click)="openAssignSmsDialog(historyItem)" *ngIf="historyItem.notProcessed"></bk-popover>
-            <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived || historyItem.notProcessed"></bk-popover>
           </div>
         </div>
         <hr *ngIf="!lastGroup">

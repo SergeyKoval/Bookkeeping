@@ -19,6 +19,8 @@ export class ToggleComponent {
   @Input()
   public value: boolean = false;
   @Input()
+  public disabled: boolean = false;
+  @Input()
   public width: number;
   @Output()
   public onValueChanged: Subject<boolean> = new Subject();
@@ -29,7 +31,13 @@ export class ToggleComponent {
   private _GROUP_ELEMENT_REF: ElementRef;
 
   public changeValue(): void {
-    this.value = !this.value;
-    this.onValueChanged.next(this.value);
+    if (!this.disabled) {
+      this.value = !this.value;
+      this.onValueChanged.next(this.value);
+    }
+  }
+
+  public isDisabled(): string {
+    return this.disabled ? 'disabled' : null;
   }
 }

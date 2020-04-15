@@ -5,6 +5,7 @@ import by.bk.controller.model.response.SimpleResponse;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
 import by.bk.security.role.RoleMobile;
+import by.bk.security.role.RoleUserOrMobile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +62,7 @@ public class HistoryController extends BaseAPIController {
         return historyAPI.assignSmsToHistoryItem(principal.getName(), request);
     }
 
+    @RoleUserOrMobile
     @GetMapping("/unprocessed-count")
     public SimpleResponse getUnprocessedHistoryItemsCount(Principal principal) {
         return historyAPI.getUnprocessedHistoryItemsCount(principal.getName());

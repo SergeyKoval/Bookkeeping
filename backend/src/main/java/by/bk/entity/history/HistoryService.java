@@ -112,17 +112,27 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<SmsRequest> smsItems) {
-        Set<String> ids = smsItems.stream()
+        Map<Sms, SmsRequest> smsMap = smsItems.stream()
                 .peek(smsRequest -> smsRequest.getSms().setDeviceId(deviceId))
-                .map(smsRequest -> {
-                    Sms sms = smsRequest.getSms();
+                .distinct()
+                .collect(Collectors.toMap(SmsRequest::getSms, smsRequest -> smsRequest));
+        Set<Sms> smsToAdd = smsMap.keySet();
+        List<HistoryItem> itemsWithDuplicateSms = mongoTemplate.find(Query.query(Criteria.where("user").is(login).and("notProcessed").is(true).and("sms").in(smsToAdd)), HistoryItem.class);
+        itemsWithDuplicateSms.stream()
+                .flatMap(historyItem -> historyItem.getSms().stream())
+                .filter(smsToAdd::contains)
+                .forEach(smsToAdd::remove);
+
+        Set<String> ids = smsMap.entrySet().stream()
+                .map(smsEntry -> {
+                    Sms sms = smsEntry.getKey();
                     Instant instant = Instant.ofEpochMilli(sms.getSmsTimestamp());
                     LocalDate smsDate = LocalDate.ofInstant(instant, MINSK_TIMEZONE);
-                    return new HistoryItem(login, smsDate.getYear(), smsDate.getMonthValue(), smsDate.getDayOfMonth(), new Balance(smsRequest.getAccount(), smsRequest.getSubAccount()), sms);
+                    return new HistoryItem(login, smsDate.getYear(), smsDate.getMonthValue(), smsDate.getDayOfMonth(), new Balance(smsEntry.getValue().getAccount(), smsEntry.getValue().getSubAccount()), sms);
                 })
                 .map(historyItem -> saveHistoryItem(login, historyItem).getId())
                 .collect(Collectors.toSet());
-        return smsItems.size() == ids.size() ? SimpleResponse.success() : SimpleResponse.fail();
+        return smsToAdd.size() == ids.size() ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     @Override

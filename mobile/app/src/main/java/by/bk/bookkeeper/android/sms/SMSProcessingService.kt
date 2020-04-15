@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit
 class SMSProcessingService : Service() {
 
     private val periodicPendingSmsRequest = createPeriodicSmsRequest()
+    private val periodicUnprocessedSmsRequest = createPeriodicUnprocessedSmsRequest()
     private val bkService: BookkeeperService = Injection.provideBookkeeperService()
     private val disposables = CompositeDisposable()
     private val notificationBuilder by lazy { createNotificationBuilder() }
@@ -41,8 +42,9 @@ class SMSProcessingService : Service() {
         super.onCreate()
         Timber.d("Service on create invoked")
         createNotificationChannel()
-        WorkManager.getInstance().enqueue(periodicPendingSmsRequest)
+        WorkManager.getInstance().enqueue(listOf(periodicPendingSmsRequest, periodicUnprocessedSmsRequest))
         observePendingSms()
+        observeUnprocessedSms()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -64,7 +66,10 @@ class SMSProcessingService : Service() {
                 .subscribeOn(Schedulers.io())
                 .subscribe { pendingSms ->
                     updateNotification(notificationBuilder
-                            .setContentTitle(if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size) else null)
+                            .setContentText(
+                                    if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size)
+                                    else applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)
+                            )
                             .setContentIntent(createPendingIntent(
                                     if (pendingSms.isNotEmpty()) AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
                                     else AccountingActivity.ACTION_EXTERNAL_HOME))
@@ -74,9 +79,25 @@ class SMSProcessingService : Service() {
         )
     }
 
+    private fun observeUnprocessedSms() {
+        disposables.add(SmsPreferenceProvider.getUnprocessedResponseObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe { response ->
+                    val count = response.count
+                    updateNotification(notificationBuilder
+                            .setContentTitle(if (count != null && count > 0)
+                                applicationContext.getString(R.string.msg_sms_status_server_unprocessed_count, response.count) else null)
+                            .setContentIntent(createPendingIntent(
+                                    if (count != null && count > 0) AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
+                                    else AccountingActivity.ACTION_EXTERNAL_HOME))
+                            .build()
+                    )
+                }
+        )
+    }
+
     private fun createNotificationBuilder(): Notification.Builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentIntent(createPendingIntent(AccountingActivity.ACTION_EXTERNAL_HOME))
-            .setContentText(applicationContext.getString(R.string.msg_service_notification_waiting_for_sms))
             .setSmallIcon(R.drawable.ic_running_service)
 
     private fun updateNotification(notification: Notification) =
@@ -150,6 +171,13 @@ class SMSProcessingService : Service() {
 
     private fun createPeriodicSmsRequest(): PeriodicWorkRequest = PeriodicWorkRequest.Builder(
             PendingSmsProcessingWorker::class.java,
+            PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
+            .setConstraints(createNetworkConstraint())
+            .build()
+
+    private fun createPeriodicUnprocessedSmsRequest(): PeriodicWorkRequest = PeriodicWorkRequest.Builder(
+            UnprocessedSmsWorker::class.java,
             PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS,
             PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
             .setConstraints(createNetworkConstraint())

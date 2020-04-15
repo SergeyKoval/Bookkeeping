@@ -33,7 +33,7 @@ abstract class BaseFragment : Fragment() {
     protected fun showErrorSnackbar(failure: FailureWrapper) {
         activity?.findViewById<View>(R.id.accounting_root_coordinator_layout)?.actionSnackbar(
                 messageRes = failure.messageStringRes,
-                length = Snackbar.LENGTH_INDEFINITE) {
+                length = Snackbar.LENGTH_LONG) {
             action(R.string.action_retry_loading) {
                 retryLoading()
             }

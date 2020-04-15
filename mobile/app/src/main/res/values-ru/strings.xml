@@ -29,6 +29,7 @@
     <string name="err_association_adding_failed">Не удалось добавить ассоциацию</string>
     <string name="err_association_editing_failed">Не удалось отредактировать ассоциацию</string>
     <string name="err_unable_to_get_sms">Не удалось получить SMS</string>
+    <string name="err_unable_to_get_unprocessed_sms_count">Не удалось получить количество необработанных SMS</string>
     <string name="err_unable_to_get_conversations">Не удалось получить цепочку сообщений</string>
     <string name="err_no_permissions">Не хватает прав для работы с SMS</string>
 
@@ -45,6 +46,9 @@
     <string name="msg_service_notification_running">Сервис по обработке SMS запущен</string>
 
     <string name="msg_sms_status_pending_sms_count">%d SMS находятся в очереди, для отправки нажмите кнопку</string>
+    <string name="msg_sms_status_server_unprocessed_count">Количество необработанных SMS: %d</string>
+    <string name="msg_sms_status_server_unprocessed_count_unknown">Количество необработанных SMS: неизвестно</string>
+    <string name="msg_sms_status_server_unprocessed_response_date_time">Последнее успешное обновление: %s</string>
     <string name="msg_sms_status_no_pending_sms">Нет SMS, находящихся в очереди</string>
     <string name="msg_sms_status_account_subaccount_info">Счет: %s, субсчет: %s</string>
 

@@ -29,6 +29,7 @@
     <string name="err_association_adding_failed">Association adding failed</string>
     <string name="err_association_editing_failed">Association editing failed</string>
     <string name="err_unable_to_get_sms">Unable to get sms</string>
+    <string name="err_unable_to_get_unprocessed_sms_count">Unable to get unprocessed sms count</string>
     <string name="err_unable_to_get_conversations">Unable to get conversations</string>
     <string name="err_no_permissions">No permissions granted. Unable to proceed to sms handling</string>
 
@@ -45,6 +46,9 @@
     <string name="msg_service_notification_running">SMS processing service running</string>
 
     <string name="msg_sms_status_pending_sms_count">%d sms are pending, press button to send now</string>
+    <string name="msg_sms_status_server_unprocessed_count">Unprocessed sms count: %d</string>
+    <string name="msg_sms_status_server_unprocessed_count_unknown">Unprocessed sms count: unknown</string>
+    <string name="msg_sms_status_server_unprocessed_response_date_time">Last successful update: %s</string>
     <string name="msg_sms_status_no_pending_sms">No pending sms</string>
     <string name="msg_sms_status_account_subaccount_info">Account: %s, subaccount: %s</string>
 

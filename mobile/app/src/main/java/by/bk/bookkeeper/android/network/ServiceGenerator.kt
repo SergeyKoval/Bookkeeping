@@ -5,6 +5,7 @@ import by.bk.bookkeeper.android.BuildConfig
 import by.bk.bookkeeper.android.network.auth.TokenAuthenticator
 import by.bk.bookkeeper.android.network.auth.TokenInterceptor
 import by.bk.bookkeeper.android.network.response.SubAccount
+import by.bk.bookkeeper.android.network.response.UnprocessedCountResponse
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,6 +43,7 @@ object ServiceGenerator {
 
     private fun createConfiguredGson() = GsonBuilder()
             .registerTypeAdapter(SubAccount::class.java, SubAccount.createJsonDeserializer())
+            .registerTypeAdapter(UnprocessedCountResponse::class.java, UnprocessedCountResponse.createJsonDeserializer())
             .setPrettyPrinting()
             .create()
 

@@ -7,6 +7,7 @@ import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.AuthResponse
 import by.bk.bookkeeper.android.network.response.BaseResponse
+import by.bk.bookkeeper.android.network.response.UnprocessedCountResponse
 import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.Body
@@ -24,6 +25,12 @@ interface BookkeeperService {
 
     @GET("/api/profile/accounts")
     fun getAccounts(): Single<List<Account>>
+
+    @GET("/api/history/unprocessed-count")
+    fun getUnprocessedSmsCountSingle(): Single<UnprocessedCountResponse>
+
+    @GET("/api/history/unprocessed-count")
+    fun getUnprocessedSmsCount(): Call<UnprocessedCountResponse>
 
     @POST("/api/profile/assign-sub-account")
     fun associateWithAccount(@Body associationRequest: AssociationRequest): Single<BaseResponse>

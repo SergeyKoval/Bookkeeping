@@ -1,7 +1,7 @@
 package by.bk.bookkeeper.android.sms.preferences
 
 import by.bk.bookkeeper.android.network.request.MatchedSms
-import by.bk.bookkeeper.android.sms.SMS
+import by.bk.bookkeeper.android.network.response.UnprocessedCountResponse
 import io.reactivex.Observable
 
 /**
@@ -31,4 +31,9 @@ interface ISmsPreferenceProvider {
      */
     fun getShouldProcessReceivedSms(): Boolean
 
+    fun saveUnprocessedResponseToStorage(response: UnprocessedCountResponse)
+
+    fun getUnprocessedResponseFromStorage(): UnprocessedCountResponse
+
+    fun getUnprocessedResponseObservable(): Observable<UnprocessedCountResponse>
 }

@@ -8,18 +8,18 @@
     android:focusableInTouchMode="true"
     android:padding="@dimen/content_default_padding">
 
-    <TextView
-        android:id="@+id/tv_pending_status"
-        android:layout_width="0dp"
-        android:textStyle="bold"
-        android:layout_marginEnd="@dimen/content_default_margin"
+    <ImageButton
+        android:id="@+id/button_refresh_unprocessed_count"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/button_send_sms"
-        app:layout_constraintEnd_toStartOf="@+id/button_send_sms"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/button_send_sms"
-        tools:text="Pending sms info" />
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/content_description_btn_sent_sms"
+        android:padding="@dimen/list_item_element_space"
+        android:tint="@color/color_primary"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_unprocessed_response_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_unprocessed_sms_count"
+        app:srcCompat="@drawable/ic_refresh" />
 
     <ImageButton
         android:id="@+id/button_send_sms"
@@ -29,10 +29,41 @@
         android:contentDescription="@string/content_description_btn_sent_sms"
         android:padding="@dimen/list_item_element_space"
         android:tint="@color/color_primary"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_pending_status"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_pending_status"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_pending_status"
         app:srcCompat="@drawable/ic_send" />
+
+    <TextView
+        android:id="@+id/tv_unprocessed_sms_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/msg_sms_status_server_unprocessed_count_unknown"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/button_refresh_unprocessed_count"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_unprocessed_response_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_default_margin"
+        app:layout_constraintEnd_toStartOf="@+id/button_refresh_unprocessed_count"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_unprocessed_sms_count"
+        tools:text="Date and time of last success response" />
+
+    <TextView
+        android:id="@+id/tv_pending_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_extra_margin"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/button_send_sms"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_refresh_unprocessed_count"
+        tools:text="Pending sms info" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_pending_sms"

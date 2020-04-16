@@ -243,10 +243,13 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
-                             balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string, archived?: boolean): HistoryType {
+                             balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string,
+                             archived?: boolean, id?: string, sms?: Sms[]): HistoryType {
 
     const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
     const result: HistoryType = {
+      'id': id,
+      'sms': sms,
       'type': historyType,
       'year': year,
       'month': month,
@@ -322,8 +325,8 @@ export class HistoryEditDialogComponent implements OnInit {
 
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
     const balance: HistoryBalanceType = originalItem.balance;
-    return this.initNewHistoryItem(historyType, originalItem.year, originalItem.month, originalItem.day, balance.value,
-      balance.currency, balance.newCurrency, balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description, originalItem.archived);
+    return this.initNewHistoryItem(historyType, originalItem.year, originalItem.month, originalItem.day, balance.value, balance.currency, balance.newCurrency,
+      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description, originalItem.archived, originalItem.id, originalItem.sms);
   }
 
   private validateTransfer(): boolean {

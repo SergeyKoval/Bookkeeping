@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 @Controller
 public class UIController {
-    @Value("classpath:mobile-app/android/bookkeeper-1.3.5.apk")
+    @Value("classpath:mobile-app/android/bookkeeper-1.3.7.apk")
     private Resource androidApplication;
 
     @RequestMapping(value = "/**/{path:[^\\.]+}", method = RequestMethod.GET)

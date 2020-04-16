@@ -6,10 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.IBinder
 import android.telephony.SmsMessage
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
@@ -19,12 +15,12 @@ import by.bk.bookkeeper.android.sms.ReceivedSms.Companion.createFromPdu
 import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.sms.receiver.SMSReceiver
+import by.bk.bookkeeper.android.sms.worker.PeriodicSMSScheduler
 import by.bk.bookkeeper.android.ui.home.AccountingActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 /**
  *  Created by Evgenia Grinkevich on 05, February, 2020
@@ -32,8 +28,6 @@ import java.util.concurrent.TimeUnit
 
 class SMSProcessingService : Service() {
 
-    private val periodicPendingSmsRequest = createPeriodicSmsRequest()
-    private val periodicUnprocessedSmsRequest = createPeriodicUnprocessedSmsRequest()
     private val bkService: BookkeeperService = Injection.provideBookkeeperService()
     private val disposables = CompositeDisposable()
     private val notificationBuilder by lazy { createNotificationBuilder() }
@@ -42,7 +36,7 @@ class SMSProcessingService : Service() {
         super.onCreate()
         Timber.d("Service on create invoked")
         createNotificationChannel()
-        WorkManager.getInstance().enqueue(listOf(periodicPendingSmsRequest, periodicUnprocessedSmsRequest))
+        PeriodicSMSScheduler.schedule()
         observePendingSms()
         observeUnprocessedSms()
     }
@@ -169,23 +163,6 @@ class SMSProcessingService : Service() {
                 NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
     }
 
-    private fun createPeriodicSmsRequest(): PeriodicWorkRequest = PeriodicWorkRequest.Builder(
-            PendingSmsProcessingWorker::class.java,
-            PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
-            .setConstraints(createNetworkConstraint())
-            .build()
-
-    private fun createPeriodicUnprocessedSmsRequest(): PeriodicWorkRequest = PeriodicWorkRequest.Builder(
-            UnprocessedSmsWorker::class.java,
-            PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
-            .setConstraints(createNetworkConstraint())
-            .build()
-
-    private fun createNetworkConstraint(): Constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
 
     override fun onDestroy() {
         super.onDestroy()

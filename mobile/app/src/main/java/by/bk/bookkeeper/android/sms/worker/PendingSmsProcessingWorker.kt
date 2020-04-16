@@ -1,4 +1,4 @@
-package by.bk.bookkeeper.android.sms
+package by.bk.bookkeeper.android.sms.worker
 
 import android.content.Context
 import androidx.work.Worker

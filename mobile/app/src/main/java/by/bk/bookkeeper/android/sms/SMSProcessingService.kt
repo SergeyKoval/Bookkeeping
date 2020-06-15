@@ -36,7 +36,7 @@ class SMSProcessingService : Service() {
         super.onCreate()
         Timber.d("Service on create invoked")
         createNotificationChannel()
-        PeriodicSMSScheduler.schedule()
+        PeriodicSMSScheduler.schedule(context = this)
         observePendingSms()
         observeUnprocessedSms()
     }

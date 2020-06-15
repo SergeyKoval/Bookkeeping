@@ -1,9 +1,7 @@
 package by.bk.bookkeeper.android.sms.worker
 
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
+import android.content.Context
+import androidx.work.*
 import java.util.concurrent.TimeUnit
 
 
@@ -16,11 +14,18 @@ object PeriodicSMSScheduler {
     private val smsRequest = createPeriodicSmsRequest()
     private val unprocessedSmsRequest = createPeriodicUnprocessedSmsRequest()
 
-    fun schedule() {
-        val workManager = WorkManager.getInstance()
-        workManager.cancelAllWork()
-        workManager.pruneWork()
-        workManager.enqueue(listOf(smsRequest, unprocessedSmsRequest))
+    fun schedule(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueueUniquePeriodicWork(
+                PendingSmsProcessingWorker.WORK_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,
+                smsRequest
+        )
+        workManager.enqueueUniquePeriodicWork(
+                UnprocessedSmsWorker.WORK_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,
+                unprocessedSmsRequest
+        )
     }
 
     private fun createPeriodicSmsRequest(): PeriodicWorkRequest = PeriodicWorkRequest.Builder(

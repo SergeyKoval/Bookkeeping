@@ -14,7 +14,7 @@ class PendingSmsProcessingWorker(appContext: Context, workerParams: WorkerParame
     private val bkService = Injection.provideBookkeeperService()
 
     override fun doWork(): Result {
-        Timber.d("Periodic pending sms checker started")
+        Timber.d("Pending sms checker started")
         SessionDataProvider.getCurrentSessionData()?.token ?: return Result.failure()
         val pendingSms = SmsPreferenceProvider.getPendingSmsFromStorage()
         if (pendingSms.isNotEmpty()) {
@@ -29,5 +29,9 @@ class PendingSmsProcessingWorker(appContext: Context, workerParams: WorkerParame
             }
         }
         return Result.success()
+    }
+
+    companion object {
+        const val WORK_NAME = "Pending SMS worker"
     }
 }

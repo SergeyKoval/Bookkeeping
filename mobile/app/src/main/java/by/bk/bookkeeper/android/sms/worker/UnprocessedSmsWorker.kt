@@ -18,7 +18,7 @@ class UnprocessedSmsWorker(appContext: Context, workerParams: WorkerParameters) 
     private val bkService = Injection.provideBookkeeperService()
 
     override fun doWork(): Result {
-        Timber.d("Periodic unprocessed sms checker started")
+        Timber.d("Unprocessed sms checker started")
         SessionDataProvider.getCurrentSessionData()?.token ?: return Result.failure()
         val response = bkService.getUnprocessedSmsCount().execute()
         return if (response.isSuccessful && response.body()?.status == BaseResponse.STATUS_SUCCESS) {
@@ -29,5 +29,9 @@ class UnprocessedSmsWorker(appContext: Context, workerParams: WorkerParameters) 
             Timber.d("Unprocessed SMS pending request FAILURE ${response.errorBody()}")
             Result.failure()
         }
+    }
+
+    companion object {
+        const val WORK_NAME = "Unprocessed SMS count worker"
     }
 }

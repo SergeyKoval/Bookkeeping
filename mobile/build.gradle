@@ -23,6 +23,7 @@ allprojects {
 
 ext {
     archLifecycleVersion = '2.2.0'
+    workVersion = '2.3.4'
 }
 
 task clean(type: Delete) {

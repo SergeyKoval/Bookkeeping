@@ -130,6 +130,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена');
         this._authenticationService.quiteReloadAccounts();
         this.loadMoreItems(-1);
+        this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
       });
   }
 

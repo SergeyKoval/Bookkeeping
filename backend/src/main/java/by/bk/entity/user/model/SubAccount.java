@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +18,7 @@ public class SubAccount implements Orderable, Selectable {
     private int order;
     private String icon;
     private Map<Currency, Double> balance;
-    private Map<String, DeviceAssociation> device = new HashMap<>();
+    private Map<String, List<DeviceAssociation>> device = new HashMap<>();
 
     public SubAccount() {
     }

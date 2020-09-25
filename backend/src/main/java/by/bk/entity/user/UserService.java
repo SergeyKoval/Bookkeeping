@@ -145,8 +145,8 @@ public class UserService implements UserAPI, UserDetailsService {
                 .flatMap(account -> account.getSubAccounts().stream())
                 .forEach(subAccount -> {
                     subAccount.setBalance(null);
-                    DeviceAssociation device = subAccount.getDevice().get(deviceId);
-                    subAccount.setDevice(device != null ? Collections.singletonMap(deviceId, device) : null);
+                    List<DeviceAssociation> deviceAssociations = subAccount.getDevice().get(deviceId);
+                    subAccount.setDevice(deviceAssociations != null && !deviceAssociations.isEmpty() ? Collections.singletonMap(deviceId, deviceAssociations) : null);
                 });
         return accounts;
     }
@@ -739,9 +739,14 @@ public class UserService implements UserAPI, UserDetailsService {
         List<SubAccount> subAccounts = account.getSubAccounts();
         SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
 
+        List<DeviceAssociation> deviceAssociations = subAccount.getDevice().get(deviceId);
+        if (deviceAssociations != null && deviceAssociations.contains(deviceAssociation)) {
+            return SimpleResponse.success();
+        }
+
         Query query = Query.query(Criteria.where("email").is(login));
         String setKey = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".device.", deviceId);
-        Update update = new Update().set(setKey, deviceAssociation);
+        Update update = new Update().addToSet(setKey, deviceAssociation);
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - assign sub account. Number of updated items " + updateResult.getModifiedCount());
@@ -762,8 +767,8 @@ public class UserService implements UserAPI, UserDetailsService {
         SubAccount subAccount = chooseItem(subAccounts, subAccountTitle, getSubAccountError(login, accountTitle, subAccountTitle));
 
         Query query = Query.query(Criteria.where("email").is(login));
-        String setKey = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".device.", deviceId);
-        Update update = new Update().unset(setKey);
+        String key = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".device.", deviceId);
+        Update update = new Update().pull(key, new DeviceAssociation(subAccountAssignment.getSender(), subAccountAssignment.getSubAccountIdentifier()));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - assign sub account. Number of updated items " + updateResult.getModifiedCount());

@@ -119,14 +119,15 @@ class SMSProcessingService : Service() {
             entry.value.run {
                 Timber.d("SMS processing from $senderName")
                 associationInfo.forEach { association ->
-                    if (association.sms.senderName.equals(senderName, ignoreCase = true)) {
-                        val sms = SMS(senderName = senderName, body = body, dateReceived = dateReceived)
-                        association.sms.bodyTemplate?.let {
-                            if (body.contains(association.sms.bodyTemplate, ignoreCase = true)) {
-                                matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
-                            }
+                    association.smsTemplatesList.forEach { template ->
+                        if (template.senderName.equals(senderName, ignoreCase = true)) {
+                            val sms = SMS(senderName = senderName, body = body, dateReceived = dateReceived)
+                            template.bodyTemplate?.let {
+                                if (body.contains(template.bodyTemplate, ignoreCase = true)) {
+                                    matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
+                                }
+                            } ?: matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
                         }
-                                ?: matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package by.bk.bookkeeper.android.network.response
 
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
+import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
@@ -10,7 +11,7 @@ import com.google.gson.annotations.SerializedName
  **/
 
 data class SubAccount(@SerializedName("device")
-                      val association: Association?,
+                      val associations: List<Association> = listOf(),
                       @SerializedName("icon")
                       val icon: String,
                       @SerializedName("order")
@@ -23,18 +24,25 @@ data class SubAccount(@SerializedName("device")
 
         fun createJsonDeserializer(): JsonDeserializer<SubAccount> = JsonDeserializer { json, typeOfT, context ->
             val deviceAssociationsMap = (json as JsonObject).get("device")?.asJsonObject?.entrySet()
-            var association: Association? = null
+            val associations: ArrayList<Association> = arrayListOf()
             deviceAssociationsMap?.let { map ->
                 for (entry in map) {
                     if (entry.key == SessionDataProvider.getDeviceId()) {
-                        val jsonAssociation = entry.value as JsonObject
-                        association = Association(sender = jsonAssociation.get("sender").asString,
-                                smsBodyTemplate = jsonAssociation.get("subAccountIdentifier").asString)
+                        val jsonAssociations = entry.value as JsonArray
+                        jsonAssociations.forEach {
+                            val element = it.asJsonObject
+                            associations.add(Association(sender = element.get("sender").asString,
+                                    smsBodyTemplate = element.get("subAccountIdentifier").asString))
+                        }
                     }
                 }
             }
-            return@JsonDeserializer SubAccount(association = association, icon = json.get("icon").asString,
-                    order = json.get("order").asInt, title = json.get("title").asString)
+            return@JsonDeserializer SubAccount(
+                    associations = associations,
+                    icon = json.get("icon").asString,
+                    order = json.get("order").asInt,
+                    title = json.get("title").asString
+            )
         }
     }
 

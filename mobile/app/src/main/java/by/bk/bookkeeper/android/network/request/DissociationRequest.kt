@@ -8,5 +8,9 @@ import com.google.gson.annotations.SerializedName
 data class DissociationRequest(@SerializedName("account")
                                val accountName: String,
                                @SerializedName("subAccount")
-                               val subAccountName: String
+                               val subAccountName: String,
+                               @SerializedName("sender")
+                               val associationSender: String,
+                               @SerializedName("subAccountIdentifier")
+                               val associationTemplate: String? = null
 )

@@ -5,7 +5,7 @@ package by.bk.bookkeeper.android.sms.preferences
  **/
 data class AssociationInfo(val accountName: String,
                            val subAccountName: String,
-                           val sms: AssociatedSMSInfo
+                           val smsTemplatesList: List<AssociatedSMSInfo>
 )
 
 data class AssociatedSMSInfo(val senderName: String,

@@ -9,19 +9,9 @@
     android:paddingTop="@dimen/content_default_padding"
     android:paddingBottom="@dimen/content_default_padding">
 
-    <TextView
-        android:id="@+id/tv_sub_account_title"
-        style="@style/SubAccountItemHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Account title" />
-
     <ImageView
-        android:id="@+id/iv_action_association"
+        android:id="@+id/iv_action_add_association"
+        android:tint="@color/color_primary_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/content_description_btn_add_association"
@@ -30,31 +20,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_sub_account_title"
         app:layout_constraintTop_toTopOf="@+id/tv_sub_account_title"
-        app:srcCompat="@drawable/ic_item_action" />
+        app:srcCompat="@drawable/ic_add" />
 
     <TextView
-        android:id="@+id/tv_sender"
-        android:layout_width="0dp"
+        android:id="@+id/tv_sub_account_title"
+        style="@style/SubAccountItemHeader"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/content_default_margin"
-        android:layout_marginEnd="8dp"
-        android:text="@string/association_sender"
-        android:textStyle="italic"
-        app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintEnd_toStartOf="@+id/iv_action_add_association"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sub_account_title" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Account title" />
 
-    <TextView
-        android:id="@+id/tv_sms_body_template"
-        android:layout_width="0dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_association"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/content_default_margin"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/list_item_element_space"
-        android:text="@string/association_sms_template"
-        android:textStyle="italic"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/iv_action_association"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sender" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_action_add_association" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

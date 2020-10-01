@@ -76,7 +76,10 @@ class AccountsFragment : BaseFragment() {
                                 is SubAccountRecyclerClick.RemoveAssociation -> {
                                     accountsViewModel.removeAssociation(DissociationRequest(
                                             accountName = clickInfo.account.title,
-                                            subAccountName = clickInfo.subAccount.title))
+                                            subAccountName = clickInfo.subAccount.title,
+                                            associationSender = clickInfo.association.sender,
+                                            associationTemplate = clickInfo.association.smsBodyTemplate
+                                    ))
                                 }
                                 is SubAccountRecyclerClick.AddAssociation,
                                 is SubAccountRecyclerClick.EditAssociation -> {

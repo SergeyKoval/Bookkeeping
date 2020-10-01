@@ -53,11 +53,11 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
                             }
                             accounts.onNext(sortedResponseList)
                             val smsAssociations = responseList.flatMap { account ->
-                                account.subAccounts.mapNotNull { subAccount ->
-                                    subAccount.association?.let { association ->
-                                        AssociationInfo(accountName = account.title, subAccountName = subAccount.title,
-                                                sms = AssociatedSMSInfo(senderName = association.sender, bodyTemplate = association.smsBodyTemplate))
-                                    }
+                                account.subAccounts.map { subAccount ->
+                                    AssociationInfo(accountName = account.title, subAccountName = subAccount.title,
+                                            smsTemplatesList = subAccount.associations.map {
+                                                AssociatedSMSInfo(senderName = it.sender, bodyTemplate = it.smsBodyTemplate)
+                                            })
                                 }
                             }
                             SmsPreferenceProvider.saveAssociationsToStorage(smsAssociations)

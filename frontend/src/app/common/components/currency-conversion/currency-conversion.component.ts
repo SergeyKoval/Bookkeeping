@@ -3,11 +3,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { AlertType } from '../../model/alert/AlertType';
 import * as fromUser from '../../redux/reducers/user';
 import { UserActions } from '../../redux/actions';
 import { Currency } from '../../redux/reducers/user/currency.reducer';
-import { fromCurrencies } from '../../redux/reducers';
+import { AlertType, fromCurrencies } from '../../redux/reducers';
 
 @Component({
   selector: 'bk-currency-conversion',

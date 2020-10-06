@@ -10,7 +10,6 @@ import { HistoryService } from '../common/service/history.service';
 import { ProfileService } from '../common/service/profile.service';
 import { ConfirmDialogService } from '../common/components/confirm-dialog/confirm-dialog.service';
 import { HistoryItem } from '../common/model/history/HistoryItem';
-import { AlertType } from '../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
 import { BudgetService } from '../common/service/budget.service';
 import { CurrencyUtils } from '../common/utils/currency-utils';
@@ -19,6 +18,7 @@ import { LoadingDialogComponent } from '../common/components/loading-dialog/load
 import { SmsAssignDialogComponent } from './sms-assign-dialog/sms-assign-dialog.component';
 import * as fromUser from '../common/redux/reducers/user';
 import { UserActions } from '../common/redux/actions';
+import { AlertType } from '../common/redux/reducers';
 
 @Component({
   selector: 'bk-history',

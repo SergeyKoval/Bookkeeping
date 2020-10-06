@@ -10,11 +10,11 @@ import { CheckboxState } from '../../common/components/three-state-checkbox/Chec
 import { BaseReport } from '../BaseReport';
 import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { ReportService } from '../../common/service/report.service';
 import { CurrencyService } from '../../common/service/currency.service';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-report-summary',

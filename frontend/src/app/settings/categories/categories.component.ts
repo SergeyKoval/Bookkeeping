@@ -6,12 +6,12 @@ import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../common/service/profile.service';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 import { MoveSubCategoryDialogComponent } from './move-sub-category-dialog/move-sub-category-dialog.component';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-categories',

@@ -7,12 +7,12 @@ import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-accounts',

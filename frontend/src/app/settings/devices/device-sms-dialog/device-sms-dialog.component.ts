@@ -4,9 +4,9 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../../common/service/profile.service';
-import { AlertType } from '../../../common/model/alert/AlertType';
 import * as fromUser from '../../../common/redux/reducers/user';
 import { UserActions } from '../../../common/redux/actions';
+import { AlertType } from '../../../common/redux/reducers';
 
 @Component({
   selector: 'bk-device-sms-dialog',

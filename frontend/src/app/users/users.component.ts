@@ -6,11 +6,11 @@ import { Store } from '@ngrx/store';
 
 import { UsersService } from '../common/service/users.service';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-import { AlertType } from '../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../common/components/confirm-dialog/confirm-dialog.service';
 import { ProfileService } from '../common/service/profile.service';
 import * as fromUser from '../common/redux/reducers/user';
 import { UserActions } from '../common/redux/actions';
+import { AlertType } from '../common/redux/reducers';
 
 @Component({
   selector: 'bk-users',

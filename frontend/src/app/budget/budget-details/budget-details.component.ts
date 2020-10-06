@@ -11,12 +11,12 @@ import { CurrencyService } from '../../common/service/currency.service';
 import { BudgetService } from '../../common/service/budget.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
 import { UserActions } from '../../common/redux/actions';
 import * as fromUser from '../../common/redux/reducers/user';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-budget-details',

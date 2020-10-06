@@ -12,11 +12,11 @@ import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyValuePipe } from '../../common/pipes/currency-value.pipe';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-history-edit-dialog',

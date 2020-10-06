@@ -9,11 +9,11 @@ import { ProfileService } from '../../common/service/profile.service';
 import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
 import { BaseReport } from '../BaseReport';
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { DateUtils } from '../../common/utils/date-utils';
 import { ReportService } from '../../common/service/report.service';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-report-dynamic',

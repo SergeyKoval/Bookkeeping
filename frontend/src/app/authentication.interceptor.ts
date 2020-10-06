@@ -6,9 +6,8 @@ import { catchError, tap } from 'rxjs/internal/operators';
 import { Store } from '@ngrx/store';
 
 import { AuthenticationService } from './common/service/authentication.service';
-import { AlertType } from './common/model/alert/AlertType';
 import { environment } from '../environments/environment';
-import { fromLoginPage } from './common/redux/reducers';
+import { AlertType, fromLoginPage } from './common/redux/reducers';
 import { LoginPageActions, UserActions } from './common/redux/actions';
 
 @Injectable()

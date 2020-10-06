@@ -10,7 +10,6 @@ import { MultiLevelDropdownItem } from '../../common/components/multi-level-drop
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 import { ProfileService } from '../../common/service/profile.service';
 import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { ReportService } from '../../common/service/report.service';
 import { BaseReport } from '../BaseReport';
 import { HistoryItem } from '../../common/model/history/HistoryItem';
@@ -23,6 +22,7 @@ import { BudgetService } from '../../common/service/budget.service';
 import { HistoryService } from '../../common/service/history.service';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-report-actions',

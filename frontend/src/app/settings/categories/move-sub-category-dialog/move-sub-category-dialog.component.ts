@@ -7,9 +7,9 @@ import { Store } from '@ngrx/store';
 import { ProfileService } from '../../../common/service/profile.service';
 import { LoadingService } from '../../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../../common/components/loading-dialog/loading-dialog.component';
-import { AlertType } from '../../../common/model/alert/AlertType';
 import * as fromUser from '../../../common/redux/reducers/user';
 import { UserActions } from '../../../common/redux/actions';
+import { AlertType } from '../../../common/redux/reducers';
 
 @Component({
   selector: 'bk-move-sub-category-dialog',

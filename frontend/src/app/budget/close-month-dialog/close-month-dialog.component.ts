@@ -17,9 +17,9 @@ import { ProfileService } from '../../common/service/profile.service';
 import { CategoryStatisticsDialogComponent } from '../category-statistics-dialog/category-statistics-dialog.component';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
-import { AlertType } from '../../common/model/alert/AlertType';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-close-month-dialog',

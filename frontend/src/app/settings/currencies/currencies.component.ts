@@ -8,10 +8,10 @@ import { Store } from '@ngrx/store';
 import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
-import { AlertType } from '../../common/model/alert/AlertType';
 import { LoadingService } from '../../common/service/loading.service';
 import * as fromUser from '../../common/redux/reducers/user';
 import { UserActions } from '../../common/redux/actions';
+import { AlertType } from '../../common/redux/reducers';
 
 @Component({
   selector: 'bk-currencies',

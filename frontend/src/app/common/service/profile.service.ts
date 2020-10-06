@@ -11,10 +11,10 @@ import { select, Store } from '@ngrx/store';
 import { LoadingService } from 'app/common/service/loading.service';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
 import { CurrencyService } from './currency.service';
-import { AlertType } from '../model/alert/AlertType';
 import { Profile } from '../redux/reducers/user/profile.reducer';
 import * as fromUser from '../redux/reducers/user';
 import { UserActions } from '../redux/actions';
+import { AlertType } from '../redux/reducers';
 
 @Injectable()
 export class ProfileService {

@@ -3,14 +3,16 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Observable, of, Subject } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../common/service/profile.service';
-import { AlertService } from '../../common/service/alert.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-accounts',
@@ -27,7 +29,7 @@ export class AccountsComponent implements OnInit {
     private _loadingService: LoadingService,
     private _profileService: ProfileService,
     private _dialog: MatDialog,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _confirmDialogService: ConfirmDialogService
   ) { }
 
@@ -57,7 +59,7 @@ export class AccountsComponent implements OnInit {
   }
 
   public deleteAccount(deleteAccount: FinAccount): void {
-    let removeCallback = () => this._profileService.deleteAccount(deleteAccount.title);
+    const removeCallback = () => this._profileService.deleteAccount(deleteAccount.title);
     this.deleteAccountOrSubAccount(removeCallback, 'При удалении счета все существующие операции с использованием этого счета будут удалены. Остатки на удаляемом счете будут утерены. Продолжить?');
   }
 
@@ -98,9 +100,9 @@ export class AccountsComponent implements OnInit {
         switchMap((result: {[currency: string]: number}) => this._profileService.changeSubAccountBalance(finAccount.title, subAccount.title, result)),
         tap(simpleResponse => {
             if (simpleResponse.status === 'FAIL') {
-              this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+              this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время сохранения произошла ошибка' } }));
             } else {
-              this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
+              this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Операция успешно выполнена' } }));
             }
         }),
         switchMap(() => this._profileService.reloadAccountsInProfile())
@@ -150,7 +152,7 @@ export class AccountsComponent implements OnInit {
         switchMap(removeCallback),
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время удаления произошла ошибка' } }));
           }
         }),
         switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
@@ -163,7 +165,7 @@ export class AccountsComponent implements OnInit {
       .pipe(
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время перемещения произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время перемещения произошла ошибка' } }));
           }
         }),
         switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
@@ -185,7 +187,7 @@ export class AccountsComponent implements OnInit {
       .pipe(
         filter((result: boolean) => result === true),
         tap(() => {
-          this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
+          this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Операция успешно выполнена' } }));
           this.loading = true;
           this._ACCOUNTS_LOADING.next(true);
         }),

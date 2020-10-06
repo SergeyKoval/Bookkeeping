@@ -1,0 +1,14 @@
+<form #formRef [formGroup]="authenticationForm">
+  <bk-authentication-input inputId="login" [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('email')" [submitted]="formSubmitted">Логин</bk-authentication-input>
+  <bk-authentication-input inputId="password" [alwaysEditing]="alwaysEditing" [input]="authenticationForm.get('password')" [type]="'password'" [submitted]="formSubmitted">Пароль</bk-authentication-input>
+
+  <button class="btn btn-primary button-block" (click)="authenticate()" *ngIf="!authenticationChecking; else loadingIndicator">Войти</button>
+  <div class="additional-actions">
+    <label style="float: left;"><a (click)="showRegistrationForm(false)">Регистрация</a></label>
+    <label style="float: right;"><a (click)="showRegistrationForm(true)">Восстановить пароль</a></label>
+  </div>
+</form>
+
+<ng-template #loadingIndicator>
+  <bk-spinner></bk-spinner>
+</ng-template>

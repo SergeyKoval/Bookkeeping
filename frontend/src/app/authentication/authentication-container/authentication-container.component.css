@@ -1,0 +1,21 @@
+h1 {
+  text-align: center;
+  color: #777;
+  font-weight: bold;
+  margin: 0 0 40px;
+}
+
+.unsupported-browser-resolution {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  text-align: center;
+  color: #c62828;
+  margin-top: 30px;
+  margin-bottom: 0;
+}

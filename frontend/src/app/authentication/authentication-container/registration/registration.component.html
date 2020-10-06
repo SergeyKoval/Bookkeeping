@@ -1,0 +1,21 @@
+<form [formGroup]="registrationForm">
+  <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('email')" [submitted]="formSubmitted">Логин (E-mail)</bk-authentication-input>
+  <bk-authentication-input [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('password')" [type]="'password'" [submitted]="formSubmitted">
+    {{(formState$ | async).restorePasswordForm === true ? 'Новый пароль' : 'Пароль'}}
+  </bk-authentication-input>
+  <bk-authentication-input *ngIf="(formState$ | async).codeSent" [alwaysEditing]="alwaysEditing" [input]="registrationForm.get('code')" [submitted]="formSubmitted">Код подтверждения (отправлен на E-mail)</bk-authentication-input>
+
+  <button class="btn btn-primary button-block" (click)="sendCode()" *ngIf="!authenticationChecking; else loadingIndicator">
+    <span *ngIf="!(formState$ | async).codeSent">Отправить код подтверждения</span>
+    <span *ngIf="(formState$ | async).codeSent">Отправить код еще раз</span>
+  </button>
+  <button class="btn btn-primary button-block second-button" (click)="reviewCode()" *ngIf="!authenticationChecking && (formState$ | async).codeSent">Проверить код</button>
+
+  <div class="additional-actions">
+    <label style="float: right;"><a (click)="showAuthenticationForm()">Назад</a></label>
+  </div>
+</form>
+
+<ng-template #loadingIndicator>
+  <bk-spinner></bk-spinner>
+</ng-template>

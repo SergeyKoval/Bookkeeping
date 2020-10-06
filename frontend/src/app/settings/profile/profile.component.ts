@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 
+import { Store } from '@ngrx/store';
+
 import { ProfileService } from '../../common/service/profile.service';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-profile',
@@ -16,7 +19,7 @@ export class ProfileComponent implements OnInit {
 
   public constructor(
     private _profileService: ProfileService,
-    private _alertService: AlertService
+    private _userStore: Store<fromUser.State>
   ) { }
 
   public ngOnInit(): void {
@@ -51,9 +54,9 @@ export class ProfileComponent implements OnInit {
       this.submitIndicator = false;
       if (response.status === 'FAIL') {
         const message: string = response.message === 'INVALID_PASSWORD' ? 'Неверный старый пароль' : 'Ошибка сервера';
-        this._alertService.addAlert(AlertType.WARNING, message);
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message } }));
       } else {
-        this._alertService.addAlert(AlertType.SUCCESS, 'Пороль успешно изменен');
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Пороль успешно изменен' } }));
         this.profileForm.reset();
         this.profileForm.controls.newPassword.disable();
         this.disableNewPasswordAgain();

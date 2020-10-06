@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { IMyDate } from 'mydatepicker';
 import { ChartDataSets } from 'chart.js';
+import { Store } from '@ngrx/store';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { ProfileService } from '../../common/service/profile.service';
@@ -9,9 +10,10 @@ import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
 import { BaseReport } from '../BaseReport';
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 import { AlertType } from '../../common/model/alert/AlertType';
-import { AlertService } from '../../common/service/alert.service';
 import { DateUtils } from '../../common/utils/date-utils';
 import { ReportService } from '../../common/service/report.service';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-report-dynamic',
@@ -29,7 +31,7 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
     protected _profileService: ProfileService,
     protected _imagePipe: AssetImagePipe,
     private _reportService: ReportService,
-    private _alertService: AlertService
+    private _userStore: Store<fromUser.State>
   ) {
     super(_profileService, _imagePipe);
     this.datePickerOptions.dateFormat = 'mm.yyyy';
@@ -48,18 +50,18 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
 
   public search(): void {
     if (!this.periodFilter) {
-      this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Период не выбран' } }));
       return;
     }
 
     const numberOfPeriodsSelected: number = this.getNumberOfPeriodsSelected();
     if (numberOfPeriodsSelected < 1 || numberOfPeriodsSelected > 8) {
-      this._alertService.addAlert(AlertType.WARNING, 'Выберите период от 1 до 8 месцев');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Выберите период от 1 до 8 месцев' } }));
       return;
     }
 
     if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Фильтр операций пуст' } }));
       return;
     }
 

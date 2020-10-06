@@ -1,5 +1,5 @@
 <div class="field-wrap">
-  <input [id]="inputId" [type]="type || 'text'" [formControl]="input" [ngClass]="{'validation-failed': isInvalidValue()}"/>
+  <input [attr.id]="inputId" [type]="type || 'text'" [formControl]="input" [ngClass]="{'validation-failed': isInvalidValue()}"/>
   <label [ngClass]="{'active highlight': isEditing()}">
     <ng-content></ng-content><span class="req">*</span>
   </label>

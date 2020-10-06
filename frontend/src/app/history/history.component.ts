@@ -4,12 +4,12 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 import { HistoryService } from '../common/service/history.service';
 import { ProfileService } from '../common/service/profile.service';
 import { ConfirmDialogService } from '../common/components/confirm-dialog/confirm-dialog.service';
 import { HistoryItem } from '../common/model/history/HistoryItem';
-import { AlertService } from '../common/service/alert.service';
 import { AlertType } from '../common/model/alert/AlertType';
 import { HistoryEditDialogComponent } from './history-edit-dialog/history-edit-dialog.component';
 import { BudgetService } from '../common/service/budget.service';
@@ -17,6 +17,8 @@ import { CurrencyUtils } from '../common/utils/currency-utils';
 import { LoadingService } from '../common/service/loading.service';
 import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
 import { SmsAssignDialogComponent } from './sms-assign-dialog/sms-assign-dialog.component';
+import * as fromUser from '../common/redux/reducers/user';
+import { UserActions } from '../common/redux/actions';
 
 @Component({
   selector: 'bk-history',
@@ -42,10 +44,10 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     private _historyService: HistoryService,
     private _authenticationService: ProfileService,
     private _confirmDialogService: ConfirmDialogService,
-    private _alertService: AlertService,
     private _budgetService: BudgetService,
     private _profileService: ProfileService,
-    private _loadingService: LoadingService
+    private _loadingService: LoadingService,
+    private _userStore: Store<fromUser.State>
   ) {}
 
   public ngOnInit(): void {
@@ -120,14 +122,14 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         tap(simpleResponse => {
           loadingDialog.close();
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при удалении');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Ошибка при удалении' } }));
             this._lastElementId = historyItem.originalItem.id;
             this.loadMoreItems(0);
           }
         }),
         filter(simpleResponse => simpleResponse.status === 'SUCCESS')
       ).subscribe(() => {
-        this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена');
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Запись успешно удалена' } }));
         this._authenticationService.quiteReloadAccounts();
         this.loadMoreItems(-1);
         this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);

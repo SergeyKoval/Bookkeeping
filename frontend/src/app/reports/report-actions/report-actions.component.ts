@@ -4,12 +4,12 @@ import { MatDialogRef } from '@angular/material';
 
 import { of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { CheckboxState } from '../../common/components/three-state-checkbox/CheckboxState';
 import { ProfileService } from '../../common/service/profile.service';
 import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ReportService } from '../../common/service/report.service';
 import { BaseReport } from '../BaseReport';
@@ -21,6 +21,8 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 import { LoadingService } from '../../common/service/loading.service';
 import { BudgetService } from '../../common/service/budget.service';
 import { HistoryService } from '../../common/service/history.service';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-report-actions',
@@ -36,7 +38,7 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
   public constructor(
     protected _profileService: ProfileService,
     protected _imagePipe: AssetImagePipe,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _dialog: MatDialog,
     private _confirmDialogService: ConfirmDialogService,
     private _loadingService: LoadingService,
@@ -56,17 +58,17 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
 
   public search(): void {
     if (!this.periodFilter) {
-      this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Период не выбран' } }));
       return;
     }
 
     if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Фильтр операций пуст' } }));
       return;
     }
 
     if (this.accountsFilter.filter(account => account.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр счетов пуст');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Фильтр счетов пуст' } }));
       return;
     }
 
@@ -118,13 +120,13 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
         tap(simpleResponse => {
           loadingDialog.close();
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при удалении');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Ошибка при удалении' } }));
             this.search();
           }
         }),
         filter(simpleResponse => simpleResponse.status === 'SUCCESS')
       ).subscribe(() => {
-      this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Запись успешно удалена' } }));
       this._authenticationService.quiteReloadAccounts();
       this.search();
     });

@@ -3,13 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../common/service/profile.service';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 import { MoveSubCategoryDialogComponent } from './move-sub-category-dialog/move-sub-category-dialog.component';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-categories',
@@ -23,7 +25,7 @@ export class CategoriesComponent implements OnInit {
   public constructor(
     private _dialog: MatDialog,
     private _profileService: ProfileService,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _confirmDialogService: ConfirmDialogService
   ) {}
 
@@ -126,7 +128,7 @@ export class CategoriesComponent implements OnInit {
         switchMap(removeCallback),
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время удаления произошла ошибка' } }));
           }
         }),
         switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
@@ -139,7 +141,7 @@ export class CategoriesComponent implements OnInit {
       .pipe(
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время перемещения произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время перемещения произошла ошибка' } }));
           }
         }),
         switchMap(simpleResponse => simpleResponse.status === 'SUCCESS' ? of(true) : of(false))
@@ -161,7 +163,7 @@ export class CategoriesComponent implements OnInit {
       .pipe(
         filter((result: boolean) => result === true),
         tap((result: boolean) => {
-          this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно выполнена');
+          this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Операция успешно выполнена' } }));
           this.loading = true;
         }),
         switchMap(() => this._profileService.reloadCategoriesInProfile())

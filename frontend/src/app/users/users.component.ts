@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { UsersService } from '../common/service/users.service';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { AlertType } from '../common/model/alert/AlertType';
-import { AlertService } from '../common/service/alert.service';
 import { ConfirmDialogService } from '../common/components/confirm-dialog/confirm-dialog.service';
 import { ProfileService } from '../common/service/profile.service';
+import * as fromUser from '../common/redux/reducers/user';
+import { UserActions } from '../common/redux/actions';
 
 @Component({
   selector: 'bk-users',
@@ -22,7 +24,7 @@ export class UsersComponent implements OnInit {
   public constructor (
     private _dialog: MatDialog,
     private _usersService: UsersService,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _confirmDialogService: ConfirmDialogService,
     private _profileService: ProfileService
   ) {}
@@ -55,7 +57,7 @@ export class UsersComponent implements OnInit {
         switchMap(() => this._usersService.deleteUser(user.email)),
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время удаления произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время удаления произошла ошибка' } }));
           }
         }),
         switchMap(() => this._usersService.getAllUsers())
@@ -89,7 +91,7 @@ export class UsersComponent implements OnInit {
         filter((result: boolean) => result === true),
         tap(() => {
           this.loading = true;
-          this._alertService.addAlert(AlertType.SUCCESS, dialogData.editMode ? 'Пользователь успешно изменен' : 'Пользователь успешно добавлен');
+          this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: dialogData.editMode ? 'Пользователь успешно изменен' : 'Пользователь успешно добавлен' } }));
         }),
         switchMap(() => this._usersService.getAllUsers())
       ).subscribe((users: User[]) => {

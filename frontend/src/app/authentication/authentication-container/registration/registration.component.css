@@ -1,0 +1,50 @@
+.progress {
+  height: 53px;
+  margin-bottom: 0;
+}
+
+.progress-bar {
+  width: 100%;
+  color: #ffffff;
+  padding: 15px 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.button {
+  border: 0;
+  outline: none;
+  border-radius: 4px;
+  padding: 15px 0;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  background: #337ab7;
+  border-color: #2e6da4;
+  color: #ffffff;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+}
+.button:hover, .button:focus {
+  background: #283593;
+}
+
+.button-block {
+  width: 100%;
+  font-size: 21px;
+}
+
+a {
+  cursor: pointer;
+  color: #777;
+}
+
+.additional-actions {
+  padding-top: 15px;
+}
+
+.second-button {
+  margin-top: 10px;
+}

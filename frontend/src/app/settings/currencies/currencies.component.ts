@@ -2,14 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs/index';
+import { Observable, Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { LoadingService } from '../../common/service/loading.service';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-currencies',
@@ -25,7 +27,7 @@ export class CurrenciesComponent implements OnInit {
   public constructor(
     private _router: Router,
     private _loadingService: LoadingService,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _confirmDialogService: ConfirmDialogService,
     private _currencyService: CurrencyService,
     private _profileService: ProfileService
@@ -52,9 +54,9 @@ export class CurrenciesComponent implements OnInit {
       .pipe(
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время сохранения произошла ошибка' } }));
           } else {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Валюта успешно добавлена' } }));
           }
         }),
         switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
@@ -76,9 +78,9 @@ export class CurrenciesComponent implements OnInit {
         switchMap(() => this._profileService.updateProfileUnUseCurrency(currencyName)),
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время сохранения произошла ошибка' } }));
           } else {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно удалена');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Валюта успешно удалена' } }));
           }
         }),
         switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
@@ -94,9 +96,9 @@ export class CurrenciesComponent implements OnInit {
       .pipe(
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время сохранения произошла ошибка' } }));
           } else {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно добавлена');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Валюта успешно добавлена' } }));
           }
         }),
         switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())
@@ -128,9 +130,9 @@ export class CurrenciesComponent implements OnInit {
       .pipe(
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Во время сохранения произошла ошибка');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Во время сохранения произошла ошибка' } }));
           } else {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Валюта успешно перемещена');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Валюта успешно перемещена' } }));
           }
         }),
         switchMap(() => this._profileService.reloadCurrenciesAndAccountsInProfile())

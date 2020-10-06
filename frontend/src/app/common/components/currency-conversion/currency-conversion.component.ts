@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 
-import { ProfileService } from '../../service/profile.service';
-import { CurrencyService } from '../../service/currency.service';
-import { AlertService } from '../../service/alert.service';
+import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+
 import { AlertType } from '../../model/alert/AlertType';
+import * as fromUser from '../../redux/reducers/user';
+import { UserActions } from '../../redux/actions';
+import { Currency } from '../../redux/reducers/user/currency.reducer';
+import { fromCurrencies } from '../../redux/reducers';
 
 @Component({
   selector: 'bk-currency-conversion',
@@ -15,31 +18,40 @@ export class CurrencyConversionComponent implements OnInit {
   @Input()
   public label: string = 'к валюте:';
   @Input()
-  public selectedCurrency: CurrencyDetail = null;
+  public selectedCurrency: Currency = null;
   @Input()
   public denyNoChoice: boolean = false;
   @Output()
-  public currencyConversion: EventEmitter<CurrencyDetail> = new EventEmitter();
+  public currencyConversion: EventEmitter<Currency> = new EventEmitter();
 
-  public profile: Profile;
+  public currencies$: Observable<Array<Currency>>;
 
   public constructor(
-    private _router: Router,
-    private _authenticationService: ProfileService,
-    private _currencyService: CurrencyService,
-    private _alertService: AlertService
+    private _userStore: Store<fromUser.State>,
+    private _currenciesStore: Store<fromCurrencies.CurrencyHistoryState>
   ) {}
 
   public ngOnInit(): void {
-    this.profile = this._authenticationService.authenticatedProfile;
+    this.currencies$ = this._userStore.pipe(select(fromUser.selectCurrencies));
   }
 
-  public chooseCurrency(currency: CurrencyDetail): void {
-    if (currency === null || this._currencyService.isCurrencyHistoryLoaded(currency.name)) {
-      this.selectedCurrency = currency;
-      this.currencyConversion.emit(currency);
-    } else {
-      this._alertService.addAlert(AlertType.WARNING, 'Альтернативные валюты еще не загружены. Попробуйте немного позже.');
+  public chooseCurrency(currency: Currency): void {
+    if (currency === null) {
+      this.useCurrency(currency);
+      return;
     }
+
+    this._currenciesStore.select(fromCurrencies.isCurrencyHistoryLoaded, { currency: currency.name }).subscribe(currencyHistoryLoaded => {
+      if (currencyHistoryLoaded) {
+        this.useCurrency(currency);
+      } else {
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Альтернативные валюты еще не загружены. Попробуйте немного позже.' } }));
+      }
+    });
+  }
+
+  private useCurrency(currency: Currency): void {
+    this.selectedCurrency = currency;
+    this.currencyConversion.emit(currency);
   }
 }

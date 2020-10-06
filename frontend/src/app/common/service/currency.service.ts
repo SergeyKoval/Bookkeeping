@@ -4,9 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators';
 import { IMyDate } from 'mydatepicker';
+import { Store } from '@ngrx/store';
 
 import { HOST } from '../config/config';
 import { DateUtils } from '../utils/date-utils';
+import { CurrencyHistory } from '../redux/reducers/currency.reducer';
+import { fromCurrencies } from '../redux/reducers';
 
 @Injectable()
 export class CurrencyService {
@@ -16,17 +19,23 @@ export class CurrencyService {
 
   public constructor(
     private _http: HttpClient,
+    private _currenciesStore: Store<fromCurrencies.CurrencyHistoryState>,
     @Inject(HOST) private _host: string
   ) {}
 
-  public loadCurrenciesForCurrentMoth(profileCurrencies: string[]): Observable<CurrencyHistory[]> {
+  public loadCurrenciesForMoth(request: {month: number, year: number, currencies: Array<string>}): Observable<Array<CurrencyHistory>> {
+    return this._http.post<CurrencyHistory[]>('/api/currency/month-currencies', request);
+  }
+
+  public loadCurrenciesForCurrentMoth(profileCurrencies: string[]): Observable<Array<CurrencyHistory>> {
     const currentDate: Date = new Date(Date.now());
     const currenciesRequest: {month: number, year: number, currencies: string[]} = {
       month: currentDate.getUTCMonth() + 1,
       year: currentDate.getUTCFullYear(),
       currencies: profileCurrencies
     };
-    return this.loadCurrenciesForMonth(currenciesRequest);
+    // return this.loadCurrenciesForMonth(currenciesRequest);
+    return this._http.post<CurrencyHistory[]>('/api/currency/month-currencies', currenciesRequest);
   }
 
   public loadCurrenciesForMonth(request: {month: number, year: number, currencies: string[]}): Observable<CurrencyHistory[]> {
@@ -40,7 +49,8 @@ export class CurrencyService {
                 .reduce((first: CurrencyHistory, second: CurrencyHistory) => first.day > second.day ? first : second);
               this._todayConversions.set(currency, todayConversions);
             }
-          });}),
+          });
+        }),
         tap((currencyHistories: CurrencyHistory[]) => {
           currencyHistories.forEach(currencyHistory => {
             let currencyYears: Map<number, Map<number, CurrencyHistory[]>>;

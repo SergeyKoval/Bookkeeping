@@ -3,18 +3,20 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } fr
 
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/internal/operators';
+import { Store } from '@ngrx/store';
 
 import { AuthenticationService } from './common/service/authentication.service';
-import { AlertService } from './common/service/alert.service';
 import { AlertType } from './common/model/alert/AlertType';
 import { environment } from '../environments/environment';
+import { fromLoginPage } from './common/redux/reducers';
+import { LoginPageActions, UserActions } from './common/redux/actions';
 
 @Injectable()
 export class AuthenticationInterceptor implements HttpInterceptor {
 
   public constructor(
-    private _alertService: AlertService,
-    private _authenticationService: AuthenticationService
+    private _authenticationService: AuthenticationService,
+    private _store: Store<fromLoginPage.LoginPageState>
   ) {}
 
   // tslint:disable-next-line:no-any
@@ -35,24 +37,25 @@ export class AuthenticationInterceptor implements HttpInterceptor {
       tap((response: HttpResponse<any>) => {
         if (response.url && !req.url.match(/token\/server\/version/) && !response.headers.get('bk-version').startsWith(environment.VERSION)) {
           console.error(`Versions mismatch. Server version = ${response.headers.get('bk-version')}, ui version = ${environment.VERSION}`);
-          this._alertService.addAlert(AlertType.DANGER, 'Версия устарела. Обновите страницу.');
+          this._store.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.DANGER, message: 'Версия устарела. Обновите страницу.' } }));
           this._authenticationService.exit(false);
         }
       }),
       catchError(err => {
         if ((err.url.endsWith('/token/generate-token') || err.url.endsWith('/token/send-registration-code')) && (err.status === 401 || err.status === 403)) {
           if (err.status === 401) {
-            this._authenticationService.addErrorMessage(err.error);
+            this._store.dispatch(LoginPageActions.AUTHENTICATION_FAILED({ messageCode: err.error }));
           } else if (err.status === 403) {
-            this._authenticationService.addErrorMessage('NOT ACTIVE');
+            this._store.dispatch(LoginPageActions.AUTHENTICATION_FAILED({ messageCode: 'NOT ACTIVE' }));
           }
-        } else if (err.status === 401) {
-          console.log(err);
-          this._authenticationService.exit(true);
         } else {
           console.log(err);
-          this._authenticationService.closeAllDialogs();
-          this._alertService.addAlert(AlertType.DANGER, 'Возникла ошибка при обработке запроса, обратитесь к администратору');
+          if (err.status === 401) {
+            this._authenticationService.exit(true);
+          } else {
+            this._store.dispatch(UserActions.CLOSE_DIALOGS());
+            this._store.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.DANGER, message: 'Возникла ошибка при обработке запроса, обратитесь к администратору' } }));
+          }
         }
 
         return of(err);

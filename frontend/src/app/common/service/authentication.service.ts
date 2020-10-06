@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, NavigationExtras, Router, RouterStateSnapshot } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,16 +8,18 @@ import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { tap } from 'rxjs/internal/operators';
-import { switchMap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { LoadingService } from './loading.service';
 import { ProfileService } from './profile.service';
 import { CurrencyService } from './currency.service';
+import { LoginPageActions, UserActions } from '../redux/actions';
+import * as fromUser from '../redux/reducers/user';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService implements CanActivate {
+export class AuthenticationService {
   public static readonly TOKEN: string = 'access_token';
 
   private _errorMessage$$: Subject<string> = new Subject<string>();
@@ -33,7 +35,9 @@ export class AuthenticationService implements CanActivate {
     private _http: HttpClient,
     private _localStorageService: LocalStorageService,
     private _jwtHelper: JwtHelperService,
-    private _dialogRef: MatDialog
+    private _dialogRef: MatDialog,
+    private _store: Store<fromUser.State>,
+    private _userStore: Store<fromUser.State>
   ) {}
 
   public initAuthenticationForm(): FormGroup {
@@ -43,7 +47,7 @@ export class AuthenticationService implements CanActivate {
     });
   }
 
-  public initRegistrationForm(restorePassword: boolean, email: string, password: string): FormGroup {
+  public initRegistrationForm(restorePassword: boolean, email: string = '', password: string = ''): FormGroup {
     return this._formBuilder.group({
       email: [email, [Validators.required, Validators.email, Validators.minLength(3)]],
       password: [password, [Validators.required, Validators.minLength(3)]],
@@ -91,46 +95,17 @@ export class AuthenticationService implements CanActivate {
   public validateToken(): boolean {
     const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
     if (token === null || token === undefined || this._jwtHelper.isTokenExpired(token)) {
-      this.exit();
+      this.exit(token !== null);
       return false;
     }
 
     return true;
   }
 
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    if (!this.validateToken()) {
-      return false;
-    }
-
-    if (this._profileService.initialDataLoaded === true) {
-      return true;
-    }
-
-    const authenticationCheck$$: Subject<boolean> = this._loadingService.authenticationCheck$$;
-    authenticationCheck$$.next(true);
-    const result: Subject<boolean> = new Subject<boolean>();
-    this._profileService.loadFullProfile()
-      .pipe(switchMap(() => this._currencyService.loadCurrenciesForCurrentMoth(this._profileService.getProfileCurrencies())))
-      .subscribe(() => {
-        authenticationCheck$$.next(false);
-        result.next(true);
-        this._profileService.initialDataLoaded = true;
-        this.startAuthenticationExpirationJob();
-    });
-
-    return result.asObservable();
-  }
-
   public exit(expiredSession: boolean = false): void {
-    this.closeAllDialogs();
-    this._profileService.initialDataLoaded = false;
+    this._store.dispatch(UserActions.CLOSE_DIALOGS());
     this._localStorageService.remove(AuthenticationService.TOKEN);
-    this._profileService.clearProfile();
-    this._authentication$$.next(false);
-    this._applicationLoading$$.next(false);
-    const navigationExtras: NavigationExtras = expiredSession ? {queryParams: {expiredSession: true}} : {};
-    this._router.navigate(['/authentication'], navigationExtras);
+    this._store.dispatch(LoginPageActions.LOGIN_REDIRECT({ expiredSession }));
   }
 
   public addErrorMessage(message: string): void {
@@ -143,15 +118,6 @@ export class AuthenticationService implements CanActivate {
     return this._errorMessage$$.asObservable();
   }
 
-  public get authentication$$(): Subject<boolean> {
-    return this._authentication$$;
-  }
-
-
-  public get applicationLoading$$(): Subject<boolean> {
-    return this._applicationLoading$$;
-  }
-
   public getServerVersion(): Observable<SimpleResponse> {
     return this._http.get<SimpleResponse>(`/token/server/version?timestamp=${new Date().getTime()}`);
   }
@@ -160,7 +126,7 @@ export class AuthenticationService implements CanActivate {
     this._dialogRef.closeAll();
   }
 
-  private startAuthenticationExpirationJob(): void {
+  public startAuthenticationExpirationJob(): void {
     if (this.validateToken()) {
       setTimeout(this.startAuthenticationExpirationJob.bind(this), 30000);
     } else {

@@ -2,12 +2,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { filter, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../../common/service/profile.service';
 import { LoadingService } from '../../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../../common/components/loading-dialog/loading-dialog.component';
-import { AlertService } from '../../../common/service/alert.service';
 import { AlertType } from '../../../common/model/alert/AlertType';
+import * as fromUser from '../../../common/redux/reducers/user';
+import { UserActions } from '../../../common/redux/actions';
 
 @Component({
   selector: 'bk-move-sub-category-dialog',
@@ -24,7 +26,7 @@ export class MoveSubCategoryDialogComponent implements OnInit {
     private _dialogRef: MatDialogRef<MoveSubCategoryDialogComponent>,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService
+    private _userStore: Store<fromUser.State>
   ) { }
 
   public ngOnInit(): void {
@@ -63,7 +65,7 @@ export class MoveSubCategoryDialogComponent implements OnInit {
         tap(response => {
           loadingDialog.close();
           if (response.status !== 'SUCCESS') {
-            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при перемещении категории');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Ошибка при перемещении категории' } }));
           }
         }),
         filter(response => response.status === 'SUCCESS')

@@ -4,16 +4,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Observable } from 'rxjs';
 import { filter, tap } from 'rxjs/internal/operators';
 import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
+import { Store } from '@ngrx/store';
+
 
 import { HistoryService } from '../../common/service/history.service';
 import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyValuePipe } from '../../common/pipes/currency-value.pipe';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -49,7 +52,7 @@ export class HistoryEditDialogComponent implements OnInit {
     private _authenticationService: ProfileService,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _confirmDialogService: ConfirmDialogService,
     private _currencyValuePipe: CurrencyValuePipe
   ) {}
@@ -389,7 +392,7 @@ export class HistoryEditDialogComponent implements OnInit {
     ).subscribe((response: SimpleResponse) => {
       this._authenticationService.quiteReloadAccounts();
       mdDialogRef.close();
-      this._alertService.addAlert(AlertType.SUCCESS, 'Операция успешно учтена');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Операция успешно учтена' } }));
       this.close(true);
     });
   }

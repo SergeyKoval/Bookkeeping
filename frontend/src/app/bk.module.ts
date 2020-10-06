@@ -12,11 +12,13 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { MyDatePickerModule } from 'mydatepicker';
 import { MyDateRangePickerModule } from 'mydaterangepicker';
 import { ChartsModule } from 'ng2-charts';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
-import { AuthenticationComponent } from './authentication/authentication.component';
-import { InputComponent } from './authentication/input/input.component';
 import { ProfileService } from './common/service/profile.service';
 import { LoadingService } from './common/service/loading.service';
 import { environment } from '../environments/environment';
@@ -43,7 +45,6 @@ import { HistoryGroupPipe } from './common/pipes/history-group.pipe';
 import { HistoryEditDialogComponent } from './history/history-edit-dialog/history-edit-dialog.component';
 import { ConfirmDialogComponent } from './common/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogService } from './common/components/confirm-dialog/confirm-dialog.service';
-import { AlertService } from './common/service/alert.service';
 import { GoalsContainerComponent } from './history/history-edit-dialog/goals-container/goals-container.component';
 import { CurrencyValueDirective } from './common/directives/currency-value.directive';
 import { SelectComponent } from './common/components/select/select.component';
@@ -97,11 +98,19 @@ import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog
 import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/device-sms-dialog.component';
 import { SmsAssignDialogComponent } from './history/sms-assign-dialog/sms-assign-dialog.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
+import { metaReducers, reducers } from './common/redux/reducers';
+import { InputComponent } from './authentication/authentication-container/input/input.component';
+import { AuthenticationContainerComponent } from './authentication/authentication-container/authentication-container.component';
+import { AuthenticationComponent } from './authentication/authentication-container/authentication/authentication.component';
+import { RegistrationComponent } from './authentication/authentication-container/registration/registration.component';
+import { LoginPageEffects } from './common/redux/effects/pages/login-page.effects';
+import { CurrencyEffects } from './common/redux/effects/currency.effects';
+import { UserEffects } from './common/redux/effects/user.effects';
+import { SummaryEffects } from './common/redux/effects/summary.effects';
 
 @NgModule({
   declarations: [
     BookkeepingRootComponent,
-    AuthenticationComponent,
     InputComponent,
     HeaderComponent,
     HistoryComponent,
@@ -171,7 +180,10 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     DeviceNameDialogComponent,
     DeviceSmsDialogComponent,
     SmsAssignDialogComponent,
-    ToggleComponent
+    ToggleComponent,
+    AuthenticationContainerComponent ,
+    AuthenticationComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,
@@ -197,7 +209,30 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     LocalStorageModule.forRoot({
       prefix: 'Bookkeeper',
       storageType: 'localStorage'
-    })
+    }),
+    StoreModule.forRoot(reducers, {
+      metaReducers,
+      runtimeChecks: {
+        // strictStateImmutability and strictActionImmutability are enabled by default
+        strictStateSerializability: true,
+        strictActionSerializability: true,
+        strictActionWithinNgZone: true,
+        strictActionTypeUniqueness: true,
+      },
+    }),
+    // StoreRouterConnectingModule.forRoot(),
+    StoreDevtoolsModule.instrument({
+      name: 'Bookkeeper application',
+
+      // In a production build you would want to disable the Store Devtools
+      // logOnly: environment.production,
+    }),
+    EffectsModule.forRoot([
+      LoginPageEffects,
+      UserEffects,
+      CurrencyEffects,
+      SummaryEffects
+    ])
   ],
   entryComponents: [
     ConfirmDialogComponent,
@@ -230,7 +265,6 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     HistoryService,
     ConfirmDialogService,
     BudgetService,
-    AlertService,
     {
       provide: HOST,
       useValue: environment.backendHost,

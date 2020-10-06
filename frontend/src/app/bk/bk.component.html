@@ -1,4 +1,4 @@
-<div class="container" *ngIf="isInitialDataLoaded(); else authenticationContainer">
+<div class="container" *ngIf="initialDataReady$ | async; else authenticationContainer">
   <bk-header></bk-header>
   <div class="row">
     <bk-summary></bk-summary>
@@ -11,7 +11,7 @@
 
 <ng-template #authenticationContainer>
   <div class="form">
-    <div class="table authentication-check" *ngIf="authenticationCheckIndicator && !versionCheckIndicator">
+    <div class="table authentication-check" *ngIf="(permissionsChecking$ | async) && !(versionChecking$ | async)">
       <div class="row">
         <div class="col-md-2 authentication-check-spinner">
           <bk-spinner [size]="35"></bk-spinner>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="table authentication-check" *ngIf="versionCheckIndicator">
+    <div class="table authentication-check" *ngIf="versionChecking$ | async">
       <div class="row">
         <div class="col-sm-2 authentication-check-spinner">
           <bk-spinner [size]="35"></bk-spinner>
@@ -29,13 +29,13 @@
       </div>
     </div>
 
-    <div class="table authentication-check" *ngIf="versionError">
+    <div class="table authentication-check" *ngIf="versionError$ | async">
       <div class="row"><div class="col-sm-12 authentication-check-text">Версия сервера отличается.</div></div>
-      <div class="row"><div class="col-sm-12 authentication-check-text">Сервер: {{serverVersion}}</div></div>
+      <div class="row"><div class="col-sm-12 authentication-check-text">Сервер: {{serverVersion$ | async}}</div></div>
       <div class="row"><div class="col-sm-12 authentication-check-text">Клиент: {{uiVersion}}</div></div>
     </div>
 
-    <router-outlet *ngIf="!authenticationCheckIndicator && !versionCheckIndicator && !versionError"></router-outlet>
+    <router-outlet *ngIf="!(permissionsChecking$ | async) && !(versionChecking$ | async) && !(versionError$ | async)"></router-outlet>
   </div>
 </ng-template>
 

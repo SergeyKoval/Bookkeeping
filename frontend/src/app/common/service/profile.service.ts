@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
 import { switchMap } from 'rxjs/internal/operators';
+import { select, Store } from '@ngrx/store';
 
 import { LoadingService } from 'app/common/service/loading.service';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
 import { CurrencyService } from './currency.service';
-import { AlertService } from './alert.service';
 import { AlertType } from '../model/alert/AlertType';
+import { Profile } from '../redux/reducers/user/profile.reducer';
+import * as fromUser from '../redux/reducers/user';
+import { UserActions } from '../redux/actions';
 
 @Injectable()
-export class ProfileService implements CanActivate {
+export class ProfileService {
   private _observableProfile: Observable<Profile>;
   private _authenticatedProfile: Profile;
   private _userCurrencies: Map<String, CurrencyDetail> = new Map();
@@ -22,26 +25,18 @@ export class ProfileService implements CanActivate {
   private _accountIcon: Map<string, string> = new Map();
   private _accounts$$: Subject<FinAccount[]> = new ReplaySubject(1);
   private _initialDataLoaded: boolean = false;
+  private _profile: Profile;
 
   public constructor(
-    private _alertService: AlertService,
     private _router: Router,
     private _formBuilder: FormBuilder,
     private _loadingService: LoadingService,
     private _currencyService: CurrencyService,
     private _assetImagePipe: AssetImagePipe,
-    private _http: HttpClient
-  ) {}
-
-  public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    if (this._authenticatedProfile) {
-      return of(this._authenticatedProfile.roles.indexOf('ADMIN') > -1);
-    }
-
-    const result: Subject<boolean> = new Subject<boolean>();
-    this._observableProfile.subscribe(profile => result.next(profile.roles.indexOf('ADMIN') > -1));
-
-    return result.asObservable();
+    private _http: HttpClient,
+    private _userStore: Store<fromUser.State>
+  ) {
+    this._userStore.pipe(select(fromUser.selectProfile)).subscribe(value => this._profile = value);
   }
 
   public loadFullProfile(): Observable<Profile> {
@@ -220,7 +215,7 @@ export class ProfileService implements CanActivate {
     this._http.post<SimpleResponse>('/api/profile/toggle-account', {'title': accountTitle, 'toggleState': toggleState})
       .subscribe(simpleResponse => {
         if (simpleResponse.status === 'FAIL') {
-          this._alertService.addAlert(AlertType.WARNING, 'Ошибка при сохранения измененного статуса счета');
+          this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Ошибка при сохранения измененного статуса счета' } }));
         }
       });
   }
@@ -371,7 +366,7 @@ export class ProfileService implements CanActivate {
 
   public prepareProfileForm(): FormGroup {
     return this._formBuilder.group({
-      email: this._formBuilder.control({value: this._authenticatedProfile.email, disabled: true}),
+      email: this._formBuilder.control({value: this._profile.email, disabled: true}),
       oldPassword: ['', Validators.required],
       newPassword: this._formBuilder.control({value: '', disabled: true}, [Validators.required, Validators.minLength(3)]),
       newPasswordAgain: this._formBuilder.control({value: '', disabled: true}, [Validators.required, Validators.minLength(3)])
@@ -386,7 +381,7 @@ export class ProfileService implements CanActivate {
         filter((response: HttpResponse<Blob>) => response.status === 200),
         map((response: HttpResponse<Blob>) => response.body),
         catchError(() => {
-          this._alertService.addAlert(AlertType.DANGER, `Error loading`);
+          this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.DANGER, message: `Error loading` } }));
           return of(null);
         })
       );
@@ -450,7 +445,7 @@ export class ProfileService implements CanActivate {
     return this._initialDataLoaded;
   }
 
-  private getUserProfile(): Observable<Profile> {
+  public getUserProfile(): Observable<Profile> {
     return this._http.get<Profile>('/api/profile/full');
   }
 }

@@ -1,0 +1,29 @@
+<h1>Бухгалтерия</h1>
+
+<div *ngIf="unsupportedBrowser" class="text-center unsupported-browser-resolution">
+  <div>Ваш браузер не поддерживается.</div>
+  <div>Приложение корректно работает в Chrome и FireFox.</div>
+</div>
+
+<div *ngIf="isResolutionUnsupported()" class="text-center unsupported-browser-resolution">
+  <div>Ваша ширина браузера {{getBrowserWidth()}}px.</div>
+  <div>Минимальная ширина для корректной работы 768px.</div>
+</div>
+
+<div *ngIf="!(initialDataLoading$ | async); else initialDataLoadingIndicator">
+  <bk-authentication *ngIf="authenticationMode$ | async"
+                     [alwaysEditing]="alwaysEditing$ | async"
+                     [formSubmitted]="formSubmitted$ | async"
+                     [authenticationChecking]="authenticationChecking$ | async">
+  </bk-authentication>
+  <bk-registration *ngIf="!(authenticationMode$ | async)"
+                   [formSubmitted]="formSubmitted$ | async"
+                   [authenticationChecking]="authenticationChecking$ | async"
+                   [alwaysEditing]="alwaysEditing$ | async">
+  </bk-registration>
+  <h2 *ngIf="errorMessage$ | async">{{errorMessage$ | async}}</h2>
+</div>
+
+<ng-template #initialDataLoadingIndicator>
+  <bk-spinner [size]="100"></bk-spinner>
+</ng-template>

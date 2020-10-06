@@ -1,9 +1,10 @@
 import { CurrencyService } from '../../service/currency.service';
+import { Account } from '../../redux/reducers/user/account.reducer';
 
 export abstract class BaseSummaryPipe {
   protected constructor(protected _currencyService: CurrencyService) {}
 
-  protected populateBalanceMap(account: FinAccount, balanceMap: Map<string, number>): void {
+  protected populateBalanceMap(account: Account, balanceMap: Map<string, number>): void {
     account.subAccounts.forEach((subAccount: SubAccount) => {
       Object.entries(subAccount.balance)
         .filter(([currency, value]) => value !== 0)

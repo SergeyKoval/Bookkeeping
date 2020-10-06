@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { from } from 'rxjs';
 import { groupBy, mergeMap, tap, toArray } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { ProfileService } from '../../common/service/profile.service';
@@ -10,9 +11,10 @@ import { BaseReport } from '../BaseReport';
 import { AssetImagePipe } from '../../common/pipes/asset-image.pipe';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { AlertType } from '../../common/model/alert/AlertType';
-import { AlertService } from '../../common/service/alert.service';
 import { ReportService } from '../../common/service/report.service';
 import { CurrencyService } from '../../common/service/currency.service';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-report-summary',
@@ -39,7 +41,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
   public constructor(
     protected _profileService: ProfileService,
     protected _imagePipe: AssetImagePipe,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _reportService: ReportService,
     private _currencyService: CurrencyService
   ) {
@@ -57,22 +59,22 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
 
   public search(): void {
     if (!this.periodFilter) {
-      this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Период не выбран' } }));
       return;
     }
 
     if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Фильтр операций пуст' } }));
       return;
     }
 
     if (this.accountsFilter.filter(account => account.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр счетов пуст');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Фильтр счетов пуст' } }));
       return;
     }
 
     if (this.currenciesFilter.filter(currency => currency.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр валют пуст');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Фильтр валют пуст' } }));
       return;
     }
 

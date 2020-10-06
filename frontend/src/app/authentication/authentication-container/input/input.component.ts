@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'bk-authentication-input',
   templateUrl: './input.component.html',
-  styleUrls: ['./input.component.css']
+  styleUrls: ['./input.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InputComponent {
   @Input()
@@ -16,7 +17,7 @@ export class InputComponent {
   @Input()
   public alwaysEditing: boolean;
   @Input()
-  public inputId: string;
+  public inputId: string = null;
 
   public isInvalidValue(): boolean {
     return this.submitted && this.input.invalid;

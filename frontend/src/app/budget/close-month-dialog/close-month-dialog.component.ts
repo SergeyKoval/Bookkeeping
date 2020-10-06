@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { MatDialog } from '@angular/material/dialog';
 
 import { filter } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { GoalWrapper } from '../../common/model/budget/GoalWrapper';
 import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
@@ -17,7 +18,8 @@ import { CategoryStatisticsDialogComponent } from '../category-statistics-dialog
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AlertType } from '../../common/model/alert/AlertType';
-import { AlertService } from '../../common/service/alert.service';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-close-month-dialog',
@@ -44,7 +46,7 @@ export class CloseMonthDialogComponent implements OnInit {
     private _profileService: ProfileService,
     private _budgetService: BudgetService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService
+    private _userStore: Store<fromUser.State>
   ) {}
 
   public ngOnInit(): void {
@@ -306,10 +308,10 @@ export class CloseMonthDialogComponent implements OnInit {
       .subscribe((simpleResponse: SimpleResponse) => {
         loadingDialog.close();
         if (simpleResponse.status === 'SUCCESS') {
-          this._alertService.addAlert(AlertType.SUCCESS, 'Бюджет успешно запланирован');
+          this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Бюджет успешно запланирован' } }));
         } else {
           const errors: string[] = simpleResponse.result['errors'];
-          errors.forEach(errorMessage => this._alertService.addAlert(AlertType.WARNING, errorMessage));
+          errors.forEach(errorMessage => this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: errorMessage } })));
         }
         this._dialogRef.close(true);
       });

@@ -1,56 +1,47 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/internal/operators';
+import { select, Store } from '@ngrx/store';
 
-import { AlertService } from '../common/service/alert.service';
-import { ProfileService } from '../common/service/profile.service';
-import { LoadingService } from '../common/service/loading.service';
-import { AuthenticationService } from '../common/service/authentication.service';
 import { environment } from '../../environments/environment';
+import * as fromUser from '../common/redux/reducers/user';
+import { fromLoginPage } from '../common/redux/reducers';
+import { ApplicationActions } from '../common/redux/actions';
 
 @Component({
   selector: 'bk-root',
   templateUrl: './bk.component.html',
-  styleUrls: ['./bk.component.css']
+  styleUrls: ['./bk.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BookkeepingRootComponent implements OnInit, OnDestroy {
-  public authenticationCheckIndicator: boolean = false;
-  public versionCheckIndicator: boolean = true;
-  public versionError: boolean = false;
-  public serverVersion: string;
+export class BookkeepingRootComponent implements OnInit {
   public uiVersion: string = environment.VERSION;
 
-  private subscription: Subscription;
-  private authenticationCheckSubscription: Subscription;
+  public initialDataReady$: Observable<boolean>;
+  public versionError$: Observable<boolean>;
+  public permissionsChecking$: Observable<boolean>;
+  public versionChecking$: Observable<boolean>;
+  public serverVersion$: Observable<string>;
 
   public constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
-    private _alertService: AlertService,
-    private _profileService: ProfileService,
-    private _loadingService: LoadingService,
     private _titleService: Title,
-    private _authenticationService: AuthenticationService
+    private _userStore: Store<fromUser.State>,
+    private _store: Store<fromLoginPage.LoginPageState>
   ) {}
 
   public ngOnInit(): void {
-    this._authenticationService.getServerVersion().subscribe(response => {
-      if (response.message.startsWith(environment.VERSION)) {
-        this.versionError = false;
-        this.versionCheckIndicator = false;
-      } else {
-        this.versionCheckIndicator = false;
-        this.versionError = true;
-        this.serverVersion = response.message;
-      }
-    });
+    this.initialDataReady$ = this._userStore.pipe(select(fromUser.selectInitialDataReady));
+    this.permissionsChecking$ = this._userStore.pipe(select(fromUser.selectPermissionsChecking));
+    this.versionError$ = this._store.pipe(select(fromLoginPage.selectVersionError));
+    this.versionChecking$ = this._store.pipe(select(fromLoginPage.selectVersionChecking));
+    this.serverVersion$ = this._store.pipe(select(fromLoginPage.selectServerVersion));
 
-    this.authenticationCheckSubscription = this._loadingService.authenticationCheck$$.subscribe(value => {
-      this.authenticationCheckIndicator = value;
-    });
+    this._store.dispatch(ApplicationActions.CHECK_SERVER_VERSION({ frontendVersion: this.uiVersion }));
 
     this._router.events
       .pipe(
@@ -69,13 +60,5 @@ export class BookkeepingRootComponent implements OnInit, OnDestroy {
           return null;
         })
       ).subscribe((title: string) => this._titleService.setTitle(title));
-  }
-
-  public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  public isInitialDataLoaded(): boolean {
-    return this._profileService.initialDataLoaded;
   }
 }

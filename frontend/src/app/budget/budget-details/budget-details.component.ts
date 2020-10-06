@@ -4,17 +4,19 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/internal/operators';
 import { Observable, Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CurrencyService } from '../../common/service/currency.service';
 import { BudgetService } from '../../common/service/budget.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
+import { UserActions } from '../../common/redux/actions';
+import * as fromUser from '../../common/redux/reducers/user';
 
 @Component({
   selector: 'bk-budget-details',
@@ -42,9 +44,9 @@ export class BudgetDetailsComponent implements OnInit {
     private _currencyService: CurrencyService,
     private _budgetService: BudgetService,
     private _loadingService: LoadingService,
-    private _alertService: AlertService,
     private _dialog: MatDialog,
-    private _confirmDialogService: ConfirmDialogService
+    private _confirmDialogService: ConfirmDialogService,
+    private _userStore: Store<fromUser.State>
   ) {}
 
   public ngOnInit(): void {
@@ -116,7 +118,7 @@ export class BudgetDetailsComponent implements OnInit {
       .pipe(
         tap(simpleResponse => {
           if (simpleResponse.status === 'FAIL') {
-            this._alertService.addAlert(AlertType.WARNING, 'Ошибка при изменении статуса цели');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Ошибка при изменении статуса цели' } }));
             mdDialogRef.close();
           }
         }),
@@ -125,7 +127,7 @@ export class BudgetDetailsComponent implements OnInit {
         goal.done = !goal.done;
         this.calculateGoalCounts();
         mdDialogRef.close();
-        this._alertService.addAlert(AlertType.SUCCESS, 'Статус цели изменен');
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Статус цели изменен' } }));
       });
   }
 
@@ -133,7 +135,7 @@ export class BudgetDetailsComponent implements OnInit {
     this.budgetDetails.opened = !this.budgetDetails.opened;
     this._budgetService.toggleBudgetDetails(this.budget.id, this.type, this.budgetDetails.opened).subscribe(simpleResponse => {
       if (simpleResponse.status === 'FAIL') {
-        this._alertService.addAlert(AlertType.WARNING, 'Ошибка при отправке данных на сервер');
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Ошибка при отправке данных на сервер' } }));
       }
     });
   }
@@ -181,7 +183,7 @@ export class BudgetDetailsComponent implements OnInit {
 
   public moveGoal(category: BudgetCategory, goal: BudgetGoal): void {
     if (goal.done) {
-      this._alertService.addAlert(AlertType.INFO, 'Цель уже выполнена');
+      this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.INFO, message: 'Цель уже выполнена' } }));
       return;
     }
 
@@ -242,10 +244,10 @@ export class BudgetDetailsComponent implements OnInit {
       ).subscribe((response: SimpleResponse) => {
       loadingDialog.close();
       if (response.status === 'SUCCESS') {
-        this._alertService.addAlert(AlertType.SUCCESS, `${removeType === 'category' ? 'Категория' : 'Цель'} удалена`);
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: `${removeType === 'category' ? 'Категория' : 'Цель'} удалена` } }));
         this.updateBudget.next(true);
       } else {
-        this._alertService.addAlert(AlertType.DANGER, `Ошибка при удалении ${removeType === 'category' ? 'категории' : 'цели'}`);
+        this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.DANGER, message: `Ошибка при удалении ${removeType === 'category' ? 'категории' : 'цели'}` } }));
       }
     });
   }

@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { BaseSummaryPipe } from './baseSummaryPipe';
 import { CurrencyService } from '../../service/currency.service';
+import { Account } from '../../redux/reducers/user/account.reducer';
 
 @Pipe({
   name: 'summaryFooter'
@@ -11,7 +12,7 @@ export class SummaryFooterPipe extends BaseSummaryPipe implements PipeTransform 
     super(currencyService);
   }
 
-  public transform(accounts: FinAccount[], currency: CurrencyDetail): BalanceItem[] {
+  public transform(accounts: Array<Account>, currency: CurrencyDetail): BalanceItem[] {
     const balanceMap: Map<string, number> = new Map();
 
     accounts.forEach((account: FinAccount) => {

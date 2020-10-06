@@ -3,16 +3,18 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import * as fileSaver from 'file-saver';
 import { filter } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { DeviceMailDialogComponent } from './device-mail-dialog/device-mail-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
-import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { DeviceNameDialogComponent } from './device-name-dialog/device-name-dialog.component';
 import { DeviceSmsDialogComponent } from './device-sms-dialog/device-sms-dialog.component';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import * as fromUser from '../../common/redux/reducers/user';
+import { UserActions } from '../../common/redux/actions';
 
 @Component({
   selector: 'bk-devices',
@@ -26,7 +28,7 @@ export class DevicesComponent implements OnInit {
     private _profileService: ProfileService,
     private _dialog: MatDialog,
     private _loadingService: LoadingService,
-    private _alertService: AlertService,
+    private _userStore: Store<fromUser.State>,
     private _confirmDialogService: ConfirmDialogService
   ) { }
 
@@ -57,9 +59,9 @@ export class DevicesComponent implements OnInit {
         this._profileService.sendApplicationEmail(email).subscribe(response => {
           loadingDialog.close();
           if (response.status === 'SUCCESS') {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Ссылка на приложение отправлена');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Ссылка на приложение отправлена' } }));
           } else {
-            this._alertService.addAlert(AlertType.WARNING, 'Произошла ошибка при отправке письма');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Произошла ошибка при отправке письма' } }));
           }
         });
       });
@@ -80,9 +82,9 @@ export class DevicesComponent implements OnInit {
             this.devices = profile.devices;
             loadingDialog.close();
             if (response.status === 'SUCCESS') {
-              this._alertService.addAlert(AlertType.SUCCESS, 'Имя девайса изменено');
+              this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Имя девайса изменено' } }));
             } else {
-              this._alertService.addAlert(AlertType.WARNING, 'Произошла ошибка при изменении имени девайса');
+              this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Произошла ошибка при изменении имени девайса' } }));
             }
           });
         });
@@ -108,9 +110,9 @@ export class DevicesComponent implements OnInit {
         this._profileService.logoutDevice(deviceId).subscribe(response => {
           loadingDialog.close();
           if (response.status === 'SUCCESS') {
-            this._alertService.addAlert(AlertType.SUCCESS, 'Девайс разлогинен');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Девайс разлогинен' } }));
           } else {
-            this._alertService.addAlert(AlertType.WARNING, 'Произошла ошибка при попытке разлогинить девайс');
+            this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Произошла ошибка при попытке разлогинить девайс' } }));
           }
         });
       });
@@ -127,9 +129,9 @@ export class DevicesComponent implements OnInit {
             this.devices = profile.devices;
             loadingDialog.close();
             if (response.status === 'SUCCESS') {
-              this._alertService.addAlert(AlertType.SUCCESS, 'Девайс удален');
+              this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.SUCCESS, message: 'Девайс удален' } }));
             } else {
-              this._alertService.addAlert(AlertType.WARNING, 'Произошла ошибка при попытке удалить девайс');
+              this._userStore.dispatch(UserActions.SHOW_ALERT({ alert: { type: AlertType.WARNING, message: 'Произошла ошибка при попытке удалить девайс' } }));
             }
           });
         });

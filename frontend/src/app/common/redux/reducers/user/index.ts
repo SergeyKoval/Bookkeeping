@@ -1,7 +1,6 @@
 import { Action, combineReducers, createFeatureSelector, createReducer, createSelector, on } from '@ngrx/store';
 
 import * as fromUserAccounts from './account.reducer';
-import { ACCOUNTS_FEATURE_KEY } from './account.reducer';
 import * as fromUserCurrencies from './currency.reducer';
 import * as fromUserCategories from './category.reducer';
 import * as fromUserProfile from './profile.reducer';
@@ -89,6 +88,7 @@ export const selectAccountsLoading = createSelector(selectUserRootState, (state)
 
 export const selectProfileState = createSelector(selectUserState, (state) => state.profile);
 export const selectProfile = createSelector(selectProfileState, (state) => state.profile);
+export const selectProfileEmail = createSelector(selectProfileState, (state) => state.profile ? state.profile.email : '');
 
 export const selectAccountsState = createSelector(selectUserState, (state) => state.accounts);
 export const selectAccounts = createSelector(selectAccountsState, fromUserAccounts.selectAllAccounts);

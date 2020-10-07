@@ -1,20 +1,20 @@
 <form [formGroup]="profileForm">
   <div class="input-group profile-email">
     <span class="input-group-addon" id="basic-addon1">Логин</span>
-    <input type="text" class="form-control" aria-describedby="basic-addon1" [formControl]="profileForm.controls.email">
+    <input type="text" class="form-control" aria-describedby="basic-addon1" formControlName="email">
   </div>
 
   <div class="input-group profile-password">
     <span class="input-group-addon" id="basic-addon2">Старый пароль</span>
-    <input type="password" class="form-control" aria-describedby="basic-addon2" (input)="changeOldPasswordValue(profileForm.controls.oldPassword)" [formControl]="profileForm.controls.oldPassword">
+    <input type="password" class="form-control" aria-describedby="basic-addon2" (input)="changeOldPasswordValue(profileForm.controls.oldPassword)" formControlName="oldPassword">
   </div>
   <div class="input-group profile-password">
     <span class="input-group-addon" id="basic-addon3">Новый пароль</span>
-    <input type="password" class="form-control" aria-describedby="basic-addon3" (input)="changeNewPasswordValue(profileForm.controls.newPassword)"  [formControl]="profileForm.controls.newPassword">
+    <input type="password" class="form-control" aria-describedby="basic-addon3" (input)="changeNewPasswordValue(profileForm.controls.newPassword)" formControlName="newPassword">
   </div>
   <div class="input-group profile-password">
     <span class="input-group-addon" id="basic-addon4">Новый пароль еще раз</span>
-    <input type="password" class="form-control" aria-describedby="basic-addon4" [formControl]="profileForm.controls.newPasswordAgain">
+    <input type="password" class="form-control" aria-describedby="basic-addon4" formControlName="newPasswordAgain">
   </div>
 
   <span class="error-message pull-left">{{profileForm.controls.newPasswordAgain.errors?.message}}</span>

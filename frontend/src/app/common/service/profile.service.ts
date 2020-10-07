@@ -364,9 +364,9 @@ export class ProfileService {
     return items;
   }
 
-  public prepareProfileForm(): FormGroup {
+  public prepareProfileForm(email: string): FormGroup {
     return this._formBuilder.group({
-      email: this._formBuilder.control({value: this._profile.email, disabled: true}),
+      email: this._formBuilder.control({value: email, disabled: true}),
       oldPassword: ['', Validators.required],
       newPassword: this._formBuilder.control({value: '', disabled: true}, [Validators.required, Validators.minLength(3)]),
       newPasswordAgain: this._formBuilder.control({value: '', disabled: true}, [Validators.required, Validators.minLength(3)])

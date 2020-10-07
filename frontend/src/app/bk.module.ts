@@ -62,7 +62,6 @@ import { GoalSortPipe } from './common/pipes/goal-sort.pipe';
 import { CurrenciesComponent } from './settings/currencies/currencies.component';
 import { AccountsComponent } from './settings/accounts/accounts.component';
 import { CategoriesComponent } from './settings/categories/categories.component';
-import { ProfileComponent } from './settings/profile/profile.component';
 import { CurrencyDetailSortPipe } from './common/pipes/currency-detail-sort.pipe';
 import { BalanceDialogComponent } from './settings/accounts/balance-dialog/balance-dialog.component';
 import { AuthenticationService } from './common/service/authentication.service';
@@ -107,6 +106,9 @@ import { LoginPageEffects } from './common/redux/effects/pages/login-page.effect
 import { CurrencyEffects } from './common/redux/effects/currency.effects';
 import { UserEffects } from './common/redux/effects/user.effects';
 import { SummaryEffects } from './common/redux/effects/summary.effects';
+import { ProfileFormComponent } from './settings/profile-container/profile-form/profile-form.component';
+import { ProfileContainerComponent } from './settings/profile-container/profile-container.component';
+import { SettingsProfilePageEffects } from './common/redux/effects/pages/settings/settings-profile-page.effects';
 
 @NgModule({
   declarations: [
@@ -147,7 +149,7 @@ import { SummaryEffects } from './common/redux/effects/summary.effects';
     CurrenciesComponent,
     AccountsComponent,
     CategoriesComponent,
-    ProfileComponent,
+    ProfileContainerComponent,
     CurrencyDetailSortPipe,
     BalanceDialogComponent,
     AccountCategoryDialogComponent,
@@ -183,7 +185,8 @@ import { SummaryEffects } from './common/redux/effects/summary.effects';
     ToggleComponent,
     AuthenticationContainerComponent ,
     AuthenticationComponent,
-    RegistrationComponent
+    RegistrationComponent,
+    ProfileFormComponent
   ],
   imports: [
     BrowserModule,
@@ -231,7 +234,8 @@ import { SummaryEffects } from './common/redux/effects/summary.effects';
       LoginPageEffects,
       UserEffects,
       CurrencyEffects,
-      SummaryEffects
+      SummaryEffects,
+      SettingsProfilePageEffects
     ])
   ],
   entryComponents: [

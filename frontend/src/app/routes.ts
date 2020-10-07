@@ -6,7 +6,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { CurrenciesComponent } from './settings/currencies/currencies.component';
 import { AccountsComponent } from './settings/accounts/accounts.component';
 import { CategoriesComponent } from './settings/categories/categories.component';
-import { ProfileComponent } from './settings/profile/profile.component';
 import { UsersComponent } from './users/users.component';
 import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
@@ -15,6 +14,7 @@ import { DevicesComponent } from './settings/devices/devices.component';
 import { AuthenticationContainerComponent } from './authentication/authentication-container/authentication-container.component';
 import { AdminGuard } from './common/guards/admin.guard';
 import { AuthenticationGuard } from './common/guards/authentication.guard';
+import { ProfileContainerComponent } from './settings/profile-container/profile-container.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -83,7 +83,7 @@ export const BOOKKEEPING_ROUTES: Route[] = [
       },
       {
         path: 'profile',
-        component: ProfileComponent,
+        component: ProfileContainerComponent,
         data: {title: 'Бухгалтерия - настройки - профиль'}
       },
       {

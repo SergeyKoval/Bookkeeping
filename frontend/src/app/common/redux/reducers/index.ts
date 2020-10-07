@@ -2,12 +2,14 @@ import { ActionReducer, ActionReducerMap, MetaReducer } from '@ngrx/store';
 
 import { environment } from '../../../../environments/environment';
 import * as fromLoginPage from './pages/login-page.reducer';
+import * as fromSettingsPage from './pages/settings';
 import * as fromUser from './user';
 import * as fromCurrencies from './currency.reducer';
 
 export {
   fromUser,
   fromLoginPage,
+  fromSettingsPage,
   fromCurrencies
 };
 
@@ -28,6 +30,7 @@ export interface Alert {
 
 export const reducers: ActionReducerMap<BkState> = {
   [fromLoginPage.LOGIN_PAGE_FEATURE_KEY]: fromLoginPage.REDUCER,
+  [fromSettingsPage.SETTINGS_PAGE_FEATURE_KEY]: fromSettingsPage.REDUCERS,
   [fromUser.USER_FEATURE_KEY]: fromUser.REDUCERS,
   [fromCurrencies.CURRENCIES_FEATURE_KEY]: fromCurrencies.REDUCER
 };

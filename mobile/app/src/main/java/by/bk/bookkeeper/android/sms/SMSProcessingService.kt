@@ -49,7 +49,11 @@ class SMSProcessingService : Service() {
             stopSelf()
         }
         if (intent?.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
-            processSms(intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>, intent.extras?.getString(INTENT_PDU_FORMAT))
+            processSms(
+                    wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
+                    pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
+                    format = intent.extras?.getString(INTENT_PDU_FORMAT)
+            )
         }
         startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
         return START_STICKY
@@ -102,7 +106,7 @@ class SMSProcessingService : Service() {
                 action = targetAction
             }, 0)
 
-    private fun processSms(pdus: Array<*>?, format: String?) {
+    private fun processSms(wakelockId: Int, pdus: Array<*>?, format: String?) {
         val associationInfo: List<AssociationInfo> = SmsPreferenceProvider.getAssociationsFromStorage()
         val receivedSms: HashMap<String, ReceivedSms> = hashMapOf()
         val matchedSms: ArrayList<MatchedSms> = arrayListOf()
@@ -133,15 +137,17 @@ class SMSProcessingService : Service() {
             }
         }
         if (matchedSms.isNotEmpty()) {
-            sendSMSRequest(matchedSms)
+            sendSMSRequest(wakelockId, matchedSms)
         } else {
             Timber.d("No matches found")
+            SMSReceiver.completeWakefulIntent(wakelockId)
         }
     }
 
-    private fun sendSMSRequest(matchedSms: List<MatchedSms>) {
+    private fun sendSMSRequest(wakelockId: Int, matchedSms: List<MatchedSms>) {
         disposables.add(bkService.sendSmsToServerSingle(matchedSms)
                 .subscribeOn(Schedulers.io())
+                .doFinally { SMSReceiver.completeWakefulIntent(wakelockId) }
                 .subscribeWith(smsRequestSingleDisposableObserver(matchedSms))
         )
     }

@@ -31,9 +31,9 @@ import java.util.stream.Stream;
 public class NbrbJob {
     private static final Log LOG = LogFactory.getLog(NbrbJob.class);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-    private static final String USD_URL = "http://www.nbrb.by/API/ExRates/Rates/USD?ParamMode=2";
-    private static final String EUR_URL = "http://www.nbrb.by/API/ExRates/Rates/EUR?ParamMode=2";
-    private static final String RUB_URL = "http://www.nbrb.by/API/ExRates/Rates/RUB?ParamMode=2";
+    private static final String USD_URL = "https://www.nbrb.by/API/ExRates/Rates/USD?ParamMode=2";
+    private static final String EUR_URL = "https://www.nbrb.by/API/ExRates/Rates/EUR?ParamMode=2";
+    private static final String RUB_URL = "https://www.nbrb.by/API/ExRates/Rates/RUB?ParamMode=2";
     private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.0000", DecimalFormatSymbols.getInstance(Locale.US));
     private static final BiFunction<Currency, Double, Map.Entry<Currency, Double>> CONVERSION_ENTRY =
             (currency, value) -> new AbstractMap.SimpleEntry<>(currency, Double.parseDouble(CURRENCY_FORMAT.format(value)));

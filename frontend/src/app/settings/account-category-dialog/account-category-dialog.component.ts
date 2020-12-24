@@ -17,7 +17,7 @@ export class AccountCategoryDialogComponent implements OnInit {
   public accountIcons: string[] = ['payok.gif', 'avtokarta.gif', 'alfa.gif', 'belagro.gif', 'belarusbank.gif', 'belgazprom1.gif'
     , 'parents.gif', 'collega.gif', 'rabotnik.gif', 'kwallet.gif', 'Money.gif', 'other_exp.gif', 'idea.png', 'bta.jpg'
     , 'tehnobank.png', 'status.png', 'moskva-minsk.png', 'bps.jpg', 'paritet.jpg', 'prior.png', 'belveb.png', 'bsb.gif'
-    , 'vtb.png', 'bnb.png', 'belinvest.jpg', 'mtb.png'];
+    , 'vtb.png', 'bnb.png', 'belinvest.jpg', 'mtb.png', 'klever.png'];
   public categoryIcons: string[] = ['twinpalm.gif', 'eating.gif', 'shopping.gif', 'health.gif', 'rock-and-roll.gif', 'income.gif'
     , 'kredit.gif', 'avto.gif', 'deti.gif', 'home.gif', 'plane.gif', 'mouse.png', 'ruler.png', 'work.png', 'gift.png'];
   public title: string;

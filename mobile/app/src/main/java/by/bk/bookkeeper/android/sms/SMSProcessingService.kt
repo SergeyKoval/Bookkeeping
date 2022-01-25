@@ -11,7 +11,6 @@ import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
 import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.BaseResponse
-import by.bk.bookkeeper.android.sms.ReceivedSms.Companion.createFromPdu
 import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.sms.receiver.SMSReceiver
@@ -107,35 +106,9 @@ class SMSProcessingService : Service() {
             }, 0)
 
     private fun processSms(wakelockId: Int, pdus: Array<*>?, format: String?) {
+        val receivedSms: HashMap<String, ReceivedSms> = SMSProcessor.createFromPdus(pdus, format)
         val associationInfo: List<AssociationInfo> = SmsPreferenceProvider.getAssociationsFromStorage()
-        val receivedSms: HashMap<String, ReceivedSms> = hashMapOf()
-        val matchedSms: ArrayList<MatchedSms> = arrayListOf()
-        pdus?.forEach { pdu ->
-            val sms = createFromPdu(pdu as ByteArray, format) ?: return
-            val originatingAddress = sms.originatingAddress
-            if (!receivedSms.containsKey(originatingAddress)) {
-                receivedSms[originatingAddress] = sms
-            } else {
-                receivedSms[originatingAddress]?.apply { body += sms.body }
-            }
-        }
-        receivedSms.forEach { entry ->
-            entry.value.run {
-                Timber.d("SMS processing from $senderName")
-                associationInfo.forEach { association ->
-                    association.smsTemplatesList.forEach { template ->
-                        if (template.senderName.equals(senderName, ignoreCase = true)) {
-                            val sms = SMS(senderName = senderName, body = body, dateReceived = dateReceived)
-                            template.bodyTemplate?.let {
-                                if (body.contains(template.bodyTemplate, ignoreCase = true)) {
-                                    matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
-                                }
-                            } ?: matchedSms.add(MatchedSms(association.accountName, association.subAccountName, sms))
-                        }
-                    }
-                }
-            }
-        }
+        val matchedSms: ArrayList<MatchedSms> = SMSProcessor.mapToAssociations(receivedSms, associationInfo)
         if (matchedSms.isNotEmpty()) {
             sendSMSRequest(wakelockId, matchedSms)
         } else {

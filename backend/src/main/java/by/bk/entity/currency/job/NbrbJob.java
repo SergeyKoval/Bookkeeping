@@ -67,7 +67,7 @@ public class NbrbJob {
     }
 
 
-    @Scheduled(fixedDelay = 3600000)
+//    @Scheduled(fixedDelay = 3600000)
     public void getFreshCurrencies() {
 //        populateUserBudgetJob.populateBudgetForAllUsers();
         LocalDate today = LocalDate.now();

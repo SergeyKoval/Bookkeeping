@@ -1,16 +1,25 @@
 package by.bk.bookkeeper.android.sms
 
 import android.Manifest.permission
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.IBinder
 import android.telephony.SmsMessage
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.BookkeeperService
+import by.bk.bookkeeper.android.network.request.LogRequest
 import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.BaseResponse
+import by.bk.bookkeeper.android.push.PushListenerService
 import by.bk.bookkeeper.android.sms.ReceivedSms.Companion.createFromPdu
 import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
@@ -28,6 +37,7 @@ import timber.log.Timber
 
 class SMSProcessingService : Service() {
 
+    private lateinit var pushReceiver: PushBroadcastReceiver
     private val bkService: BookkeeperService = Injection.provideBookkeeperService()
     private val disposables = CompositeDisposable()
     private val notificationBuilder by lazy { createNotificationBuilder() }
@@ -39,6 +49,11 @@ class SMSProcessingService : Service() {
         PeriodicSMSScheduler.schedule(context = this)
         observePendingSms()
         observeUnprocessedSms()
+
+        pushReceiver = PushBroadcastReceiver()
+        registerReceiver(pushReceiver, IntentFilter().apply {
+            addAction(PushListenerService.ACTION_ON_NOTIFICATION_POSTED)
+        })
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -50,9 +65,9 @@ class SMSProcessingService : Service() {
         }
         if (intent?.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
             processSms(
-                    wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
-                    pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
-                    format = intent.extras?.getString(INTENT_PDU_FORMAT)
+                wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
+                pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
+                format = intent.extras?.getString(INTENT_PDU_FORMAT)
             )
         }
         startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
@@ -60,17 +75,22 @@ class SMSProcessingService : Service() {
     }
 
     private fun observePendingSms() {
-        disposables.add(SmsPreferenceProvider.getPendingSmsObservable()
+        disposables.add(
+            SmsPreferenceProvider.getPendingSmsObservable()
                 .subscribeOn(Schedulers.io())
                 .subscribe { pendingSms ->
-                    updateNotification(notificationBuilder
+                    updateNotification(
+                        notificationBuilder
                             .setContentText(
-                                    if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size)
-                                    else applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)
+                                if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size)
+                                else applicationContext.getString(R.string.msg_service_notification_waiting_for_sms)
                             )
-                            .setContentIntent(createPendingIntent(
+                            .setContentIntent(
+                                createPendingIntent(
                                     if (pendingSms.isNotEmpty()) AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
-                                    else AccountingActivity.ACTION_EXTERNAL_HOME))
+                                    else AccountingActivity.ACTION_EXTERNAL_HOME
+                                )
+                            )
                             .build()
                     )
                 }
@@ -104,7 +124,7 @@ class SMSProcessingService : Service() {
     private fun createPendingIntent(targetAction: String): PendingIntent = PendingIntent.getActivity(this, SERVICE_REQUEST_CODE,
             Intent(this, AccountingActivity::class.java).apply {
                 action = targetAction
-            }, 0)
+            }, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
 
     private fun processSms(wakelockId: Int, pdus: Array<*>?, format: String?) {
         val associationInfo: List<AssociationInfo> = SmsPreferenceProvider.getAssociationsFromStorage()
@@ -152,6 +172,13 @@ class SMSProcessingService : Service() {
         )
     }
 
+    private fun sendLog(logRequest: LogRequest) {
+        disposables.add(bkService.sendLog(logRequest)
+            .subscribeOn(Schedulers.io())
+            .subscribe({ /*ignore*/ }, { /*ignore*/ })
+        )
+    }
+
     private fun smsRequestSingleDisposableObserver(matchedSms: List<MatchedSms>): DisposableSingleObserver<BaseResponse> {
         return object : DisposableSingleObserver<BaseResponse>() {
             override fun onSuccess(t: BaseResponse) {
@@ -166,17 +193,33 @@ class SMSProcessingService : Service() {
     }
 
     private fun createNotificationChannel() {
-        getSystemService(NotificationManager::class.java)?.createNotificationChannel(NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
+        getSystemService(NotificationManager::class.java)?.createNotificationChannel(
+            NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW
+            )
+        )
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(pushReceiver)
         disposables.clear()
     }
 
     override fun onBind(intent: Intent): IBinder? = null
+
+    inner class PushBroadcastReceiver : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == PushListenerService.ACTION_ON_NOTIFICATION_POSTED) {
+                intent.getStringExtra(PushListenerService.PUSH_MESSAGE_LOG)?.let { log ->
+                    Timber.i("PUSH: $log")
+                    sendLog(LogRequest(log))
+                }
+            }
+        }
+    }
 
     companion object {
         private const val SERVICE_NOTIFICATION_ID = 1209

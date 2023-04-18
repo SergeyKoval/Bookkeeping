@@ -52,4 +52,6 @@
     <string name="msg_sms_status_no_pending_sms">No pending sms</string>
     <string name="msg_sms_status_account_subaccount_info">Account: %s, subaccount: %s</string>
 
+    <string name="notification_service_label" translatable="false">Notification Service</string>
+
 </resources>

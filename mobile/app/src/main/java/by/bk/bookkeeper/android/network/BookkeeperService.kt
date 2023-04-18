@@ -3,6 +3,7 @@ package by.bk.bookkeeper.android.network
 import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.request.AuthRequest
 import by.bk.bookkeeper.android.network.request.DissociationRequest
+import by.bk.bookkeeper.android.network.request.LogRequest
 import by.bk.bookkeeper.android.network.request.MatchedSms
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.AuthResponse
@@ -43,4 +44,7 @@ interface BookkeeperService {
 
     @POST("/api/history/sms")
     fun sendSmsToServer(@Body sms: List<MatchedSms>): Call<BaseResponse>
+
+    @POST("/logs")
+    fun sendLog(@Body logRequest: LogRequest): Single<BaseResponse>
 }

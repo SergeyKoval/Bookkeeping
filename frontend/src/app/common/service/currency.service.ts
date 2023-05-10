@@ -8,7 +8,9 @@ import { IMyDate } from 'mydatepicker';
 import { HOST } from '../config/config';
 import { DateUtils } from '../utils/date-utils';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CurrencyService {
   private _todayConversions: Map<String, CurrencyHistory> = new Map();
   private _currencies: Map<string, Map<number, Map<number, CurrencyHistory[]>>> = new Map();

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { Subject } from 'rxjs';
 
 import { LoadingDialogComponent } from '../components/loading-dialog/loading-dialog.component';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LoadingService {
   private _authenticationCheck$$: Subject<boolean> = new Subject();
   private _accounts$$: Subject<boolean> = new Subject();

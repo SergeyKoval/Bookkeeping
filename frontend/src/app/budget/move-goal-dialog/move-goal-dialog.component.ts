@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { filter, tap } from 'rxjs/operators';
 
@@ -9,6 +8,7 @@ import { LoadingService } from '../../common/service/loading.service';
 import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { ProfileService } from '../../common/service/profile.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'bk-move-goal-dialog',

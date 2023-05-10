@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/internal/operators';
 import { Observable, Subject } from 'rxjs';

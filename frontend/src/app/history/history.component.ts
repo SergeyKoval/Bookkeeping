@@ -1,6 +1,5 @@
 import { AfterViewChecked, Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';

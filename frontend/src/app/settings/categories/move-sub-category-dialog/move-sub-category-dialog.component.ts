@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { filter, tap } from 'rxjs/operators';
 
@@ -8,6 +7,7 @@ import { LoadingService } from '../../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../../common/components/loading-dialog/loading-dialog.component';
 import { AlertService } from '../../../common/service/alert.service';
 import { AlertType } from '../../../common/model/alert/AlertType';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'bk-move-sub-category-dialog',

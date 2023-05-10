@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
 import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HistoryService {
   public constructor(
     private _http: HttpClient,

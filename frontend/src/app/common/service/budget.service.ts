@@ -11,7 +11,9 @@ import { CurrencyService } from './currency.service';
 import { CategoryWrapper } from '../model/budget/CategoryWrapper';
 import { GoalWrapper } from '../model/budget/GoalWrapper';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class BudgetService {
 
   public constructor(

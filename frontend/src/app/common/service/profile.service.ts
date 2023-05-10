@@ -13,7 +13,9 @@ import { CurrencyService } from './currency.service';
 import { AlertService } from './alert.service';
 import { AlertType } from '../model/alert/AlertType';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ProfileService implements CanActivate {
   private _observableProfile: Observable<Profile>;
   private _authenticatedProfile: Profile;

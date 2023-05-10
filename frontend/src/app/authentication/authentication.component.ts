@@ -28,7 +28,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
   public codeSent: boolean = false;
   public unsupportedBrowser: boolean;
 
-  @ViewChild('formRef', {static : false})
+  @ViewChild('formRef')
   private _FORM_REF: HTMLFormElement;
   private _AUTHENTICATION_LOADING_SUBSCRIPTION: Subscription;
   private _APPLICATION_LOADING_SUBSCRIPTION: Subscription;

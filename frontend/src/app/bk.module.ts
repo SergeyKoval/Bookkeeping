@@ -3,10 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { MatDialogModule, MatProgressSpinnerModule, MatSlideToggleModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { PopoverModule } from 'ngx-popover';
+// import { PopoverModule } from 'ngx-popover';
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MyDatePickerModule } from 'mydatepicker';
@@ -97,6 +96,9 @@ import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog
 import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/device-sms-dialog.component';
 import { SmsAssignDialogComponent } from './history/sms-assign-dialog/sms-assign-dialog.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -189,7 +191,7 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     MatProgressSpinnerModule,
     MatDialogModule,
     MatSlideToggleModule,
-    PopoverModule,
+    // PopoverModule,
     MyDatePickerModule,
     MyDateRangePickerModule,
     ChartsModule,
@@ -198,24 +200,6 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
       prefix: 'Bookkeeper',
       storageType: 'localStorage'
     })
-  ],
-  entryComponents: [
-    ConfirmDialogComponent,
-    HistoryEditDialogComponent,
-    LoadingDialogComponent,
-    AlternativeCurrenciesDialogComponent,
-    AccountCategoryDialogComponent,
-    BalanceDialogComponent,
-    UserDialogComponent,
-    PlanBudgetDialogComponent,
-    MoveGoalDialogComponent,
-    MoveSubCategoryDialogComponent,
-    CategoryStatisticsDialogComponent,
-    CloseMonthDialogComponent,
-    DeviceMailDialogComponent,
-    DeviceNameDialogComponent,
-    DeviceSmsDialogComponent,
-    SmsAssignDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

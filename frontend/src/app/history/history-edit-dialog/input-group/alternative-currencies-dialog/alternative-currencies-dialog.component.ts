@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { isNumeric } from 'rxjs/internal/util/isNumeric';
 
 import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
 import { ProfileService } from '../../../../common/service/profile.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'bk-alternative-currencies-dialog',

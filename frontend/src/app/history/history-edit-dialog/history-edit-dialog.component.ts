@@ -1,5 +1,4 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { Observable } from 'rxjs';
 import { filter, tap } from 'rxjs/internal/operators';
@@ -14,6 +13,7 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyValuePipe } from '../../common/pipes/currency-value.pipe';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'bk-history-edit-dialog',

@@ -1,8 +1,8 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material';
 
 import { CurrencyUtils } from '../../utils/currency-utils';
 import { CurrencyValuePipe } from '../../pipes/currency-value.pipe';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'bk-input-calculator',
@@ -85,9 +85,9 @@ export class InputCalculatorComponent implements OnInit {
   }
 
   public getInputClass(showCalculator: boolean): string {
-    return `form-control 
-            ${showCalculator && (this.position === 'right' || this.position === 'middle') ? 'no-left-radius' : ''} 
-            ${!showCalculator && (this.position === 'left' || this.position === 'middle') ? 'no-right-radius' : ''} 
+    return `form-control
+            ${showCalculator && (this.position === 'right' || this.position === 'middle') ? 'no-left-radius' : ''}
+            ${!showCalculator && (this.position === 'left' || this.position === 'middle') ? 'no-right-radius' : ''}
             ${InputCalculatorComponent.checkValueValidationClass(this._INPUT.value)}`;
   }
 

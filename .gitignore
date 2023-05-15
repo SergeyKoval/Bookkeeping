@@ -52,4 +52,12 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/frontend/node_modules/
+/frontend/node_modules/*
+/frontend/.angular/*
+/frontend/dist/*
+/frontend/node/*
+/frontend/bookkeeper-frontend.iml
+/backend/target/*
+/bookkeeper-parent.iml
+/frontend/target/maven-archiver/pom.properties
+/frontend/package-lock.json

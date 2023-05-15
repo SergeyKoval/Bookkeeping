@@ -1,8 +1,7 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { filter, tap } from 'rxjs/internal/operators';
-import { IMyDate, IMyDateModel, IMyDpOptions } from 'mydatepicker';
+import { IAngularMyDpOptions, IMyDate, IMyDateModel } from 'angular-mydatepicker';
 
 import { HistoryService } from '../../common/service/history.service';
 import { CurrencyService } from '../../common/service/currency.service';
@@ -14,6 +13,17 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyValuePipe } from '../../common/pipes/currency-value.pipe';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { HistoryType } from '../../common/model/history/history-type';
+import { CurrencyDetail } from '../../common/model/currency-detail';
+import { SelectItem } from '../../common/components/select/select-item';
+import { Category } from '../../common/model/category';
+import { GoalDetails } from '../../common/model/budget/goal-details';
+import { Profile } from '../../common/model/profile';
+import { FinAccount } from '../../common/model/fin-account';
+import { Sms } from '../../common/model/history/sms';
+import { HistoryBalanceType } from '../../common/model/history/history-balance-type';
+import { SimpleResponse } from '../../common/model/simple-response';
+import { filter, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'bk-history-edit-dialog',
@@ -21,7 +31,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./history-edit-dialog.component.css']
 })
 export class HistoryEditDialogComponent implements OnInit {
-  public datePickerOptions: IMyDpOptions = {dateFormat: 'dd.mm.yyyy', inline: true, selectorWidth: '210px', selectorHeight: '210px'};
+  public datePickerOptions: IAngularMyDpOptions = {dateFormat: 'dd.mm.yyyy', inline: true, selectorWidth: '210px', selectorHeight: '210px'};
 
   public errors: string;
   public historyItem: HistoryType;
@@ -89,7 +99,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   public onDateChanged(event: IMyDateModel): void {
     this._titleElement.nativeElement.click();
-    const date: IMyDate = event.date;
+    const date: IMyDate = event.singleDate.date;
     if (date.day !== this.selectedDate.day || date.month !== this.selectedDate.month || date.year !== this.selectedDate.year) {
       if ((this.selectedDate.month !== date.month || this.selectedDate.year !== date.year)
         && !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, date)) {

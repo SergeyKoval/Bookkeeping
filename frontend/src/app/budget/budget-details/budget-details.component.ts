@@ -1,8 +1,7 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { filter, switchMap, tap } from 'rxjs/internal/operators';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, switchMap } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { CurrencyService } from '../../common/service/currency.service';
@@ -14,6 +13,14 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { PlanBudgetDialogComponent } from '../plan-budget-dialog/plan-budget-dialog.component';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { MoveGoalDialogComponent } from '../move-goal-dialog/move-goal-dialog.component';
+import { Budget } from '../../common/model/budget/budget';
+import { MonthProgress } from '../../common/model/budget/month-progress';
+import { BudgetDetails } from '../../common/model/budget/budget-details';
+import { BudgetBalance } from '../../common/model/budget/budget-balance';
+import { BudgetGoal } from '../../common/model/budget/budget-goal';
+import { BudgetCategory } from '../../common/model/budget/budget-category';
+import { SimpleResponse } from '../../common/model/simple-response';
+import { filter, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'bk-budget-details',

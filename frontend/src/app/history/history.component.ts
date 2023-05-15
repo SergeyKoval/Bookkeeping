@@ -16,6 +16,9 @@ import { CurrencyUtils } from '../common/utils/currency-utils';
 import { LoadingService } from '../common/service/loading.service';
 import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
 import { SmsAssignDialogComponent } from './sms-assign-dialog/sms-assign-dialog.component';
+import { HistoryType } from '../common/model/history/history-type';
+import { Device } from '../common/model/device';
+import { SimpleResponse } from '../common/model/simple-response';
 
 @Component({
   selector: 'bk-history',

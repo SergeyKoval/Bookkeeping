@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'bk-authentication-input',
@@ -8,7 +8,7 @@ import { FormControl } from '@angular/forms';
 })
 export class InputComponent {
   @Input()
-  public input: FormControl;
+  public input: UntypedFormControl;
   @Input()
   public type: string;
   @Input()

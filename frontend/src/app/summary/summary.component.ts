@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { LoadingService } from '../common/service/loading.service';
 import { ProfileService } from '../common/service/profile.service';
+import { CurrencyDetail } from '../common/model/currency-detail';
+import { FinAccount } from '../common/model/fin-account';
 
 @Component({
   selector: 'bk-summary',

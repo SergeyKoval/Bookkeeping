@@ -20,6 +20,10 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 import { LoadingService } from '../../common/service/loading.service';
 import { BudgetService } from '../../common/service/budget.service';
 import { HistoryService } from '../../common/service/history.service';
+import { HistoryType } from '../../common/model/history/history-type';
+import { Profile } from '../../common/model/profile';
+import { SimpleResponse } from '../../common/model/simple-response';
+import { Category } from '../../common/model/category';
 
 @Component({
   selector: 'bk-report-actions',

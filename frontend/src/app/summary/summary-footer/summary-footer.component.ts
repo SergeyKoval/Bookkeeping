@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { FinAccount } from '../../common/model/fin-account';
+import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
   selector: 'bk-summary-footer',

@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ProfileService } from '../service/profile.service';
+import { CurrencyDetail } from '../model/currency-detail';
 
 @Pipe({
   name: 'currencySort'

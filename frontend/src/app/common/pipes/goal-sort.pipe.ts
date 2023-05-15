@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { BudgetService } from '../service/budget.service';
+import { BudgetGoal } from '../model/budget/budget-goal';
 
 @Pipe({
   name: 'goalSort'

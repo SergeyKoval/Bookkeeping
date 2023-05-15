@@ -10,6 +10,13 @@ import { GoalFilterType } from '../model/history/GoalFilterType';
 import { CurrencyService } from './currency.service';
 import { CategoryWrapper } from '../model/budget/CategoryWrapper';
 import { GoalWrapper } from '../model/budget/GoalWrapper';
+import { Budget } from '../model/budget/budget';
+import { SimpleResponse } from '../model/simple-response';
+import { BudgetBalance } from '../model/budget/budget-balance';
+import { BudgetStatistic } from '../model/budget/budget-statistic';
+import { CurrencyDetail } from '../model/currency-detail';
+import { BudgetDetails } from '../model/budget/budget-details';
+import { BudgetGoal } from '../model/budget/budget-goal';
 
 @Injectable({
   providedIn: 'root'

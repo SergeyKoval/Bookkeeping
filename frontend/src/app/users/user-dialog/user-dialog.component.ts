@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/index';
 
 import { UsersService } from '../../common/service/users.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
   selector: 'bk-user-dialog',

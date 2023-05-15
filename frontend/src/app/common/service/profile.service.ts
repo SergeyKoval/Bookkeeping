@@ -3,15 +3,24 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
-import { Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
-import { switchMap } from 'rxjs/internal/operators';
 
-import { LoadingService } from 'app/common/service/loading.service';
 import { AssetImagePipe } from '../pipes/asset-image.pipe';
 import { CurrencyService } from './currency.service';
 import { AlertService } from './alert.service';
 import { AlertType } from '../model/alert/AlertType';
+import { Profile } from '../model/profile';
+import { CurrencyDetail } from '../model/currency-detail';
+import { FinAccount } from '../model/fin-account';
+import { Category } from '../model/category';
+import { SubCategory } from '../model/sub-category';
+import { SubAccount } from '../model/sub-account';
+import { CurrencyHistory } from '../model/currency-history';
+import { SimpleResponse } from '../model/simple-response';
+import { SelectItem } from '../components/select/select-item';
+import { BalanceItem } from '../model/balance-item';
+import { LoadingService } from './loading.service';
 
 @Injectable({
   providedIn: 'root'

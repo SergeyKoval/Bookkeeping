@@ -2,11 +2,13 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/internal/operators';
-import { IMyDate } from 'mydatepicker';
+import { IMyDate } from 'angular-mydatepicker';
 
 import { HOST } from '../config/config';
 import { DateUtils } from '../utils/date-utils';
+import { CurrencyHistory } from '../model/currency-history';
+import { CurrencyDetail } from '../model/currency-detail';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -42,11 +44,12 @@ export class CurrencyService {
                 .reduce((first: CurrencyHistory, second: CurrencyHistory) => first.day > second.day ? first : second);
               this._todayConversions.set(currency, todayConversions);
             }
-          });}),
+          });
+        }),
         tap((currencyHistories: CurrencyHistory[]) => {
           currencyHistories.forEach(currencyHistory => {
             let currencyYears: Map<number, Map<number, CurrencyHistory[]>>;
-            let currency = currencyHistory.name;
+            const currency: string = currencyHistory.name;
             if (this._currencies.has(currency)) {
               currencyYears = this._currencies.get(currency);
             } else {
@@ -62,7 +65,7 @@ export class CurrencyService {
             }
 
             let currencyMonths: Map<number, CurrencyHistory[]>;
-            let year = request.year;
+            const year: number = request.year;
             if (currencyYears.has(year)) {
               currencyMonths = currencyYears.get(year);
             } else {

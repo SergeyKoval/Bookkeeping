@@ -1,3 +1,7 @@
+import { HistoryBalanceType } from './history-balance-type';
+import { HistoryType } from './history-type';
+import { Sms } from './sms';
+
 export class HistoryItem {
   public constructor(
     public originalItem: HistoryType,

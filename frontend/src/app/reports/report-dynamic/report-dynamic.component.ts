@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IMyDate } from 'mydatepicker';
-import { ChartDataSets } from 'chart.js';
+import { IMyDate } from 'angular-mydatepicker';
+import { ChartDataset } from 'chart.js';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { ProfileService } from '../../common/service/profile.service';
@@ -12,6 +12,9 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { AlertService } from '../../common/service/alert.service';
 import { DateUtils } from '../../common/utils/date-utils';
 import { ReportService } from '../../common/service/report.service';
+import { CurrencyDetail } from '../../common/model/currency-detail';
+import { Profile } from '../../common/model/profile';
+import { DynamicReport } from '../../common/model/report/dynamic-report';
 
 @Component({
   selector: 'bk-report-dynamic',
@@ -22,7 +25,7 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
   public loading: boolean;
   public operationsFilter: MultiLevelDropdownItem[];
   public defaultCurrency: CurrencyDetail;
-  public lineChartData: ChartDataSets[];
+  public lineChartData: ChartDataset[];
   public lineChartLabels: string[];
 
   public constructor(
@@ -33,7 +36,8 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
   ) {
     super(_profileService, _imagePipe);
     this.datePickerOptions.dateFormat = 'mm.yyyy';
-    this.datePickerOptions.width = '190px';
+    this.datePickerOptions.selectorWidth = '190px';
+    // this.datePickerOptions.width = '190px';
   }
 
   public ngOnInit(): void {

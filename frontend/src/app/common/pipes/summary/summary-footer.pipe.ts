@@ -2,6 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { BaseSummaryPipe } from './baseSummaryPipe';
 import { CurrencyService } from '../../service/currency.service';
+import { FinAccount } from '../../model/fin-account';
+import { CurrencyDetail } from '../../model/currency-detail';
+import { BalanceItem } from '../../model/balance-item';
 
 @Pipe({
   name: 'summaryFooter'

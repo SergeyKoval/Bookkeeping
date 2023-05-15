@@ -9,6 +9,9 @@ import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { ProfileService } from '../../common/service/profile.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { BudgetBalance } from '../../common/model/budget/budget-balance';
+import { Budget } from '../../common/model/budget/budget';
+import { BudgetGoal } from '../../common/model/budget/budget-goal';
 
 @Component({
   selector: 'bk-move-goal-dialog',

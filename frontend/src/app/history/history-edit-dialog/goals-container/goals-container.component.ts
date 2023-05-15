@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { IMyDate } from 'mydatepicker';
+import { IMyDate } from 'angular-mydatepicker';
 
 import { BudgetService } from '../../../common/service/budget.service';
 import { GoalFilterType } from '../../../common/model/history/GoalFilterType';
@@ -10,6 +10,15 @@ import { DateUtils } from '../../../common/utils/date-utils';
 import { ConfirmDialogService } from '../../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
 import { ProfileService } from '../../../common/service/profile.service';
+import { HistoryType } from '../../../common/model/history/history-type';
+import { GoalDetails } from '../../../common/model/budget/goal-details';
+import { MonthProgress } from '../../../common/model/budget/month-progress';
+import { BudgetCategory } from '../../../common/model/budget/budget-category';
+import { BudgetGoal } from '../../../common/model/budget/budget-goal';
+import { Budget } from '../../../common/model/budget/budget';
+import { Sms } from '../../../common/model/history/sms';
+import { BudgetBalance } from '../../../common/model/budget/budget-balance';
+import { HistoryBalanceType } from '../../../common/model/history/history-balance-type';
 
 @Component({
   selector: 'bk-goals-container',

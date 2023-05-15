@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ProfileService } from '../../../common/service/profile.service';
 import { AlertService } from '../../../common/service/alert.service';
 import { AlertType } from '../../../common/model/alert/AlertType';
+import { Sms } from '../../../common/model/history/sms';
 
 @Component({
   selector: 'bk-device-sms-dialog',

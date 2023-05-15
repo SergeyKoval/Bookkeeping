@@ -11,6 +11,10 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { BalanceDialogComponent } from './balance-dialog/balance-dialog.component';
 import { LoadingService } from '../../common/service/loading.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
+import { Profile } from '../../common/model/profile';
+import { FinAccount } from '../../common/model/fin-account';
+import { SubAccount } from '../../common/model/sub-account';
+import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
   selector: 'bk-accounts',

@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { BalanceDialogComponent } from '../accounts/balance-dialog/balance-dialog.component';
+import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
   selector: 'bk-account-category-dialog',

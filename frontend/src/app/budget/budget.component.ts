@@ -8,6 +8,9 @@ import { BudgetService } from '../common/service/budget.service';
 import { PlanBudgetDialogComponent } from './plan-budget-dialog/plan-budget-dialog.component';
 import { CloseMonthDialogComponent } from './close-month-dialog/close-month-dialog.component';
 import { LoadingService } from '../common/service/loading.service';
+import { Budget } from '../common/model/budget/budget';
+import { MonthProgress } from '../common/model/budget/month-progress';
+import { BudgetCategory } from '../common/model/budget/budget-category';
 
 @Component({
   selector: 'bk-budget',

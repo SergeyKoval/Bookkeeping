@@ -8,6 +8,7 @@ import { LoadingDialogComponent } from '../../../common/components/loading-dialo
 import { AlertService } from '../../../common/service/alert.service';
 import { AlertType } from '../../../common/model/alert/AlertType';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Category } from '../../../common/model/category';
 
 @Component({
   selector: 'bk-move-sub-category-dialog',

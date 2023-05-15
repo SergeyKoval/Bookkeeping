@@ -1,23 +1,24 @@
-import { IMyDateRangeModel, IMyDrpOptions } from 'mydaterangepicker';
-
 import { ProfileService } from '../common/service/profile.service';
 import { MultiLevelDropdownItem } from '../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { CheckboxState } from '../common/components/three-state-checkbox/CheckboxState';
 import { AssetImagePipe } from '../common/pipes/asset-image.pipe';
 import { DateUtils } from '../common/utils/date-utils';
+import { FinAccount } from '../common/model/fin-account';
+import { Category } from '../common/model/category';
+import { IAngularMyDpOptions, IMyDateRangeModel } from 'angular-mydatepicker';
 
 export abstract class BaseReport {
   public periodFilter: IMyDateRangeModel;
-  public datePickerOptions: IMyDrpOptions = {
+  public datePickerOptions: IAngularMyDpOptions = {
     dateFormat: 'dd.mm.yyyy',
     inline: false,
     dayLabels: DateUtils.DAY_LABELS,
     monthLabels: DateUtils.MONTH_LABELS,
-    selectBeginDateTxt: 'Выберите начало периода',
-    selectEndDateTxt: 'Выберите конец периода',
-    width: '225px',
-    height: '32px',
+    dateRange: true,
+    // selectBeginDateTxt: 'Выберите начало периода',
+    // selectEndDateTxt: 'Выберите конец периода',
     selectorWidth: '225px',
+    selectorHeight: '32px',
     disableSince: {year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() + 1}
   };
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
 import { ProfileService } from '../../common/service/profile.service';
 import { AlertService } from '../../common/service/alert.service';
@@ -11,7 +11,7 @@ import { AlertType } from '../../common/model/alert/AlertType';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  public profileForm: FormGroup;
+  public profileForm: UntypedFormGroup;
   public submitIndicator: boolean = false;
 
   public constructor(
@@ -23,8 +23,8 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this._profileService.prepareProfileForm();
   }
 
-  public changeOldPasswordValue(oldPassword: FormControl): void {
-    const newPassword: AbstractControl = this.profileForm.controls.newPassword;
+  public changeOldPasswordValue(oldPassword: AbstractControl): void {
+    const newPassword = this.profileForm.controls.newPassword;
     if (oldPassword.value !== '') {
       newPassword.enable();
       if (newPassword.value !== '') {
@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  public changeNewPasswordValue(newPassword: FormControl): void {
+  public changeNewPasswordValue(newPassword: AbstractControl): void {
     if (newPassword.value !== '' && this.profileForm.controls.oldPassword.value !== '') {
       this.profileForm.controls.newPasswordAgain.enable();
     } else {
@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit {
   }
 
   private disableNewPasswordAgain(): void {
-    const newPasswordAgain: AbstractControl = this.profileForm.controls.newPasswordAgain;
+    const newPasswordAgain = this.profileForm.controls.newPasswordAgain;
     newPasswordAgain.disable();
     newPasswordAgain.setValue('');
   }

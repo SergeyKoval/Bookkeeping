@@ -1,6 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { CurrencyService } from '../../service/currency.service';
+import { CurrencyDetail } from '../../model/currency-detail';
+import { BalanceItem } from '../../model/balance-item';
 
 @Pipe({
   name: 'summaryBodySubAccount'

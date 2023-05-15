@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { IMyDate } from 'mydatepicker';
+import { IMyDate } from 'angular-mydatepicker';
 
 @Injectable()
 export class DateUtils {

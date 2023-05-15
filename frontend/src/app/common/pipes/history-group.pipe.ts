@@ -4,6 +4,7 @@ import { HistoryGroup } from '../model/history/HistoryGroup';
 import { DateUtils } from '../utils/date-utils';
 import { HistoryItem } from '../model/history/HistoryItem';
 import { ProfileService } from '../service/profile.service';
+import { HistoryType } from '../model/history/history-type';
 
 @Pipe({
   name: 'historyGroup'

@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 
 import { HOST } from '../config/config';
 import { ProfileService } from './profile.service';
+import { HistoryType } from '../model/history/history-type';
+import { SimpleResponse } from '../model/simple-response';
 
 @Injectable({
   providedIn: 'root'

@@ -13,6 +13,7 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { DeviceNameDialogComponent } from './device-name-dialog/device-name-dialog.component';
 import { DeviceSmsDialogComponent } from './device-sms-dialog/device-sms-dialog.component';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { Device } from '../../common/model/device';
 
 @Component({
   selector: 'bk-devices',

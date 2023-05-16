@@ -11,6 +11,7 @@ import by.bk.bookkeeper.android.actionSnackbar
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_accounting.view.toolbar
 
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
@@ -30,10 +31,18 @@ abstract class BaseFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = getString(getToolbarTitle())
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (showToolbarBackButton()) {
+            view?.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_back)
+        }
+    }
+
     protected fun showErrorSnackbar(failure: FailureWrapper) {
         activity?.findViewById<View>(R.id.accounting_root_coordinator_layout)?.actionSnackbar(
-                messageRes = failure.messageStringRes,
-                length = Snackbar.LENGTH_LONG) {
+            messageRes = failure.messageStringRes,
+            length = Snackbar.LENGTH_LONG
+        ) {
             action(R.string.action_retry_loading) {
                 retryLoading()
             }
@@ -51,9 +60,12 @@ abstract class BaseFragment : Fragment() {
         super.onDestroyView()
     }
 
+    protected open fun showToolbarBackButton(): Boolean = false
+
     abstract fun retryLoading()
 
-    abstract fun getTAG(): String
+    abstract fun getFragmentTag(): String
+
     @StringRes
     abstract fun getToolbarTitle(): Int
 }

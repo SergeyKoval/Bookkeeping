@@ -37,7 +37,6 @@
 
     <string name="toolbar_title_accounts">Accounts</string>
     <string name="toolbar_title_sms_status">SMS Status</string>
-    <string name="toolbar_title_associating">Associating</string>
     <string name="hint_paste_template">Paste sms template here (optional)</string>
 
     <string name="msg_service_notification_sms_processing">SMS processing</string>
@@ -56,5 +55,16 @@
 
     <string name="notification_listener_service_title">Notification Listener Service</string>
     <string name="notification_listener_service_explanation">To be able to process push notifications you need to enable the Notification Listener Service. Enable it now?</string>
+    <string name="association_type_push">Push Notification</string>
+    <string name="association_type_sms">SMS</string>
+    <string name="association_type_push_description">Associate Push Notification</string>
+    <string name="association_type_sms_description">Associate SMS</string>
+    <string name="toolbar_title_association_type">Association Type</string>
+
+    <string name="toolbar_title_associating_sms">Associate SMS</string>
+    <string name="toolbar_title_associating_push">Associate Push Notifications</string>
+    <string name="hint_push_package_name">Push notification sender (application name) </string>
+    <string name="hint_push_content_template">Push notification text template (optional)</string>
+    <string name="push_package_invalid_name">Incorrect push notification sender app name</string>
 
 </resources>

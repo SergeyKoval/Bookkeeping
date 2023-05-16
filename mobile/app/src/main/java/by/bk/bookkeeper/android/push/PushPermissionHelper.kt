@@ -12,8 +12,8 @@ object PushPermissionHelper {
     private const val ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners"
     private const val ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
 
-    fun isNotificationServiceEnabled(context: Context): Boolean = Settings.Secure
-        .getString(context.contentResolver, ENABLED_NOTIFICATION_LISTENERS)?.contains(context.packageName) == true
+    fun isNotificationServiceEnabled(context: Context): Boolean =
+        Settings.Secure.getString(context.contentResolver, ENABLED_NOTIFICATION_LISTENERS)?.contains(context.packageName) == true
 
     fun buildPushAccessSettingsPrompt(context: Context): AlertDialog = AlertDialog.Builder(context).apply {
         setTitle(R.string.notification_listener_service_title)

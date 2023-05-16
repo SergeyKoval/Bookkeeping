@@ -37,7 +37,6 @@
 
     <string name="toolbar_title_accounts">Счета</string>
     <string name="toolbar_title_sms_status">Статус SMS</string>
-    <string name="toolbar_title_associating">Ассоциация</string>
     <string name="hint_paste_template">Вставьте шаблон SMS для ассоциации (опционально)</string>
 
     <string name="msg_service_notification_sms_processing">Обработка SMS</string>
@@ -51,5 +50,14 @@
     <string name="msg_sms_status_server_unprocessed_response_date_time">Последнее успешное обновление: %s</string>
     <string name="msg_sms_status_no_pending_sms">Нет SMS, находящихся в очереди</string>
     <string name="msg_sms_status_account_subaccount_info">Счет: %s, субсчет: %s</string>
+
+    <!--    TOOO  translates-->
+    <string name="notification_listener_service_title">Сервис обработки уведомлений</string>
+    <string name="notification_listener_service_explanation">Для того, чтобы обрабатывать пуш уведомления вам необходимо активировать сервис обработки уведомлений. Активировать его сейчас?</string>
+    <string name="association_type_push">Уведомление</string>
+    <string name="association_type_sms">СМС</string>
+    <string name="toolbar_title_association_type">Тип ассоциации</string>
+    <string name="association_type_push_description">Ассоциация уведомления</string>
+    <string name="association_type_sms_description">Ассоциация СМС</string>
 
 </resources>

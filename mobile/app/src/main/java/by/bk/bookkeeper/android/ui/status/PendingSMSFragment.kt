@@ -79,13 +79,15 @@ class PendingSMSFragment : BaseFragment() {
 
     override fun retryLoading() = pendingSmsViewModel.sendSmsToServer()
 
-    override fun getTAG() = TAG
+    override fun getFragmentTag(): String = TAG
 
     override fun getToolbarTitle(): Int = R.string.toolbar_title_sms_status
 
+    override fun showToolbarBackButton(): Boolean = true
+
     companion object {
 
-        val TAG = PendingSMSFragment::class.java.simpleName
+        internal val TAG = PendingSMSFragment::class.java.simpleName
         fun newInstance() = PendingSMSFragment()
     }
 }

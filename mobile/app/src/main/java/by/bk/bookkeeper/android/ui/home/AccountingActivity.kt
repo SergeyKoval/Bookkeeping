@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
+import by.bk.bookkeeper.android.push.PushPermissionHelper
 import by.bk.bookkeeper.android.sms.SMSProcessingService
 import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
 import by.bk.bookkeeper.android.ui.BaseActivity
@@ -19,8 +20,10 @@ import by.bk.bookkeeper.android.ui.LogoutConfirmationDialog
 import com.google.android.material.navigation.NavigationView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_accounting.*
-import kotlinx.android.synthetic.main.activity_accounting_nav_header.view.*
+import kotlinx.android.synthetic.main.activity_accounting.drawer_layout
+import kotlinx.android.synthetic.main.activity_accounting.nav_view
+import kotlinx.android.synthetic.main.activity_accounting.toolbar
+import kotlinx.android.synthetic.main.activity_accounting_nav_header.view.tv_user_email
 
 class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         NavigationView.OnNavigationItemSelectedListener,
@@ -73,6 +76,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     override fun onResume() {
         super.onResume()
+        showPushAccessSettingsPromptIfNeeded()
         subscriptionsDisposable.addAll(
                 viewModel.isSessionValid()
                         .observeOn(AndroidSchedulers.mainThread())
@@ -129,6 +133,12 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         }
     }
 
+    private fun showPushAccessSettingsPromptIfNeeded() {
+        if (!PushPermissionHelper.isNotificationServiceEnabled(this)) {
+            PushPermissionHelper.buildPushAccessSettingsPrompt(this).show()
+        }
+    }
+
     companion object {
 
         const val INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED = "activity_launched"
@@ -138,10 +148,9 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
         private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 
-        fun getStartIntent(fromPackageContext: Context): Intent =
-                Intent(fromPackageContext, AccountingActivity::class.java).also {
-                    it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+        fun getStartIntent(fromPackageContext: Context): Intent = Intent(fromPackageContext, AccountingActivity::class.java).also {
+            it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
     }
 
 }

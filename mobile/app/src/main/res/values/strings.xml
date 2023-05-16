@@ -54,4 +54,7 @@
 
     <string name="notification_service_label" translatable="false">Notification Service</string>
 
+    <string name="notification_listener_service_title">Notification Listener Service</string>
+    <string name="notification_listener_service_explanation">To be able to process push notifications you need to enable the Notification Listener Service. Enable it now?</string>
+
 </resources>

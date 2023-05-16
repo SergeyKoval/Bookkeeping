@@ -215,7 +215,6 @@ class SMSProcessingService : Service() {
             if (intent?.action == PushListenerService.ACTION_ON_NOTIFICATION_POSTED) {
                 intent.getStringExtra(PushListenerService.PUSH_MESSAGE_LOG)?.let { log ->
                     Timber.i("PUSH: $log")
-                    sendLog(LogRequest(log))
                 }
             }
         }

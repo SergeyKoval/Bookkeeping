@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class ApplicationLinkEmailPreparator extends BaseEmailPreparator {
     private static final String SUBJECT = "Мобильное приложение Бухгалтерии";
-    private static final String BODY_TEMPLATE = "<div>Мобильное приложение для отслеживания входящих SMS: <a href='%s'>%s</a></div>";
+    private static final String BODY_TEMPLATE = "<div>Мобильное приложение для отслеживания входящих сообщений: <a href='%s'>%s</a></div>";
 
     @Value("${bookkeeper.host}")
     private String bookkeeperHost;

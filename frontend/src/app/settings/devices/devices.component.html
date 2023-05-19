@@ -32,7 +32,7 @@
           <div class="col-md-7 col-sm-6">{{device.value.name}}</div>
           <div class="col-md-2 col-sm-2 sm-padding">
             <bk-popover glyphiconClass="pencil" text="Изменить имя" placement="left" (click)="openChangeNameDialog(device.value, device.key)"></bk-popover>
-            <bk-popover glyphiconClass="list" text="Sms" placement="left" (click)="openProcessedSmsDialog(device.value, device.key)"></bk-popover>
+            <bk-popover glyphiconClass="list" text="Сообщение" placement="left" (click)="openProcessedDeviceMessageDialog(device.value, device.key)"></bk-popover>
             <bk-popover glyphiconClass="alert" text="Разлогинить девайс" placement="left" (click)="confirmDeviceLogout(device.key)"></bk-popover>
             <bk-popover glyphiconClass="remove" text="Удалить девайс" placement="left" (click)="confirmDeviceRemove(device.key)"></bk-popover>
           </div>

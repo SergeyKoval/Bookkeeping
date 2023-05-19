@@ -6,7 +6,7 @@ import lombok.Getter;
  * @author Sergey Koval
  */
 @Getter
-public class AssignSmsRequest {
-    private String smsItemId;
+public class AssignDeviceMessageRequest {
+    private String deviceMessageId;
     private String historyItemId;
 }

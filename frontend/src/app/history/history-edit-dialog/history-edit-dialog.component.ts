@@ -20,7 +20,7 @@ import { Category } from '../../common/model/category';
 import { GoalDetails } from '../../common/model/budget/goal-details';
 import { Profile } from '../../common/model/profile';
 import { FinAccount } from '../../common/model/fin-account';
-import { Sms } from '../../common/model/history/sms';
+import { DeviceMessage } from '../../common/model/history/deviceMessage';
 import { HistoryBalanceType } from '../../common/model/history/history-balance-type';
 import { SimpleResponse } from '../../common/model/simple-response';
 import { filter, tap } from 'rxjs/operators';
@@ -52,7 +52,7 @@ export class HistoryEditDialogComponent implements OnInit {
   private _originalHistoryItem: HistoryType;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean, fromSms: boolean},
+    @Inject(MAT_DIALOG_DATA) public data: {historyItem: HistoryType, editMode: boolean, fromDeviceMessage: boolean},
     private _dialogRef: MatDialogRef<HistoryEditDialogComponent>,
     private _historyService: HistoryService,
     private _currencyService: CurrencyService,
@@ -72,7 +72,7 @@ export class HistoryEditDialogComponent implements OnInit {
     }
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
     this.selectedDate = {year: this.historyItem.year, month: this.historyItem.month, day: this.historyItem.day};
-    if (this.data.fromSms) {
+    if (this.data.fromDeviceMessage) {
       this.historyItem.balance.currency = this._profileService.defaultCurrency.name;
       this.historyItem.type = 'expense';
     }
@@ -131,7 +131,7 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public onChangeSelectedType(type: string): void {
-    if (!this.isTypeSelected(type) && (!this.data.editMode || this.data.fromSms)) {
+    if (!this.isTypeSelected(type) && (!this.data.editMode || this.data.fromDeviceMessage)) {
       if (this.selectedCategory) {
         this.selectedCategory.length = 0;
       }
@@ -245,7 +245,7 @@ export class HistoryEditDialogComponent implements OnInit {
   }
 
   public showGoalContainer(): boolean {
-    return this.data.fromSms || this.goalCouldBeCalculated();
+    return this.data.fromDeviceMessage || this.goalCouldBeCalculated();
   }
 
   public getSelectedCategoryTitle(): string {
@@ -254,12 +254,12 @@ export class HistoryEditDialogComponent implements OnInit {
 
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string,
-                             archived?: boolean, id?: string, sms?: Sms[]): HistoryType {
+                             archived?: boolean, id?: string, deviceMessages?: DeviceMessage[]): HistoryType {
 
     const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
     const result: HistoryType = {
       'id': id,
-      'sms': sms,
+      'deviceMessages': deviceMessages,
       'type': historyType,
       'year': year,
       'month': month,
@@ -336,7 +336,7 @@ export class HistoryEditDialogComponent implements OnInit {
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
     const balance: HistoryBalanceType = originalItem.balance;
     return this.initNewHistoryItem(historyType, originalItem.year, originalItem.month, originalItem.day, balance.value, balance.currency, balance.newCurrency,
-      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description, originalItem.archived, originalItem.id, originalItem.sms);
+      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description, originalItem.archived, originalItem.id, originalItem.deviceMessages);
   }
 
   private validateTransfer(): boolean {

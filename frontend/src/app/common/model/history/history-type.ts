@@ -1,5 +1,5 @@
 import { HistoryBalanceType } from './history-balance-type';
-import { Sms } from './sms';
+import { DeviceMessage } from './deviceMessage';
 
 export interface HistoryType {
   year: number;
@@ -15,5 +15,5 @@ export interface HistoryType {
   id?: string;
   archived: boolean;
   notProcessed?: boolean;
-  sms?: Sms[];
+  deviceMessages?: DeviceMessage[];
 }

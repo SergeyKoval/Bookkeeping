@@ -1,5 +1,6 @@
 package by.bk.controller.model.request;
 
+import by.bk.entity.user.model.DeviceSource;
 import lombok.Getter;
 
 /**
@@ -11,4 +12,5 @@ public class SubAccountAssignmentRequest {
     private String subAccount;
     private String sender;
     private String subAccountIdentifier;
+    private DeviceSource source;
 }

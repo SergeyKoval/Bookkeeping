@@ -101,13 +101,13 @@ hr {
   padding-bottom: 5px;
 }
 
-.sms-item {
+.device-message-item {
   padding-left: 5px;
   padding-right: 5px;
   font-size: 12px;
 }
 
-.sms-content {
+.device-message-content {
   font-size: 12px;
   word-break: break-word;
 }

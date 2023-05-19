@@ -411,8 +411,8 @@ export class ProfileService implements CanActivate {
     return this._http.post<SimpleResponse>('/api/profile/change-device-name', deviceDetails);
   }
 
-  public getDeviceSms(deviceId: string, smsIndex: number): Observable<SimpleResponse> {
-    return this._http.get<SimpleResponse>(`/api/history/devices/${deviceId}/sms/${smsIndex}`);
+  public getDeviceMessage(deviceId: string, deviceMessageIndex: number): Observable<SimpleResponse> {
+    return this._http.get<SimpleResponse>(`/api/history/devices/${deviceId}/messages/${deviceMessageIndex}`);
   }
 
   public logoutDevice(deviceId: string): Observable<SimpleResponse> {

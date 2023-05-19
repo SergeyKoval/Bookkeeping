@@ -88,8 +88,8 @@ import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.
 import { DevicesComponent } from './settings/devices/devices.component';
 import { DeviceMailDialogComponent } from './settings/devices/device-mail-dialog/device-mail-dialog.component';
 import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog/device-name-dialog.component';
-import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/device-sms-dialog.component';
-import { SmsAssignDialogComponent } from './history/sms-assign-dialog/sms-assign-dialog.component';
+import { DeviceMessageDialogComponent } from './settings/devices/device-message-dialog/device-message-dialog.component';
+import { DeviceMessageAssignDialogComponent } from './history/device-message-assign-dialog/device-message-assign-dialog.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -169,8 +169,8 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     DevicesComponent,
     DeviceMailDialogComponent,
     DeviceNameDialogComponent,
-    DeviceSmsDialogComponent,
-    SmsAssignDialogComponent,
+    DeviceMessageDialogComponent,
+    DeviceMessageAssignDialogComponent,
     ToggleComponent,
     InputComponent,
     SpinnerComponent

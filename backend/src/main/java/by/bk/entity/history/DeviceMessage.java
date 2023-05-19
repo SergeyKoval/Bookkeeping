@@ -1,5 +1,6 @@
 package by.bk.entity.history;
 
+import by.bk.entity.user.model.DeviceSource;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +11,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Sms {
+public class DeviceMessage {
     private String deviceId;
     private String sender;
-    private String fullSms;
-    private Long smsTimestamp;
+    private String fullText;
+    private Long messageTimestamp;
+    private DeviceSource source;
 }

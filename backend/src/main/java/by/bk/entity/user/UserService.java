@@ -732,7 +732,7 @@ public class UserService implements UserAPI, UserDetailsService {
     public SimpleResponse assignSubAccount(String login, String deviceId, SubAccountAssignmentRequest subAccountAssignment) {
         String accountTitle = subAccountAssignment.getAccount();
         String subAccountTitle = subAccountAssignment.getSubAccount();
-        DeviceAssociation deviceAssociation = new DeviceAssociation(subAccountAssignment.getSender(), subAccountAssignment.getSubAccountIdentifier());
+        DeviceAssociation deviceAssociation = new DeviceAssociation(subAccountAssignment.getSender(), subAccountAssignment.getSubAccountIdentifier(), subAccountAssignment.getSource());
 
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
@@ -768,7 +768,7 @@ public class UserService implements UserAPI, UserDetailsService {
 
         Query query = Query.query(Criteria.where("email").is(login));
         String key = StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".device.", deviceId);
-        Update update = new Update().pull(key, new DeviceAssociation(subAccountAssignment.getSender(), subAccountAssignment.getSubAccountIdentifier()));
+        Update update = new Update().pull(key, new DeviceAssociation(subAccountAssignment.getSender(), subAccountAssignment.getSubAccountIdentifier(), subAccountAssignment.getSource()));
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
         if (updateResult.getModifiedCount() != 1) {
             LOG.error("Error updating user profile - assign sub account. Number of updated items " + updateResult.getModifiedCount());

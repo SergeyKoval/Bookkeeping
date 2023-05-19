@@ -13,10 +13,10 @@
     </div>
     <div class="col-sm-8 right-column">
       <ul class="nav nav-tabs nav-justified">
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('expense'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('expense')"><a>Расход</a></li>
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('income'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('income')"><a>Доход</a></li>
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('transfer'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('transfer')"><a>Перевод</a></li>
-        <li role="presentation" [ngClass]="{'active': isTypeSelected('exchange'), 'disabled': data.editMode && !data.fromSms}" (click)="onChangeSelectedType('exchange')"><a>Обмен</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('expense'), 'disabled': data.editMode && !data.fromDeviceMessage}" (click)="onChangeSelectedType('expense')"><a>Расход</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('income'), 'disabled': data.editMode && !data.fromDeviceMessage}" (click)="onChangeSelectedType('income')"><a>Доход</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('transfer'), 'disabled': data.editMode && !data.fromDeviceMessage}" (click)="onChangeSelectedType('transfer')"><a>Перевод</a></li>
+        <li role="presentation" [ngClass]="{'active': isTypeSelected('exchange'), 'disabled': data.editMode && !data.fromDeviceMessage}" (click)="onChangeSelectedType('exchange')"><a>Обмен</a></li>
       </ul>
 
       <div class="form-row">
@@ -51,7 +51,7 @@
       </div>
     </div>
   </div>
-  <bk-goals-container [selectedCategory]="getSelectedCategoryTitle()" [selectedDate]="selectedDate" [editMode]="data.editMode" [fromSms]="data.fromSms"
+  <bk-goals-container [selectedCategory]="getSelectedCategoryTitle()" [selectedDate]="selectedDate" [editMode]="data.editMode" [fromDeviceMessage]="data.fromDeviceMessage"
                       [alternativeCurrencyLoading]="alternativeCurrencyLoading" [historyItem]="historyItem" [goalCouldBeCalculated]="goalCouldBeCalculated()"
                       (goalDetailsChange)="onGoalDetailsChange($event)" (originalGoalDetailsChange)="onOriginalGoalDetailsChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
 </mat-dialog-content>

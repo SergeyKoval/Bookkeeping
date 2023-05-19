@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 public class DeviceAssociation {
     private String sender;
     private String subAccountIdentifier;
+    private DeviceSource source;
 }

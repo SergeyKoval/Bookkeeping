@@ -18,8 +18,8 @@ export class HistoryService {
     @Inject(HOST) private _host: string
   ) {}
 
-  public loadHistoryItems(page: number, pageLimit: number, unprocessedSms: boolean): Observable<HistoryType[]> {
-    return this._http.post<HistoryType[]>('/api/history/page-portion', {'page': page, 'limit': pageLimit, 'unprocessedSms': unprocessedSms});
+  public loadHistoryItems(page: number, pageLimit: number, unprocessedDeviceMessages: boolean): Observable<HistoryType[]> {
+    return this._http.post<HistoryType[]>('/api/history/page-portion', {'page': page, 'limit': pageLimit, 'unprocessedDeviceMessages': unprocessedDeviceMessages});
   }
 
   public addHistoryItem(historyItem: HistoryType, changeGoalStatus: boolean): Observable<SimpleResponse> {
@@ -38,11 +38,11 @@ export class HistoryService {
     return this._http.post<SimpleResponse>('/api/history/day', {'year': year, 'month': month, 'day': day, 'direction': direction});
   }
 
-  public assignSmsWithHistoryItem(smsItemId: string, historyItemId: string): Observable<SimpleResponse>  {
-    return this._http.post<SimpleResponse>('/api/history/assign-sms', {'smsItemId': smsItemId, 'historyItemId': historyItemId});
+  public assignDeviceMessageWithHistoryItem(deviceMessageId: string, historyItemId: string): Observable<SimpleResponse>  {
+    return this._http.post<SimpleResponse>('/api/history/assign-device-message', {'deviceMessageId': deviceMessageId, 'historyItemId': historyItemId});
   }
 
-  public getUnprocessedSmsCount(): Observable<SimpleResponse> {
+  public getUnprocessedDeviceMessagesCount(): Observable<SimpleResponse> {
     return this._http.get<SimpleResponse>('/api/history/unprocessed-count');
   }
 }

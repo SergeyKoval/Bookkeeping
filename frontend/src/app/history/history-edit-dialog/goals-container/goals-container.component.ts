@@ -16,7 +16,7 @@ import { MonthProgress } from '../../../common/model/budget/month-progress';
 import { BudgetCategory } from '../../../common/model/budget/budget-category';
 import { BudgetGoal } from '../../../common/model/budget/budget-goal';
 import { Budget } from '../../../common/model/budget/budget';
-import { Sms } from '../../../common/model/history/sms';
+import { DeviceMessage } from '../../../common/model/history/deviceMessage';
 import { BudgetBalance } from '../../../common/model/budget/budget-balance';
 import { HistoryBalanceType } from '../../../common/model/history/history-balance-type';
 
@@ -35,7 +35,7 @@ export class GoalsContainerComponent implements OnInit {
   @Input()
   public alternativeCurrencyLoading: boolean;
   @Input()
-  public fromSms: boolean;
+  public fromDeviceMessage: boolean;
   @Input()
   public set selectedCategory(value: string) {
     if (this._selectedCategory !== value && this._budget) {
@@ -92,8 +92,8 @@ export class GoalsContainerComponent implements OnInit {
   public monthProgress: MonthProgress;
   public budgetCategory: BudgetCategory;
   public selectedGoal: BudgetGoal;
-  public smsTabSelected: boolean;
-  public selectedSmsIndex: number;
+  public deviceMessageTabSelected: boolean;
+  public selectedDeviceMessageIndex: number;
 
   private _budget: Budget;
   private _selectedCategory: string;
@@ -112,8 +112,8 @@ export class GoalsContainerComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.smsTabSelected = this.historyItem.sms && this.historyItem.sms.length > 0;
-    this.selectedSmsIndex = this.smsTabSelected ? 0 : null;
+    this.deviceMessageTabSelected = this.historyItem.deviceMessages && this.historyItem.deviceMessages.length > 0;
+    this.selectedDeviceMessageIndex = this.deviceMessageTabSelected ? 0 : null;
   }
 
   public getGoalCount(filterType: GoalFilterType): number {
@@ -205,13 +205,13 @@ export class GoalsContainerComponent implements OnInit {
     return goal.title === this.historyItem.goal;
   }
 
-  public getSmsTimestamp(sms: Sms): string {
-    const date: Date = new Date(sms.smsTimestamp);
+  public getDeviceMessageTimestamp(deviceMessage: DeviceMessage): string {
+    const date: Date = new Date(deviceMessage.messageTimestamp);
     return `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
   }
 
-  public getFormattedSms(): string {
-    return this.historyItem.sms[this.selectedSmsIndex].fullSms.split('\n').join('<br>');
+  public getFormattedDeviceMessage(): string {
+    return this.historyItem.deviceMessages[this.selectedDeviceMessageIndex].fullText.split('\n').join('<br>');
   }
 
   public get selectedCategory(): string {
@@ -233,7 +233,7 @@ export class GoalsContainerComponent implements OnInit {
       this._budget = budget;
       this.chooseBudgetCategory(budget);
 
-      if (this.editMode && !this.fromSms) {
+      if (this.editMode && !this.fromDeviceMessage) {
         if (this.historyItem.goal && !this._originalGoalDetails) {
           this.populateOriginalGoal(budget);
         }

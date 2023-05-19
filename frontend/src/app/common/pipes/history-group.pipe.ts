@@ -25,7 +25,7 @@ export class HistoryGroupPipe implements PipeTransform {
       }
       const historyGroup: HistoryGroup = historyGroupsMap.get(itemDateString);
       const historyItem: HistoryItem = new HistoryItem(item, item.order, item.type, item.category, item.subCategory
-        , item.description, item.balance, item.goal, item.archived, item.notProcessed, item.sms);
+        , item.description, item.balance, item.goal, item.archived, item.notProcessed, item.deviceMessages);
 
       switch (item.type) {
         case 'expense':

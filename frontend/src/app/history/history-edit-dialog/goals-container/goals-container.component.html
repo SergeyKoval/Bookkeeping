@@ -5,16 +5,16 @@
 <div class="row" [ngClass]="{'second-row': !goalCouldBeCalculated}">
   <div class="col-sm-4 left-column">
     <ul class="list-group goal-groups">
-      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': smsTabSelected}" (click)="smsTabSelected = true" *ngIf="historyItem.sms">Sms</li>
-      <ng-container *ngIf="smsTabSelected">
-        <a class="list-group-item sms-item" *ngFor="let sms of historyItem.sms; let smsIndex = index" (click)="selectedSmsIndex = smsIndex"
-           [ngClass]="{'goal-group-active': smsIndex === selectedSmsIndex}">
-          {{sms.sender}} ({{getSmsTimestamp(sms)}})
+      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': deviceMessageTabSelected}" (click)="deviceMessageTabSelected = true" *ngIf="historyItem.deviceMessages">Сообщения</li>
+      <ng-container *ngIf="deviceMessageTabSelected">
+        <a class="list-group-item device-message-item" *ngFor="let deviceMessage of historyItem.deviceMessages; let deviceMessageIndex = index" (click)="selectedDeviceMessageIndex = deviceMessageIndex"
+           [ngClass]="{'goal-group-active': deviceMessageIndex === selectedDeviceMessageIndex}">
+          {{deviceMessage.sender}} ({{getDeviceMessageTimestamp(deviceMessage)}})
         </a>
       </ng-container>
 
-      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': !smsTabSelected}" (click)="smsTabSelected = false" *ngIf="goalCouldBeCalculated">Цели</li>
-      <ng-container *ngIf="!smsTabSelected">
+      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': !deviceMessageTabSelected}" (click)="deviceMessageTabSelected = false" *ngIf="goalCouldBeCalculated">Цели</li>
+      <ng-container *ngIf="!deviceMessageTabSelected">
         <a *ngFor="let filterType of FILTER_TYPES" (click)="goalFilterType = filterType"
            [ngClass]="{'list-group-item': true, 'goal-group-active': goalFilterType === filterType}">
           <span *ngIf="!budgetLoading; else numberOfItemsLoadingIndicator" class="badge">{{getGoalCount(filterType)}}</span>{{filterType}}
@@ -24,7 +24,7 @@
   </div>
 
   <div class="col-sm-8 right-column">
-    <ng-container *ngIf="!smsTabSelected">
+    <ng-container *ngIf="!deviceMessageTabSelected">
       <bk-spinner [display]="budgetLoading || alternativeCurrencyLoading"></bk-spinner>
       <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
         <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType" >
@@ -47,8 +47,8 @@
         </div>
       </div>
     </ng-container>
-    <ng-container *ngIf="smsTabSelected">
-      <div class="sms-content" [innerHTML]="getFormattedSms()"></div>
+    <ng-container *ngIf="deviceMessageTabSelected">
+      <div class="device-message-content" [innerHTML]="getFormattedDeviceMessage()"></div>
     </ng-container>
   </div>
 </div>

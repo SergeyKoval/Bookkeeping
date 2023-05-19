@@ -1,6 +1,8 @@
 package by.bk.entity.history;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +21,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class HistoryItem {
     @Id
@@ -37,7 +41,7 @@ public class HistoryItem {
     private boolean archived;
     private boolean notProcessed;
     private String goal;
-    private List<Sms> sms;
+    private List<DeviceMessage> deviceMessages;
 
     @JsonIgnore
     Balance cloneBalance() {
@@ -55,15 +59,5 @@ public class HistoryItem {
         }
 
         return clonedBalance;
-    }
-
-    public HistoryItem(String user, int year, int month, int day, Balance balance, Sms sms) {
-        this.user = user;
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.notProcessed = Boolean.TRUE;
-        this.sms = Collections.singletonList(sms);
-        this.balance = balance;
     }
 }

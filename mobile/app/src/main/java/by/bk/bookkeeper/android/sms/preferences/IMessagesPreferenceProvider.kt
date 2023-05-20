@@ -1,6 +1,7 @@
 package by.bk.bookkeeper.android.sms.preferences
 
-import by.bk.bookkeeper.android.network.request.MatchedSms
+import by.bk.bookkeeper.android.network.dto.SourceType
+import by.bk.bookkeeper.android.network.request.ProcessedMessage
 import by.bk.bookkeeper.android.network.response.UnprocessedCountResponse
 import io.reactivex.Observable
 
@@ -8,11 +9,11 @@ import io.reactivex.Observable
  *  Created by Evgenia Grinkevich on 29, January, 2020
  **/
 
-interface ISmsPreferenceProvider {
+interface IMessagesPreferenceProvider {
 
-    fun getPendingSmsFromStorage(): List<MatchedSms>
+    fun getPendingMessagesFromStorage(): List<ProcessedMessage>
 
-    fun saveSMSToStorage(sms: List<MatchedSms>)
+    fun saveMessagesToStorage(sms: List<ProcessedMessage>)
 
     fun saveAssociationsToStorage(association: List<AssociationInfo>)
 
@@ -20,16 +21,18 @@ interface ISmsPreferenceProvider {
 
     fun getAssociationsFromStorage(): List<AssociationInfo>
 
-    fun deleteSMSFromStorage(sms: List<MatchedSms>)
+    fun deleteMessagesFromStorage(sms: List<ProcessedMessage>)
 
-    fun setShouldProcessReceivedSms(shouldProcess: Boolean)
+    fun setShouldProcessReceivedMessages(shouldProcess: Boolean)
 
-    fun getPendingSmsObservable(): Observable<List<MatchedSms>>
+    fun getPendingMessagesObservable(): Observable<List<ProcessedMessage>>
+
+    fun getPendingMessagesMapObservable(): Observable<Map<SourceType, List<ProcessedMessage>>>
 
     /** Indicates whether app should process receiving sms.
      *  In case of user manual logout, this value should return false
      */
-    fun getShouldProcessReceivedSms(): Boolean
+    fun getShouldProcessReceivedMessages(): Boolean
 
     fun saveUnprocessedResponseToStorage(response: UnprocessedCountResponse)
 

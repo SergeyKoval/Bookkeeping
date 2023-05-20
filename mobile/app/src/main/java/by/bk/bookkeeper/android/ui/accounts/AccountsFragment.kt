@@ -75,16 +75,18 @@ class AccountsFragment : BaseFragment() {
                         .subscribe { clickInfo ->
                             when (clickInfo) {
                                 is SubAccountRecyclerClick.RemoveAssociation -> {
-                                    accountsViewModel.removeAssociation(DissociationRequest(
+                                    accountsViewModel.removeAssociation(
+                                        DissociationRequest(
                                             accountName = clickInfo.account.title,
                                             subAccountName = clickInfo.subAccount.title,
                                             associationSender = clickInfo.association.sender,
-                                            associationTemplate = clickInfo.association.smsBodyTemplate
-                                    ))
+                                            associationTemplate = clickInfo.association.smsBodyTemplate,
+                                            source = clickInfo.association.sourceType
+                                        )
+                                    )
                                 }
                                 is SubAccountRecyclerClick.AddAssociation,
                                 is SubAccountRecyclerClick.EditAssociation -> {
-                                    //todo  wuf  impl specific case for edit association
                                     (activity as BookkeeperNavigation.NavigatorProvider).getNavigator()
                                         .showAssociationTypeFragment(
                                             AccountInfoHolder(

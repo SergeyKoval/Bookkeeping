@@ -7,12 +7,18 @@ import android.view.ViewGroup
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.fragmentScopeViewModel
+import by.bk.bookkeeper.android.hideKeyboard
+import by.bk.bookkeeper.android.network.dto.SourceType
+import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.ui.BaseFragment
+import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import kotlinx.android.synthetic.main.fragment_push_association.btn_associate_push
+import kotlinx.android.synthetic.main.fragment_push_association.edit_text_push_content
 import kotlinx.android.synthetic.main.fragment_push_association.edit_text_push_package
+import kotlinx.android.synthetic.main.fragment_push_association.push_layout_root
 
 /**
  *  Created by Evgenia Grinkevich on 20, May, 2023
@@ -40,7 +46,17 @@ class PushAssociationFragment : BaseFragment() {
             btn_associate_push.clicks().subscribe {
                 val userInput = edit_text_push_package.text?.toString()?.trim()
                 if (pushAssociationViewModel.validatePackageInput(userInput)) {
-                    //todo accountsViewModel.addAssociation()
+                    accountsViewModel.addAssociation(
+                        AssociationRequest(
+                            accountName = accountInfoHolder.accountName,
+                            subAccountName = accountInfoHolder.subAccountName,
+                            sender = edit_text_push_package.text?.toString() ?: "",
+                            associationString = edit_text_push_content.text?.toString(),
+                            source = SourceType.PUSH
+                        )
+                    )
+                    hideKeyboard(push_layout_root)
+                    (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
                 } else {
                     edit_text_push_package.error = getString(R.string.push_package_invalid_name)
                     edit_text_push_package.requestFocus()

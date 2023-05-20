@@ -9,9 +9,9 @@ import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
-import by.bk.bookkeeper.android.sms.preferences.AssociatedSMSInfo
+import by.bk.bookkeeper.android.sms.preferences.Association
 import by.bk.bookkeeper.android.sms.preferences.AssociationInfo
-import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
+import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -55,12 +55,12 @@ class AccountsViewModel(private val bkService: BookkeeperService) : BaseViewMode
                             val smsAssociations = responseList.flatMap { account ->
                                 account.subAccounts.map { subAccount ->
                                     AssociationInfo(accountName = account.title, subAccountName = subAccount.title,
-                                            smsTemplatesList = subAccount.associations.map {
-                                                AssociatedSMSInfo(senderName = it.sender, bodyTemplate = it.smsBodyTemplate)
+                                            associationList = subAccount.associations.map {
+                                                Association(senderName = it.sender, bodyTemplate = it.smsBodyTemplate)
                                             })
                                 }
                             }
-                            SmsPreferenceProvider.saveAssociationsToStorage(smsAssociations)
+                            SharedPreferencesProvider.saveAssociationsToStorage(smsAssociations)
                             accountsRequestState.onNext(if (responseList.isNotEmpty()) DataStatus.Success else DataStatus.Empty)
                         }, { error ->
                             Timber.e(error)

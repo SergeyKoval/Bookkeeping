@@ -54,7 +54,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".sms.SMSProcessingService" />
+        <service android:name="by.bk.bookkeeper.processor.ProcessingService" />
 
         <service
             android:name=".push.PushListenerService"

@@ -4,7 +4,7 @@ import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.request.AuthRequest
 import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.request.LogRequest
-import by.bk.bookkeeper.android.network.request.MatchedSms
+import by.bk.bookkeeper.android.network.request.ProcessedMessage
 import by.bk.bookkeeper.android.network.response.Account
 import by.bk.bookkeeper.android.network.response.AuthResponse
 import by.bk.bookkeeper.android.network.response.BaseResponse
@@ -28,10 +28,10 @@ interface BookkeeperService {
     fun getAccounts(): Single<List<Account>>
 
     @GET("/api/history/unprocessed-count")
-    fun getUnprocessedSmsCountSingle(): Single<UnprocessedCountResponse>
+    fun getUnprocessedSmsMessagesSingle(): Single<UnprocessedCountResponse>
 
     @GET("/api/history/unprocessed-count")
-    fun getUnprocessedSmsCount(): Call<UnprocessedCountResponse>
+    fun getUnprocessedMessagesCount(): Call<UnprocessedCountResponse>
 
     @POST("/api/profile/assign-sub-account")
     fun associateWithAccount(@Body associationRequest: AssociationRequest): Single<BaseResponse>
@@ -39,11 +39,17 @@ interface BookkeeperService {
     @POST("/api/profile/deassign-sub-account")
     fun dissociateFromAccount(@Body dissociationRequest: DissociationRequest): Single<BaseResponse>
 
-    @POST("/api/history/sms")
-    fun sendSmsToServerSingle(@Body sms: List<MatchedSms>): Single<BaseResponse>
+    @POST("/api/history/push")
+    fun sendPushesObservable(@Body pushes: List<ProcessedMessage>): Single<BaseResponse>
 
     @POST("/api/history/sms")
-    fun sendSmsToServer(@Body sms: List<MatchedSms>): Call<BaseResponse>
+    fun sendSmsObservable(@Body sms: List<ProcessedMessage>): Single<BaseResponse>
+
+    @POST("/api/history/push")
+    fun sendPushes(@Body pushes: List<ProcessedMessage>): Call<BaseResponse>
+
+    @POST("/api/history/sms")
+    fun sendSms(@Body sms: List<ProcessedMessage>): Call<BaseResponse>
 
     @POST("/logs")
     fun sendLog(@Body logRequest: LogRequest): Single<BaseResponse>

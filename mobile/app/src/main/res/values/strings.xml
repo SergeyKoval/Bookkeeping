@@ -22,8 +22,9 @@
     <string name="action_add_association">Add association</string>
     <string name="action_remove_association">Remove association</string>
     <string name="action_edit_association">Edit association</string>
+
     <string name="association_sender">Sender: %s</string>
-    <string name="association_sms_template">SMS template: %s</string>
+    <string name="association_template">Template: %s</string>
 
     <string name="err_association_removal_failed">Association removal failed</string>
     <string name="err_association_adding_failed">Association adding failed</string>
@@ -36,19 +37,25 @@
     <string name="msg_select_sms_sender">Please, select SMS sender from the list:</string>
 
     <string name="toolbar_title_accounts">Accounts</string>
-    <string name="toolbar_title_sms_status">SMS Status</string>
+    <string name="toolbar_title_messages_status">Messages Status</string>
     <string name="hint_paste_template">Paste sms template here (optional)</string>
 
     <string name="msg_service_notification_sms_processing">SMS processing</string>
     <string name="msg_service_pending_sms">%d sms are pending</string>
-    <string name="msg_service_notification_waiting_for_sms">Waiting for incoming sms</string>
+    <string name="msg_service_notification_waiting_for_messages">Waiting for incoming sms and push notifications</string>
     <string name="msg_service_notification_running">SMS processing service running</string>
 
     <string name="msg_sms_status_pending_sms_count">%d sms are pending, press button to send now</string>
-    <string name="msg_sms_status_server_unprocessed_count">Unprocessed sms count: %d</string>
-    <string name="msg_sms_status_server_unprocessed_count_unknown">Unprocessed sms count: unknown</string>
+    <string name="msg_sms_status_server_unprocessed_count">Unprocessed messages count: %d</string>
+    <string name="msg_sms_status_server_unprocessed_count_unknown">Unprocessed messages count: unknown</string>
+
+    <string name="msg_push_status_pending_push_count">%d pushes are pending, press button to send now</string>
+    <string name="msg_push_status_server_unprocessed_count">Unprocessed push count: %d</string>
+    <string name="msg_push_status_server_unprocessed_count_unknown">Unprocessed push count: unknown</string>
+
     <string name="msg_sms_status_server_unprocessed_response_date_time">Last successful update: %s</string>
     <string name="msg_sms_status_no_pending_sms">No pending sms</string>
+    <string name="msg_push_status_no_pending_pushes">No pending push notifications</string>
     <string name="msg_sms_status_account_subaccount_info">Account: %s, subaccount: %s</string>
 
     <string name="notification_service_label" translatable="false">Notification Service</string>

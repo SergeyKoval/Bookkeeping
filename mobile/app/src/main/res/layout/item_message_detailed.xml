@@ -13,14 +13,28 @@
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="Date sent" />
+        tools:text="DateSent" />
 
     <TextView
-        android:id="@+id/tv_sms_body"
+        android:id="@+id/tv_account_subaccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        tools:text="Account and subaccount" />
+
+    <TextView
+        android:id="@+id/tv_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_item_element_space"
         android:textIsSelectable="true"
-        tools:text="SMS body" />
+        tools:text="Sender" />
+
+    <TextView
+        android:id="@+id/tv_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/list_item_element_space"
+        tools:text="SMS Body" />
 
 </LinearLayout>

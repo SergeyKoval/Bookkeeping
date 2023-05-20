@@ -18,7 +18,6 @@ class AssociationsAdapter(private val account: Account,
                           private val clicksSubject: PublishSubject<SubAccountRecyclerClick>
 ) : RecyclerView.Adapter<AssociationViewHolder>() {
 
-
     override fun onBindViewHolder(holder: AssociationViewHolder, position: Int) {
         holder.setItem(associations[position])
     }

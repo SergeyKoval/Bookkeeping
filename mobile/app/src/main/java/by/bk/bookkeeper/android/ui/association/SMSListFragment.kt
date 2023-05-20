@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.hideKeyboard
+import by.bk.bookkeeper.android.network.dto.SourceType
 import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.sms.Conversation
@@ -20,8 +21,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_sms.btn_associate
 import kotlinx.android.synthetic.main.fragment_sms.edit_text_template
 import kotlinx.android.synthetic.main.fragment_sms.recycler_sms
-import kotlinx.android.synthetic.main.fragment_sms.sms_layout_root
 import kotlinx.android.synthetic.main.fragment_sms.sms_swipe_refresh
+import kotlinx.android.synthetic.main.fragment_sms.status_layout_root
 import kotlinx.android.synthetic.main.fragment_sms.text_input_template
 
 /**
@@ -60,11 +61,16 @@ class SMSListFragment : BaseFragment() {
             inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
         }
         btn_associate.setOnClickListener {
-            accountViewModel.addAssociation(AssociationRequest(accountName = accountInfoHolder.accountName,
+            accountViewModel.addAssociation(
+                AssociationRequest(
+                    accountName = accountInfoHolder.accountName,
                     subAccountName = accountInfoHolder.subAccountName,
                     sender = conversation.sender.address,
-                    associationString = edit_text_template.text?.toString()))
-            hideKeyboard(sms_layout_root)
+                    associationString = edit_text_template.text?.toString(),
+                    source = SourceType.SMS
+                )
+            )
+            hideKeyboard(status_layout_root)
             (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
         }
     }

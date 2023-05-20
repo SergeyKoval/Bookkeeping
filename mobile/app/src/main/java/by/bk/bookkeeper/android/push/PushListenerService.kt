@@ -1,24 +1,28 @@
 package by.bk.bookkeeper.android.push
 
+import android.app.Notification
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import by.bk.bookkeeper.android.util.Logger
 
 class PushListenerService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
-        val log = Logger.generateLog(sbn)
         sendBroadcast(Intent(ACTION_ON_NOTIFICATION_POSTED).apply {
-            putExtra(PUSH_MESSAGE_LOG, log)
+            putExtra(
+                PUSH_MESSAGE,
+                PushMessage(
+                    sbn.packageName ?: "",
+                    sbn.notification.extras?.getString(Notification.EXTRA_TEXT) ?: "",
+                    sbn.postTime
+                )
+            )
         })
     }
 
     companion object {
-        const val PUSH_TITLE_EXTRA = "PUSH_TITLE_EXTRA"
-        const val PUSH_MESSAGE_EXTRA = "PUSH_MESSAGE_EXTRA"
-        const val PUSH_MESSAGE_LOG = "PUSH_MESSAGE_LOG"
+        const val PUSH_MESSAGE = "PUSH_MESSAGE"
         const val ACTION_ON_NOTIFICATION_POSTED = "on_notification_posted"
     }
 

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
 import by.bk.bookkeeper.android.hideKeyboard
+import by.bk.bookkeeper.android.network.dto.SourceType
 import by.bk.bookkeeper.android.network.request.AssociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.sms.Conversation
@@ -17,8 +18,12 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_accounting.view.*
-import kotlinx.android.synthetic.main.fragment_sms.*
+import kotlinx.android.synthetic.main.fragment_sms.btn_associate
+import kotlinx.android.synthetic.main.fragment_sms.edit_text_template
+import kotlinx.android.synthetic.main.fragment_sms.recycler_sms
+import kotlinx.android.synthetic.main.fragment_sms.sms_swipe_refresh
+import kotlinx.android.synthetic.main.fragment_sms.status_layout_root
+import kotlinx.android.synthetic.main.fragment_sms.text_input_template
 
 /**
  *  Created by Evgenia Grinkevich on 04, February, 2020
@@ -47,7 +52,6 @@ class SMSListFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_back)
         recycler_sms.run {
             layoutManager = LinearLayoutManager(context)
             adapter = smsAdapter
@@ -57,11 +61,16 @@ class SMSListFragment : BaseFragment() {
             inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
         }
         btn_associate.setOnClickListener {
-            accountViewModel.addAssociation(AssociationRequest(accountName = accountInfoHolder.accountName,
+            accountViewModel.addAssociation(
+                AssociationRequest(
+                    accountName = accountInfoHolder.accountName,
                     subAccountName = accountInfoHolder.subAccountName,
                     sender = conversation.sender.address,
-                    associationString = edit_text_template.text?.toString()))
-            hideKeyboard(sms_layout_root)
+                    associationString = edit_text_template.text?.toString(),
+                    source = SourceType.SMS
+                )
+            )
+            hideKeyboard(status_layout_root)
             (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
         }
     }
@@ -69,22 +78,22 @@ class SMSListFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         subscriptionsDisposable.addAll(
-                inboxSmsViewModel.sms()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { smsList ->
-                            smsAdapter.setData(smsList)
-                        },
-                inboxSmsViewModel.smsLoadingState()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { dataStatus ->
-                            sms_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
-                            if (dataStatus is DataStatus.Error) {
-                                showErrorSnackbar(dataStatus.failure)
-                            }
-                        },
-                edit_text_template.textChanges()
-                        .skipInitialValue()
-                        .subscribe { text_input_template.error = null }
+            inboxSmsViewModel.sms()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { smsList ->
+                    smsAdapter.setData(smsList)
+                },
+            inboxSmsViewModel.smsLoadingState()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { dataStatus ->
+                    sms_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
+                    if (dataStatus is DataStatus.Error) {
+                        showErrorSnackbar(dataStatus.failure)
+                    }
+                },
+            edit_text_template.textChanges()
+                .skipInitialValue()
+                .subscribe { text_input_template.error = null }
         )
     }
 
@@ -92,13 +101,15 @@ class SMSListFragment : BaseFragment() {
         inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
     }
 
-    override fun getTAG() = TAG
+    override fun getFragmentTag(): String = TAG
 
-    override fun getToolbarTitle(): Int = R.string.toolbar_title_associating
+    override fun getToolbarTitle(): Int = R.string.toolbar_title_associating_sms
+
+    override fun showToolbarBackButton(): Boolean = true
 
     companion object {
 
-        val TAG = SMSListFragment::class.java.simpleName
+        private val TAG = SMSListFragment::class.java.simpleName
         private const val ARG_INFO_HOLDER = "arg_info_holder"
         private const val ARG_CONVERSATION = "arg_conversation"
 

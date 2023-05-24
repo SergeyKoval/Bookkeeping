@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.PowerManager
 import android.provider.Telephony
 import android.util.SparseArray
-import by.bk.bookkeeper.android.sms.SMSProcessingService
+import by.bk.bookkeeper.processor.ProcessingService
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -30,10 +30,10 @@ class SMSReceiver : BroadcastReceiver() {
                 )
                 wakeLock.acquire(TimeUnit.SECONDS.toMillis(30))
                 activeWakeLocks.put(id, wakeLock)
-                context.startForegroundService(Intent(context, SMSProcessingService::class.java).apply {
+                context.startForegroundService(Intent(context, ProcessingService::class.java).apply {
                     action = INTENT_ACTION_SMS_RECEIVED
-                    putExtra(SMSProcessingService.INTENT_PDU_EXTRA, intent.extras?.get("pdus") as? Array<*>)
-                    putExtra(SMSProcessingService.INTENT_PDU_FORMAT, intent.getStringExtra("format"))
+                    putExtra(ProcessingService.INTENT_PDU_EXTRA, intent.extras?.get("pdus") as? Array<*>?)
+                    putExtra(ProcessingService.INTENT_PDU_FORMAT, intent.getStringExtra("format"))
                     putExtra(EXTRA_WAKE_LOCK_ID, id)
                 })
                 Timber.w("WakeLock acquired for ${intent.action}, ID = $id")

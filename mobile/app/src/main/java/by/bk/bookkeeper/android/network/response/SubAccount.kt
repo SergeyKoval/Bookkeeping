@@ -1,6 +1,7 @@
 package by.bk.bookkeeper.android.network.response
 
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
+import by.bk.bookkeeper.android.network.dto.SourceType
 import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonObject
@@ -31,8 +32,13 @@ data class SubAccount(@SerializedName("device")
                         val jsonAssociations = entry.value as JsonArray
                         jsonAssociations.forEach {
                             val element = it.asJsonObject
-                            associations.add(Association(sender = element.get("sender").asString,
-                                    smsBodyTemplate = element.get("subAccountIdentifier").asString))
+                            associations.add(
+                                Association(
+                                    sender = element.get("sender").asString,
+                                    smsBodyTemplate = element.get("subAccountIdentifier").asString,
+                                    sourceType = SourceType.mapToSourceType(element.get("source")?.asString)
+                                )
+                            )
                         }
                     }
                 }

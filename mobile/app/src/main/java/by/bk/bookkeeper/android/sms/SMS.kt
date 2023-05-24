@@ -1,14 +1,10 @@
 package by.bk.bookkeeper.android.sms
 
-import com.google.gson.annotations.SerializedName
-
 /**
  *  Created by Evgenia Grinkevich on 30, January, 2020
  **/
-data class SMS(@SerializedName("fullSms")
-               val body: String,
-               @SerializedName("smsTimestamp")
-               val dateReceived: Long,
-               @SerializedName("sender")
-               val senderName: String
+data class SMS(
+    val body: String,
+    val dateReceived: Long,
+    val senderName: String
 )

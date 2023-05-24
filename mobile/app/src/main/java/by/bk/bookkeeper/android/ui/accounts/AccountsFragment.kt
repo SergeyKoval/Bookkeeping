@@ -14,8 +14,9 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_accounting.view.*
-import kotlinx.android.synthetic.main.fragment_accounts.*
+import kotlinx.android.synthetic.main.activity_accounting.view.toolbar
+import kotlinx.android.synthetic.main.fragment_accounts.account_swipe_refresh
+import kotlinx.android.synthetic.main.fragment_accounts.recycler_accounts
 
 
 /**
@@ -74,18 +75,25 @@ class AccountsFragment : BaseFragment() {
                         .subscribe { clickInfo ->
                             when (clickInfo) {
                                 is SubAccountRecyclerClick.RemoveAssociation -> {
-                                    accountsViewModel.removeAssociation(DissociationRequest(
+                                    accountsViewModel.removeAssociation(
+                                        DissociationRequest(
                                             accountName = clickInfo.account.title,
                                             subAccountName = clickInfo.subAccount.title,
                                             associationSender = clickInfo.association.sender,
-                                            associationTemplate = clickInfo.association.smsBodyTemplate
-                                    ))
+                                            associationTemplate = clickInfo.association.smsBodyTemplate,
+                                            source = clickInfo.association.sourceType
+                                        )
+                                    )
                                 }
                                 is SubAccountRecyclerClick.AddAssociation,
                                 is SubAccountRecyclerClick.EditAssociation -> {
                                     (activity as BookkeeperNavigation.NavigatorProvider).getNavigator()
-                                            .showConversationsFragment(AccountInfoHolder(accountName = clickInfo.account.title,
-                                                    subAccountName = clickInfo.subAccount.title))
+                                        .showAssociationTypeFragment(
+                                            AccountInfoHolder(
+                                                accountName = clickInfo.account.title,
+                                                subAccountName = clickInfo.subAccount.title
+                                            )
+                                        )
                                 }
                             }
                         }
@@ -96,11 +104,11 @@ class AccountsFragment : BaseFragment() {
 
     override fun getToolbarTitle(): Int = R.string.toolbar_title_accounts
 
-    override fun getTAG() = TAG
+    override fun getFragmentTag(): String = TAG
 
     companion object {
 
-        val TAG = AccountsFragment::class.java.simpleName
+        internal val TAG = AccountsFragment::class.java.simpleName
 
         fun newInstance() = AccountsFragment()
     }

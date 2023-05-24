@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
 import by.bk.bookkeeper.android.network.response.BaseResponse
-import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
+import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
 import timber.log.Timber
 
 /**
@@ -20,9 +20,9 @@ class UnprocessedSmsWorker(appContext: Context, workerParams: WorkerParameters) 
     override fun doWork(): Result {
         Timber.d("Unprocessed sms checker started")
         SessionDataProvider.getCurrentSessionData()?.token ?: return Result.failure()
-        val response = bkService.getUnprocessedSmsCount().execute()
+        val response = bkService.getUnprocessedMessagesCount().execute()
         return if (response.isSuccessful && response.body()?.status == BaseResponse.STATUS_SUCCESS) {
-            response.body()?.let { SmsPreferenceProvider.saveUnprocessedResponseToStorage(it) }
+            response.body()?.let { SharedPreferencesProvider.saveUnprocessedResponseToStorage(it) }
             Timber.d("Unprocessed SMS pending request SUCCESS")
             Result.success()
         } else {

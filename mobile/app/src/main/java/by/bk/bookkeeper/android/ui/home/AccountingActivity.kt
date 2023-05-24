@@ -10,17 +10,20 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
-import by.bk.bookkeeper.android.sms.SMSProcessingService
-import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
+import by.bk.bookkeeper.android.push.PushPermissionHelper
+import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
 import by.bk.bookkeeper.android.ui.BaseActivity
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.BookkeeperNavigator
 import by.bk.bookkeeper.android.ui.LogoutConfirmationDialog
+import by.bk.bookkeeper.processor.ProcessingService
 import com.google.android.material.navigation.NavigationView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_accounting.*
-import kotlinx.android.synthetic.main.activity_accounting_nav_header.view.*
+import kotlinx.android.synthetic.main.activity_accounting.drawer_layout
+import kotlinx.android.synthetic.main.activity_accounting.nav_view
+import kotlinx.android.synthetic.main.activity_accounting.toolbar
+import kotlinx.android.synthetic.main.activity_accounting_nav_header.view.tv_user_email
 
 class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         NavigationView.OnNavigationItemSelectedListener,
@@ -48,12 +51,12 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         }
         if (intent?.action != null) {
             when (intent.action) {
-                ACTION_EXTERNAL_SHOW_SMS_STATUS -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_status))
+                ACTION_EXTERNAL_SHOW_SMS_STATUS -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_status_messages))
                 else -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
             }
         } else {
             savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(
-                    if (SmsPreferenceProvider.getPendingSmsFromStorage().isNotEmpty()) R.id.nav_status
+                    if (SharedPreferencesProvider.getPendingMessagesFromStorage().isNotEmpty()) R.id.nav_status_messages
                     else R.id.nav_accounts))
         }
         nav_view.getHeaderView(0)?.tv_user_email?.text = SessionDataProvider.getCurrentUser()
@@ -61,7 +64,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
                 .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
                 .subscribe { granted ->
                     if (granted) {
-                        startForegroundService(Intent(this, SMSProcessingService::class.java).apply {
+                        startForegroundService(Intent(this, ProcessingService::class.java).apply {
                             action = INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED
                         })
                     } else {
@@ -69,6 +72,11 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
                     }
                 }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showPushAccessSettingsPromptIfNeeded()
     }
 
     override fun onResume() {
@@ -87,8 +95,8 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
             R.id.nav_accounts -> {
                 navigator.showAccountsFragment()
             }
-            R.id.nav_status -> {
-                navigator.showSmsStatusFragment()
+            R.id.nav_status_messages -> {
+                navigator.showMessagesStatusFragment()
             }
             R.id.nav_logout -> {
                 LogoutConfirmationDialog.show(this)
@@ -102,7 +110,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     override fun onLogoutConfirmed() {
         viewModel.logout()
-        startForegroundService(Intent(this, SMSProcessingService::class.java).apply {
+        startForegroundService(Intent(this, ProcessingService::class.java).apply {
             action = INTENT_ACTION_USER_LOGGED_OUT
         })
     }
@@ -129,6 +137,12 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         }
     }
 
+    private fun showPushAccessSettingsPromptIfNeeded() {
+        if (!PushPermissionHelper.isNotificationServiceEnabled(this)) {
+            PushPermissionHelper.buildPushAccessSettingsPrompt(this).show()
+        }
+    }
+
     companion object {
 
         const val INTENT_ACTION_ROOT_ACTIVITY_LAUNCHED = "activity_launched"
@@ -138,10 +152,9 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
         private const val KEY_NAV_MENU_SELECTION = "key_nav_menu_selection"
 
-        fun getStartIntent(fromPackageContext: Context): Intent =
-                Intent(fromPackageContext, AccountingActivity::class.java).also {
-                    it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+        fun getStartIntent(fromPackageContext: Context): Intent = Intent(fromPackageContext, AccountingActivity::class.java).also {
+            it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
     }
 
 }

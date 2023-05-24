@@ -4,8 +4,11 @@
         android:id="@+id/action_remove"
         android:icon="@drawable/ic_remove"
         android:title="@string/action_remove_association" />
+
+    <!-- Edit action is temporary disabled-->
     <item
         android:id="@+id/action_edit"
+        android:visible="false"
         android:icon="@drawable/ic_edit"
         android:title="@string/action_edit_association" />
 </menu>

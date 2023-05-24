@@ -23,7 +23,7 @@ class SMSAdapter : RecyclerView.Adapter<SMSViewHolder>() {
     fun getItem(position: Int): SMS = sms[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SMSViewHolder =
-            SMSViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_sms_body, parent, false))
+            SMSViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_message_body, parent, false))
 
     override fun getItemCount(): Int = sms.size
 

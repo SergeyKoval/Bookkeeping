@@ -17,13 +17,13 @@ export class HistoryPageActionsComponent {
   @Input()
   public disableMoreButton: boolean;
   @Input()
-  public unprocessedSms: boolean;
+  public unprocessedDeviceMessages: boolean;
   @Input()
-  public unprocessedSmsCount: number;
+  public unprocessedDeviceMessagesCount: number;
   @Output()
   public loadMore: EventEmitter<number> = new EventEmitter();
   @Output()
-  public onShowUnprocessedSmsChanged: EventEmitter<boolean> = new EventEmitter();
+  public onShowUnprocessedDeviceMessagesChanged: EventEmitter<boolean> = new EventEmitter();
 
   public constructor(private _dialog: MatDialog) { }
 
@@ -51,7 +51,7 @@ export class HistoryPageActionsComponent {
     return this.disableMoreButton ? 'true' : null;
   }
 
-  public showUnprocessedSms(value: boolean): void {
-    this.onShowUnprocessedSmsChanged.next(value);
+  public showUnprocessedDeviceMessages(value: boolean): void {
+    this.onShowUnprocessedDeviceMessagesChanged.next(value);
   }
 }

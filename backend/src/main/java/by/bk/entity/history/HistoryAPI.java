@@ -1,9 +1,9 @@
 package by.bk.entity.history;
 
-import by.bk.controller.model.request.AssignSmsRequest;
+import by.bk.controller.model.request.AssignDeviceMessageRequest;
 import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.request.DayProcessedHistoryItemsRequest;
-import by.bk.controller.model.request.SmsRequest;
+import by.bk.controller.model.request.DeviceMessageRequest;
 import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.response.SummaryReportResponse;
@@ -18,10 +18,10 @@ import java.util.function.Supplier;
  * @author Sergey Koval
  */
 public interface HistoryAPI {
-    List<HistoryItem> getPagePortion(String login, int page, int limit, boolean unprocessedSms);
+    List<HistoryItem> getPagePortion(String login, int page, int limit, boolean unprocessedDeviceMessages);
     List<HistoryItem> getSuitable(String login, String category, String subCategory, SubCategoryType subCategoryType);
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
-    SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<SmsRequest> smsItems);
+    SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<DeviceMessageRequest> smsItems);
     HistoryItem addBalanceHistoryItem(String login, Currency currency, String accountTitle, String subAccountTitle, Supplier<Double> value);
     SimpleResponse editHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus, boolean changeOriginalGoalStatus);
     SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus);
@@ -33,6 +33,6 @@ public interface HistoryAPI {
     Collection<DynamicReportResponse> getPeriodDynamic(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, Currency currency);
 
     SimpleResponse getUnprocessedHistoryItemsCount(String login);
-    SimpleResponse getDeviceSms(String login, String deviceId, Integer smsIndex);
-    SimpleResponse assignSmsToHistoryItem(String login, AssignSmsRequest request);
+    SimpleResponse getDeviceMessage(String login, String deviceId, Integer deviceMessageIndex);
+    SimpleResponse assignDeviceMessageToHistoryItem(String login, AssignDeviceMessageRequest request);
 }

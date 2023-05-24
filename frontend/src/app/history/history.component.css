@@ -70,7 +70,7 @@
   margin-right: 12px;
 }
 
-:host ::ng-deep bk-popover .unprocessed-sms-icon {
+:host ::ng-deep bk-popover .unprocessed-device-message-icon {
   color: #3f51b5;
   margin-right: 12px;
   padding-left: 0;
@@ -139,7 +139,7 @@ bk-history-page-actions {
   display: flex;
 }
 
-.sms-top-margin {
+.device-message-top-margin {
   margin-top: 2px;
 }
 

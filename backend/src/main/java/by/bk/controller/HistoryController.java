@@ -23,7 +23,7 @@ public class HistoryController extends BaseAPIController {
 
     @PostMapping("/page-portion")
     public List<HistoryItem> getPagePortion(@RequestBody HistoryPageRequest request, Principal principal) {
-        return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit(), request.isUnprocessedSms());
+        return historyAPI.getPagePortion(principal.getName(), request.getPage(), request.getLimit(), request.isUnprocessedDeviceMessages());
     }
 
     @PostMapping("/add")
@@ -43,13 +43,19 @@ public class HistoryController extends BaseAPIController {
 
     @RoleMobile
     @PostMapping("/sms")
-    public SimpleResponse addHistoryItemsFromSms(@RequestBody List<SmsRequest> request, Principal principal) {
+    public SimpleResponse addHistoryItemsFromSms(@RequestBody List<DeviceMessageRequest> request, Principal principal) {
         return historyAPI.addHistoryItemsFromSms(principal.getName(), getDeviceId(principal), request);
     }
 
-    @GetMapping("/devices/{deviceId}/sms/{index}")
-    public SimpleResponse getDeviceSms(Principal principal, @PathVariable("deviceId") String deviceId, @PathVariable("index") Integer smsIndex) {
-        return historyAPI.getDeviceSms(principal.getName(), deviceId, smsIndex);
+    @RoleMobile
+    @PostMapping("/push")
+    public SimpleResponse addHistoryItemsFromPush(@RequestBody List<DeviceMessageRequest> request, Principal principal) {
+        return historyAPI.addHistoryItemsFromSms(principal.getName(), getDeviceId(principal), request);
+    }
+
+    @GetMapping("/devices/{deviceId}/messages/{index}")
+    public SimpleResponse getDeviceMessage(Principal principal, @PathVariable("deviceId") String deviceId, @PathVariable("index") Integer deviceMessageIndex) {
+        return historyAPI.getDeviceMessage(principal.getName(), deviceId, deviceMessageIndex);
     }
 
     @PostMapping("/day")
@@ -57,9 +63,9 @@ public class HistoryController extends BaseAPIController {
         return historyAPI.getDayProcessedHistoryItems(principal.getName(), request);
     }
 
-    @PostMapping("/assign-sms")
-    public SimpleResponse assignSmsToHistoryItem(@RequestBody AssignSmsRequest request, Principal principal) {
-        return historyAPI.assignSmsToHistoryItem(principal.getName(), request);
+    @PostMapping("/assign-device-message")
+    public SimpleResponse assignDeviceMessageToHistoryItem(@RequestBody AssignDeviceMessageRequest request, Principal principal) {
+        return historyAPI.assignDeviceMessageToHistoryItem(principal.getName(), request);
     }
 
     @RoleUserOrMobile

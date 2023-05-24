@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { filter } from 'rxjs/operators';
 
@@ -18,6 +17,12 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { LoadingService } from '../../common/service/loading.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { AlertService } from '../../common/service/alert.service';
+import { Budget } from '../../common/model/budget/budget';
+import { BudgetGoal } from '../../common/model/budget/budget-goal';
+import { CloseMonthGoalPlan } from '../../common/model/budget/close-month-goal-plan';
+import { BudgetBalance } from '../../common/model/budget/budget-balance';
+import { SimpleResponse } from '../../common/model/simple-response';
+import { BudgetDetails } from '../../common/model/budget/budget-details';
 
 @Component({
   selector: 'bk-close-month-dialog',

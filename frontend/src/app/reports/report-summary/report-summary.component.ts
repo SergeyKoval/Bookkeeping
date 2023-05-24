@@ -13,6 +13,8 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { AlertService } from '../../common/service/alert.service';
 import { ReportService } from '../../common/service/report.service';
 import { CurrencyService } from '../../common/service/currency.service';
+import { SummaryReport } from '../../common/model/report/summary-report';
+import { Profile } from '../../common/model/profile';
 
 @Component({
   selector: 'bk-report-summary',

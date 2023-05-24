@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/index';
+import { User } from '../model/user';
+import { SimpleResponse } from '../model/simple-response';
 
 @Injectable({
   providedIn: 'root'

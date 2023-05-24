@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 
 import { ProfileService } from '../../common/service/profile.service';
+import { FinAccount } from '../../common/model/fin-account';
+import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
   selector: 'bk-summary-body',

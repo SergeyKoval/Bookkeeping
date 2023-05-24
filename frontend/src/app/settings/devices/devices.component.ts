@@ -11,8 +11,9 @@ import { LoadingDialogComponent } from '../../common/components/loading-dialog/l
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { DeviceNameDialogComponent } from './device-name-dialog/device-name-dialog.component';
-import { DeviceSmsDialogComponent } from './device-sms-dialog/device-sms-dialog.component';
+import { DeviceMessageDialogComponent } from './device-message-dialog/device-message-dialog.component';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
+import { Device } from '../../common/model/device';
 
 @Component({
   selector: 'bk-devices',
@@ -89,8 +90,8 @@ export class DevicesComponent implements OnInit {
       });
   }
 
-  public openProcessedSmsDialog(device: Device, deviceId: string): void {
-    this._dialog.open(DeviceSmsDialogComponent, {
+  public openProcessedDeviceMessageDialog(device: Device, deviceId: string): void {
+    this._dialog.open(DeviceMessageDialogComponent, {
       width: '550px',
       position: {top: 'top'},
       data: {'name': device.name, 'deviceId': deviceId}

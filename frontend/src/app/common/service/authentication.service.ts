@@ -7,12 +7,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { tap } from 'rxjs/internal/operators';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 import { LoadingService } from './loading.service';
 import { ProfileService } from './profile.service';
 import { CurrencyService } from './currency.service';
+import { SimpleResponse } from '../model/simple-response';
 
 @Injectable({
   providedIn: 'root'

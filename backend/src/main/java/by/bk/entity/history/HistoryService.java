@@ -1,9 +1,9 @@
 package by.bk.entity.history;
 
-import by.bk.controller.model.request.AssignSmsRequest;
+import by.bk.controller.model.request.AssignDeviceMessageRequest;
 import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.request.DayProcessedHistoryItemsRequest;
-import by.bk.controller.model.request.SmsRequest;
+import by.bk.controller.model.request.DeviceMessageRequest;
 import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SimpleResponse;
 import by.bk.controller.model.response.SummaryReportResponse;
@@ -16,8 +16,8 @@ import by.bk.entity.user.UserAPI;
 import by.bk.entity.user.UserRepository;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
-import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import java.util.function.Function;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -68,9 +68,9 @@ public class HistoryService implements HistoryAPI {
     private UserRepository userRepository;
 
     @Override
-    public List<HistoryItem> getPagePortion(String login, int page, int limit, boolean unprocessedSms) {
+    public List<HistoryItem> getPagePortion(String login, int page, int limit, boolean unprocessedDeviceMessages) {
         Criteria criteria = Criteria.where("user").is(login);
-        if (unprocessedSms) {
+        if (unprocessedDeviceMessages) {
             criteria = criteria.and("notProcessed").is(true);
         }
         Query query = Query.query(criteria)
@@ -111,28 +111,35 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<SmsRequest> smsItems) {
-        Map<Sms, SmsRequest> smsMap = smsItems.stream()
-                .peek(smsRequest -> smsRequest.getSms().setDeviceId(deviceId))
+    public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<DeviceMessageRequest> smsItems) {
+        Map<DeviceMessage, DeviceMessageRequest> deviceMessagesMap = smsItems.stream()
+                .peek(deviceMessageRequest -> deviceMessageRequest.getDeviceMessage().setDeviceId(deviceId))
                 .distinct()
-                .collect(Collectors.toMap(SmsRequest::getSms, smsRequest -> smsRequest));
-        Set<Sms> smsToAdd = smsMap.keySet();
-        List<HistoryItem> itemsWithDuplicateSms = mongoTemplate.find(Query.query(Criteria.where("user").is(login).and("notProcessed").is(true).and("sms").in(smsToAdd)), HistoryItem.class);
-        itemsWithDuplicateSms.stream()
-                .flatMap(historyItem -> historyItem.getSms().stream())
-                .filter(smsToAdd::contains)
-                .forEach(smsToAdd::remove);
+                .collect(Collectors.toMap(DeviceMessageRequest::getDeviceMessage, Function.identity()));
+        Set<DeviceMessage> deviceMessageToAdd = deviceMessagesMap.keySet();
+        var query = Query.query(Criteria.where("user").is(login).and("notProcessed").is(true).and("deviceMessages").in(deviceMessageToAdd));
+        mongoTemplate.find(query, HistoryItem.class).stream()
+                .flatMap(historyItem -> historyItem.getDeviceMessages().stream())
+                .filter(deviceMessageToAdd::contains)
+                .forEach(deviceMessageToAdd::remove);
 
-        Set<String> ids = smsMap.entrySet().stream()
-                .map(smsEntry -> {
-                    Sms sms = smsEntry.getKey();
-                    Instant instant = Instant.ofEpochMilli(sms.getSmsTimestamp());
-                    LocalDate smsDate = LocalDate.ofInstant(instant, MINSK_TIMEZONE);
-                    return new HistoryItem(login, smsDate.getYear(), smsDate.getMonthValue(), smsDate.getDayOfMonth(), new Balance(smsEntry.getValue().getAccount(), smsEntry.getValue().getSubAccount()), sms);
+        Set<String> ids = deviceMessagesMap.entrySet().stream()
+                .map(deviceMessageEntry -> {
+                    DeviceMessage deviceMessage = deviceMessageEntry.getKey();
+                    Instant instant = Instant.ofEpochMilli(deviceMessage.getMessageTimestamp());
+                    LocalDate deviceMessageDate = LocalDate.ofInstant(instant, MINSK_TIMEZONE);
+                    return HistoryItem.builder()
+                        .user(login)
+                        .year(deviceMessageDate.getYear())
+                        .month(deviceMessageDate.getMonthValue())
+                        .day(deviceMessageDate.getDayOfMonth())
+                        .balance(new Balance(deviceMessageEntry.getValue().getAccount(), deviceMessageEntry.getValue().getSubAccount()))
+                        .deviceMessages(Collections.singletonList(deviceMessage))
+                        .build();
                 })
                 .map(historyItem -> saveHistoryItem(login, historyItem).getId())
                 .collect(Collectors.toSet());
-        return smsToAdd.size() == ids.size() ? SimpleResponse.success() : SimpleResponse.fail();
+        return deviceMessageToAdd.size() == ids.size() ? SimpleResponse.success() : SimpleResponse.fail();
     }
 
     @Override
@@ -363,32 +370,32 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public SimpleResponse getDeviceSms(String login, String deviceId, Integer smsIndex) {
-        Query query = Query.query(Criteria.where("user").is(login).and("sms.deviceId").is(deviceId))
-                .with(new Sort(Sort.Direction.DESC, "sms.smsTimestamp"))
-                .skip(smsIndex)
+    public SimpleResponse getDeviceMessage(String login, String deviceId, Integer deviceMessageIndex) {
+        Query query = Query.query(Criteria.where("user").is(login).and("deviceMessages.deviceId").is(deviceId))
+                .with(new Sort(Sort.Direction.DESC, "deviceMessages.messageTimestamp"))
+                .skip(deviceMessageIndex)
                 .limit(1);
         HistoryItem historyItem = mongoTemplate.findOne(query, HistoryItem.class);
-        return historyItem != null ? SimpleResponse.successWithDetails(historyItem.getSms().get(0)) : SimpleResponse.fail("MISSED");
+        return historyItem != null ? SimpleResponse.successWithDetails(historyItem.getDeviceMessages().get(0)) : SimpleResponse.fail("MISSED");
     }
 
     @Override
-    public SimpleResponse assignSmsToHistoryItem(String login, AssignSmsRequest request) {
-        HistoryItem smsHistoryItem = getById(login, request.getSmsItemId());
-        List<Sms> sms = smsHistoryItem.getSms();
-        if (CollectionUtils.isEmpty(sms)) {
-            LOG.error("Source history item doesn't have sms in it");
+    public SimpleResponse assignDeviceMessageToHistoryItem(String login, AssignDeviceMessageRequest request) {
+        HistoryItem deviceMessageHistoryItem = getById(login, request.getDeviceMessageId());
+        List<DeviceMessage> deviceMessages = deviceMessageHistoryItem.getDeviceMessages();
+        if (CollectionUtils.isEmpty(deviceMessages)) {
+            LOG.error("Source history item doesn't have device messages in it");
             return SimpleResponse.fail();
         }
 
         Query query = Query.query(Criteria.where("id").is(request.getHistoryItemId()));
-        UpdateResult result = mongoTemplate.updateFirst(query, new Update().push("sms", sms.get(0)), HistoryItem.class);
+        UpdateResult result = mongoTemplate.updateFirst(query, new Update().push("deviceMessages", deviceMessages.get(0)), HistoryItem.class);
         if (result.getModifiedCount() != 1) {
-            LOG.error("Error assigning sms to the history item with id = " + request.getHistoryItemId());
+            LOG.error("Error assigning device messages to the history item with id = " + request.getHistoryItemId());
             return SimpleResponse.fail();
         }
 
-        historyRepository.deleteById(smsHistoryItem.getId());
+        historyRepository.deleteById(deviceMessageHistoryItem.getId());
         return SimpleResponse.success();
     }
 

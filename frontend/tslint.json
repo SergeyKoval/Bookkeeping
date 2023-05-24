@@ -144,6 +144,9 @@
       "variable-declaration",
       "member-variable-declaration"
     ],
+    "deprecation": {
+      "severity": "warning"
+    },
     "typedef-whitespace": [
       true,
       {

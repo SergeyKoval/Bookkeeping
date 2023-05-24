@@ -3,7 +3,7 @@
   margin-left: 80px;
 }
 
-.sms-toggle {
+.device-message-toggle {
   position: absolute;
   right: 25px;
 }
@@ -12,7 +12,7 @@ mat-slide-toggle {
   margin-top: 5px;
 }
 
-.sms-label {
+.device-message-label {
   position: absolute;
   top: 7px;
   margin-left: 5px;

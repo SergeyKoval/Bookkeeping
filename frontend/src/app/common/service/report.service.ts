@@ -2,11 +2,14 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { IMyDateRangeModel } from 'mydaterangepicker';
 
 import { HOST } from '../config/config';
 import { MultiLevelDropdownItem } from '../components/multi-level-dropdown/MultiLevelDropdownItem';
 import { CheckboxState } from '../components/three-state-checkbox/CheckboxState';
+import { HistoryType } from '../model/history/history-type';
+import { SummaryReport } from '../model/report/summary-report';
+import { DynamicReport } from '../model/report/dynamic-report';
+import { IMyDateRangeModel } from 'angular-mydatepicker';
 
 @Injectable({
   providedIn: 'root'

@@ -3,13 +3,13 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/internal/operators';
 
 import { AlertService } from '../common/service/alert.service';
 import { ProfileService } from '../common/service/profile.service';
 import { LoadingService } from '../common/service/loading.service';
 import { AuthenticationService } from '../common/service/authentication.service';
 import { environment } from '../../environments/environment';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'bk-root',

@@ -10,6 +10,10 @@ import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { AccountCategoryDialogComponent } from '../account-category-dialog/account-category-dialog.component';
 import { MoveSubCategoryDialogComponent } from './move-sub-category-dialog/move-sub-category-dialog.component';
+import { Profile } from '../../common/model/profile';
+import { Category } from '../../common/model/category';
+import { SimpleResponse } from '../../common/model/simple-response';
+import { SubCategory } from '../../common/model/sub-category';
 
 @Component({
   selector: 'bk-categories',

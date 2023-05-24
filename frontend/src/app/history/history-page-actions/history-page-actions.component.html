@@ -4,8 +4,8 @@
      (click)="showMoreHistoryItems()" [attr.disabled]="moreButtonDisabledValue()"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span> Следующие</a>
 </div>
 
-<bk-toggle class="sms-toggle" width="160" onValue="Необработанные" offValue="Все операции"
-           [disabled]="unprocessedSmsCount === 0" [offBadgeValue]="unprocessedSmsCount" [value]="unprocessedSms" (onValueChanged)="showUnprocessedSms($event)"></bk-toggle>
+<bk-toggle class="device-message-toggle" width="160" onValue="Необработанные" offValue="Все операции"
+           [disabled]="unprocessedDeviceMessagesCount === 0" [offBadgeValue]="unprocessedDeviceMessagesCount" [value]="unprocessedDeviceMessages" (onValueChanged)="showUnprocessedDeviceMessages($event)"></bk-toggle>
 
 <ng-template #loadingIndicator>
   <bk-spinner [size]="35" class="more-history-items"></bk-spinner>

@@ -1,4 +1,6 @@
 import { GoalWrapper } from './GoalWrapper';
+import { BudgetCategory } from './budget-category';
+import { BudgetBalance } from './budget-balance';
 
 export class CategoryWrapper {
   public constructor(

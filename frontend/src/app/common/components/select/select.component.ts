@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 
 import { FocusDirective } from '../../directives/focus.directive';
+import { SelectItem } from './select-item';
 
 @Component({
   selector: 'bk-select',

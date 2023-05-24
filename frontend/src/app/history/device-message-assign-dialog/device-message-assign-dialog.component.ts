@@ -8,25 +8,29 @@ import { LoadingService } from '../../common/service/loading.service';
 import { LoadingDialogComponent } from '../../common/components/loading-dialog/loading-dialog.component';
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
+import { DeviceMessage } from '../../common/model/history/deviceMessage';
+import { HistoryType } from '../../common/model/history/history-type';
+import { HistoryBalanceType } from '../../common/model/history/history-balance-type';
+import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
-  selector: 'bk-sms-assign-dialog',
-  templateUrl: './sms-assign-dialog.component.html',
-  styleUrls: ['./sms-assign-dialog.component.css']
+  selector: 'bk-device-message-assign-dialog',
+  templateUrl: './device-message-assign-dialog.component.html',
+  styleUrls: ['./device-message-assign-dialog.component.css']
 })
-export class SmsAssignDialogComponent implements OnInit {
+export class DeviceMessageAssignDialogComponent implements OnInit {
   public loading: boolean = true;
   public previousAvailable: boolean = true;
   public nextAvailable: boolean = true;
-  public sms: Sms;
+  public deviceMessage: DeviceMessage;
   public year: number;
   public month: number;
   public day: number;
   public historyItems: HistoryType[];
 
   public constructor (
-    @Inject(MAT_DIALOG_DATA) public data: {smsItem: HistoryType},
-    private _dialogRef: MatDialogRef<SmsAssignDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {deviceMessageItem: HistoryType},
+    private _dialogRef: MatDialogRef<DeviceMessageAssignDialogComponent>,
     private _historyService: HistoryService,
     private _profileService: ProfileService,
     private _loadingService: LoadingService,
@@ -34,18 +38,18 @@ export class SmsAssignDialogComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.sms = this.data.smsItem.sms[0];
-    this.year = this.data.smsItem.year;
-    this.month = this.data.smsItem.month;
-    this.day = this.data.smsItem.day;
+    this.deviceMessage = this.data.deviceMessageItem.deviceMessages[0];
+    this.year = this.data.deviceMessageItem.year;
+    this.month = this.data.deviceMessageItem.month;
+    this.day = this.data.deviceMessageItem.day;
     this._historyService.getDayHistoryItems(this.year, this.month, this.day).subscribe(response => {
       this.historyItems = response.result as HistoryType[];
       this.loading = false;
     });
   }
 
-  public getFormattedSms(): string {
-    return this.sms.fullSms.split('\n').join('<br>');
+  public getFormattedDeviceMessage(): string {
+    return this.deviceMessage.fullText.split('\n').join('<br>');
   }
 
   public getSelectedDate(): string {
@@ -61,14 +65,14 @@ export class SmsAssignDialogComponent implements OnInit {
   }
 
   public assignWithHistoryItem(historyItem: HistoryType): void {
-    const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Ассоциация sms с операцией...');
-    this._historyService.assignSmsWithHistoryItem(this.data.smsItem.id, historyItem.id).subscribe(response => {
+    const loadingDialog: MatDialogRef<LoadingDialogComponent> = this._loadingService.openLoadingDialog('Ассоциация сообщения с операцией...');
+    this._historyService.assignDeviceMessageWithHistoryItem(this.data.deviceMessageItem.id, historyItem.id).subscribe(response => {
       loadingDialog.close();
       if (response.status === 'SUCCESS') {
-        this._alertService.addAlert(AlertType.SUCCESS, 'Sms успешно ассоциирована с операцией');
+        this._alertService.addAlert(AlertType.SUCCESS, 'Сообщение успешно ассоциирована с операцией');
         this._dialogRef.close(true);
       } else {
-        this._alertService.addAlert(AlertType.WARNING, 'Не удалось ассоциировать sms с операцией');
+        this._alertService.addAlert(AlertType.WARNING, 'Не удалось ассоциировать сообщение с операцией');
       }
     });
   }

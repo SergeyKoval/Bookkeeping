@@ -1,9 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatSlideToggleChange } from '@angular/material';
 
 import { BudgetService } from '../../common/service/budget.service';
 import { DateUtils } from '../../common/utils/date-utils';
 import { CurrencyService } from '../../common/service/currency.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { BudgetStatistic } from '../../common/model/budget/budget-statistic';
+import { BudgetBalance } from '../../common/model/budget/budget-balance';
+import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
   selector: 'bk-category-statistics-dialog',

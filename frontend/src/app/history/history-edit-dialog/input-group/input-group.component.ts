@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { AlternativeCurrenciesDialogComponent } from './alternative-currencies-dialog/alternative-currencies-dialog.component';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
+import { CurrencyDetail } from '../../../common/model/currency-detail';
+import { HistoryType } from '../../../common/model/history/history-type';
 
 @Component({
   selector: 'bk-input-group',

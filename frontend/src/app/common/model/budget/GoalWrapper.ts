@@ -1,3 +1,6 @@
+import { BudgetGoal } from './budget-goal';
+import { CloseMonthGoalPlan } from './close-month-goal-plan';
+
 export class GoalWrapper {
   public actionPlan: CloseMonthGoalPlan;
 

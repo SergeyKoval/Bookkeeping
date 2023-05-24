@@ -10,6 +10,8 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { LoadingService } from '../../common/service/loading.service';
+import { CurrencyDetail } from '../../common/model/currency-detail';
+import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
   selector: 'bk-currencies',

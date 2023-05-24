@@ -1,9 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { distinct, filter, map, scan } from 'rxjs/operators';
-import { tap } from 'rxjs/internal/operators';
+import { distinct, filter, map, scan, tap } from 'rxjs/operators';
 import { from, Observable, of } from 'rxjs';
 
 import { ProfileService } from '../../common/service/profile.service';
@@ -13,6 +11,14 @@ import { BudgetService } from '../../common/service/budget.service';
 import { CurrencyUtils } from '../../common/utils/currency-utils';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { CategoryStatisticsDialogComponent } from '../category-statistics-dialog/category-statistics-dialog.component';
+import { CurrencyDetail } from '../../common/model/currency-detail';
+import { Category } from '../../common/model/category';
+import { BudgetBalance } from '../../common/model/budget/budget-balance';
+import { Budget } from '../../common/model/budget/budget';
+import { BudgetGoal } from '../../common/model/budget/budget-goal';
+import { CloseMonthGoalPlan } from '../../common/model/budget/close-month-goal-plan';
+import { BudgetCategory } from '../../common/model/budget/budget-category';
+import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
   selector: 'bk-plan-budget-dialog',

@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/internal/operators';
 
 import { AuthenticationService } from './common/service/authentication.service';
 import { AlertService } from './common/service/alert.service';
 import { AlertType } from './common/model/alert/AlertType';
 import { environment } from '../environments/environment';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthenticationInterceptor implements HttpInterceptor {

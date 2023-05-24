@@ -1,3 +1,7 @@
+import { HistoryBalanceType } from './history-balance-type';
+import { HistoryType } from './history-type';
+import { DeviceMessage } from './deviceMessage';
+
 export class HistoryItem {
   public constructor(
     public originalItem: HistoryType,
@@ -10,10 +14,10 @@ export class HistoryItem {
     public goal?: string,
     public archived?: boolean,
     public notProcessed?: boolean,
-    public sms?: Sms[],
+    public deviceMessages?: DeviceMessage[],
     public icon?: string,
     public additionalIcon?: string,
-    public showSmsIndex?: number
+    public showDeviceMessageIndex?: number
   ) {}
 
   public cloneOriginalItem(): HistoryType {

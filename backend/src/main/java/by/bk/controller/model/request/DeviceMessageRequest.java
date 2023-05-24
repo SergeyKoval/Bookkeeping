@@ -1,6 +1,6 @@
 package by.bk.controller.model.request;
 
-import by.bk.entity.history.Sms;
+import by.bk.entity.history.DeviceMessage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -9,8 +9,8 @@ import lombok.Getter;
  */
 @Getter
 @EqualsAndHashCode
-public class SmsRequest {
+public class DeviceMessageRequest {
     private String account;
     private String subAccount;
-    private Sms sms;
+    private DeviceMessage deviceMessage;
 }

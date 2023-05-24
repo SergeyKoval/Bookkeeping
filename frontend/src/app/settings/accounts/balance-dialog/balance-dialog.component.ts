@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { ProfileService } from '../../../common/service/profile.service';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CurrencyDetail } from '../../../common/model/currency-detail';
 
 @Component({
   selector: 'bk-balance-dialog',

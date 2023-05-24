@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { IMyDate } from 'mydatepicker';
+import { IMyDate } from 'angular-mydatepicker';
 
 import { BudgetService } from '../../../common/service/budget.service';
 import { GoalFilterType } from '../../../common/model/history/GoalFilterType';
@@ -10,6 +10,15 @@ import { DateUtils } from '../../../common/utils/date-utils';
 import { ConfirmDialogService } from '../../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyUtils } from '../../../common/utils/currency-utils';
 import { ProfileService } from '../../../common/service/profile.service';
+import { HistoryType } from '../../../common/model/history/history-type';
+import { GoalDetails } from '../../../common/model/budget/goal-details';
+import { MonthProgress } from '../../../common/model/budget/month-progress';
+import { BudgetCategory } from '../../../common/model/budget/budget-category';
+import { BudgetGoal } from '../../../common/model/budget/budget-goal';
+import { Budget } from '../../../common/model/budget/budget';
+import { DeviceMessage } from '../../../common/model/history/deviceMessage';
+import { BudgetBalance } from '../../../common/model/budget/budget-balance';
+import { HistoryBalanceType } from '../../../common/model/history/history-balance-type';
 
 @Component({
   selector: 'bk-goals-container',
@@ -26,7 +35,7 @@ export class GoalsContainerComponent implements OnInit {
   @Input()
   public alternativeCurrencyLoading: boolean;
   @Input()
-  public fromSms: boolean;
+  public fromDeviceMessage: boolean;
   @Input()
   public set selectedCategory(value: string) {
     if (this._selectedCategory !== value && this._budget) {
@@ -83,8 +92,8 @@ export class GoalsContainerComponent implements OnInit {
   public monthProgress: MonthProgress;
   public budgetCategory: BudgetCategory;
   public selectedGoal: BudgetGoal;
-  public smsTabSelected: boolean;
-  public selectedSmsIndex: number;
+  public deviceMessageTabSelected: boolean;
+  public selectedDeviceMessageIndex: number;
 
   private _budget: Budget;
   private _selectedCategory: string;
@@ -103,8 +112,8 @@ export class GoalsContainerComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.smsTabSelected = this.historyItem.sms && this.historyItem.sms.length > 0;
-    this.selectedSmsIndex = this.smsTabSelected ? 0 : null;
+    this.deviceMessageTabSelected = this.historyItem.deviceMessages && this.historyItem.deviceMessages.length > 0;
+    this.selectedDeviceMessageIndex = this.deviceMessageTabSelected ? 0 : null;
   }
 
   public getGoalCount(filterType: GoalFilterType): number {
@@ -196,13 +205,13 @@ export class GoalsContainerComponent implements OnInit {
     return goal.title === this.historyItem.goal;
   }
 
-  public getSmsTimestamp(sms: Sms): string {
-    const date: Date = new Date(sms.smsTimestamp);
+  public getDeviceMessageTimestamp(deviceMessage: DeviceMessage): string {
+    const date: Date = new Date(deviceMessage.messageTimestamp);
     return `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
   }
 
-  public getFormattedSms(): string {
-    return this.historyItem.sms[this.selectedSmsIndex].fullSms.split('\n').join('<br>');
+  public getFormattedDeviceMessage(): string {
+    return this.historyItem.deviceMessages[this.selectedDeviceMessageIndex].fullText.split('\n').join('<br>');
   }
 
   public get selectedCategory(): string {
@@ -224,7 +233,7 @@ export class GoalsContainerComponent implements OnInit {
       this._budget = budget;
       this.chooseBudgetCategory(budget);
 
-      if (this.editMode && !this.fromSms) {
+      if (this.editMode && !this.fromDeviceMessage) {
         if (this.historyItem.goal && !this._originalGoalDetails) {
           this.populateOriginalGoal(budget);
         }

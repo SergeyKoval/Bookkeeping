@@ -1,17 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { MatDialogModule, MatProgressSpinnerModule, MatSlideToggleModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { PopoverModule } from 'ngx-popover';
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MyDatePickerModule } from 'mydatepicker';
-import { MyDateRangePickerModule } from 'mydaterangepicker';
-import { ChartsModule } from 'ng2-charts';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';
@@ -26,7 +21,6 @@ import { HistoryComponent } from './history/history.component';
 import { BudgetComponent } from './budget/budget.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SummaryComponent } from './summary/summary.component';
-import { SpinnerComponent } from './common/components/spinner/spinner.component';
 import { CurrencyService } from './common/service/currency.service';
 import { CurrencyConversionComponent } from './common/components/currency-conversion/currency-conversion.component';
 import { SummaryBodyComponent } from './summary/summary-body/summary-body.component';
@@ -94,9 +88,16 @@ import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.
 import { DevicesComponent } from './settings/devices/devices.component';
 import { DeviceMailDialogComponent } from './settings/devices/device-mail-dialog/device-mail-dialog.component';
 import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog/device-name-dialog.component';
-import { DeviceSmsDialogComponent } from './settings/devices/device-sms-dialog/device-sms-dialog.component';
-import { SmsAssignDialogComponent } from './history/sms-assign-dialog/sms-assign-dialog.component';
+import { DeviceMessageDialogComponent } from './settings/devices/device-message-dialog/device-message-dialog.component';
+import { DeviceMessageAssignDialogComponent } from './history/device-message-assign-dialog/device-message-assign-dialog.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AngularMyDatePickerModule } from 'angular-mydatepicker';
+import { SpinnerComponent } from './common/components/spinner/spinner.component';
+import { NgChartsModule } from 'ng2-charts';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,6 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     BudgetComponent,
     SettingsComponent,
     SummaryComponent,
-    SpinnerComponent,
     CurrencyConversionComponent,
     SummaryBodyComponent,
     SummaryFooterComponent,
@@ -169,9 +169,11 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     DevicesComponent,
     DeviceMailDialogComponent,
     DeviceNameDialogComponent,
-    DeviceSmsDialogComponent,
-    SmsAssignDialogComponent,
-    ToggleComponent
+    DeviceMessageDialogComponent,
+    DeviceMessageAssignDialogComponent,
+    ToggleComponent,
+    InputComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
@@ -181,8 +183,8 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     JwtModule.forRoot({
       config: {
         tokenGetter: () => localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`),
-        whitelistedDomains: ['localhost:8080', 'localhost:3000'],
-        blacklistedRoutes: [/token\/server\/version.*/, /token\/generate-token.*/, /token\/send-registration-code.*/, /token\/review-registration-code.*/]
+        allowedDomains: ['localhost:8085', 'localhost:3000'],
+        disallowedRoutes: [/token\/server\/version.*/, /token\/generate-token.*/, /token\/send-registration-code.*/, /token\/review-registration-code.*/]
       }
     }),
     BrowserAnimationsModule,
@@ -190,32 +192,13 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
     MatDialogModule,
     MatSlideToggleModule,
     PopoverModule,
-    MyDatePickerModule,
-    MyDateRangePickerModule,
-    ChartsModule,
+    AngularMyDatePickerModule,
+    NgChartsModule,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
     LocalStorageModule.forRoot({
       prefix: 'Bookkeeper',
       storageType: 'localStorage'
     })
-  ],
-  entryComponents: [
-    ConfirmDialogComponent,
-    HistoryEditDialogComponent,
-    LoadingDialogComponent,
-    AlternativeCurrenciesDialogComponent,
-    AccountCategoryDialogComponent,
-    BalanceDialogComponent,
-    UserDialogComponent,
-    PlanBudgetDialogComponent,
-    MoveGoalDialogComponent,
-    MoveSubCategoryDialogComponent,
-    CategoryStatisticsDialogComponent,
-    CloseMonthDialogComponent,
-    DeviceMailDialogComponent,
-    DeviceNameDialogComponent,
-    DeviceSmsDialogComponent,
-    SmsAssignDialogComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

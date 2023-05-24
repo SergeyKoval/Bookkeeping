@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { ProfileService } from '../../service/profile.service';
+import { BalanceItem } from '../../model/balance-item';
 
 @Pipe({
   name: 'summaryBalanceOrdering'

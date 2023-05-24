@@ -1,4 +1,8 @@
 import { CurrencyService } from '../../service/currency.service';
+import { FinAccount } from '../../model/fin-account';
+import { SubAccount } from '../../model/sub-account';
+import { CurrencyDetail } from '../../model/currency-detail';
+import { BalanceItem } from '../../model/balance-item';
 
 export abstract class BaseSummaryPipe {
   protected constructor(protected _currencyService: CurrencyService) {}

@@ -4,7 +4,9 @@ declare var $: any; // tslint:disable-line:no-any
 
 import { AlertType } from '../model/alert/AlertType';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AlertService {
 
   public constructor() {}

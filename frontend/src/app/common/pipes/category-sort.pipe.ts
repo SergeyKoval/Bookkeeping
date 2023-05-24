@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ProfileService } from '../service/profile.service';
+import { BudgetCategory } from '../model/budget/budget-category';
 
 @Pipe({
   name: 'categorySort'

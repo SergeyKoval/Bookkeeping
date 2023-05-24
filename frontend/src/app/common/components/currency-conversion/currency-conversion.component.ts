@@ -5,6 +5,8 @@ import { ProfileService } from '../../service/profile.service';
 import { CurrencyService } from '../../service/currency.service';
 import { AlertService } from '../../service/alert.service';
 import { AlertType } from '../../model/alert/AlertType';
+import { CurrencyDetail } from '../../model/currency-detail';
+import { Profile } from '../../model/profile';
 
 @Component({
   selector: 'bk-currency-conversion',

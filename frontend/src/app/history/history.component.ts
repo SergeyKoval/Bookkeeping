@@ -1,6 +1,5 @@
 import { AfterViewChecked, Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -16,7 +15,10 @@ import { BudgetService } from '../common/service/budget.service';
 import { CurrencyUtils } from '../common/utils/currency-utils';
 import { LoadingService } from '../common/service/loading.service';
 import { LoadingDialogComponent } from '../common/components/loading-dialog/loading-dialog.component';
-import { SmsAssignDialogComponent } from './sms-assign-dialog/sms-assign-dialog.component';
+import { DeviceMessageAssignDialogComponent } from './device-message-assign-dialog/device-message-assign-dialog.component';
+import { HistoryType } from '../common/model/history/history-type';
+import { Device } from '../common/model/device';
+import { SimpleResponse } from '../common/model/simple-response';
 
 @Component({
   selector: 'bk-history',
@@ -29,10 +31,10 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   public loading: boolean = true;
   public loadingMoreIndicator: boolean = false;
   public disableMoreButton: boolean = false;
-  public unprocessedSms: boolean = false;
+  public unprocessedDeviceMessages: boolean = false;
 
   public historyItems: HistoryType[] = [];
-  public unprocessedSmsCount: number;
+  public unprocessedDeviceMessagesCount: number;
 
   private _lastElementId: string;
   private _devices: {[deviceId: string]: Device};
@@ -49,7 +51,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
   ) {}
 
   public ngOnInit(): void {
-    this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
+    this._historyService.getUnprocessedDeviceMessagesCount().subscribe(response => this.unprocessedDeviceMessagesCount = response.result as number);
     this._devices = this._authenticationService.authenticatedProfile.devices;
     this.init(1, HistoryComponent.PAGE_LIMIT);
   }
@@ -71,7 +73,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     this.init(1, this.historyItems.length + numberOfNewItems);
   }
 
-  public editHistoryItem(historyItem: HistoryItem, fromSms: boolean): void {
+  public editHistoryItem(historyItem: HistoryItem, fromDeviceMessage: boolean): void {
     this._dialog.open(HistoryEditDialogComponent, {
       width: '720px',
       position: {top: 'top'},
@@ -79,7 +81,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
       data: {
         'historyItem': historyItem.cloneOriginalItem(),
         'editMode': true,
-        'fromSms': fromSms
+        'fromDeviceMessage': fromDeviceMessage
       }
     }).afterClosed()
       .pipe(
@@ -87,8 +89,8 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         tap(() => this._lastElementId = historyItem.originalItem.id)
       ).subscribe(() => {
         this.loadMoreItems(0);
-        if (fromSms) {
-          this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
+        if (fromDeviceMessage) {
+          this._historyService.getUnprocessedDeviceMessagesCount().subscribe(response => this.unprocessedDeviceMessagesCount = response.result as number);
         }
       });
   }
@@ -130,22 +132,22 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
         this._alertService.addAlert(AlertType.SUCCESS, 'Запись успешно удалена');
         this._authenticationService.quiteReloadAccounts();
         this.loadMoreItems(-1);
-        this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
+        this._historyService.getUnprocessedDeviceMessagesCount().subscribe(response => this.unprocessedDeviceMessagesCount = response.result as number);
       });
   }
 
-  public changeShowSms(event: boolean): void {
-    this.unprocessedSms = event;
+  public changeShowDeviceMessages(event: boolean): void {
+    this.unprocessedDeviceMessages = event;
     const moreItems: number = this.historyItems.length >= HistoryComponent.PAGE_LIMIT ? 0 : HistoryComponent.PAGE_LIMIT - this.historyItems.length;
     this.loadMoreItems(moreItems);
   }
 
-  public getFormattedSms(sms: string): string {
-    return sms.split('\n').join('<br>');
+  public getFormattedDeviceMessage(deviceMessage: string): string {
+    return deviceMessage.split('\n').join('<br>');
   }
 
-  public getSmsDateTime(smsTimestamp: number): string {
-    return new Date(smsTimestamp).toLocaleTimeString('ru-RU');
+  public getDeviceMessageDateTime(deviceMessageTimestamp: number): string {
+    return new Date(deviceMessageTimestamp).toLocaleTimeString('ru-RU');
   }
 
   public getDeviceName(deviceId: string): string {
@@ -153,31 +155,31 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
     return !device ? deviceId : device.name || deviceId;
   }
 
-  public openAssignSmsDialog(historyItem: HistoryItem): void {
-    this._dialog.open(SmsAssignDialogComponent, {
+  public openAssignDeviceMessageDialog(historyItem: HistoryItem): void {
+    this._dialog.open(DeviceMessageAssignDialogComponent, {
       width: '800px',
       position: {top: 'top'},
-      panelClass: 'assign-sms-dialog',
+      panelClass: 'assign-device-message-dialog',
       data: {
-        'smsItem': historyItem.originalItem
+        'deviceMessageItem': historyItem.originalItem
       }
     }).afterClosed()
       .pipe(
         filter((result: boolean) => result === true),
         tap(() => this._lastElementId = null)
       ).subscribe(() => {
-        this._historyService.getUnprocessedSmsCount().subscribe(response => this.unprocessedSmsCount = response.result as number);
+        this._historyService.getUnprocessedDeviceMessagesCount().subscribe(response => this.unprocessedDeviceMessagesCount = response.result as number);
         this.loadMoreItems(0);
       });
   }
 
-  public clickOnSms(historyItem: HistoryItem, smsIndex: number): void {
-    historyItem.showSmsIndex = historyItem.showSmsIndex !== smsIndex ? smsIndex : null;
+  public clickOnDeviceMessage(historyItem: HistoryItem, deviceMessageIndex: number): void {
+    historyItem.showDeviceMessageIndex = historyItem.showDeviceMessageIndex !== deviceMessageIndex ? deviceMessageIndex : null;
   }
 
   private init(page: number, limit: number): void {
     this.loading = true;
-    this._historyService.loadHistoryItems(page, limit, this.unprocessedSms).subscribe((historyItems: HistoryType[]) => {
+    this._historyService.loadHistoryItems(page, limit, this.unprocessedDeviceMessages).subscribe((historyItems: HistoryType[]) => {
       if (historyItems.length < limit) {
         this.disableMoreButton = true;
       }

@@ -1,10 +1,9 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-
-import { isNumeric } from 'rxjs/internal/util/isNumeric';
 
 import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
 import { ProfileService } from '../../../../common/service/profile.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { HistoryBalanceType } from '../../../../common/model/history/history-balance-type';
 
 @Component({
   selector: 'bk-alternative-currencies-dialog',
@@ -28,7 +27,7 @@ export class AlternativeCurrenciesDialogComponent {
   }
 
   public blurValueInCurrency(currency: string, amountInput: HTMLInputElement): void {
-    if (isNumeric(amountInput.value) && amountInput.value !== '0') {
+    if (!Number.isNaN(amountInput.value) && amountInput.value !== '0') {
       this.data.balance.alternativeCurrency[currency] = Number(this._currencyValuePipe.transform(Number(amountInput.value), 2, true));
     } else {
       amountInput.value = this.data.balance.alternativeCurrency[currency].toString();

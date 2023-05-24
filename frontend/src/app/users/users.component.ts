@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
 
@@ -9,6 +8,8 @@ import { AlertType } from '../common/model/alert/AlertType';
 import { AlertService } from '../common/service/alert.service';
 import { ConfirmDialogService } from '../common/components/confirm-dialog/confirm-dialog.service';
 import { ProfileService } from '../common/service/profile.service';
+import { MatDialog } from '@angular/material/dialog';
+import { User } from '../common/model/user';
 
 @Component({
   selector: 'bk-users',

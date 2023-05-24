@@ -9,17 +9,15 @@ import by.bk.bookkeeper.android.R
 
 enum class SourceType(private val key: String) {
     SMS("SMS"),
-    PUSH("PUSH"),
-    UNKNOWN("UNKNOWN");
+    PUSH("PUSH");
 
     companion object {
 
-        fun mapToSourceType(key: String): SourceType = values().find { it.key == key } ?: UNKNOWN
+        fun mapToSourceType(key: String?): SourceType = values().find { it.key == key } ?: SMS
 
         fun getUiString(context: Context, sourceType: SourceType) = when (sourceType) {
             SMS -> context.getString(R.string.association_type_sms)
             PUSH -> context.getString(R.string.association_type_push)
-            else -> ""
         }
     }
 

@@ -36,7 +36,7 @@ data class SubAccount(@SerializedName("device")
                                 Association(
                                     sender = element.get("sender").asString,
                                     smsBodyTemplate = element.get("subAccountIdentifier").asString,
-                                    sourceType = SourceType.mapToSourceType(element.get("source").asString)
+                                    sourceType = SourceType.mapToSourceType(element.get("source")?.asString)
                                 )
                             )
                         }

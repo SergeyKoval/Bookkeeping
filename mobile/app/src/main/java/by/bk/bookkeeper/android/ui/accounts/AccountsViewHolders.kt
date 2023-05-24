@@ -99,7 +99,7 @@ class AssociationViewHolder(private val account: Account,
                     return@setOnMenuItemClickListener true
                 }
                 R.id.action_edit -> {
-                    clickObservable.onNext(SubAccountRecyclerClick.EditAssociation(account, subAccount, item))
+                    clickObservable.onNext(SubAccountRecyclerClick.EditAssociation(account, subAccount, item, item.sourceType))
                     return@setOnMenuItemClickListener true
                 }
                 else -> return@setOnMenuItemClickListener false

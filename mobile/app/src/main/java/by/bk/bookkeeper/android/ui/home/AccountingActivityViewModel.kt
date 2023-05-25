@@ -2,7 +2,7 @@ package by.bk.bookkeeper.android.ui.home
 
 import by.bk.bookkeeper.android.network.BookkeeperService
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
-import by.bk.bookkeeper.android.sms.preferences.SmsPreferenceProvider
+import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
 import by.bk.bookkeeper.android.ui.BaseViewModel
 import io.reactivex.Observable
 
@@ -21,7 +21,7 @@ class AccountingActivityViewModel(private val bkService: BookkeeperService) : Ba
     override fun logout() {
         SessionDataProvider.clearSessionData()
         SessionDataProvider.setCurrentUser(null)
-        SmsPreferenceProvider.setShouldProcessReceivedSms(false)
+        SharedPreferencesProvider.setShouldProcessReceivedMessages(false)
     }
 
 }

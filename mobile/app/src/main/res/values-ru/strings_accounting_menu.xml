@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="menu_accounts">Счета</string>
-    <string name="menu_status">Статус SMS</string>
+    <string name="menu_messages_status">Статус сообщений</string>
     <string name="menu_logout">Выход</string>
     <string name="menu_search">Поиск</string>
 </resources>

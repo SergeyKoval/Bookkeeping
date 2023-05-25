@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingTop="@dimen/content_default_padding"
     android:paddingBottom="@dimen/content_default_padding">
@@ -20,22 +21,34 @@
         app:srcCompat="@drawable/ic_item_action" />
 
     <TextView
+        android:id="@+id/tv_source_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_sender"
+        app:layout_constraintEnd_toStartOf="@+id/iv_action_edit_association"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="PUSH" />
+
+    <TextView
         android:id="@+id/tv_sender"
         android:layout_width="0dp"
+        android:layout_marginTop="@dimen/list_item_element_space"
         android:layout_height="wrap_content"
         android:text="@string/association_sender"
         android:textStyle="italic"
         app:layout_constraintEnd_toStartOf="@+id/iv_action_edit_association"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tv_source_type" />
 
     <TextView
         android:id="@+id/tv_sms_body_template"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/list_item_element_space"
-        android:text="@string/association_sms_template"
+        android:text="@string/association_template"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/iv_action_edit_association"

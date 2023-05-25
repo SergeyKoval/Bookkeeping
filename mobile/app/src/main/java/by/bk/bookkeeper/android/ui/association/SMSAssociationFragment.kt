@@ -16,13 +16,12 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_accounting.view.*
-import kotlinx.android.synthetic.main.fragment_asociation.*
+import kotlinx.android.synthetic.main.fragment_sms_asociation.*
 
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
-class ConversationsFragment : BaseFragment() {
+class SMSAssociationFragment : BaseFragment() {
 
     private val inboxSmsViewModel: InboxSmsViewModel by activityScopeViewModel()
     private val conversationAdapter by lazy { ConversationFilterableAdapter() }
@@ -38,12 +37,11 @@ class ConversationsFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_asociation, container, false)
+        return inflater.inflate(R.layout.fragment_sms_asociation, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_back)
         recycler_conversations.run {
             layoutManager = LinearLayoutManager(context)
             adapter = conversationAdapter
@@ -126,17 +124,19 @@ class ConversationsFragment : BaseFragment() {
         inboxSmsViewModel.reloadConversations()
     }
 
-    override fun getTAG() = TAG
+    override fun getFragmentTag(): String = TAG
 
-    override fun getToolbarTitle(): Int = R.string.toolbar_title_associating
+    override fun getToolbarTitle(): Int = R.string.toolbar_title_associating_sms
+
+    override fun showToolbarBackButton(): Boolean = true
 
     companion object {
 
-        val TAG = ConversationsFragment::class.java.simpleName
+        private val TAG = SMSAssociationFragment::class.java.simpleName
         private const val KEY_QUERY = "key_query"
         private const val ARG_INFO_HOLDER = "arg_info_holder"
 
-        fun newInstance(infoHolder: AccountInfoHolder) = ConversationsFragment().apply {
+        fun newInstance(infoHolder: AccountInfoHolder) = SMSAssociationFragment().apply {
             arguments = Bundle().apply { putParcelable(ARG_INFO_HOLDER, infoHolder) }
         }
     }

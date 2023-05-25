@@ -23,7 +23,7 @@
     <string name="action_remove_association">Удалить ассоциацию</string>
     <string name="action_edit_association">Изменить ассоциацию</string>
     <string name="association_sender">Отправитель: %s</string>
-    <string name="association_sms_template">SMS шаблон: %s</string>
+    <string name="association_template">SMS шаблон: %s</string>
 
     <string name="err_association_removal_failed">Не удалось удалить ассоциацию</string>
     <string name="err_association_adding_failed">Не удалось добавить ассоциацию</string>
@@ -36,20 +36,39 @@
     <string name="msg_select_sms_sender">Выберите отправителя SMS:</string>
 
     <string name="toolbar_title_accounts">Счета</string>
-    <string name="toolbar_title_sms_status">Статус SMS</string>
-    <string name="toolbar_title_associating">Ассоциация</string>
+    <string name="toolbar_title_messages_status">Статус сообщений</string>
     <string name="hint_paste_template">Вставьте шаблон SMS для ассоциации (опционально)</string>
 
     <string name="msg_service_notification_sms_processing">Обработка SMS</string>
     <string name="msg_service_pending_sms">%d SMS находятся в очереди</string>
-    <string name="msg_service_notification_waiting_for_sms">Ожидание новых SMS</string>
+    <string name="msg_service_notification_waiting_for_messages">Ожидание новых смс и пуш уведомлений</string>
     <string name="msg_service_notification_running">Сервис по обработке SMS запущен</string>
 
     <string name="msg_sms_status_pending_sms_count">%d SMS находятся в очереди, для отправки нажмите кнопку</string>
-    <string name="msg_sms_status_server_unprocessed_count">Количество необработанных SMS: %d</string>
-    <string name="msg_sms_status_server_unprocessed_count_unknown">Количество необработанных SMS: неизвестно</string>
+    <string name="msg_push_status_pending_push_count">%d уведомлений находятся в очереди, для отправки нажмите кнопку</string>
+    <string name="msg_sms_status_server_unprocessed_count">Количество необработанных сообщений: %d</string>
+    <string name="msg_sms_status_server_unprocessed_count_unknown">Количество необработанных сообщений: неизвестно</string>
+
+    <string name="msg_push_status_server_unprocessed_count">Количество необработанных уведомлений: %d</string>
+    <string name="msg_push_status_server_unprocessed_count_unknown">Количество необработанных уведомлений: неизвестно</string>
+
     <string name="msg_sms_status_server_unprocessed_response_date_time">Последнее успешное обновление: %s</string>
     <string name="msg_sms_status_no_pending_sms">Нет SMS, находящихся в очереди</string>
+    <string name="msg_push_status_no_pending_pushes">Нет уведомлений, находящихся в очереди</string>
     <string name="msg_sms_status_account_subaccount_info">Счет: %s, субсчет: %s</string>
+
+    <string name="notification_listener_service_title">Сервис обработки уведомлений</string>
+    <string name="notification_listener_service_explanation">Для того, чтобы обрабатывать пуш уведомления вам необходимо активировать сервис обработки уведомлений. Активировать его сейчас?</string>
+    <string name="association_type_push">Уведомление</string>
+    <string name="association_type_sms">СМС</string>
+    <string name="toolbar_title_association_type">Тип ассоциации</string>
+    <string name="association_type_push_description">Ассоциация уведомления</string>
+    <string name="association_type_sms_description">Ассоциация СМС</string>
+
+    <string name="toolbar_title_associating_sms">Ассоциация СМС</string>
+    <string name="toolbar_title_associating_push">Ассоциация уведомления</string>
+    <string name="hint_push_package_name">Отправитель пуш уведомления (имя приложения) </string>
+    <string name="hint_push_content_template">Шаблон пуш уведомления (опционально)</string>
+    <string name="push_package_invalid_name">Неверное имя отправителя пуш уведомлений</string>
 
 </resources>

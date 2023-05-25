@@ -112,34 +112,38 @@ public class HistoryService implements HistoryAPI {
 
     @Override
     public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<DeviceMessageRequest> smsItems) {
-        Map<DeviceMessage, DeviceMessageRequest> deviceMessagesMap = smsItems.stream()
-                .peek(deviceMessageRequest -> deviceMessageRequest.getDeviceMessage().setDeviceId(deviceId))
-                .distinct()
-                .collect(Collectors.toMap(DeviceMessageRequest::getDeviceMessage, Function.identity()));
-        Set<DeviceMessage> deviceMessageToAdd = deviceMessagesMap.keySet();
-        var query = Query.query(Criteria.where("user").is(login).and("notProcessed").is(true).and("deviceMessages").in(deviceMessageToAdd));
-        mongoTemplate.find(query, HistoryItem.class).stream()
-                .flatMap(historyItem -> historyItem.getDeviceMessages().stream())
-                .filter(deviceMessageToAdd::contains)
-                .forEach(deviceMessageToAdd::remove);
+        smsItems.stream()
+            .peek(deviceMessageRequest -> deviceMessageRequest.getDeviceMessage().setDeviceId(deviceId))
+            .distinct()
+            .forEach(smsItem -> {
+                var deviceMessage = smsItem.getDeviceMessage();
+                var query = Query.query(Criteria.where("user").is(login)
+                    .and("notProcessed").is(true)
+                    .and("deviceMessages.messageTimestamp").is(deviceMessage.getMessageTimestamp())
+                    .and("balance.account").is(smsItem.getAccount())
+                    .and("balance.subAccount").is(smsItem.getSubAccount()));
+                var historyItems = mongoTemplate.find(query, HistoryItem.class);
 
-        Set<String> ids = deviceMessagesMap.entrySet().stream()
-                .map(deviceMessageEntry -> {
-                    DeviceMessage deviceMessage = deviceMessageEntry.getKey();
-                    Instant instant = Instant.ofEpochMilli(deviceMessage.getMessageTimestamp());
-                    LocalDate deviceMessageDate = LocalDate.ofInstant(instant, MINSK_TIMEZONE);
-                    return HistoryItem.builder()
+                if (CollectionUtils.isNotEmpty(historyItems)) {
+                    historyItems.stream()
+                        .peek(historyItem -> addMessageAsDuplicate(historyItem, deviceMessage))
+                        .forEach(mongoTemplate::save);
+                } else {
+                    var deviceMessageDate = LocalDate.ofInstant(Instant.ofEpochMilli(deviceMessage.getMessageTimestamp()), MINSK_TIMEZONE);
+                    var historyItem = HistoryItem.builder()
                         .user(login)
                         .year(deviceMessageDate.getYear())
                         .month(deviceMessageDate.getMonthValue())
                         .day(deviceMessageDate.getDayOfMonth())
-                        .balance(new Balance(deviceMessageEntry.getValue().getAccount(), deviceMessageEntry.getValue().getSubAccount()))
+                        .balance(new Balance(smsItem.getAccount(), smsItem.getSubAccount()))
                         .deviceMessages(Collections.singletonList(deviceMessage))
+                        .notProcessed(true)
                         .build();
-                })
-                .map(historyItem -> saveHistoryItem(login, historyItem).getId())
-                .collect(Collectors.toSet());
-        return deviceMessageToAdd.size() == ids.size() ? SimpleResponse.success() : SimpleResponse.fail();
+                    mongoTemplate.save(historyItem);
+                }
+            });
+
+        return SimpleResponse.success();
     }
 
     @Override
@@ -577,5 +581,11 @@ public class HistoryService implements HistoryAPI {
         } else {
             period.setMonth(period.getMonth() + 1);
         }
+    }
+
+    private void addMessageAsDuplicate(HistoryItem historyItem, DeviceMessage deviceMessage) {
+        var duplicateMessages = new ArrayList<>(CollectionUtils.emptyIfNull(historyItem.getDuplicateMessages()));
+        duplicateMessages.add(deviceMessage);
+        historyItem.setDuplicateMessages(duplicateMessages);
     }
 }

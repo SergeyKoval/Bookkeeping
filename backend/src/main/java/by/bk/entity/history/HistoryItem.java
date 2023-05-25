@@ -10,7 +10,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,6 +41,7 @@ public class HistoryItem {
     private boolean notProcessed;
     private String goal;
     private List<DeviceMessage> deviceMessages;
+    private List<DeviceMessage> duplicateMessages;
 
     @JsonIgnore
     Balance cloneBalance() {

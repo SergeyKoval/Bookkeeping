@@ -593,7 +593,7 @@ public class HistoryService implements HistoryAPI {
                 .deviceMessages(Collections.singletonList(deviceMessage))
                 .notProcessed(true)
                 .build();
-            mongoTemplate.save(historyItem);
+            saveHistoryItem(login, historyItem);
         }
     }
 

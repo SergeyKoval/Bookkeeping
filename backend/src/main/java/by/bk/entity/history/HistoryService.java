@@ -17,7 +17,6 @@ import by.bk.entity.user.UserRepository;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
 import com.mongodb.client.result.UpdateResult;
-import java.util.function.Function;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -111,37 +110,11 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<DeviceMessageRequest> smsItems) {
-        smsItems.stream()
+    public SimpleResponse addHistoryItemsFromDeviceMessages(String login, String deviceId, List<DeviceMessageRequest> deviceMessages) {
+        deviceMessages.stream()
             .peek(deviceMessageRequest -> deviceMessageRequest.getDeviceMessage().setDeviceId(deviceId))
             .distinct()
-            .forEach(smsItem -> {
-                var deviceMessage = smsItem.getDeviceMessage();
-                var query = Query.query(Criteria.where("user").is(login)
-                    .and("notProcessed").is(true)
-                    .and("deviceMessages.messageTimestamp").is(deviceMessage.getMessageTimestamp())
-                    .and("balance.account").is(smsItem.getAccount())
-                    .and("balance.subAccount").is(smsItem.getSubAccount()));
-                var historyItems = mongoTemplate.find(query, HistoryItem.class);
-
-                if (CollectionUtils.isNotEmpty(historyItems)) {
-                    historyItems.stream()
-                        .peek(historyItem -> addMessageAsDuplicate(historyItem, deviceMessage))
-                        .forEach(mongoTemplate::save);
-                } else {
-                    var deviceMessageDate = LocalDate.ofInstant(Instant.ofEpochMilli(deviceMessage.getMessageTimestamp()), MINSK_TIMEZONE);
-                    var historyItem = HistoryItem.builder()
-                        .user(login)
-                        .year(deviceMessageDate.getYear())
-                        .month(deviceMessageDate.getMonthValue())
-                        .day(deviceMessageDate.getDayOfMonth())
-                        .balance(new Balance(smsItem.getAccount(), smsItem.getSubAccount()))
-                        .deviceMessages(Collections.singletonList(deviceMessage))
-                        .notProcessed(true)
-                        .build();
-                    mongoTemplate.save(historyItem);
-                }
-            });
+            .forEach(smsItem -> addHistoryItemFromDeviceMessage(login, smsItem));
 
         return SimpleResponse.success();
     }
@@ -587,5 +560,44 @@ public class HistoryService implements HistoryAPI {
         var duplicateMessages = new ArrayList<>(CollectionUtils.emptyIfNull(historyItem.getDuplicateMessages()));
         duplicateMessages.add(deviceMessage);
         historyItem.setDuplicateMessages(duplicateMessages);
+    }
+
+    private void addHistoryItemFromDeviceMessage(String login, DeviceMessageRequest deviceMessageRequest) {
+        var deviceMessage = deviceMessageRequest.getDeviceMessage();
+        var tokens = Stream.of(getDeviceMessageTokens(deviceMessage))
+            .filter(token -> token.matches("^\\d+.*"))
+            .collect(Collectors.toList());
+        var deviceMessageDate = LocalDate.ofInstant(Instant.ofEpochMilli(deviceMessage.getMessageTimestamp()), MINSK_TIMEZONE);
+        var query = Query.query(Criteria.where("user").is(login)
+            .and("notProcessed").is(true)
+            .and("year").is(deviceMessageDate.getYear())
+            .and("month").is(deviceMessageDate.getMonthValue())
+            .and("day").is(deviceMessageDate.getDayOfMonth())
+            .and("balance.account").is(deviceMessageRequest.getAccount())
+            .and("balance.subAccount").is(deviceMessageRequest.getSubAccount()));
+        var historyItems = mongoTemplate.find(query, HistoryItem.class).stream()
+            .filter(historyItem -> List.of(getDeviceMessageTokens(historyItem.getDeviceMessages().get(0))).containsAll(tokens))
+            .collect(Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(historyItems)) {
+            historyItems.stream()
+                .peek(historyItem -> addMessageAsDuplicate(historyItem, deviceMessage))
+                .forEach(mongoTemplate::save);
+        } else {
+            var historyItem = HistoryItem.builder()
+                .user(login)
+                .year(deviceMessageDate.getYear())
+                .month(deviceMessageDate.getMonthValue())
+                .day(deviceMessageDate.getDayOfMonth())
+                .balance(new Balance(deviceMessageRequest.getAccount(), deviceMessageRequest.getSubAccount()))
+                .deviceMessages(Collections.singletonList(deviceMessage))
+                .notProcessed(true)
+                .build();
+            mongoTemplate.save(historyItem);
+        }
+    }
+
+    private String[] getDeviceMessageTokens(DeviceMessage deviceMessage) {
+        return deviceMessage.getFullText().split("\\n| ");
     }
 }

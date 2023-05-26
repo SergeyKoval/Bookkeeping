@@ -21,7 +21,7 @@ public interface HistoryAPI {
     List<HistoryItem> getPagePortion(String login, int page, int limit, boolean unprocessedDeviceMessages);
     List<HistoryItem> getSuitable(String login, String category, String subCategory, SubCategoryType subCategoryType);
     SimpleResponse addHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus);
-    SimpleResponse addHistoryItemsFromSms(String login, String deviceId, List<DeviceMessageRequest> smsItems);
+    SimpleResponse addHistoryItemsFromDeviceMessages(String login, String deviceId, List<DeviceMessageRequest> smsItems);
     HistoryItem addBalanceHistoryItem(String login, Currency currency, String accountTitle, String subAccountTitle, Supplier<Double> value);
     SimpleResponse editHistoryItem(String login, HistoryItem historyItem, boolean changeGoalStatus, boolean changeOriginalGoalStatus);
     SimpleResponse deleteHistoryItem(String login, String historyItemId, boolean changeGoalStatus);

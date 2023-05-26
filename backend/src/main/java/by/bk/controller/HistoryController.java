@@ -44,13 +44,13 @@ public class HistoryController extends BaseAPIController {
     @RoleMobile
     @PostMapping("/sms")
     public SimpleResponse addHistoryItemsFromSms(@RequestBody List<DeviceMessageRequest> request, Principal principal) {
-        return historyAPI.addHistoryItemsFromSms(principal.getName(), getDeviceId(principal), request);
+        return historyAPI.addHistoryItemsFromDeviceMessages(principal.getName(), getDeviceId(principal), request);
     }
 
     @RoleMobile
     @PostMapping("/push")
     public SimpleResponse addHistoryItemsFromPush(@RequestBody List<DeviceMessageRequest> request, Principal principal) {
-        return historyAPI.addHistoryItemsFromSms(principal.getName(), getDeviceId(principal), request);
+        return historyAPI.addHistoryItemsFromDeviceMessages(principal.getName(), getDeviceId(principal), request);
     }
 
     @GetMapping("/devices/{deviceId}/messages/{index}")

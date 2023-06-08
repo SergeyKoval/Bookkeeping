@@ -75,3 +75,13 @@ body {
 
 
 /*:host ::ng-deep bk-popover .action*/
+
+.mat-mdc-dialog-container {
+  --mdc-dialog-subhead-font: Roboto,"Helvetica Neue", sans-serif;
+  --mdc-dialog-supporting-text-font: Roboto,"Helvetica Neue", sans-serif;
+  --mdc-dialog-supporting-text-size: 14px;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  overflow: visible;
+}

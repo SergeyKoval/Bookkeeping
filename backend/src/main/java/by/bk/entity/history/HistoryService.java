@@ -17,6 +17,7 @@ import by.bk.entity.user.UserRepository;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.UserCurrency;
 import com.mongodb.client.result.UpdateResult;
+import java.util.regex.Pattern;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -52,6 +53,7 @@ public class HistoryService implements HistoryAPI {
     private static final Log LOG = LogFactory.getLog(HistoryService.class);
     private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
     private static final ZoneId MINSK_TIMEZONE = ZoneId.of("Europe/Minsk");
+    private static final Pattern MESSAGE_PATTERN = Pattern.compile("\\d+\\.\\d+ [a-zA-Z]+");
 
     @Autowired
     private HistoryRepository historyRepository;
@@ -564,9 +566,7 @@ public class HistoryService implements HistoryAPI {
 
     private void addHistoryItemFromDeviceMessage(String login, DeviceMessageRequest deviceMessageRequest) {
         var deviceMessage = deviceMessageRequest.getDeviceMessage();
-        var tokens = Stream.of(getDeviceMessageTokens(deviceMessage))
-            .filter(token -> token.matches("^\\d+.*"))
-            .collect(Collectors.toList());
+        var tokens = getDeviceMessageTokens(deviceMessage);
         var deviceMessageDate = LocalDate.ofInstant(Instant.ofEpochMilli(deviceMessage.getMessageTimestamp()), MINSK_TIMEZONE);
         var query = Query.query(Criteria.where("user").is(login)
             .and("notProcessed").is(true)
@@ -576,7 +576,7 @@ public class HistoryService implements HistoryAPI {
             .and("balance.account").is(deviceMessageRequest.getAccount())
             .and("balance.subAccount").is(deviceMessageRequest.getSubAccount()));
         var historyItems = mongoTemplate.find(query, HistoryItem.class).stream()
-            .filter(historyItem -> List.of(getDeviceMessageTokens(historyItem.getDeviceMessages().get(0))).containsAll(tokens))
+            .filter(historyItem -> tokens.stream().allMatch(token -> historyItem.getDeviceMessages().get(0).getFullText().contains(token)))
             .collect(Collectors.toList());
 
         if (CollectionUtils.isNotEmpty(historyItems)) {
@@ -597,7 +597,13 @@ public class HistoryService implements HistoryAPI {
         }
     }
 
-    private String[] getDeviceMessageTokens(DeviceMessage deviceMessage) {
-        return deviceMessage.getFullText().split("\\n| ");
+    private Set<String> getDeviceMessageTokens(DeviceMessage deviceMessage) {
+        var tokens = new HashSet<String>();
+        var matcher = MESSAGE_PATTERN.matcher(deviceMessage.getFullText());
+        while (matcher.find()) {
+            tokens.add(matcher.group());
+        }
+
+        return tokens;
     }
 }

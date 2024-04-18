@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078133485011:android:8c90faf0a55c38b0389326",
+        "android_client_info": {
+          "package_name": "by.bk.bookkeeper.android.debuggable"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078133485011-ds5ubna1qcao7iui6prjqpg335rchr2p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBURlbQfFP1FL388dPErGXqtnRPjggd36Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078133485011-ds5ubna1qcao7iui6prjqpg335rchr2p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

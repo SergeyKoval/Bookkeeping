@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Бухгалтерия</string>
+    <string name="app_name">Debug! Бухгалтерия</string>
     <string name="action_login">Войти</string>
     <string name="str_copyright" translatable="false">© %s, Deplake</string>
     <string name="str_version" translatable="false">Версия %s</string>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bookkeeper</string>
+    <string name="app_name">Debug! Bookkeeper</string>
     <string name="action_login">Login</string>
     <string name="str_copyright" translatable="false">© %s, Bookkeeper</string>
     <string name="str_version" translatable="false">Version %s</string>

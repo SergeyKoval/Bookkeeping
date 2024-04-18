@@ -12,7 +12,7 @@ android {
         applicationId "by.bk.bookkeeper.android"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 17
+        versionCode 18
         versionName "2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

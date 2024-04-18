@@ -56,7 +56,8 @@ class ProcessingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("On start command invoked with action ${intent?.action}")
         if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
-                || intent?.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
+            || intent?.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT
+        ) {
             stopForeground(true)
             stopSelf()
         }
@@ -112,8 +113,8 @@ class ProcessingService : Service() {
                             )
                         )
                         .build()
-                    )
-                }
+                )
+            }
         )
     }
 
@@ -147,6 +148,11 @@ class ProcessingService : Service() {
     }
 
     private fun handlePush(pushMessage: PushMessage) {
+        disposables.add(
+            repository.sendLog("[Push] ${pushMessage.packageName} | ${pushMessage.text} | ${pushMessage.timestamp}")
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+        )
         val matchedPush = pushProcessor.process(listOf(pushMessage))
         if (matchedPush.isNotEmpty()) {
             disposables.add(

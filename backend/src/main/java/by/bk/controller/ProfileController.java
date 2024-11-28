@@ -2,6 +2,7 @@ package by.bk.controller;
 
 import by.bk.controller.model.request.*;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.entity.user.UserFacade;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.Account;
 import by.bk.entity.user.model.User;
@@ -23,6 +24,8 @@ import java.util.List;
 public class ProfileController extends BaseAPIController {
     @Autowired
     private UserAPI userAPI;
+    @Autowired
+    private UserFacade userFacade;
     @Autowired
     private EmailPreparator applicationLinkEmailPreparator;
 
@@ -92,7 +95,7 @@ public class ProfileController extends BaseAPIController {
 
     @PostMapping("/delete-account")
     public SimpleResponse deleteAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userAPI.deleteAccount(principal.getName(), request.getTitle());
+        return userFacade.deleteAccount(principal.getName(), request.getTitle());
     }
 
     @PostMapping("/move-account")
@@ -102,17 +105,17 @@ public class ProfileController extends BaseAPIController {
 
     @PostMapping("/add-sub-account")
     public SimpleResponse addSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userAPI.addSubAccount(principal.getName(), request.getTitle(), request.getParentTitle(), request.getIcon(), request.getBalance());
+        return userFacade.addSubAccount(principal.getName(), request.getTitle(), request.getParentTitle(), request.getIcon(), request.getBalance());
     }
 
     @PostMapping("/change-sub-account-balance")
     public SimpleResponse changeSubAccountBalance(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userAPI.changeSubAccountBalance(principal.getName(), request.getTitle(), request.getParentTitle(), request.getBalance());
+        return userFacade.changeSubAccountBalance(principal.getName(), request.getTitle(), request.getParentTitle(), request.getBalance());
     }
 
     @PostMapping("/edit-sub-account")
     public SimpleResponse editSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userAPI.editSubAccount(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getIcon(), request.getBalance());
+        return userFacade.editSubAccount(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getIcon(), request.getBalance());
     }
 
     @PostMapping("/move-sub-account")
@@ -127,7 +130,7 @@ public class ProfileController extends BaseAPIController {
 
     @PostMapping("/delete-sub-account")
     public SimpleResponse deleteSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userAPI.deleteSubAccount(principal.getName(), request.getParentTitle(), request.getTitle());
+        return userFacade.deleteSubAccount(principal.getName(), request.getParentTitle(), request.getTitle());
     }
 
     @PostMapping("/add-category")
@@ -175,7 +178,7 @@ public class ProfileController extends BaseAPIController {
 
     @PostMapping("/move-sub-category-to-another-category")
     public SimpleResponse moveSubCategoryToAnotherCategory(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userAPI.moveSubCategoryToAnotherCategory(principal.getName(), request.getOldTitle(), request.getParentTitle(), request.getTitle(), request.getSubCategoryType());
+        return userFacade.moveSubCategoryToAnotherCategory(principal.getName(), request.getOldTitle(), request.getParentTitle(), request.getTitle(), request.getSubCategoryType());
     }
 
     @PostMapping("/send-application-link")

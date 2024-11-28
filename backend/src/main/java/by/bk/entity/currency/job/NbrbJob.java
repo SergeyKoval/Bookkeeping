@@ -1,28 +1,15 @@
 package by.bk.entity.currency.job;
 
-import by.bk.entity.budget.job.PopulateUserBudgetJob;
 import by.bk.entity.currency.Currency;
 import by.bk.entity.currency.CurrencyAPI;
 import by.bk.entity.currency.CurrencyDetail;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.net.ssl.SSLContext;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
@@ -55,16 +42,16 @@ public class NbrbJob {
 //    private PopulateUserBudgetJob populateUserBudgetJob;
     private RestTemplate restTemplate;
 
-    @PostConstruct
-    public void init() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        TrustStrategy acceptingTrustStrategy = (x509Certificates, s) -> true;
-        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
-        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new String[]{"TLSv1.2"}, null, new NoopHostnameVerifier());
-        CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setHttpClient(httpClient);
-        restTemplate = new RestTemplate(requestFactory);
-    }
+//    @PostConstruct
+//    public void init() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+//        TrustStrategy acceptingTrustStrategy = (x509Certificates, s) -> true;
+//        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+//        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new String[]{"TLSv1.2"}, null, new NoopHostnameVerifier());
+//        CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+//        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+//        requestFactory.setHttpClient(httpClient);
+//        restTemplate = new RestTemplate(requestFactory);
+//    }
 
 
 //    @Scheduled(fixedDelay = 3600000)

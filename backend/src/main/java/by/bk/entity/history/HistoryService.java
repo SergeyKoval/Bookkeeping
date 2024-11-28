@@ -351,7 +351,7 @@ public class HistoryService implements HistoryAPI {
     @Override
     public SimpleResponse getDeviceMessage(String login, String deviceId, Integer deviceMessageIndex) {
         Query query = Query.query(Criteria.where("user").is(login).and("deviceMessages.deviceId").is(deviceId))
-                .with(new Sort(Sort.Direction.DESC, "deviceMessages.messageTimestamp"))
+                .with(Sort.by(Sort.Direction.DESC, "deviceMessages.messageTimestamp"))
                 .skip(deviceMessageIndex)
                 .limit(1);
         HistoryItem historyItem = mongoTemplate.findOne(query, HistoryItem.class);

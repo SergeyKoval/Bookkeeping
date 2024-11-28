@@ -8,12 +8,14 @@ import by.bk.entity.currency.Currency;
 import by.bk.entity.history.Balance;
 import by.bk.entity.history.HistoryType;
 import by.bk.entity.user.model.Account;
+import by.bk.entity.user.model.SubAccount;
 import by.bk.entity.user.model.SubCategoryType;
 import by.bk.entity.user.model.User;
 import by.bk.security.AuthenticationAPI;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Sergey Koval
@@ -31,14 +33,14 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse toggleAccount(String login, String accountTitle, boolean toggleState);
     SimpleResponse addAccount(String login, String title);
     SimpleResponse editAccount(String login, String newTitle, String oldTitle);
-    SimpleResponse deleteAccount(String login, String title);
+    Optional<Account> deleteAccount(String login, String title);
     SimpleResponse moveAccount(String login, String title, Direction direction);
 
     SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance);
-    SimpleResponse changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance);
-    SimpleResponse editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance);
+    Optional<SubAccount> changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance);
+    Optional<SubAccount> editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance);
     SimpleResponse moveSubAccount(String login, String accountTitle, String subAccountTitle, Direction direction);
-    SimpleResponse deleteSubAccount(String login, String accountTitle, String subAccountTitle);
+    Optional<SubAccount> deleteSubAccount(String login, String accountTitle, String subAccountTitle);
 
     SimpleResponse addCategory(String login, String categoryTitle, String icon);
     SimpleResponse editCategory(String login, String oldCategoryTitle, String newCategoryTitle, String icon);

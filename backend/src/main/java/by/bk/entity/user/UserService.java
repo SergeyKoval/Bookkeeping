@@ -12,11 +12,12 @@ import by.bk.entity.history.Balance;
 import by.bk.entity.user.exception.SelectableItemMissedSettingUpdateException;
 import by.bk.entity.user.model.*;
 import by.bk.mail.EmailPreparator;
+import by.bk.security.JwtTokenUtil;
 import by.bk.security.MissedUserException;
 import by.bk.security.model.JwtToken;
 import by.bk.security.model.JwtUser;
+import by.bk.security.model.LoginRequest;
 import com.mongodb.client.result.UpdateResult;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,16 +27,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -43,14 +40,11 @@ import java.util.function.Supplier;
  * @author Sergey Koval
  */
 @Service
-public class UserService implements UserAPI, UserDetailsService {
+public class UserService implements UserAPI {
     private static final Log LOG = LogFactory.getLog(UserService.class);
-    private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private HistoryAPI historyApi;
     @Autowired
     private BudgetAPI budgetAPI;
     @Autowired
@@ -59,6 +53,8 @@ public class UserService implements UserAPI, UserDetailsService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private EmailPreparator registrationCodeEmailPreparator;
+    @Autowired
+    private JwtTokenUtil tokenUtil;
 
     @Override
     public SimpleResponse sendRegistrationCode(String email, String password, boolean restorePassword) {
@@ -127,10 +123,24 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public JwtUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.authenticateUser(username)
-                .map(user -> new JwtUser(username, user.getPassword(), user.isEnabled(), user.getRoles(), null))
-                .orElseThrow(() -> new MissedUserException(username));
+    public String authenticate(LoginRequest loginRequest) {
+        var email = StringUtils.lowerCase(loginRequest.getEmail());
+        var encryptedPassword = userRepository.authenticateUser(email)
+            .map(User::getPassword)
+            .orElseThrow(() -> new MissedUserException(email));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), encryptedPassword)) {
+            throw new BadCredentialsException("Invalid password for account with email: %s".formatted(email));
+        }
+
+        var deviceId = loginRequest.getDeviceId();
+        if (StringUtils.isBlank(deviceId)) {
+            return tokenUtil.generateToken(email);
+        }
+
+        var token = tokenUtil.generateTokenMobile(email, deviceId);
+        registerDevice(email, deviceId, token);
+        return token;
     }
 
     @Override
@@ -298,7 +308,7 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public SimpleResponse deleteAccount(String login, String title) {
+    public Optional<Account> deleteAccount(String login, String title) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, title, getAccountError(login, title));
 
@@ -309,13 +319,10 @@ public class UserService implements UserAPI, UserDetailsService {
             Query historyQuery = Query.query(Criteria.where("user").is(login)
                     .orOperator(Criteria.where("balance.account").is(title), Criteria.where("balance.accountTo").is(title)));
             archiveHistoryItems(historyQuery);
-
-            account.getSubAccounts().forEach(subAccount -> subAccount.getBalance().forEach((currency, value) -> {
-                historyApi.addBalanceHistoryItem(login, currency, title, subAccount.getTitle(), () -> value * -1);
-            }));
+            return Optional.of(account);
         }
 
-        return response;
+        return Optional.empty();
     }
 
     @Override
@@ -352,19 +359,11 @@ public class UserService implements UserAPI, UserDetailsService {
                 .orElse(0);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance));
-        SimpleResponse response = updateUser(query, update);
-
-        if (response.isSuccess()) {
-            balance.forEach((currency, value) -> {
-                historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value);
-            });
-        }
-
-        return response;
+        return updateUser(query, update);
     }
 
     @Override
-    public SimpleResponse changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance) {
+    public Optional<SubAccount> changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
@@ -376,21 +375,17 @@ public class UserService implements UserAPI, UserDetailsService {
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount), ".balance"), balance);
 
         SimpleResponse response = updateUser(query, update);
-        if (response.isSuccess()) {
-            addBalanceHistoryItemOnBalanceEdit(login, accountTitle, subAccountTitle, subAccount, balance);
-        }
-
-        return response;
+        return response.isSuccess() ? Optional.of(subAccount) : Optional.empty();
     }
 
     @Override
-    public SimpleResponse editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance) {
+    public Optional<SubAccount> editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
         List<SubAccount> subAccounts = account.getSubAccounts();
         if (!StringUtils.equals(oldSubAccountTitle, newSubAccountTitle) && subAccounts.stream().anyMatch(subAccount -> StringUtils.equals(subAccount.getTitle(), newSubAccountTitle))) {
-            return SimpleResponse.alreadyExistsFail();
+            return Optional.empty();
         }
         SubAccount subAccount = chooseItem(subAccounts, oldSubAccountTitle, getSubAccountError(login, accountTitle, oldSubAccountTitle));
 
@@ -400,8 +395,6 @@ public class UserService implements UserAPI, UserDetailsService {
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount)), newSubAccount);
         SimpleResponse response = updateUser(query, update);
         if (response.isSuccess()) {
-            addBalanceHistoryItemOnBalanceEdit(login, accountTitle, newSubAccountTitle, subAccount, balance);
-
             Query historyQuery = Query.query(Criteria.where("user").is(login).and("balance.account").is(accountTitle).and("balance.subAccount").is(oldSubAccountTitle));
             Update historyUpdate = Update.update("balance.subAccount", newSubAccountTitle);
             mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
@@ -409,9 +402,11 @@ public class UserService implements UserAPI, UserDetailsService {
             historyQuery = Query.query(Criteria.where("user").is(login).and("balance.accountTo").is(accountTitle).and("balance.subAccountTo").is(oldSubAccountTitle));;
             historyUpdate = Update.update("balance.subAccountTo", newSubAccountTitle);
             mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+
+            return Optional.of(subAccount);
         }
 
-        return response;
+        return Optional.empty();
     }
 
     @Override
@@ -446,7 +441,7 @@ public class UserService implements UserAPI, UserDetailsService {
     }
 
     @Override
-    public SimpleResponse deleteSubAccount(String login, String accountTitle, String subAccountTitle) {
+    public Optional<SubAccount> deleteSubAccount(String login, String accountTitle, String subAccountTitle) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
@@ -461,10 +456,10 @@ public class UserService implements UserAPI, UserDetailsService {
                     Criteria.where("balance.account").is(accountTitle).and("balance.subAccount").is(subAccountTitle),
                     Criteria.where("balance.accountTo").is(accountTitle).and("balance.subAccountTo").is(subAccountTitle)));
             archiveHistoryItems(historyQuery);
-            subAccount.getBalance().forEach((currency, value) -> historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value * -1));
+            return Optional.of(subAccount);
         }
 
-        return response;
+        return Optional.empty();
     }
 
     @Override
@@ -642,14 +637,7 @@ public class UserService implements UserAPI, UserDetailsService {
         Update update = new Update()
                 .pull("categories." + categories.indexOf(oldCategory) + ".subCategories", subCategory)
                 .push("categories." + categories.indexOf(newCategory) + ".subCategories", new SubCategory(subCategory.getTitle(), newSubCategoryOrder, subCategory.getType()));
-        SimpleResponse response = updateUser(query, update);
-
-        if (response.isSuccess()) {
-            List<HistoryItem> historyItems = historyApi.getSuitable(login, oldCategoryTitle, subCategoryTitle, subCategoryType);
-            response = budgetAPI.moveCategory(login, oldCategoryTitle, newCategoryTitle, subCategoryTitle, subCategoryType, historyItems);
-        }
-
-        return response;
+        return updateUser(query, update);
     }
 
     @Override
@@ -880,21 +868,6 @@ public class UserService implements UserAPI, UserDetailsService {
     private void archiveHistoryItems(Query query) {
         Update historyUpdate = new Update().set("archived", true);
         mongoTemplate.updateMulti(query, historyUpdate, HistoryItem.class);
-    }
-
-    private void addBalanceHistoryItemOnBalanceEdit(String login, String accountTitle, String subAccountTitle, SubAccount subAccount, Map<Currency, Double> balance) {
-        subAccount.getBalance().forEach((currency, value) -> {
-            Double currencyValue = !balance.containsKey(currency) ? value * -1 : Double.parseDouble(CURRENCY_FORMAT.format(balance.get(currency) - value));
-            if (currencyValue != 0) {
-                historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> currencyValue);
-            }
-        });
-
-        CollectionUtils.disjunction(subAccount.getBalance().keySet(), balance.keySet()).forEach(currency -> {
-            if (balance.containsKey(currency)) {
-                historyApi.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> balance.get(currency));
-            }
-        });
     }
 
     private User initUserFromTemplate(String email, String password, List<UserPermission> roles) {

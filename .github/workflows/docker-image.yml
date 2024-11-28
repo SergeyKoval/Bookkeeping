@@ -1,0 +1,21 @@
+name: Build image and push it to dockerhub
+
+on:
+  push:
+    branches: [ "java-upgrade" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build --tag deplake/bookkeeping:latest
+      - name: Push image to docker hub
+        run: |
+          docker login -u deplake -p ${{secrets.DEPLAKE_DOCKER_HUB_TOKEN}}
+          docker push deplake/bookkeeping:latest

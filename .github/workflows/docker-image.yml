@@ -20,5 +20,6 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: 22
           script: |
-            docker stop $(docker ps -a -q)
+            docker stop $(docker ps -a -q --filter="name=bk")
+            docker rm $(docker ps -a -q --filter="name=bk")
             docker run -d --name bk --pull=always --env-file /home/bk/server.properties -p 8080:8080 deplake/bookkeeping:latest

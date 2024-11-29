@@ -1,6 +1,6 @@
 package by.bk.mail;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * @author Sergey Koval

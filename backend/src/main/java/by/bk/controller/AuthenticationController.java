@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -33,8 +31,6 @@ public class AuthenticationController {
     private static final String BAD_CREDENTIALS = "BAD CREDENTIALS";
     private static final String MISSED_USER = "MISSED USER";
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenUtil tokenUtil;
     @Autowired
@@ -60,10 +56,7 @@ public class AuthenticationController {
 
     @PostMapping("/generate-token")
     public Map<String, String> register(@RequestBody LoginRequest loginRequest) {
-        String email = StringUtils.lowerCase(loginRequest.getEmail());
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword());
-        authenticationManager.authenticate(authenticationToken);
-        return Collections.singletonMap("token", tokenUtil.generateToken(email));
+        return Collections.singletonMap("token", authenticationAPI.authenticate(loginRequest));
     }
 
     @PostMapping("/generate-token-mobile")
@@ -71,12 +64,7 @@ public class AuthenticationController {
         if (StringUtils.isBlank(loginRequest.getDeviceId())) {
             throw new BadCredentialsException("Device id is missed on mobile login for user " + loginRequest.getEmail());
         }
-        String email = StringUtils.lowerCase(loginRequest.getEmail());
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword());
-        authenticationManager.authenticate(authenticationToken);
-        String token = tokenUtil.generateTokenMobile(email, loginRequest.getDeviceId());
-        authenticationAPI.registerDevice(loginRequest.getEmail(), loginRequest.getDeviceId(), token);
-        return Collections.singletonMap("token", token);
+        return Collections.singletonMap("token", authenticationAPI.authenticate(loginRequest));
     }
 
     @PostMapping("/send-registration-code")

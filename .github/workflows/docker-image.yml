@@ -2,22 +2,29 @@ name: Build image and push it to dockerhub
 
 on:
   push:
-    branches: [ "java-upgrade" ]
-  pull_request:
     branches: [ "master" ]
 
 jobs:
 
-  build-and-publish:
+  buld-publish-and-deploy-latest-version:
     runs-on: ubuntu-latest
 
     steps:
-      - name: executing remote ssh commands using password
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build . --tag deplake/bookkeeping:latest
+      - name: Push image to docker hub
+        run: |
+          docker login -u deplake -p ${{secrets.DEPLAKE_DOCKER_HUB_TOKEN}}
+          docker push deplake/bookkeeping:latest
+      - name: Stop current application and start latest one
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
           port: 22
-          script: whoami
-          
+          script: |
+            docker stop $(docker ps -a -q --filter="name=bk")
+            docker rm $(docker ps -a -q --filter="name=bk")
+            docker run -d --name bk --pull=always --env-file /home/bk/server.properties -p 8080:8080 deplake/bookkeeping:latest

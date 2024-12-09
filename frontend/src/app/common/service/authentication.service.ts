@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, NavigationExtras, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, NavigationExtras, Router, RouterStateSnapshot } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { SimpleResponse } from '../model/simple-response';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService implements CanActivate {
+export class AuthenticationService  {
   public static readonly TOKEN: string = 'access_token';
 
   private _errorMessage$$: Subject<string> = new Subject<string>();

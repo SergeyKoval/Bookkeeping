@@ -20,6 +20,7 @@ import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * @author Sergey Koval
@@ -30,7 +31,7 @@ public class GlobalExceptionResolver extends SimpleMappingExceptionResolver impl
     private static final String REPLACE_PATTERN = System.getProperty("line.separator");
     private static final String REPLACEMENT = "<br>&emsp;";
     private static final String SYSTEM_USER = "SYSTEM";
-    private static final List<Class> EXPECTED_EXCEPTIONS = List.of(BadCredentialsException.class);
+    private static final List<Class> EXPECTED_EXCEPTIONS = List.of(BadCredentialsException.class, NoResourceFoundException.class);
 
     @Value("${mail.admin.username}")
     private String toEmail;

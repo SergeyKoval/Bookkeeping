@@ -5,7 +5,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
@@ -182,7 +181,7 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => localStorage.getItem(`Bookkeeper.${AuthenticationService.TOKEN}`),
+        tokenGetter: () => localStorage.getItem(AuthenticationService.TOKEN),
         allowedDomains: ['localhost:8085', 'localhost:3000'],
         disallowedRoutes: [/token\/server\/version.*/, /token\/generate-token.*/, /token\/send-registration-code.*/, /token\/review-registration-code.*/]
       }
@@ -194,11 +193,7 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     PopoverModule,
     AngularMyDatePickerModule,
     NgChartsModule,
-    RouterModule.forRoot(BOOKKEEPING_ROUTES),
-    LocalStorageModule.forRoot({
-      prefix: 'Bookkeeper',
-      storageType: 'localStorage'
-    })
+    RouterModule.forRoot(BOOKKEEPING_ROUTES)
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

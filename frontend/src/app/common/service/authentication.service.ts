@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
-import { LocalStorageService } from 'angular-2-local-storage';
 import { Observable, Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { switchMap, tap } from 'rxjs/operators';
@@ -31,7 +30,6 @@ export class AuthenticationService  {
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _http: HttpClient,
-    private _localStorageService: LocalStorageService,
     private _jwtHelper: JwtHelperService,
     private _dialogRef: MatDialog
   ) {}
@@ -60,7 +58,7 @@ export class AuthenticationService  {
       .pipe(
         tap(response => {
           if (response.status === 'SUCCESS') {
-            this._localStorageService.set(AuthenticationService.TOKEN, response.message);
+            localStorage.setItem(AuthenticationService.TOKEN, response.message);
             this.startAuthenticationExpirationJob();
           }
         }),
@@ -71,25 +69,25 @@ export class AuthenticationService  {
     this._authentication$$.next(true);
     return this._http.post<{token: string}>('/token/generate-token', credentials, { observe: 'response' })
       .pipe(
-        tap((response: HttpResponse<{token: string}>) => this._localStorageService.set(AuthenticationService.TOKEN, response.body.token)),
+        tap((response: HttpResponse<{token: string}>) => localStorage.setItem(AuthenticationService.TOKEN, response.body.token)),
         tap(() => this.startAuthenticationExpirationJob())
       );
   }
 
   public refreshTokenIfRequired(): void {
-    const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
+    const token: string = localStorage.getItem(AuthenticationService.TOKEN);
     if (token !== null && token !== undefined) {
       const now: Date = new Date();
       const tokenExpirationDate: Date = this._jwtHelper.getTokenExpirationDate(token);
       if ((tokenExpirationDate.getTime() - now.getTime()) < 300000) {
         this._http.post<{token: string}>('/token/refresh-token', {'token': token})
-          .subscribe((response: {token: string}) => this._localStorageService.set(AuthenticationService.TOKEN, response.token));
+          .subscribe((response: {token: string}) => localStorage.setItem(AuthenticationService.TOKEN, response.token));
       }
     }
   }
 
   public validateToken(): boolean {
-    const token: string = this._localStorageService.get(AuthenticationService.TOKEN);
+    const token: string = localStorage.getItem(AuthenticationService.TOKEN);
     if (token === null || token === undefined || this._jwtHelper.isTokenExpired(token)) {
       this.exit();
       return false;
@@ -125,7 +123,7 @@ export class AuthenticationService  {
   public exit(expiredSession: boolean = false): void {
     this.closeAllDialogs();
     this._profileService.initialDataLoaded = false;
-    this._localStorageService.remove(AuthenticationService.TOKEN);
+    localStorage.removeItem(AuthenticationService.TOKEN);
     this._profileService.clearProfile();
     this._authentication$$.next(false);
     this._applicationLoading$$.next(false);

@@ -58,31 +58,31 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
   }
 
   public search(): void {
-    if (!this.periodFilter) {
-      this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
-      return;
-    }
-
-    if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
-      return;
-    }
-
-    if (this.accountsFilter.filter(account => account.state !== CheckboxState.UNCHECKED).length === 0) {
-      this._alertService.addAlert(AlertType.WARNING, 'Фильтр счетов пуст');
-      return;
-    }
-
-    this.loading = true;
-    this._reportService.getHistoryItemsForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter).subscribe((items: HistoryType[]) => {
-      this.historyItems = items;
-      this.loading = false;
-    });
+    // if (!this.periodFilter) {
+    //   this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
+    //   return;
+    // }
+    //
+    // if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
+    //   this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
+    //   return;
+    // }
+    //
+    // if (this.accountsFilter.filter(account => account.state !== CheckboxState.UNCHECKED).length === 0) {
+    //   this._alertService.addAlert(AlertType.WARNING, 'Фильтр счетов пуст');
+    //   return;
+    // }
+    //
+    // this.loading = true;
+    // this._reportService.getHistoryItemsForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter).subscribe((items: HistoryType[]) => {
+    //   this.historyItems = items;
+    //   this.loading = false;
+    // });
   }
 
   public editHistoryItem(historyItem: HistoryItem): void {
     this._dialog.open(HistoryEditDialogComponent, {
-      width: '720px',
+      width: '800px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',
       data: {

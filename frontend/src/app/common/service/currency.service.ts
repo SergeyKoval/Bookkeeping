@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { IMyDate } from 'angular-mydatepicker';
 
 import { HOST } from '../config/config';
 import { DateUtils } from '../utils/date-utils';
 import { CurrencyHistory } from '../model/currency-history';
 import { CurrencyDetail } from '../model/currency-detail';
 import { tap } from 'rxjs/operators';
+import { Moment } from 'moment/moment';
 
 @Injectable({
   providedIn: 'root'
@@ -97,12 +97,12 @@ export class CurrencyService {
     this._currenciesIndicatorMap.clear();
   }
 
-  public isCurrencyHistoryLoaded(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): boolean {
+  public isCurrencyHistoryLoaded(currency: string, date: Moment = DateUtils.getDateFromUTC()): boolean {
     if (this._currenciesIndicatorMap.has(currency)) {
       const currencyIndicator: Map<number, Map<number, boolean>> = this._currenciesIndicatorMap.get(currency);
-      if (currencyIndicator.has(date.year)) {
-        const yearIndicator: Map<number, boolean> = currencyIndicator.get(date.year);
-        if (yearIndicator.has(date.month)) {
+      if (currencyIndicator.has(date.year())) {
+        const yearIndicator: Map<number, boolean> = currencyIndicator.get(date.year());
+        if (yearIndicator.has(date.month() + 1)) {
           return true;
         }
       }
@@ -111,7 +111,7 @@ export class CurrencyService {
     return false;
   }
 
-  public convertToCurrency(value: number, currentCurrency: string, convertedCurrency: string, date: IMyDate = DateUtils.getDateFromUTC()): number {
+  public convertToCurrency(value: number, currentCurrency: string, convertedCurrency: string, date: Moment = DateUtils.getDateFromUTC()): number {
     if (convertedCurrency === currentCurrency) {
       return value;
     }
@@ -120,17 +120,17 @@ export class CurrencyService {
     return currencyHistory ? (currencyHistory.conversions[convertedCurrency]  * value) : 0;
   }
 
-  private getCurrencyHistory(currency: string, date: IMyDate = DateUtils.getDateFromUTC()): CurrencyHistory {
+  private getCurrencyHistory(currency: string, date: Moment = DateUtils.getDateFromUTC()): CurrencyHistory {
     if (!this.isCurrencyHistoryLoaded(currency, date)) {
       return this._todayConversions.get(currency);
     }
 
-    const yearCurrencies: Map<number, CurrencyHistory[]> = this._currencies.get(currency).get(date.year);
-    if (yearCurrencies && yearCurrencies.has(date.month)) {
-      const monthCurrencies: CurrencyHistory[] = yearCurrencies.get(date.month);
+    const yearCurrencies: Map<number, CurrencyHistory[]> = this._currencies.get(currency).get(date.year());
+    if (yearCurrencies && yearCurrencies.has(date.month() + 1)) {
+      const monthCurrencies: CurrencyHistory[] = yearCurrencies.get(date.month() + 1);
       if (monthCurrencies && monthCurrencies.length > 0) {
         const currencyConversions: CurrencyHistory = monthCurrencies
-          .filter((currencyHistory: CurrencyHistory) => currencyHistory.day === date.day)
+          .filter((currencyHistory: CurrencyHistory) => currencyHistory.day === date.day())
           .filter((currencyHistory: CurrencyHistory) => currencyHistory.name === currency)[0];
         if (currencyConversions) {
           return currencyConversions;

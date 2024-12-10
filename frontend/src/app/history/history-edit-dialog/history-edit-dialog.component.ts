@@ -1,7 +1,8 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { IAngularMyDpOptions, IMyDate, IMyDateModel } from 'angular-mydatepicker';
+import { Moment } from 'moment/moment';
+import * as moment from 'moment';
 
 import { HistoryService } from '../../common/service/history.service';
 import { CurrencyService } from '../../common/service/currency.service';
@@ -12,7 +13,7 @@ import { AlertService } from '../../common/service/alert.service';
 import { AlertType } from '../../common/model/alert/AlertType';
 import { ConfirmDialogService } from '../../common/components/confirm-dialog/confirm-dialog.service';
 import { CurrencyValuePipe } from '../../common/pipes/currency-value.pipe';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HistoryType } from '../../common/model/history/history-type';
 import { CurrencyDetail } from '../../common/model/currency-detail';
 import { SelectItem } from '../../common/components/select/select-item';
@@ -31,12 +32,10 @@ import { filter, tap } from 'rxjs/operators';
   styleUrls: ['./history-edit-dialog.component.css']
 })
 export class HistoryEditDialogComponent implements OnInit {
-  public datePickerOptions: IAngularMyDpOptions = {dateFormat: 'dd.mm.yyyy', inline: true, selectorWidth: '210px', selectorHeight: '210px'};
-
   public errors: string;
   public historyItem: HistoryType;
   public currencies: CurrencyDetail[];
-  public selectedDate: IMyDate;
+  public selectedDate: Moment;
   public accounts: SelectItem[];
   public categories: SelectItem[];
   public selectedAccount: SelectItem[];
@@ -71,7 +70,7 @@ export class HistoryEditDialogComponent implements OnInit {
       this._originalHistoryItem.balance = Object.assign({}, this.data.historyItem.balance);
     }
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
-    this.selectedDate = {year: this.historyItem.year, month: this.historyItem.month, day: this.historyItem.day};
+    this.selectedDate = this.toMoment(this.historyItem);
     if (this.data.fromDeviceMessage) {
       this.historyItem.balance.currency = this._profileService.defaultCurrency.name;
       this.historyItem.type = 'expense';
@@ -97,22 +96,21 @@ export class HistoryEditDialogComponent implements OnInit {
     }
   }
 
-  public onDateChanged(event: IMyDateModel): void {
+  public onDateChanged(changedDate: Moment): void {
     this._titleElement.nativeElement.click();
-    const date: IMyDate = event.singleDate.date;
-    if (date.day !== this.selectedDate.day || date.month !== this.selectedDate.month || date.year !== this.selectedDate.year) {
-      if ((this.selectedDate.month !== date.month || this.selectedDate.year !== date.year)
-        && !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, date)) {
+    if (changedDate.format('YYYYMMDD') !== this.selectedDate.format('YYYYMMDD')) {
+      if ((this.selectedDate.month() !== changedDate.month() || this.selectedDate.year() !== changedDate.year())
+        && !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, changedDate)) {
 
         this.alternativeCurrencyLoading = true;
-        this.loadAlternativeCurrencies(date);
+        this.loadAlternativeCurrencies(changedDate);
       } else {
         this.updateAlternativeCurrencies();
       }
-      this.selectedDate = date;
-      this.historyItem.year = date.year;
-      this.historyItem.month = date.month;
-      this.historyItem.day = date.day;
+      this.selectedDate = changedDate;
+      this.historyItem.year = changedDate.year();
+      this.historyItem.month = changedDate.month() + 1;
+      this.historyItem.day = changedDate.day();
     }
   }
 
@@ -252,6 +250,10 @@ export class HistoryEditDialogComponent implements OnInit {
     return this.selectedCategory && this.selectedCategory.length > 0 ? this.selectedCategory[0].title : null;
   }
 
+  private toMoment(historyItem: HistoryType): Moment {
+    return moment({year: historyItem.year, month: historyItem.month - 1, day: historyItem.day});
+  }
+
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string,
                              archived?: boolean, id?: string, deviceMessages?: DeviceMessage[]): HistoryType {
@@ -314,8 +316,8 @@ export class HistoryEditDialogComponent implements OnInit {
     return true;
   }
 
-  private loadAlternativeCurrencies(date: IMyDate): void {
-    this._currencyService.loadCurrenciesForMonth({month: date.month, year: date.year, currencies: this._authenticationService.getProfileCurrencies()})
+  private loadAlternativeCurrencies(date: Moment): void {
+    this._currencyService.loadCurrenciesForMonth({month: date.month() + 1, year: date.year(), currencies: this._authenticationService.getProfileCurrencies()})
       .subscribe(() => {
         this.updateAlternativeCurrencies();
         this.alternativeCurrencyLoading = false;

@@ -75,7 +75,7 @@ export class HistoryComponent implements OnInit, AfterViewChecked {
 
   public editHistoryItem(historyItem: HistoryItem, fromDeviceMessage: boolean): void {
     this._dialog.open(HistoryEditDialogComponent, {
-      width: '720px',
+      width: '800px',
       position: {top: 'top'},
       panelClass: 'history-add-edit-dialog',
       data: {

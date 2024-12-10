@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { IMyDate } from 'angular-mydatepicker';
+import { Moment } from 'moment/moment';
 
 import { BudgetService } from '../../../common/service/budget.service';
 import { GoalFilterType } from '../../../common/model/history/GoalFilterType';
@@ -52,8 +52,8 @@ export class GoalsContainerComponent implements OnInit {
     }
   }
   @Input()
-  public set selectedDate(value: IMyDate) {
-    const dateChanged: boolean = this._selectedDate && (this._selectedDate.year !== value.year || this._selectedDate.month !== value.month);
+  public set selectedDate(value: Moment) {
+    const dateChanged: boolean = this._selectedDate && this._selectedDate.format('YYYYMM') !== value.format('YYYYMM');
 
     if (dateChanged) {
       this.updateMonthProgress(value);
@@ -97,7 +97,7 @@ export class GoalsContainerComponent implements OnInit {
 
   private _budget: Budget;
   private _selectedCategory: string;
-  private _selectedDate: IMyDate;
+  private _selectedDate: Moment;
   private _originalHistoryItem: HistoryType;
   private _originalBudget: Budget;
   private _originalCategory: BudgetCategory;
@@ -218,18 +218,17 @@ export class GoalsContainerComponent implements OnInit {
     return this._selectedCategory;
   }
 
-  public get selectedDate(): IMyDate {
+  public get selectedDate(): Moment {
     return this._selectedDate;
   }
-
 
   public get goalCouldBeCalculated(): boolean {
     return this._goalCouldBeCalculated;
   }
 
-  private loadBudget(date: IMyDate): void {
+  private loadBudget(date: Moment): void {
     this.budgetLoading = true;
-    this._budgetService.loadBudget(date.year, date.month).subscribe((budget: Budget) => {
+    this._budgetService.loadBudget(date.year(), date.month() + 1).subscribe((budget: Budget) => {
       this._budget = budget;
       this.chooseBudgetCategory(budget);
 
@@ -258,10 +257,10 @@ export class GoalsContainerComponent implements OnInit {
     });
   }
 
-  private updateMonthProgress(date: IMyDate): void {
+  private updateMonthProgress(date: Moment): void {
     const now: Date = new Date();
-    const currentMonth: boolean = now.getFullYear() === date.year && now.getMonth() === date.month - 1;
-    const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(date.year, date.month) * 100) : 0;
+    const currentMonth: boolean = now.getFullYear() === date.year() && now.getMonth() === date.month();
+    const monthPercent: number = currentMonth ? Math.round(now.getDate() / DateUtils.daysInMonth(date.year(), date.month() + 1) * 100) : 0;
     this.monthProgress = {'currentMonth': currentMonth, 'monthPercent': monthPercent};
   }
 
@@ -314,8 +313,8 @@ export class GoalsContainerComponent implements OnInit {
     if (this.editMode
       && this._originalGoalDetails
       && this._originalGoalDetails.done === true
-      && this._selectedDate.year === this._originalHistoryItem.year
-      && this._selectedDate.month === this._originalHistoryItem.month
+      && this._selectedDate.year() === this._originalHistoryItem.year
+      && this._selectedDate.month() + 1 === this._originalHistoryItem.month
       && this.historyItem.category === this._originalHistoryItem.category
       && this.historyItem.goal === this._originalHistoryItem.goal
       && this._originalGoalDetails.value < this._originalGoalDetails.completeValue

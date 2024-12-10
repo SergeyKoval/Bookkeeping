@@ -9,7 +9,6 @@ import { CheckboxState } from '../components/three-state-checkbox/CheckboxState'
 import { HistoryType } from '../model/history/history-type';
 import { SummaryReport } from '../model/report/summary-report';
 import { DynamicReport } from '../model/report/dynamic-report';
-import { IMyDateRangeModel } from 'angular-mydatepicker';
 
 @Injectable({
   providedIn: 'root'
@@ -20,42 +19,42 @@ export class ReportService {
     @Inject(HOST) private _host: string
   ) { }
 
-  public getHistoryItemsForPeriodReport(periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[], accountsFilter: MultiLevelDropdownItem[]): Observable<HistoryType[]> {
-    const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
-    const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
-    return this._http.post<HistoryType[]>('/api/report/history-actions', {
-      'startPeriod': periodFilter.beginDate,
-      'endPeriod': periodFilter.endDate,
-      'operations': selectedOperations,
-      'accounts': selectedAccounts
-    });
-  }
+  // public getHistoryItemsForPeriodReport(periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[], accountsFilter: MultiLevelDropdownItem[]): Observable<HistoryType[]> {
+  //   const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
+  //   const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
+  //   return this._http.post<HistoryType[]>('/api/report/history-actions', {
+  //     'startPeriod': periodFilter.beginDate,
+  //     'endPeriod': periodFilter.endDate,
+  //     'operations': selectedOperations,
+  //     'accounts': selectedAccounts
+  //   });
+  // }
 
-  public getSummaryForPeriodReport(periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[],
-                                   accountsFilter: MultiLevelDropdownItem[], currenciesFilter: MultiLevelDropdownItem[]): Observable<SummaryReport[]> {
-    const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
-    const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
-    const selectedCurrencies: string[] = currenciesFilter
-      .filter(currency => currency.state === CheckboxState.CHECKED)
-      .map(currency => currency.alias);
-    return this._http.post<SummaryReport[]>('/api/report/period-summary', {
-      'startPeriod': periodFilter.beginDate,
-      'endPeriod': periodFilter.endDate,
-      'operations': selectedOperations,
-      'accounts': selectedAccounts,
-      'currencies': selectedCurrencies
-    });
-  }
+  // public getSummaryForPeriodReport(periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[],
+  //                                  accountsFilter: MultiLevelDropdownItem[], currenciesFilter: MultiLevelDropdownItem[]): Observable<SummaryReport[]> {
+  //   const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
+  //   const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
+  //   const selectedCurrencies: string[] = currenciesFilter
+  //     .filter(currency => currency.state === CheckboxState.CHECKED)
+  //     .map(currency => currency.alias);
+  //   return this._http.post<SummaryReport[]>('/api/report/period-summary', {
+  //     'startPeriod': periodFilter.beginDate,
+  //     'endPeriod': periodFilter.endDate,
+  //     'operations': selectedOperations,
+  //     'accounts': selectedAccounts,
+  //     'currencies': selectedCurrencies
+  //   });
+  // }
 
-  public getDynamicForPeriodReport (currency: string, periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[]): Observable<DynamicReport[]> {
-    const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
-    return this._http.post<DynamicReport[]>('/api/report/period-dynamic', {
-      'startPeriod': periodFilter.beginDate,
-      'endPeriod': periodFilter.endDate,
-      'operations': selectedOperations,
-      'currency': currency
-    });
-  }
+  // public getDynamicForPeriodReport (currency: string, periodFilter: IMyDateRangeModel, operationsFilter: MultiLevelDropdownItem[]): Observable<DynamicReport[]> {
+  //   const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
+  //   return this._http.post<DynamicReport[]>('/api/report/period-dynamic', {
+  //     'startPeriod': periodFilter.beginDate,
+  //     'endPeriod': periodFilter.endDate,
+  //     'operations': selectedOperations,
+  //     'currency': currency
+  //   });
+  // }
 
   private prepareFilteredItems(items: MultiLevelDropdownItem[]): string[][] {
     if (items.filter(operation => operation.state === CheckboxState.CHECKED).length === items.length) {

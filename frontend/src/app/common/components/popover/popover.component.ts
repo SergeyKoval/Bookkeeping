@@ -1,12 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { BrowserUtils } from '../../utils/browser-utils';
-import { AvailbleBSPositions } from 'ngx-bootstrap/positioning';
 
 @Component({
   selector: 'bk-popover',
-  template: `<span [class]="getFinalClass()" [popover]="text" [placement]="placement">
-<!--                   [popoverDisabled]="disabled" [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true">-->
-             </span>`,
+  template: `<span [class]="getFinalClass()" [matTooltipPosition]="placement" [matTooltip]="text"></span>`,
   styleUrls: ['./popover.component.css']
 })
 export class PopoverComponent {
@@ -17,7 +14,7 @@ export class PopoverComponent {
   @Input()
   public glyphiconClass: string;
   @Input()
-  public placement: AvailbleBSPositions;
+  public placement: 'above' | 'below' | 'left' | 'right' | 'before' | 'after';
   @Input()
   public conditionalClass: {[className: string]: boolean} = {};
 

@@ -4,6 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCardModule } from '@angular/material/card';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LocalStorageModule } from 'angular-2-local-storage';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -97,10 +102,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SpinnerComponent } from './common/components/spinner/spinner.component';
 import { NgChartsModule } from 'ng2-charts';
 import { PopoverModule } from 'ngx-bootstrap/popover';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatCardModule } from '@angular/material/card';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [
@@ -203,7 +204,8 @@ import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment
     }),
     MatDatepickerModule,
     MatMomentDateModule,
-    MatCardModule
+    MatCardModule,
+    MatTooltipModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,

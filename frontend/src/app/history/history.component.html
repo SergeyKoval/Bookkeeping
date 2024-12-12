@@ -31,7 +31,7 @@
               <span class="description">{{historyItem.balance.account}}</span>
               <div>
                 <bk-popover class="float-left" *ngFor="let deviceMessage of historyItem.deviceMessages; let deviceMessageIndex = index" glyphiconClass="envelope"
-                            [text]="getDeviceName(deviceMessage.deviceId)" (click)="clickOnDeviceMessage(historyItem, deviceMessageIndex)" placement="top"></bk-popover>
+                            [text]="getDeviceName(deviceMessage.deviceId)" (click)="clickOnDeviceMessage(historyItem, deviceMessageIndex)" placement="above"></bk-popover>
                 <div class="footnote float-left" [ngClass]="{'device-message-top-margin': historyItem.deviceMessages}">{{historyItem.balance.subAccount}}</div>
               </div>
             </span>
@@ -50,14 +50,14 @@
 
           <!--not exchange, second column-->
           <div [ngClass]="{'col-sm-2 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.type !== 'exchange' && !historyItem.notProcessed">
-            <bk-popover spanClass="goal-icon col-sm-1 no-left-right-padding" glyphiconClass="screenshot" [text]="historyItem.goal" placement="top" *ngIf="historyItem.goal"></bk-popover>
+            <bk-popover spanClass="goal-icon col-sm-1 no-left-right-padding" glyphiconClass="screenshot" [text]="historyItem.goal" placement="above" *ngIf="historyItem.goal"></bk-popover>
             <div class="no-left-padding no-right-padding">
               <div [ngClass]="historyItem.type">
                 {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
               </div>
               <div *ngIf="historyItem.type !== 'balance'">
                 <bk-popover class="float-left" *ngFor="let deviceMessage of historyItem.deviceMessages; let deviceMessageIndex = index" glyphiconClass="envelope"
-                            [text]="getDeviceName(deviceMessage.deviceId)" (click)="clickOnDeviceMessage(historyItem, deviceMessageIndex)" placement="top"></bk-popover>
+                            [text]="getDeviceName(deviceMessage.deviceId)" (click)="clickOnDeviceMessage(historyItem, deviceMessageIndex)" placement="above"></bk-popover>
                 <bk-template-variable #accountTitle [toggleState]="false"></bk-template-variable>
                 <div class="float-left">
                   <div class="footnote clickable" [ngClass]="{'device-message-top-margin': historyItem.deviceMessages && accountTitle.isToggleState()}"
@@ -71,7 +71,7 @@
 
           <!--Unprocessed message, second column-->
           <div [ngClass]="{'col-sm-3 sm-small-left-padding': true, 'col-sm-offset-2': !firstItem}" *ngIf="historyItem.notProcessed">
-            <bk-popover spanClass="unprocessed-device-message-icon col-sm-1 no-left-right-padding" glyphiconClass="envelope" [text]="getDeviceName(historyItem.deviceMessages[0].deviceId)" placement="top"></bk-popover>
+            <bk-popover spanClass="unprocessed-device-message-icon col-sm-1 no-left-right-padding" glyphiconClass="envelope" [text]="getDeviceName(historyItem.deviceMessages[0].deviceId)" placement="above"></bk-popover>
             <div class="footnote">{{getDeviceMessageDateTime(historyItem.deviceMessages[0].messageTimestamp)}}</div>
             <div class="footnote">{{historyItem.deviceMessages[0].sender}}</div>
           </div>
@@ -119,7 +119,7 @@
           <!--last column-->
           <div class="col-sm-2 text-center" *ngIf="!(historyItem.type === 'balance')">
             <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="editHistoryItem(historyItem, false)" *ngIf="!historyItem.archived && !historyItem.notProcessed"></bk-popover>
-            <bk-popover glyphiconClass="plus" text="Добавть операцию" placement="left" (click)="editHistoryItem(historyItem, true)" *ngIf="historyItem.notProcessed"></bk-popover>
+            <bk-popover glyphiconClass="plus" text="Добавить операцию" placement="left" (click)="editHistoryItem(historyItem, true)" *ngIf="historyItem.notProcessed"></bk-popover>
             <bk-popover glyphiconClass="paperclip" text="Ассоциировать с операцией" placement="left" (click)="openAssignDeviceMessageDialog(historyItem)" *ngIf="historyItem.notProcessed"></bk-popover>
             <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="deleteHistoryItem(historyItem)" *ngIf="!historyItem.archived || historyItem.notProcessed"></bk-popover>
           </div>

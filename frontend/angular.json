@@ -11,11 +11,12 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "allowedCommonJsDependencies": [],
-            "outputPath": "dist",
-            "main": "src/main.ts",
+            "outputPath": {
+              "base": "dist"
+            },
             "tsConfig": "tsconfig.app.json",
             "index": "src/index.html",
             "polyfills": ["zone.js"],
@@ -28,7 +29,8 @@
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -49,8 +51,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "optimization": true
             }
           }

@@ -30,7 +30,7 @@
         <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType" >
           <div [ngClass]="{'goal-popover-container': true, 'col-sm-11 no-right-padding': isSelectedGoal(goalItem), 'col-sm-12 selectable-goal': !isSelectedGoal(goalItem)}">
             <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
-                        [text]="getGoalDonePopoverTitle(goalItem)" placement="top" (click)="changeGoalStatus(goalItem)"></bk-popover>
+                        [text]="getGoalDonePopoverTitle(goalItem)" placement="above" (click)="changeGoalStatus(goalItem)"></bk-popover>
             <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
               <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
                    [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>

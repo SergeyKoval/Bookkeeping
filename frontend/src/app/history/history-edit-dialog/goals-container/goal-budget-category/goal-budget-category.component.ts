@@ -1,12 +1,13 @@
 import { Component, Input } from '@angular/core';
 
+import { Moment } from 'moment/moment';
+
 import { BudgetService } from '../../../../common/service/budget.service';
 import { ProfileService } from '../../../../common/service/profile.service';
 import { CurrencyValuePipe } from '../../../../common/pipes/currency-value.pipe';
 import { HistoryType } from '../../../../common/model/history/history-type';
 import { MonthProgress } from '../../../../common/model/budget/month-progress';
 import { BudgetCategory } from '../../../../common/model/budget/budget-category';
-import { IMyDate } from 'angular-mydatepicker';
 
 @Component({
   selector: 'bk-goal-budget-category',
@@ -17,7 +18,7 @@ export class GoalBudgetCategoryComponent {
   @Input()
   public historyItem: HistoryType;
   @Input()
-  public selectedDate: IMyDate;
+  public selectedDate: Moment;
   @Input()
   public budgetLoading: boolean;
   @Input()

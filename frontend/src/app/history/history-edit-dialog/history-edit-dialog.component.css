@@ -43,3 +43,8 @@ ul.nav-tabs li {
 .history-action-item {
   float: right;
 }
+
+:host ::ng-deep mat-calendar [aria-hidden=true] .mat-calendar-body-label { display: none; }
+:host ::ng-deep mat-calendar td.mat-calendar-body-label { visibility: hidden; }
+:host ::ng-deep mat-calendar .mat-calendar-header { padding-top: 0; }
+:host ::ng-deep mat-calendar .mat-calendar-controls { margin-top: 0; margin-bottom: 0; }

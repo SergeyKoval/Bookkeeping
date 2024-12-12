@@ -4,6 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCardModule } from '@angular/material/card';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
@@ -93,7 +98,6 @@ import { ToggleComponent } from './common/components/toggle/toggle.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { AngularMyDatePickerModule } from 'angular-mydatepicker';
 import { SpinnerComponent } from './common/components/spinner/spinner.component';
 import { NgChartsModule } from 'ng2-charts';
 import { PopoverModule } from 'ngx-bootstrap/popover';
@@ -191,9 +195,12 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     MatDialogModule,
     MatSlideToggleModule,
     PopoverModule,
-    AngularMyDatePickerModule,
     NgChartsModule,
-    RouterModule.forRoot(BOOKKEEPING_ROUTES)
+    RouterModule.forRoot(BOOKKEEPING_ROUTES),
+    MatDatepickerModule,
+    MatMomentDateModule,
+    MatCardModule,
+    MatTooltipModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS,
@@ -212,7 +219,9 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     {
       provide: HOST,
       useValue: environment.backendHost,
-    }
+    },
+    { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] }
   ],
   bootstrap: [BookkeepingRootComponent]
 })

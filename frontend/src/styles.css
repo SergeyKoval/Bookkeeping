@@ -28,17 +28,12 @@
   font-size: 30px;
 }
 
-.popover.left {
-  margin-left: -25px;
+.mat-mdc-tooltip-panel-left {
+  padding-right: 25px;
 }
 
-.popover.top {
-  margin-top: -20px;
-}
-
-.popover.right {
-  margin-left: 25px;
-  white-space: nowrap;
+.mat-mdc-tooltip-panel-right {
+  padding-left: 25px;
 }
 
 html {

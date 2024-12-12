@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { IMyDate } from 'angular-mydatepicker';
+import { Moment } from 'moment/moment';
+import * as moment from 'moment/moment';
 
 @Injectable()
 export class DateUtils {
@@ -21,13 +22,12 @@ export class DateUtils {
     return DateUtils.initUTCDate(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
-  public static getUTCDateByDay(date: IMyDate): number {
-    return DateUtils.initUTCDate(date.year, date.month - 1, date.day);
+  public static getUTCDateByDay(date: Moment): number {
+    return DateUtils.initUTCDate(date.year(), date.month(), date.day());
   }
 
-  public static getDateFromUTC(timestamp: number = DateUtils.getUTCDate()): IMyDate {
-    const date: Date = new Date(timestamp);
-    return {year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate()};
+  public static getDateFromUTC(timestamp: number = DateUtils.getUTCDate()): Moment {
+    return moment.utc(timestamp, 'X');
   }
 
   public static daysInMonth(year: number, month: number): number {

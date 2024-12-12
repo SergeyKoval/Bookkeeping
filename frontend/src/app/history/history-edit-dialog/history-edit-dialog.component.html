@@ -8,8 +8,9 @@
   </div>
   <div class="row">
     <div class="col-sm-4 left-column">
-      <input angular-mydatepicker class="datePicker" [options]="datePickerOptions" (dateChanged)="onDateChanged($event)" locale="ru"/>
-<!--      <my-date-picker [selDate]="selectedDate" [options]="datePickerOptions" (dateChanged)="onDateChanged($event)" locale="ru"></my-date-picker>-->
+      <mat-card class="demo-inline-calendar-card">
+        <mat-calendar [selected]="selectedDate" (selectedChange)="onDateChanged($event)" ></mat-calendar>
+      </mat-card>
     </div>
     <div class="col-sm-8 right-column">
       <ul class="nav nav-tabs nav-justified">

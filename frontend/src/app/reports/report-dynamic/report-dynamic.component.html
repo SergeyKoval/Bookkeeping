@@ -6,7 +6,7 @@
         <bk-multi-level-dropdown class="filter" alternativeSelection="true" alternativeSelectionIndex="1" buttonTitle="Операции"
                                  [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <bk-currency-conversion label="К валюте:" denyNoChoice="true" [selectedCurrency]="defaultCurrency" class="filter" (currencyConversion)="changeCurrency($event)"></bk-currency-conversion>
-        <span><my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker></span>
+<!--        <span><my-date-range-picker placeholder="Период" [ngModel]="periodFilter" [options]="datePickerOptions" (dateRangeChanged)="onDateRangeChanged($event)"></my-date-range-picker></span>-->
       </div>
       <div class="col-sm-1">
         <span class="btn btn-default search-button pull-right" type="button" (click)="search()">Поиск</span>

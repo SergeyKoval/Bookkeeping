@@ -11,6 +11,7 @@ import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { JwtModule } from '@auth0/angular-jwt';
+import 'moment/locale/ru';
 
 import { BookkeepingRootComponent } from './bk/bk.component';
 import { BOOKKEEPING_ROUTES } from './routes';

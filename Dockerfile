@@ -1,4 +1,4 @@
-FROM maven:3.9.8-amazoncorretto-21 AS builder
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
 ENV APP_HOME="/usr/src/application"
 

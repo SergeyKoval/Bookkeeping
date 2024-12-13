@@ -18,8 +18,8 @@
         <version>1.6</version>
 
         <configuration>
-          <nodeVersion>v16.14.2</nodeVersion>
-          <npmVersion>8.5.0</npmVersion>
+          <nodeVersion>v20.13.1</nodeVersion>
+          <npmVersion>10.5.2</npmVersion>
         </configuration>
 
         <executions>

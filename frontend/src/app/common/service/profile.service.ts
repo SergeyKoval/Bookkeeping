@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
@@ -25,7 +25,7 @@ import { LoadingService } from './loading.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ProfileService implements CanActivate {
+export class ProfileService  {
   private _observableProfile: Observable<Profile>;
   private _authenticatedProfile: Profile;
   private _userCurrencies: Map<String, CurrencyDetail> = new Map();

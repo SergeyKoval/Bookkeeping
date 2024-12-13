@@ -15,6 +15,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ErrorHandler;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -31,7 +32,7 @@ public class GlobalExceptionResolver extends SimpleMappingExceptionResolver impl
     private static final String REPLACE_PATTERN = System.getProperty("line.separator");
     private static final String REPLACEMENT = "<br>&emsp;";
     private static final String SYSTEM_USER = "SYSTEM";
-    private static final List<Class> EXPECTED_EXCEPTIONS = List.of(BadCredentialsException.class, NoResourceFoundException.class);
+    private static final List<Class> EXPECTED_EXCEPTIONS = List.of(BadCredentialsException.class, NoResourceFoundException.class, HttpMediaTypeNotAcceptableException.class);
 
     @Value("${mail.admin.username}")
     private String toEmail;

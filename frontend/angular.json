@@ -11,14 +11,15 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "allowedCommonJsDependencies": [],
-            "outputPath": "dist",
-            "main": "src/main.ts",
+            "outputPath": {
+              "base": "dist"
+            },
             "tsConfig": "tsconfig.app.json",
             "index": "src/index.html",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "assets": [
               "src/favicon.png",
               "src/assets"
@@ -26,9 +27,12 @@
             "styles": [
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/bootstrap-notify/animate.min.css",
+              "src/assets/material/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -49,8 +53,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "optimization": true
             }
           }
@@ -58,25 +60,25 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "bk:build"
+            "buildTarget": "bk:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "bk:build:production"
+              "buildTarget": "bk:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bk:build"
+            "buildTarget": "bk:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "styles": [
@@ -116,6 +118,5 @@
         }
       }
     }
-  },
-  "defaultProject": "bk"
+  }
 }

@@ -1,8 +1,7 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { Moment } from 'moment/moment';
-import * as moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { HistoryService } from '../../common/service/history.service';
 import { CurrencyService } from '../../common/service/currency.service';

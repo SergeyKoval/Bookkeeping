@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { Moment } from 'moment/moment';
-import * as moment from 'moment/moment';
+import { Moment } from 'moment';
+import * as moment from 'moment';
 
 @Injectable()
 export class DateUtils {

@@ -14,7 +14,7 @@ export class CurrencyUtils {
     }
 
     if (CurrencyUtils.CALCULATION_PATTERN.test(value)) {
-      const calculatedValue: number = !CurrencyUtils.LAST_SYMBOL_PATTERN.test(value) ? eval(value) : 0;  // tslint:disable-line:no-eval
+      const calculatedValue: number = this.safeEvaluateValue(value);
       return isFinite(calculatedValue) ? Number(calculatedValue.toFixed(2)) : 0;
     } else {
       return Number(value);
@@ -36,5 +36,13 @@ export class CurrencyUtils {
 
     const htmlCodeNumber: number = Number(CurrencyUtils.HTML_SYMBOL_NUMBER_PATTERN.exec(htmlCode)[1]);
     return String.fromCharCode(htmlCodeNumber);
+  }
+
+  private static safeEvaluateValue(expression: string): number {
+    if (CurrencyUtils.LAST_SYMBOL_PATTERN.test(expression)) {
+      return 0;
+    }
+
+    return new Function(`return ${expression}`)();
   }
 }

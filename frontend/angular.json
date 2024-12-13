@@ -27,6 +27,8 @@
             "styles": [
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/bootstrap-notify/animate.min.css",
+              "src/assets/material/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": [],

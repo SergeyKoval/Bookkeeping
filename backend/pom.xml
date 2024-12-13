@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>bookkeeper-backend</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -98,7 +98,7 @@
                             <outputDirectory>${project.build.directory}/classes/static/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../frontend/dist</directory>
+                                    <directory>../frontend/dist/browser</directory>
                                 </resource>
                             </resources>
                         </configuration>

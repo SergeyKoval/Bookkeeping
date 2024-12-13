@@ -27,7 +27,7 @@ export class DateUtils {
   }
 
   public static getDateFromUTC(timestamp: number = DateUtils.getUTCDate()): Moment {
-    return moment.utc(timestamp, 'X');
+    return moment.unix(timestamp / 1000);
   }
 
   public static daysInMonth(year: number, month: number): number {

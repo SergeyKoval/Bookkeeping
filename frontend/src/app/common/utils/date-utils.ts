@@ -23,7 +23,7 @@ export class DateUtils {
   }
 
   public static getUTCDateByDay(date: Moment): number {
-    return DateUtils.initUTCDate(date.year(), date.month(), date.day());
+    return DateUtils.initUTCDate(date.year(), date.month(), date.date());
   }
 
   public static getDateFromUTC(timestamp: number = DateUtils.getUTCDate()): Moment {

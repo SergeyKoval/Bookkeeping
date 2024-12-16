@@ -109,7 +109,7 @@ export class HistoryEditDialogComponent implements OnInit {
       this.selectedDate = changedDate;
       this.historyItem.year = changedDate.year();
       this.historyItem.month = changedDate.month() + 1;
-      this.historyItem.day = changedDate.day();
+      this.historyItem.day = changedDate.date();
     }
   }
 

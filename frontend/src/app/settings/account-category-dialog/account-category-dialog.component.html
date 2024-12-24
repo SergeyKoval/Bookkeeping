@@ -15,8 +15,8 @@
   </div>
   <div class="table">
     <div class="row title">
-      <div class="col-sm-3 left-column">Название:</div>
-      <div class="col-sm-9">
+      <div class="col-sm-4 left-column">Название:</div>
+      <div class="col-sm-8">
         <input type="text" [(ngModel)]="title" class="form-control" *ngIf="!isSubAccountType()">
 
         <div class="input-group" *ngIf="isSubAccountType()">
@@ -29,8 +29,17 @@
     </div>
 
     <div class="row" *ngIf="isSubAccountType()">
-      <div class="col-sm-3 left-column">Иконка:</div>
-      <div class="col-sm-9 right-column">
+      <div class="col-sm-4 left-column">
+        Исключить: <bk-popover glyphiconClass="info-sign" text="Исключить из итогов" placement="above"></bk-popover>
+      </div>
+      <div class="col-sm-8">
+        <mat-slide-toggle color="primary" [checked]="excludeFromTotals" (change)="changeExcludeFromTotals($event)"></mat-slide-toggle>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="isSubAccountType()">
+      <div class="col-sm-4 left-column">Иконка:</div>
+      <div class="col-sm-8 right-column">
         <span *ngFor="let accountIcon of accountIcons;" class="icon-wrapper">
           <img [ngClass]="{'account-icon':true, 'active-icon':accountIcon===data.icon}"
                [src]="accountIcon | assetImage:'account'"
@@ -39,8 +48,8 @@
       </div>
     </div>
     <div class="row" *ngIf="isCategoryType()">
-      <div class="col-sm-3 left-column">Иконка:</div>
-      <div class="col-sm-9 right-column">
+      <div class="col-sm-4 left-column">Иконка:</div>
+      <div class="col-sm-8 right-column">
         <span *ngFor="let categoryIcon of categoryIcons;" class="icon-wrapper">
           <img [ngClass]="{'account-icon':true, 'active-icon':categoryIcon===data.icon}"
                [src]="categoryIcon | assetImage:'category'"
@@ -50,12 +59,12 @@
     </div>
 
     <div class="row" *ngIf="isSubCategoryType()">
-      <div class="col-sm-3 left-column">Тип:</div>
-      <div class="col-sm-9 left-column" *ngIf="data.editMode">
+      <div class="col-sm-4 left-column">Тип:</div>
+      <div class="col-sm-8 left-column" *ngIf="data.editMode">
         <span class="income-category value" *ngIf="data.subCategoryType === 'income'">Доходная</span>
         <span class="expense-category value" *ngIf="data.subCategoryType === 'expense'">Расходная</span>
       </div>
-      <div class="col-sm-9 right-column" *ngIf="!data.editMode">
+      <div class="col-sm-8 right-column" *ngIf="!data.editMode">
         <div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="sub-category-type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width: 100%">
             <span class="selected-type">

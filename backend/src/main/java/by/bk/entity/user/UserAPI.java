@@ -36,9 +36,9 @@ public interface UserAPI extends AuthenticationAPI {
     Optional<Account> deleteAccount(String login, String title);
     SimpleResponse moveAccount(String login, String title, Direction direction);
 
-    SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance);
+    SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals);
     Optional<SubAccount> changeSubAccountBalance(String login, String subAccountTitle, String accountTitle, Map<Currency, Double> balance);
-    Optional<SubAccount> editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance);
+    Optional<SubAccount> editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals);
     SimpleResponse moveSubAccount(String login, String accountTitle, String subAccountTitle, Direction direction);
     Optional<SubAccount> deleteSubAccount(String login, String accountTitle, String subAccountTitle);
 

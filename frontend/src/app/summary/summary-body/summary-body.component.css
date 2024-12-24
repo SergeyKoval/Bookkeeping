@@ -45,6 +45,11 @@
   color: red;
 }
 
+:host ::ng-deep bk-popover .exclude-icon {
+  display: block;
+  float: right;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .col-sm-5 {
     padding-left: 0;

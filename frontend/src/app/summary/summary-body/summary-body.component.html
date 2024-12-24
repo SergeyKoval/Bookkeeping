@@ -23,6 +23,7 @@
           <div class="col-lg-7 col-md-6 summary-balance-title">
             <img class="icon" *ngIf="subAccount.icon" [src]="subAccount.icon | assetImage:'account'">
             <strong>{{subAccount.title}}</strong>
+            <bk-popover *ngIf="subAccount.excludeFromTotals" glyphiconClass="exclamation-sign" text="Исключен из итогов" placement="left" spanClass="exclude-icon"></bk-popover>
           </div>
           <div class="col-lg-5 col-md-6">
             <div *ngFor="let balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'row': true, 'negative-value': balanceItem.value < 0}">

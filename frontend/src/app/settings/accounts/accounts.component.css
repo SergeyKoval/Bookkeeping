@@ -62,3 +62,11 @@ hr {
   padding-bottom: 2px;
   padding-right: 5px;
 }
+
+.right {
+  float: right;
+}
+
+.label {
+  margin-top: 2px;
+}

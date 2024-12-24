@@ -3,4 +3,5 @@ export interface SubAccount {
   order: number;
   icon: string;
   balance: {[currency: string]: number};
+  excludeFromTotals: boolean;
 }

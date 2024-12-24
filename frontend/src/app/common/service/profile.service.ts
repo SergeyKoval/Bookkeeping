@@ -192,12 +192,13 @@ export class ProfileService  {
     return this._http.post<SimpleResponse>('/api/profile/move-account', {title: accountTitle, direction: 'UP'});
   }
 
-  public addSubAccount(subAccountTitle: string, accountTitle: string, icon: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
+  public addSubAccount(subAccountTitle: string, accountTitle: string, icon: string, balance: {[currency: string]: number}, excludeFromTotals: boolean): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/add-sub-account', {
       'title': subAccountTitle,
       'parentTitle': accountTitle,
       'icon': icon,
-      'balance': balance
+      'balance': balance,
+      'excludeFromTotals': excludeFromTotals
     });
   }
 
@@ -209,13 +210,14 @@ export class ProfileService  {
     });
   }
 
-  public editSubAccount(accountTitle: string, oldSubAccountTitle: string, newSubAccountTitle: string, icon: string, balance: {[currency: string]: number}): Observable<SimpleResponse> {
+  public editSubAccount(accountTitle: string, oldSubAccountTitle: string, newSubAccountTitle: string, icon: string, balance: {[currency: string]: number}, excludeFromTotals: boolean): Observable<SimpleResponse> {
     return this._http.post<SimpleResponse>('/api/profile/edit-sub-account', {
       'oldTitle': oldSubAccountTitle,
       'title': newSubAccountTitle,
       'parentTitle': accountTitle,
       'balance': balance,
-      'icon': icon
+      'icon': icon,
+      'excludeFromTotals': excludeFromTotals
     });
   }
 

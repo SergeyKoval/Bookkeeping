@@ -19,4 +19,5 @@ public class UpdateAccountCategoryRequest {
     private Map<Currency, Double> balance;
     private boolean toggleState;
     private SubCategoryType subCategoryType;
+    private Boolean excludeFromTotals;
 }

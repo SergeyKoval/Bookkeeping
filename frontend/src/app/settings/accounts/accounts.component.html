@@ -28,6 +28,7 @@
         <div class="col-sm-8">
           <img class="icon" [src]="subAccount.icon | assetImage:'account'">
           <span>{{subAccount.title}}</span>
+          <span class="label label-primary right" *ngIf="subAccount.excludeFromTotals === true">Исключена из итогов</span>
         </div>
         <div class="col-sm-4 text-right">
           <bk-popover glyphiconClass="piggy-bank" text="Редактировать остатки" placement="left" (click)="editSubAccountBalance(account, subAccount)"></bk-popover>

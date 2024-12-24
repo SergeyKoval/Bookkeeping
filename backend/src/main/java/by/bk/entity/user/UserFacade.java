@@ -37,8 +37,8 @@ public class UserFacade {
     return SimpleResponse.success();
   }
 
-  public SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance) {
-    var response = userAPI.addSubAccount(login, subAccountTitle, accountTitle, icon, balance);
+  public SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals) {
+    var response = userAPI.addSubAccount(login, subAccountTitle, accountTitle, icon, balance, excludeFromTotals);
     if (response.isSuccess()) {
       balance.forEach((currency, value) -> {
         historyAPI.addBalanceHistoryItem(login, currency, accountTitle, subAccountTitle, () -> value);
@@ -78,8 +78,8 @@ public class UserFacade {
     return SimpleResponse.success();
   }
 
-  public SimpleResponse editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance) {
-    var maybeSubAccount = userAPI.editSubAccount(login, accountTitle, oldSubAccountTitle, newSubAccountTitle, icon, balance);
+  public SimpleResponse editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals) {
+    var maybeSubAccount = userAPI.editSubAccount(login, accountTitle, oldSubAccountTitle, newSubAccountTitle, icon, balance, excludeFromTotals);
     if (maybeSubAccount.isEmpty()) {
       return SimpleResponse.fail();
     }

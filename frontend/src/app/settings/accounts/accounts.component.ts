@@ -121,7 +121,8 @@ export class AccountsComponent implements OnInit {
       'parentTitle': account.title,
       'title': subAccount.title,
       'icon': subAccount.icon,
-      'balance': subAccount.balance
+      'balance': subAccount.balance,
+      'excludeFromTotals': subAccount.excludeFromTotals
     });
   }
 

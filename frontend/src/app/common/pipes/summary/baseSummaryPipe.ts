@@ -8,17 +8,19 @@ export abstract class BaseSummaryPipe {
   protected constructor(protected _currencyService: CurrencyService) {}
 
   protected populateBalanceMap(account: FinAccount, balanceMap: Map<string, number>): void {
-    account.subAccounts.forEach((subAccount: SubAccount) => {
-      Object.entries(subAccount.balance)
-        .filter(([currency, value]) => value !== 0)
-        .forEach(([currency, value]) => {
-          if (!balanceMap.has(currency)) {
-            balanceMap.set(currency, value);
-          } else {
-            balanceMap.set(currency, balanceMap.get(currency) + value);
-          }
+    account.subAccounts
+      .filter(subAccount => subAccount.excludeFromTotals !== true)
+      .forEach((subAccount: SubAccount) => {
+        Object.entries(subAccount.balance)
+          .filter(([currency, value]) => value !== 0)
+          .forEach(([currency, value]) => {
+            if (!balanceMap.has(currency)) {
+              balanceMap.set(currency, value);
+            } else {
+              balanceMap.set(currency, balanceMap.get(currency) + value);
+            }
+        });
       });
-    });
   }
 
   protected calculateBalance(balanceMap: Map<string, number>, currency: CurrencyDetail): BalanceItem[] {

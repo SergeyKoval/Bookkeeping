@@ -343,7 +343,7 @@ public class UserService implements UserAPI {
     }
 
     @Override
-    public SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance) {
+    public SimpleResponse addSubAccount(String login, String subAccountTitle, String accountTitle, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
@@ -358,7 +358,7 @@ public class UserService implements UserAPI {
                 .map(SubAccount::getOrder)
                 .orElse(0);
         Query query = Query.query(Criteria.where("email").is(login));
-        Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance));
+        Update update = new Update().addToSet(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts"), new SubAccount(subAccountTitle, order, icon, balance, excludeFromTotals));
         return updateUser(query, update);
     }
 
@@ -379,7 +379,7 @@ public class UserService implements UserAPI {
     }
 
     @Override
-    public Optional<SubAccount> editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance) {
+    public Optional<SubAccount> editSubAccount(String login, String accountTitle, String oldSubAccountTitle, String newSubAccountTitle, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals) {
         List<Account> accounts = userRepository.getUserAccounts(login).getAccounts();
         Account account = chooseItem(accounts, accountTitle, getAccountError(login, accountTitle));
 
@@ -390,7 +390,7 @@ public class UserService implements UserAPI {
         SubAccount subAccount = chooseItem(subAccounts, oldSubAccountTitle, getSubAccountError(login, accountTitle, oldSubAccountTitle));
 
         balance.entrySet().removeIf(entry -> entry.getValue() == 0);
-        SubAccount newSubAccount = new SubAccount(newSubAccountTitle, subAccount.getOrder(), icon, balance);
+        SubAccount newSubAccount = new SubAccount(newSubAccountTitle, subAccount.getOrder(), icon, balance, excludeFromTotals);
         Query query = Query.query(Criteria.where("email").is(login));
         Update update = Update.update(StringUtils.join("accounts.", accounts.indexOf(account), ".subAccounts.", subAccounts.indexOf(subAccount)), newSubAccount);
         SimpleResponse response = updateUser(query, update);
@@ -878,12 +878,12 @@ public class UserService implements UserAPI {
         user.setAccounts(accounts);
         Account mainAccount = new Account("Деньги", 1);
         mainAccount.setOpened(true);
-        mainAccount.getSubAccounts().add(new SubAccount("Наличные", 1, "Money.gif", new HashMap<>()));
-        mainAccount.getSubAccounts().add(new SubAccount("Альфа банк", 2, "alfa.gif", new HashMap<>()));
-        mainAccount.getSubAccounts().add(new SubAccount("Беларусьбанк", 3, "belarusbank.gif", new HashMap<>()));
+        mainAccount.getSubAccounts().add(new SubAccount("Наличные", 1, "Money.gif", new HashMap<>(), null));
+        mainAccount.getSubAccounts().add(new SubAccount("Альфа банк", 2, "alfa.gif", new HashMap<>(), null));
+        mainAccount.getSubAccounts().add(new SubAccount("Беларусьбанк", 3, "belarusbank.gif", new HashMap<>(), null));
         Account additionalAccount = new Account("Долги", 2);
-        additionalAccount.getSubAccounts().add(new SubAccount("Дядя Вася", 1, "rabotnik.gif", new HashMap<>()));
-        additionalAccount.getSubAccounts().add(new SubAccount("Вера Пупкина", 2, "collega.gif", new HashMap<>()));
+        additionalAccount.getSubAccounts().add(new SubAccount("Дядя Вася", 1, "rabotnik.gif", new HashMap<>(), null));
+        additionalAccount.getSubAccounts().add(new SubAccount("Вера Пупкина", 2, "collega.gif", new HashMap<>(), null));
         accounts.add(mainAccount);
         accounts.add(additionalAccount);
 

@@ -19,14 +19,16 @@ public class SubAccount implements Orderable, Selectable {
     private String icon;
     private Map<Currency, Double> balance;
     private Map<String, List<DeviceAssociation>> device = new HashMap<>();
+    private Boolean excludeFromTotals;
 
     public SubAccount() {
     }
 
-    public SubAccount(String title, int order, String icon, Map<Currency, Double> balance) {
+    public SubAccount(String title, int order, String icon, Map<Currency, Double> balance, Boolean excludeFromTotals) {
         this.title = title;
         this.order = order;
         this.icon = icon;
         this.balance = balance;
+        this.excludeFromTotals = excludeFromTotals;
     }
 }

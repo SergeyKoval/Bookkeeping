@@ -105,7 +105,7 @@ public class ProfileController extends BaseAPIController {
 
     @PostMapping("/add-sub-account")
     public SimpleResponse addSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userFacade.addSubAccount(principal.getName(), request.getTitle(), request.getParentTitle(), request.getIcon(), request.getBalance());
+        return userFacade.addSubAccount(principal.getName(), request.getTitle(), request.getParentTitle(), request.getIcon(), request.getBalance(), request.getExcludeFromTotals());
     }
 
     @PostMapping("/change-sub-account-balance")
@@ -115,7 +115,7 @@ public class ProfileController extends BaseAPIController {
 
     @PostMapping("/edit-sub-account")
     public SimpleResponse editSubAccount(@RequestBody UpdateAccountCategoryRequest request, Principal principal) {
-        return userFacade.editSubAccount(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getIcon(), request.getBalance());
+        return userFacade.editSubAccount(principal.getName(), request.getParentTitle(), request.getOldTitle(), request.getTitle(), request.getIcon(), request.getBalance(), request.getExcludeFromTotals());
     }
 
     @PostMapping("/move-sub-account")

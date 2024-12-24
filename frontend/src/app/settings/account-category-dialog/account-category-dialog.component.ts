@@ -7,6 +7,7 @@ import { filter } from 'rxjs/operators';
 import { ProfileService } from '../../common/service/profile.service';
 import { BalanceDialogComponent } from '../accounts/balance-dialog/balance-dialog.component';
 import { SimpleResponse } from '../../common/model/simple-response';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'bk-account-category-dialog',
@@ -21,11 +22,12 @@ export class AccountCategoryDialogComponent implements OnInit {
   public categoryIcons: string[] = ['twinpalm.gif', 'eating.gif', 'shopping.gif', 'health.gif', 'rock-and-roll.gif', 'income.gif'
     , 'kredit.gif', 'avto.gif', 'deti.gif', 'home.gif', 'plane.gif', 'mouse.png', 'ruler.png', 'work.png', 'gift.png'];
   public title: string;
+  public excludeFromTotals: boolean;
   public errorMessage: string;
   public loading: boolean;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, parentTitle: string, title: string, icon: string, balance: {[currency: string]: number}, subCategoryType: string},
+    @Inject(MAT_DIALOG_DATA) public data: {editMode: boolean, type: string, parentTitle: string, title: string, icon: string, balance: {[currency: string]: number}, subCategoryType: string, excludeFromTotals: boolean},
     private _dialogRef: MatDialogRef<AccountCategoryDialogComponent>,
     private _profileService: ProfileService,
     private _dialog: MatDialog
@@ -34,6 +36,9 @@ export class AccountCategoryDialogComponent implements OnInit {
   public ngOnInit(): void {
     if (this.data.editMode) {
       this.title = this.data.title;
+      if (this.isSubAccountType()) {
+        this.excludeFromTotals = this.data.excludeFromTotals;
+      }
     } else {
       if (this.isSubAccountType()) {
         this.data.icon = this.accountIcons[0];
@@ -77,10 +82,10 @@ export class AccountCategoryDialogComponent implements OnInit {
 
     if (this.isSubAccountType()) {
       if (!this.data.editMode) {
-        this.processResult(this._profileService.addSubAccount(this.title, this.data.parentTitle, this.data.icon, this.data.balance)
+        this.processResult(this._profileService.addSubAccount(this.title, this.data.parentTitle, this.data.icon, this.data.balance, this.excludeFromTotals)
           , 'Субчет с таким названием уже существует', 'Ошибка при добавлении субсчета');
       } else {
-        this.processResult(this._profileService.editSubAccount(this.data.parentTitle, this.data.title, this.title, this.data.icon, this.data.balance)
+        this.processResult(this._profileService.editSubAccount(this.data.parentTitle, this.data.title, this.title, this.data.icon, this.data.balance, this.excludeFromTotals)
           , 'Субсчет с таким названием уже существует', 'Ошибка при изменении субсчета');
       }
     }
@@ -137,6 +142,10 @@ export class AccountCategoryDialogComponent implements OnInit {
 
   public changeType(type: string): void {
     this.data.subCategoryType = type;
+  }
+
+  public changeExcludeFromTotals (event: MatSlideToggleChange): void {
+    this.excludeFromTotals = event.checked;
   }
 
   private processResult(resultObservable: Observable<SimpleResponse>, alreadyExistError: string, otherError: string): void {

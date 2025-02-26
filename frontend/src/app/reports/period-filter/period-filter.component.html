@@ -1,0 +1,15 @@
+<mat-date-range-input class="period-filter" [rangePicker]="picker">
+  <input matStartDate placeholder="Start date" [formControl]="startDate">
+  <input matEndDate placeholder="End date" [formControl]="endDate">
+</mat-date-range-input>
+<mat-date-range-picker #picker (closed)="onClose()"></mat-date-range-picker>
+<div class="input-group mat-form-field-underline">
+  <input type="text" class="form-control period-input" disabled placeholder="Период" [value]="period">
+  <div class="input-group-btn">
+    <button class="btn btn-default" type="button">
+      <span class="glyphicon glyphicon-calendar" (click)="picker.open()"></span>
+    </button>
+  </div>
+</div>
+
+

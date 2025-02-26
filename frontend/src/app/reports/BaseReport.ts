@@ -4,9 +4,10 @@ import { CheckboxState } from '../common/components/three-state-checkbox/Checkbo
 import { AssetImagePipe } from '../common/pipes/asset-image.pipe';
 import { FinAccount } from '../common/model/fin-account';
 import { Category } from '../common/model/category';
+import { PeriodFilter } from '../common/model/report/period-filter';
 
 export abstract class BaseReport {
-  // public periodFilter: IMyDateRangeModel;
+  public periodFilter: PeriodFilter;
   // public datePickerOptions: IAngularMyDpOptions = {
   //   dateFormat: 'dd.mm.yyyy',
   //   inline: false,
@@ -25,9 +26,9 @@ export abstract class BaseReport {
     protected _imagePipe: AssetImagePipe,
   ) { }
 
-  // public onDateRangeChanged(dateRange: IMyDateRangeModel): void {
-  //   this.periodFilter = dateRange;
-  // }
+  public updatePeriod(period: PeriodFilter): void {
+    this.periodFilter = period;
+  }
 
   protected populateAccountsFilter(accounts: FinAccount[]): MultiLevelDropdownItem[] {
     const accountsFilter: MultiLevelDropdownItem[] = [];

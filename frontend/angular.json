@@ -54,6 +54,9 @@
               "aot": true,
               "extractLicenses": true,
               "optimization": true
+            },
+            "development": {
+              "optimization": false
             }
           }
         },
@@ -65,6 +68,9 @@
           "configurations": {
             "production": {
               "buildTarget": "bk:build:production"
+            },
+            "development": {
+              "buildTarget": "bk:build:development"
             }
           }
         },

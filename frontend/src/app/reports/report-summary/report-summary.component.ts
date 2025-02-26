@@ -58,69 +58,69 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
   }
 
   public search(): void {
-    // if (!this.periodFilter) {
-    //   this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
-    //   return;
-    // }
-    //
-    // if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
-    //   this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
-    //   return;
-    // }
-    //
-    // if (this.accountsFilter.filter(account => account.state !== CheckboxState.UNCHECKED).length === 0) {
-    //   this._alertService.addAlert(AlertType.WARNING, 'Фильтр счетов пуст');
-    //   return;
-    // }
-    //
-    // if (this.currenciesFilter.filter(currency => currency.state !== CheckboxState.UNCHECKED).length === 0) {
-    //   this._alertService.addAlert(AlertType.WARNING, 'Фильтр валют пуст');
-    //   return;
-    // }
-    //
-    // this.loading = true;
-    // this.pieChartLabels = [];
-    // this.pieChartData = [];
-    // this.reportSum = 0;
-    // this.items = [];
-    // this.totals = {};
-    // this.type = this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED)[0].getAlias();
-    // this.onlyCategories = true;
-    //
-    // let defaultCurrency: string = this._profileService.defaultCurrency.name;
-    // if (this.currenciesFilter.filter(currency => currency.alias === defaultCurrency).length === 0) {
-    //   defaultCurrency = this.currenciesFilter[0].alias;
-    // }
-    // this.reportCurrency = defaultCurrency;
-    //
-    // this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter)
-    //   .pipe(tap(items => {
-    //     items.map(item => item.values).forEach((valueMap: {[currency: string]: number}) => {
-    //       Object.keys(valueMap).forEach(currency => {
-    //         this.reportSum = this.reportSum + this._currencyService.convertToCurrency(valueMap[currency], currency, this.reportCurrency);
-    //         this.totals[currency] = valueMap[currency] + (this.totals[currency] | 0);
-    //       });
-    //     });
-    //
-    //     items.forEach(item => {
-    //       if (this.onlyCategories && item.subCategory) {
-    //         this.onlyCategories = false;
-    //       }
-    //
-    //       this.pieChartLabels.push(item.subCategory ? `${item.category} >> ${item.subCategory}` : item.category);
-    //       let itemValue: number = 0;
-    //       Object.keys(item.values)
-    //         .forEach(currency => itemValue = itemValue + this._currencyService.convertToCurrency(item.values[currency], currency, this.reportCurrency));
-    //       const percent: number = 100 * itemValue / this.reportSum;
-    //       item.percent = Number(percent.toFixed(2));
-    //       this.pieChartData.push(item.percent);
-    //     });
-    //   })).subscribe((items: SummaryReport[]) => {
-    //     from(items).pipe(
-    //       groupBy(item => item.category),
-    //       mergeMap(group => group.pipe(toArray()))
-    //     ).subscribe(categoryGroup => this.items.push(categoryGroup));
-    //     this.loading = false;
-    // });
+    if (!this.periodFilter) {
+      this._alertService.addAlert(AlertType.WARNING, 'Период не выбран');
+      return;
+    }
+
+    if (this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED).length === 0) {
+      this._alertService.addAlert(AlertType.WARNING, 'Фильтр операций пуст');
+      return;
+    }
+
+    if (this.accountsFilter.filter(account => account.state !== CheckboxState.UNCHECKED).length === 0) {
+      this._alertService.addAlert(AlertType.WARNING, 'Фильтр счетов пуст');
+      return;
+    }
+
+    if (this.currenciesFilter.filter(currency => currency.state !== CheckboxState.UNCHECKED).length === 0) {
+      this._alertService.addAlert(AlertType.WARNING, 'Фильтр валют пуст');
+      return;
+    }
+
+    this.loading = true;
+    this.pieChartLabels = [];
+    this.pieChartData = [];
+    this.reportSum = 0;
+    this.items = [];
+    this.totals = {};
+    this.type = this.operationsFilter.filter(operation => operation.state !== CheckboxState.UNCHECKED)[0].getAlias();
+    this.onlyCategories = true;
+
+    let defaultCurrency: string = this._profileService.defaultCurrency.name;
+    if (this.currenciesFilter.filter(currency => currency.alias === defaultCurrency).length === 0) {
+      defaultCurrency = this.currenciesFilter[0].alias;
+    }
+    this.reportCurrency = defaultCurrency;
+
+    this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter)
+      .pipe(tap(items => {
+        items.map(item => item.values).forEach((valueMap: {[currency: string]: number}) => {
+          Object.keys(valueMap).forEach(currency => {
+            this.reportSum = this.reportSum + this._currencyService.convertToCurrency(valueMap[currency], currency, this.reportCurrency);
+            this.totals[currency] = valueMap[currency] + (this.totals[currency] | 0);
+          });
+        });
+
+        items.forEach(item => {
+          if (this.onlyCategories && item.subCategory) {
+            this.onlyCategories = false;
+          }
+
+          this.pieChartLabels.push(item.subCategory ? `${item.category} >> ${item.subCategory}` : item.category);
+          let itemValue: number = 0;
+          Object.keys(item.values)
+            .forEach(currency => itemValue = itemValue + this._currencyService.convertToCurrency(item.values[currency], currency, this.reportCurrency));
+          const percent: number = 100 * itemValue / this.reportSum;
+          item.percent = Number(percent.toFixed(2));
+          this.pieChartData.push(item.percent);
+        });
+      })).subscribe((items: SummaryReport[]) => {
+        from(items).pipe(
+          groupBy(item => item.category),
+          mergeMap(group => group.pipe(toArray()))
+        ).subscribe(categoryGroup => this.items.push(categoryGroup));
+        this.loading = false;
+    });
   }
 }

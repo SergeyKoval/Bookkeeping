@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -255,6 +256,7 @@ public class HistoryService implements HistoryAPI {
         }
 
         pipes.add(Aggregation.group("category", "subCategory", "balance.currency").sum("balance.value").as("balanceValue"));
+        pipes.add(Aggregation.replaceRoot().withDocument(new Document("$mergeObjects", List.of("$_id", new Document("balanceValue", "$balanceValue")))));
 
         Aggregation aggregation = Aggregation.newAggregation(pipes);
         List<SummaryReportItem> items = mongoTemplate.aggregate(aggregation, "history", SummaryReportItem.class).getMappedResults();
@@ -306,6 +308,7 @@ public class HistoryService implements HistoryAPI {
         pipes.add(Aggregation.match(initialFilter));
         pipes.add(Aggregation.match(prepareOperationsCriteria(operations)));
         pipes.add(Aggregation.group("year", "month", "category", "subCategory", "balance.currency").sum("balance.value").as("balanceValue"));
+        pipes.add(Aggregation.replaceRoot().withDocument(new Document("$mergeObjects", List.of("$_id", new Document("balanceValue", "$balanceValue")))));
 
         Aggregation aggregation = Aggregation.newAggregation(pipes);
         List<DynamicReportItem> items = mongoTemplate.aggregate(aggregation, "history", DynamicReportItem.class).getMappedResults();

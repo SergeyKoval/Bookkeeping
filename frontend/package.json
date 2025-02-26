@@ -1,10 +1,10 @@
 {
   "name": "bk",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy-dev.json",
+    "start": "ng serve --configuration=development --proxy-config proxy-dev.json",
     "json": "json-server db.json",
     "build": "ng build --configuration production",
     "test": "ng test",

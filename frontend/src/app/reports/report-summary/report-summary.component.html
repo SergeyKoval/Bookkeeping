@@ -17,8 +17,8 @@
     </div>
 
     <div *ngIf="items && items.length > 0">
-      <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2 chart-row" *ngIf="pieChartData && pieChartLabels">
-        <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"></canvas>
+      <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2 chart-row" *ngIf="pieChartData.labels && pieChartData.datasets">
+        <canvas baseChart [data]="pieChartData" type="pie"></canvas>
       </div>
 
       <div class="row">

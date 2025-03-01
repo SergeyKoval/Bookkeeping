@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { from } from 'rxjs';
 import { groupBy, mergeMap, tap, toArray } from 'rxjs/operators';
+import { ChartData, ChartType } from 'chart.js';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
 import { ProfileService } from '../../common/service/profile.service';
@@ -22,15 +23,13 @@ import { Profile } from '../../common/model/profile';
   styleUrls: ['./report-summary.component.css']
 })
 export class ReportSummaryComponent extends BaseReport implements OnInit {
-  public pieChartType: string = 'pie';
   public loading: boolean;
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
   public currenciesFilter: MultiLevelDropdownItem[] = [];
 
   public items: SummaryReport[][] = [];
-  public pieChartLabels: string[];
-  public pieChartData: number[];
+  public pieChartData: ChartData<ChartType, number[], string>;
   public type: string;
   public onlyCategories: boolean = true;
   public totals: {[key: string]: number};
@@ -79,8 +78,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     }
 
     this.loading = true;
-    this.pieChartLabels = [];
-    this.pieChartData = [];
+    this.pieChartData = {labels: [], datasets: [{data: []}]};
     this.reportSum = 0;
     this.items = [];
     this.totals = {};
@@ -107,13 +105,13 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
             this.onlyCategories = false;
           }
 
-          this.pieChartLabels.push(item.subCategory ? `${item.category} >> ${item.subCategory}` : item.category);
+          this.pieChartData.labels.push(item.subCategory ? `${item.category} >> ${item.subCategory}` : item.category);
           let itemValue: number = 0;
           Object.keys(item.values)
             .forEach(currency => itemValue = itemValue + this._currencyService.convertToCurrency(item.values[currency], currency, this.reportCurrency));
           const percent: number = 100 * itemValue / this.reportSum;
           item.percent = Number(percent.toFixed(2));
-          this.pieChartData.push(item.percent);
+          this.pieChartData.datasets[0].data.push(item.percent);
         });
       })).subscribe((items: SummaryReport[]) => {
         from(items).pipe(

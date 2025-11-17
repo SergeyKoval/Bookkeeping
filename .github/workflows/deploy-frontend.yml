@@ -2,7 +2,7 @@ name: Build and Deploy Frontend
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "28-separate-backend-frontend" ]
     paths:
       - 'frontend/**'
   workflow_dispatch:  # Allow manual trigger

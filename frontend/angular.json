@@ -22,7 +22,8 @@
             "polyfills": ["zone.js"],
             "assets": [
               "src/favicon.png",
-              "src/assets"
+              "src/assets",
+              "src/503.html"
             ],
             "styles": [
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
@@ -93,7 +94,8 @@
             "scripts": [],
             "assets": [
               "src/favicon.png",
-              "src/assets"
+              "src/assets",
+              "src/503.html"
             ]
           }
         },

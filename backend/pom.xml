@@ -3,16 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>by.bk</groupId>
-        <artifactId>bookkeeper-parent</artifactId>
-        <version>1.0</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.0</version>
     </parent>
 
+    <groupId>by.bk</groupId>
     <artifactId>bookkeeper-backend</artifactId>
-    <version>3.2.1</version>
+    <version>3.3.0</version>
     <packaging>jar</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <start-class>by.bk.Bookkeeper</start-class>
     </properties>
 
@@ -88,21 +90,6 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>copy-ui</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/classes/static/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>../frontend/dist/browser</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>copy-apk</id>
                         <phase>validate</phase>

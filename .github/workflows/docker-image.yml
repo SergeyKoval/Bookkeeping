@@ -1,23 +1,31 @@
-name: Build image and push it to dockerhub
+name: Build and Deploy Backend
 
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
 
-  buld-publish-and-deploy-latest-version:
+  build-publish-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Build the Docker image
+        working-directory: ./backend
         run: docker build . --tag deplake/bookkeeping:latest
-      - name: Push image to docker hub
+
+      - name: Push image to Docker Hub
         run: |
           docker login -u deplake -p ${{secrets.DEPLAKE_DOCKER_HUB_TOKEN}}
           docker push deplake/bookkeeping:latest
-      - name: Stop current application and start latest one
+
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -25,6 +33,12 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: 22
           script: |
-            docker stop $(docker ps -a -q --filter="name=bk")
-            docker rm $(docker ps -a -q --filter="name=bk")
-            docker run -d --name bk --pull=always --env-file /home/bk/server.properties -p 8080:8080 deplake/bookkeeping:latest
+            # Stop and remove old container
+            docker stop $(docker ps -a -q --filter="name=bk") || true
+            docker rm $(docker ps -a -q --filter="name=bk") || true
+
+            # Pull and start new container
+            docker pull deplake/bookkeeping:latest
+            docker run -d --name bk --env-file /home/bk/server.properties -p 8080:8080 deplake/bookkeeping:latest
+
+            echo "Backend deployment completed successfully"

@@ -1,0 +1,83 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.18.1'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: Build Angular app
+      working-directory: ./frontend
+      run: npm run build
+
+    - name: Create deployment archive
+      working-directory: ./frontend/dist/browser
+      run: tar -czf ../frontend-dist.tar.gz .
+
+    - name: Deploy to server via SCP
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_KEY }}
+        port: 22
+        source: "frontend/dist/frontend-dist.tar.gz"
+        target: "/tmp/"
+        strip_components: 2
+
+    - name: Extract and move files to Apache directory
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_KEY }}
+        port: 22
+        script: |
+          # Create backup of current frontend
+          if [ -d /var/www/deplake-tk ] && [ "$(ls -A /var/www/deplake-tk)" ]; then
+            sudo mkdir -p /var/www/backups
+            sudo tar -czf /var/www/backups/frontend-backup-$(date +%Y%m%d-%H%M%S).tar.gz -C /var/www/deplake-tk .
+            # Keep only last 5 backups
+            sudo ls -t /var/www/backups/frontend-backup-*.tar.gz | tail -n +6 | xargs -r sudo rm
+          fi
+
+          # Create directory if it doesn't exist
+          sudo mkdir -p /var/www/deplake-tk
+
+          # Clear current frontend files
+          sudo rm -rf /var/www/deplake-tk/*
+
+          # Extract new frontend files
+          sudo tar -xzf /tmp/frontend-dist.tar.gz -C /var/www/deplake-tk
+
+          # Set proper permissions
+          sudo chown -R www-data:www-data /var/www/deplake-tk
+          sudo chmod -R 755 /var/www/deplake-tk
+
+          # Clean up
+          rm /tmp/frontend-dist.tar.gz
+
+          # Reload Apache
+          sudo systemctl reload apache2
+
+          echo "Frontend deployment completed successfully"

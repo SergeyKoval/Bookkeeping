@@ -25,7 +25,7 @@ jobs:
 
     - name: Build Angular app
       working-directory: ./frontend
-      run: npm run build -- --configuration production
+      run: npm run build
 
     - name: Create deployment archive
       working-directory: ./frontend/dist/browser

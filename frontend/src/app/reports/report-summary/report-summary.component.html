@@ -1,6 +1,6 @@
 <div class="panel panel-default">
   <div class="panel-heading text-center">Итоги за период</div>
-  <div class="panel-body" *ngIf="!loading; else loadingIndicator">
+  <div class="panel-body">
     <div class="row filter-row-wrapper">
       <div class="col-sm-10">
         <span class="filter-row">
@@ -16,7 +16,8 @@
       </div>
     </div>
 
-    <div *ngIf="items && items.length > 0">
+    <div *ngIf="!loading; else loadingIndicator">
+      <div *ngIf="items && items.length > 0">
       <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2 chart-row" *ngIf="pieChartData.labels && pieChartData.datasets">
         <canvas baseChart [data]="pieChartData" type="pie"></canvas>
       </div>
@@ -81,6 +82,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

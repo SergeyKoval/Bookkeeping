@@ -7,8 +7,6 @@ on:
   push:
     branches-ignore:
       - 'master'
-    paths:
-      - 'backend/**'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:

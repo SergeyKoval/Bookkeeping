@@ -1,6 +1,6 @@
 <div class="panel panel-default">
   <div class="panel-heading text-center">Динамика за период</div>
-  <div class="panel-body" *ngIf="!loading; else loadingIndicator">
+  <div class="panel-body">
     <div class="row filter-row">
       <div class="col-sm-11 filters">
         <bk-multi-level-dropdown class="filter" alternativeSelection="true" alternativeSelectionIndex="1" buttonTitle="Операции"
@@ -12,9 +12,11 @@
         <span class="btn btn-default search-button pull-right" type="button" (click)="search()">Поиск</span>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" chartType="line" *ngIf="lineChartData"></canvas>
+    <div *ngIf="!loading; else loadingIndicator">
+      <div class="row">
+        <div class="col-sm-12">
+          <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" chartType="line" *ngIf="lineChartData"></canvas>
+        </div>
       </div>
     </div>
   </div>

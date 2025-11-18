@@ -1,6 +1,6 @@
 <div class="panel panel-default">
   <div class="panel-heading text-center">Операции за период</div>
-  <div class="panel-body" *ngIf="!loading; else loadingIndicator">
+  <div class="panel-body">
     <div class="row filter-row">
       <div class="col-sm-10 filters">
         <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
@@ -12,7 +12,8 @@
       </div>
     </div>
 
-    <div class="table" *ngIf="historyItems">
+    <div *ngIf="!loading; else loadingIndicator">
+      <div class="table" *ngIf="historyItems">
       <div class="row header">
         <div class="col-sm-2">Дата</div>
         <div class="col-sm-2">Сумма</div>
@@ -129,6 +130,7 @@
         </div>
         <hr *ngIf="!lastGroup">
       </div>
+    </div>
     </div>
   </div>
 </div>

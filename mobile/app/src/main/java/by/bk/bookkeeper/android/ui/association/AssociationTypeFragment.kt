@@ -6,15 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.databinding.FragmentAsociationTypeBinding
 import by.bk.bookkeeper.android.ui.BaseFragment
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
-import kotlinx.android.synthetic.main.fragment_asociation_type.container_push
-import kotlinx.android.synthetic.main.fragment_asociation_type.container_sms
 
 /**
  *  Created by Evgenia Grinkevich on 16, May, 2023
  **/
 class AssociationTypeFragment : BaseFragment() {
+
+    private var _binding: FragmentAsociationTypeBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var accountInfoHolder: AccountInfoHolder
 
@@ -25,16 +27,23 @@ class AssociationTypeFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_asociation_type, container, false)
+        _binding = FragmentAsociationTypeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        container_sms.setOnClickListener {
+        super.onViewCreated(view, savedInstanceState)
+        binding.containerSms.setOnClickListener {
             getMainNavigator(activity)?.showAssociationFragment(AssociationType.SMS, accountInfoHolder)
         }
-        container_push.setOnClickListener {
+        binding.containerPush.setOnClickListener {
             getMainNavigator(activity)?.showAssociationFragment(AssociationType.PUSH, accountInfoHolder)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun retryLoading() {

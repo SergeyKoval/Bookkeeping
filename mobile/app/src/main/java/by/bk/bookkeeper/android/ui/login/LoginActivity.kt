@@ -9,6 +9,7 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintSet
 import by.bk.bookkeeper.android.BuildConfig
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.databinding.ActivityLoginRootBinding
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.network.wrapper.InputValidationError
 import by.bk.bookkeeper.android.network.wrapper.InputValidationWrapper
@@ -17,7 +18,6 @@ import by.bk.bookkeeper.android.ui.home.AccountingActivity
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_login_root.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -27,14 +27,16 @@ import java.util.concurrent.TimeUnit
 
 class LoginActivity : BaseActivity<LoginViewModel>() {
 
+    private lateinit var binding: ActivityLoginRootBinding
     private var shouldShowSplash: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login_root)
-        text_view_copyright.text =
+        binding = ActivityLoginRootBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.textViewCopyright.text =
                 String.format(getString(R.string.str_copyright), Calendar.getInstance().get(Calendar.YEAR))
-        text_view_version.text = String.format(getString(R.string.str_version), getBuildConfigAppVersion())
+        binding.textViewVersion.text = String.format(getString(R.string.str_version), getBuildConfigAppVersion())
         savedInstanceState?.getBoolean(KEY_SHOW_SPLASH_VIEW)?.let { showSplash ->
             if (!showSplash) performLoginViewsTransition()
         }
@@ -53,16 +55,19 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
                 viewModel.authRequestState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { status ->
-                            progress_login.visibility = if (status is DataStatus.Loading) View.VISIBLE else View.GONE
-                            text_view_error.visibility = if (status is DataStatus.Error) View.VISIBLE else View.GONE
-                            button_login.isEnabled = status !is DataStatus.Loading
+                            binding.progressLogin.visibility = if (status is DataStatus.Loading) View.VISIBLE else View.GONE
+                            binding.textViewError.visibility = if (status is DataStatus.Error) View.VISIBLE else View.GONE
+                            binding.buttonLogin.isEnabled = status !is DataStatus.Loading
                             when (status) {
                                 is DataStatus.Success -> {
                                     startActivity(AccountingActivity.getStartIntent(this@LoginActivity))
                                 }
                                 is DataStatus.Error -> {
-                                    text_view_error.text = status.failure.serverErrorMessage
+                                    binding.textViewError.text = status.failure.serverErrorMessage
                                             ?: getString(status.failure.messageStringRes)
+                                }
+                                else -> {
+                                    // Handle Empty and Loading states
                                 }
                             }
                         },
@@ -74,15 +79,15 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
                                 handleValidationErrors(it.validationError)
                             }
                         },
-                button_login.clicks().subscribe {
-                    viewModel.login(edit_text_email.text.toString(), edit_text_password.text.toString())
+                binding.buttonLogin.clicks().subscribe {
+                    viewModel.login(binding.editTextEmail.text.toString(), binding.editTextPassword.text.toString())
                 },
-                edit_text_email.textChanges()
+                binding.editTextEmail.textChanges()
                         .skipInitialValue()
-                        .subscribe { text_input_email.error = null },
-                edit_text_password.textChanges()
+                        .subscribe { binding.textInputEmail.error = null },
+                binding.editTextPassword.textChanges()
                         .skipInitialValue()
-                        .subscribe { text_input_password.error = null }
+                        .subscribe { binding.textInputPassword.error = null }
         )
     }
 
@@ -98,12 +103,12 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         when (validationError) {
             is InputValidationError.InvalidEmail,
             is InputValidationError.EmptyEmail -> {
-                text_input_email.error = errorMessage
-                edit_text_email.requestFocus()
+                binding.textInputEmail.error = errorMessage
+                binding.editTextEmail.requestFocus()
             }
             is InputValidationError.EmptyPassword -> {
-                text_input_password.error = errorMessage
-                edit_text_password.requestFocus()
+                binding.textInputPassword.error = errorMessage
+                binding.editTextPassword.requestFocus()
             }
         }
     }
@@ -119,8 +124,8 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         val constraintSetLoginFields = ConstraintSet().apply {
             clone(this@LoginActivity, R.layout.activity_login_alternative)
         }
-        TransitionManager.beginDelayedTransition(constraint_layout_root)
-        constraintSetLoginFields.applyTo(constraint_layout_root)
+        TransitionManager.beginDelayedTransition(binding.constraintLayoutRoot)
+        constraintSetLoginFields.applyTo(binding.constraintLayoutRoot)
     }
 
     private fun getBuildConfigAppVersion(): String = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"

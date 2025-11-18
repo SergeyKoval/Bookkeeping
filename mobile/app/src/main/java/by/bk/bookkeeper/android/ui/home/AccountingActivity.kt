@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.databinding.ActivityAccountingBinding
+import by.bk.bookkeeper.android.databinding.ActivityAccountingNavHeaderBinding
 import by.bk.bookkeeper.android.network.auth.SessionDataProvider
 import by.bk.bookkeeper.android.push.PushPermissionHelper
 import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
@@ -20,46 +22,45 @@ import by.bk.bookkeeper.processor.ProcessingService
 import com.google.android.material.navigation.NavigationView
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_accounting.drawer_layout
-import kotlinx.android.synthetic.main.activity_accounting.nav_view
-import kotlinx.android.synthetic.main.activity_accounting.toolbar
-import kotlinx.android.synthetic.main.activity_accounting_nav_header.view.tv_user_email
 
 class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
         NavigationView.OnNavigationItemSelectedListener,
         BookkeeperNavigation.NavigatorProvider,
         LogoutConfirmationDialog.OnLogoutConfirmedListener {
 
+    private lateinit var binding: ActivityAccountingBinding
     private var navMenuSelectedItemId: Int? = null
     private val navigator: BookkeeperNavigation.Navigator = BookkeeperNavigator(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_accounting)
-        setSupportActionBar(toolbar)
-        nav_view.setNavigationItemSelectedListener(this)
-        drawer_layout.addDrawerListener(ActionBarDrawerToggle(
-                this, drawer_layout, toolbar,
+        binding = ActivityAccountingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        binding.navView.setNavigationItemSelectedListener(this)
+        binding.drawerLayout.addDrawerListener(ActionBarDrawerToggle(
+                this, binding.drawerLayout, binding.toolbar,
                 R.string.content_description_navigation_drawer_open,
                 R.string.content_description_navigation_drawer_close
         ).also {
             it.syncState()
         })
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             if (supportFragmentManager.backStackEntryCount > 0) onBackPressed()
-            else drawer_layout.openDrawer(GravityCompat.START)
+            else binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         if (intent?.action != null) {
             when (intent.action) {
-                ACTION_EXTERNAL_SHOW_SMS_STATUS -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_status_messages))
-                else -> onNavigationItemSelected(nav_view.menu.findItem(R.id.nav_accounts))
+                ACTION_EXTERNAL_SHOW_SMS_STATUS -> onNavigationItemSelected(binding.navView.menu.findItem(R.id.nav_status_messages))
+                else -> onNavigationItemSelected(binding.navView.menu.findItem(R.id.nav_accounts))
             }
         } else {
-            savedInstanceState ?: onNavigationItemSelected(nav_view.menu.findItem(
+            savedInstanceState ?: onNavigationItemSelected(binding.navView.menu.findItem(
                     if (SharedPreferencesProvider.getPendingMessagesFromStorage().isNotEmpty()) R.id.nav_status_messages
                     else R.id.nav_accounts))
         }
-        nav_view.getHeaderView(0)?.tv_user_email?.text = SessionDataProvider.getCurrentUser()
+        val headerBinding = ActivityAccountingNavHeaderBinding.bind(binding.navView.getHeaderView(0))
+        headerBinding.tvUserEmail.text = SessionDataProvider.getCurrentUser()
         subscriptionsDisposable.add(RxPermissions(this)
                 .request(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS)
                 .subscribe { granted ->
@@ -103,8 +104,8 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
             }
         }
         navMenuSelectedItemId = item.itemId
-        nav_view.setCheckedItem(item.itemId)
-        drawer_layout.closeDrawer(GravityCompat.START)
+        binding.navView.setCheckedItem(item.itemId)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -124,7 +125,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        navMenuSelectedItemId?.let { nav_view.setCheckedItem(it) }
+        navMenuSelectedItemId?.let { binding.navView.setCheckedItem(it) }
     }
 
     override fun getNavigator(): BookkeeperNavigation.Navigator = navigator
@@ -132,7 +133,7 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
     override fun onBackPressed() {
         when {
             supportFragmentManager.backStackEntryCount > 0 -> supportFragmentManager.popBackStack()
-            drawer_layout.isDrawerOpen(GravityCompat.START) -> drawer_layout.closeDrawer(GravityCompat.START)
+            binding.drawerLayout.isDrawerOpen(GravityCompat.START) -> binding.drawerLayout.closeDrawer(GravityCompat.START)
             else -> super.onBackPressed()
         }
     }

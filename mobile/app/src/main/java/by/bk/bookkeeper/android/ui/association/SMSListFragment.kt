@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
+import by.bk.bookkeeper.android.databinding.FragmentSmsBinding
 import by.bk.bookkeeper.android.hideKeyboard
 import by.bk.bookkeeper.android.network.dto.SourceType
 import by.bk.bookkeeper.android.network.request.AssociationRequest
@@ -18,17 +19,14 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.fragment_sms.btn_associate
-import kotlinx.android.synthetic.main.fragment_sms.edit_text_template
-import kotlinx.android.synthetic.main.fragment_sms.recycler_sms
-import kotlinx.android.synthetic.main.fragment_sms.sms_swipe_refresh
-import kotlinx.android.synthetic.main.fragment_sms.status_layout_root
-import kotlinx.android.synthetic.main.fragment_sms.text_input_template
 
 /**
  *  Created by Evgenia Grinkevich on 04, February, 2020
  **/
 class SMSListFragment : BaseFragment() {
+
+    private var _binding: FragmentSmsBinding? = null
+    private val binding get() = _binding!!
 
     private val inboxSmsViewModel: InboxSmsViewModel by activityScopeViewModel()
     private val accountViewModel: AccountsViewModel by activityScopeViewModel()
@@ -47,30 +45,31 @@ class SMSListFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_sms, container, false)
+        _binding = FragmentSmsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycler_sms.run {
+        binding.recyclerSms.run {
             layoutManager = LinearLayoutManager(context)
             adapter = smsAdapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
-        sms_swipe_refresh.setOnRefreshListener {
+        binding.smsSwipeRefresh.setOnRefreshListener {
             inboxSmsViewModel.loadInboxSMSByThreadId(conversation.threadId)
         }
-        btn_associate.setOnClickListener {
+        binding.btnAssociate.setOnClickListener {
             accountViewModel.addAssociation(
                 AssociationRequest(
                     accountName = accountInfoHolder.accountName,
                     subAccountName = accountInfoHolder.subAccountName,
                     sender = conversation.sender.address,
-                    associationString = edit_text_template.text?.toString(),
+                    associationString = binding.editTextTemplate.text?.toString(),
                     source = SourceType.SMS
                 )
             )
-            hideKeyboard(status_layout_root)
+            hideKeyboard(binding.statusLayoutRoot)
             (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
         }
     }
@@ -86,15 +85,20 @@ class SMSListFragment : BaseFragment() {
             inboxSmsViewModel.smsLoadingState()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { dataStatus ->
-                    sms_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
+                    binding.smsSwipeRefresh.isRefreshing = dataStatus is DataStatus.Loading
                     if (dataStatus is DataStatus.Error) {
                         showErrorSnackbar(dataStatus.failure)
                     }
                 },
-            edit_text_template.textChanges()
+            binding.editTextTemplate.textChanges()
                 .skipInitialValue()
-                .subscribe { text_input_template.error = null }
+                .subscribe { binding.textInputTemplate.error = null }
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun retryLoading() {

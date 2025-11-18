@@ -11,12 +11,10 @@ import by.bk.bookkeeper.android.network.request.DissociationRequest
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
+import by.bk.bookkeeper.android.databinding.FragmentAccountsBinding
 import by.bk.bookkeeper.android.ui.association.AccountInfoHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_accounting.view.toolbar
-import kotlinx.android.synthetic.main.fragment_accounts.account_swipe_refresh
-import kotlinx.android.synthetic.main.fragment_accounts.recycler_accounts
 
 
 /**
@@ -24,20 +22,24 @@ import kotlinx.android.synthetic.main.fragment_accounts.recycler_accounts
  **/
 class AccountsFragment : BaseFragment() {
 
+    private var _binding: FragmentAccountsBinding? = null
+    private val binding get() = _binding!!
+
     private val accountsViewModel: AccountsViewModel by activityScopeViewModel()
     private val accountAdapter: AccountsAdapter by lazy { AccountsAdapter() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_accounts, container, false)
+        _binding = FragmentAccountsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_menu)
-        recycler_accounts.apply {
+        activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)?.setNavigationIcon(R.drawable.ic_nav_menu)
+        binding.recyclerAccounts.apply {
             adapter = accountAdapter
         }
-        account_swipe_refresh.setOnRefreshListener {
+        binding.accountSwipeRefresh.setOnRefreshListener {
             accountsViewModel.refreshAccounts()
         }
     }
@@ -52,7 +54,7 @@ class AccountsFragment : BaseFragment() {
                 accountsViewModel.accountsRequestState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { dataStatus ->
-                            account_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
+                            binding.accountSwipeRefresh.isRefreshing = dataStatus is DataStatus.Loading
                             if (dataStatus is DataStatus.Error) showErrorSnackbar(dataStatus.failure)
                             if (dataStatus is DataStatus.Empty) {
                                 Toast.makeText(context, getString(R.string.msg_no_accounts), Toast.LENGTH_LONG).show()
@@ -61,7 +63,7 @@ class AccountsFragment : BaseFragment() {
                 accountsViewModel.associationRequestState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { associationState ->
-                            account_swipe_refresh.isRefreshing = associationState.dataStatus is DataStatus.Loading
+                            binding.accountSwipeRefresh.isRefreshing = associationState.dataStatus is DataStatus.Loading
                             if (associationState.dataStatus is DataStatus.Success) {
                                 accountsViewModel.refreshAccounts()
                                 Toast.makeText(context, getString(R.string.msg_operation_successful), Toast.LENGTH_SHORT).show()
@@ -98,6 +100,11 @@ class AccountsFragment : BaseFragment() {
                             }
                         }
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun retryLoading() = accountsViewModel.refreshAccounts()

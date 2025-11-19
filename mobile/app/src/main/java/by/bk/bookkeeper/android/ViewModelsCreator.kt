@@ -20,7 +20,7 @@ import by.bk.bookkeeper.android.ui.status.PendingMessagesViewModel
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val bkService: BookkeeperService) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = when {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = when {
         modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(bkService) as T
         modelClass.isAssignableFrom(AccountingActivityViewModel::class.java) -> AccountingActivityViewModel(bkService) as T
         modelClass.isAssignableFrom(AccountsViewModel::class.java) -> AccountsViewModel(bkService) as T

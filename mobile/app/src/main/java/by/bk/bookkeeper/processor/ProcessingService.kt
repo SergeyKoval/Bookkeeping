@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.IBinder
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
@@ -48,9 +49,14 @@ class ProcessingService : Service() {
         observePendingMessages()
         observeUnprocessedSms()
         pushReceiver = PushBroadcastReceiver()
-        registerReceiver(pushReceiver, IntentFilter().apply {
+        val filter = IntentFilter().apply {
             addAction(PushListenerService.ACTION_ON_NOTIFICATION_POSTED)
-        })
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(pushReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(pushReceiver, filter)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -120,6 +126,8 @@ class ProcessingService : Service() {
     private fun createNotificationBuilder(): Notification.Builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
         .setContentIntent(createPendingIntent(AccountingActivity.ACTION_EXTERNAL_HOME))
         .setSmallIcon(R.drawable.ic_running_service)
+        .setContentTitle(getString(R.string.app_name))
+        .setContentText(getString(R.string.notification_service_running))
 
     private fun updateNotification(notification: Notification) =
         getSystemService(NotificationManager::class.java)?.notify(SERVICE_NOTIFICATION_ID, notification)

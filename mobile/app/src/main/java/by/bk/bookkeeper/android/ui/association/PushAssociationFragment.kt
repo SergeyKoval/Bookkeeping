@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
+import by.bk.bookkeeper.android.databinding.FragmentPushAssociationBinding
 import by.bk.bookkeeper.android.fragmentScopeViewModel
 import by.bk.bookkeeper.android.hideKeyboard
 import by.bk.bookkeeper.android.network.dto.SourceType
@@ -15,15 +16,14 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.accounts.AccountsViewModel
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
-import kotlinx.android.synthetic.main.fragment_push_association.btn_associate_push
-import kotlinx.android.synthetic.main.fragment_push_association.edit_text_push_content
-import kotlinx.android.synthetic.main.fragment_push_association.edit_text_push_package
-import kotlinx.android.synthetic.main.fragment_push_association.push_layout_root
 
 /**
  *  Created by Evgenia Grinkevich on 20, May, 2023
  **/
 class PushAssociationFragment : BaseFragment() {
+
+    private var _binding: FragmentPushAssociationBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var accountInfoHolder: AccountInfoHolder
 
@@ -37,35 +37,41 @@ class PushAssociationFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_push_association, container, false)
+        _binding = FragmentPushAssociationBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onStart() {
         super.onStart()
         subscriptionsDisposable.addAll(
-            btn_associate_push.clicks().subscribe {
-                val userInput = edit_text_push_package.text?.toString()?.trim()
+            binding.btnAssociatePush.clicks().subscribe {
+                val userInput = binding.editTextPushPackage.text?.toString()?.trim()
                 if (pushAssociationViewModel.validatePackageInput(userInput)) {
                     accountsViewModel.addAssociation(
                         AssociationRequest(
                             accountName = accountInfoHolder.accountName,
                             subAccountName = accountInfoHolder.subAccountName,
-                            sender = edit_text_push_package.text?.toString() ?: "",
-                            associationString = edit_text_push_content.text?.toString(),
+                            sender = binding.editTextPushPackage.text?.toString() ?: "",
+                            associationString = binding.editTextPushContent.text?.toString(),
                             source = SourceType.PUSH
                         )
                     )
-                    hideKeyboard(push_layout_root)
+                    hideKeyboard(binding.pushLayoutRoot)
                     (activity as? BookkeeperNavigation.NavigatorProvider)?.getNavigator()?.popBackStackToRoot()
                 } else {
-                    edit_text_push_package.error = getString(R.string.push_package_invalid_name)
-                    edit_text_push_package.requestFocus()
+                    binding.editTextPushPackage.error = getString(R.string.push_package_invalid_name)
+                    binding.editTextPushPackage.requestFocus()
                 }
             },
-            edit_text_push_package.textChanges()
+            binding.editTextPushPackage.textChanges()
                 .skipInitialValue()
-                .subscribe { edit_text_push_package.error = null }
+                .subscribe { binding.editTextPushPackage.error = null }
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onStop() {

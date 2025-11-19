@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.activityScopeViewModel
+import by.bk.bookkeeper.android.databinding.FragmentSmsAsociationBinding
 import by.bk.bookkeeper.android.hideKeyboard
 import by.bk.bookkeeper.android.network.wrapper.DataStatus
 import by.bk.bookkeeper.android.ui.BaseFragment
@@ -16,12 +17,14 @@ import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_sms_asociation.*
 
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
 class SMSAssociationFragment : BaseFragment() {
+
+    private var _binding: FragmentSmsAsociationBinding? = null
+    private val binding get() = _binding!!
 
     private val inboxSmsViewModel: InboxSmsViewModel by activityScopeViewModel()
     private val conversationAdapter by lazy { ConversationFilterableAdapter() }
@@ -37,17 +40,18 @@ class SMSAssociationFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_sms_asociation, container, false)
+        _binding = FragmentSmsAsociationBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycler_conversations.run {
+        binding.recyclerConversations.run {
             layoutManager = LinearLayoutManager(context)
             adapter = conversationAdapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
-        conversations_swipe_refresh.setOnRefreshListener {
+        binding.conversationsSwipeRefresh.setOnRefreshListener {
             inboxSmsViewModel.reloadConversations()
         }
     }
@@ -105,7 +109,7 @@ class SMSAssociationFragment : BaseFragment() {
                 inboxSmsViewModel.conversationsLoadingState()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { dataStatus ->
-                            conversations_swipe_refresh.isRefreshing = dataStatus is DataStatus.Loading
+                            binding.conversationsSwipeRefresh.isRefreshing = dataStatus is DataStatus.Loading
                             if (dataStatus is DataStatus.Error) {
                                 showErrorSnackbar(dataStatus.failure)
                             }
@@ -118,6 +122,11 @@ class SMSAssociationFragment : BaseFragment() {
                                     accountInfoHolder = accountInfoHolder)
                         }
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun retryLoading() {

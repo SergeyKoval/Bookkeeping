@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.databinding.ItemConversationBinding
 import by.bk.bookkeeper.android.sms.Conversation
 import by.bk.bookkeeper.android.ui.RecyclerClick
 import io.reactivex.Observable
@@ -33,7 +33,7 @@ class ConversationFilterableAdapter : RecyclerView.Adapter<ConversationViewHolde
     fun getItem(position: Int): Conversation = conversationsFiltered[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationViewHolder =
-            ConversationViewHolder(clicksSubject, LayoutInflater.from(parent.context).inflate(R.layout.item_conversation, parent, false))
+            ConversationViewHolder(clicksSubject, ItemConversationBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun getItemCount(): Int = conversationsFiltered.size
 

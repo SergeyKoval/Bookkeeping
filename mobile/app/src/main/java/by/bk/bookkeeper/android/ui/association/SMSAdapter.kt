@@ -3,7 +3,7 @@ package by.bk.bookkeeper.android.ui.association
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.bk.bookkeeper.android.R
+import by.bk.bookkeeper.android.databinding.ItemMessageBodyBinding
 import by.bk.bookkeeper.android.sms.SMS
 
 
@@ -23,7 +23,7 @@ class SMSAdapter : RecyclerView.Adapter<SMSViewHolder>() {
     fun getItem(position: Int): SMS = sms[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SMSViewHolder =
-            SMSViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_message_body, parent, false))
+            SMSViewHolder(ItemMessageBodyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun getItemCount(): Int = sms.size
 

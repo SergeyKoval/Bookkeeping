@@ -11,8 +11,6 @@ import by.bk.bookkeeper.android.actionSnackbar
 import by.bk.bookkeeper.android.network.wrapper.FailureWrapper
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_accounting.view.toolbar
-
 /**
  *  Created by Evgenia Grinkevich on 31, January, 2020
  **/
@@ -34,7 +32,7 @@ abstract class BaseFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (showToolbarBackButton()) {
-            view?.rootView?.toolbar?.setNavigationIcon(R.drawable.ic_nav_back)
+            activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)?.setNavigationIcon(R.drawable.ic_nav_back)
         }
     }
 

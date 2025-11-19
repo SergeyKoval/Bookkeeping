@@ -20,6 +20,7 @@ object SharedPreferencesProvider : IMessagesPreferenceProvider {
     private const val KEY_SERVER_UNPROCESSED_COUNT_RESPONSE = "sms_count_response"
     private const val KEY_ASSOCIATIONS = "associations"
     private const val KEY_SHOULD_PROCESS_SMS = "should_process_sms"
+    private const val KEY_DEBUG_PUSH_NOTIFICATIONS = "debug_push_notifications"
 
     private val gson: Gson by lazy { Gson() }
     private val messagesMapTypeToken = object : TypeToken<HashMap<String, ArrayList<ProcessedMessage>>>() {}.type
@@ -90,6 +91,12 @@ object SharedPreferencesProvider : IMessagesPreferenceProvider {
 
     override fun setShouldProcessReceivedMessages(shouldProcess: Boolean) =
         getSMSPreferences().edit().putBoolean(KEY_SHOULD_PROCESS_SMS, shouldProcess).apply()
+
+    fun getDebugPushNotifications(): Boolean =
+        getSMSPreferences().getBoolean(KEY_DEBUG_PUSH_NOTIFICATIONS, false)
+
+    fun setDebugPushNotifications(enabled: Boolean) =
+        getSMSPreferences().edit().putBoolean(KEY_DEBUG_PUSH_NOTIFICATIONS, enabled).apply()
 
     override fun saveUnprocessedResponseToStorage(response: UnprocessedCountResponse) {
         getSMSPreferences().edit().putString(KEY_SERVER_UNPROCESSED_COUNT_RESPONSE, gson.toJson(response)).apply()

@@ -38,6 +38,7 @@
 
     <string name="toolbar_title_accounts">Accounts</string>
     <string name="toolbar_title_messages_status">Messages Status</string>
+    <string name="toolbar_title_settings">Settings</string>
     <string name="hint_paste_template">Paste sms template here (optional)</string>
 
     <string name="msg_service_notification_sms_processing">SMS processing</string>
@@ -74,5 +75,10 @@
     <string name="hint_push_package_name">Push notification sender (application name) </string>
     <string name="hint_push_content_template">Push notification text template (optional)</string>
     <string name="push_package_invalid_name">Incorrect push notification sender app name</string>
+
+    <string name="menu_settings">Settings</string>
+    <string name="settings_header_debug">Debug Settings</string>
+    <string name="settings_debug_push_label">Send push notifications for debug</string>
+    <string name="settings_debug_push_help">When enabled, all incoming push notifications will be sent to the backend for debugging</string>
 
 </resources>

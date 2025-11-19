@@ -35,11 +35,13 @@ import timber.log.Timber
 class ProcessingService : Service() {
 
     private lateinit var pushReceiver: PushBroadcastReceiver
+    private lateinit var debugReceiver: DebugBroadcastReceiver
     private val repository = Injection.provideMessagesRepository()
     private val smsProcessor = Injection.provideSmsProcessor()
     private val pushProcessor = Injection.providePushProcessor()
     private val disposables = CompositeDisposable()
     private val notificationBuilder by lazy { createNotificationBuilder() }
+    private val gson = com.google.gson.Gson()
 
     override fun onCreate() {
         super.onCreate()
@@ -56,6 +58,17 @@ class ProcessingService : Service() {
             registerReceiver(pushReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
         } else {
             registerReceiver(pushReceiver, filter)
+        }
+
+        // Register debug broadcast receiver
+        debugReceiver = DebugBroadcastReceiver()
+        val debugFilter = IntentFilter().apply {
+            addAction(PushListenerService.ACTION_DEBUG_NOTIFICATION_POSTED)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(debugReceiver, debugFilter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(debugReceiver, debugFilter)
         }
     }
 
@@ -192,6 +205,7 @@ class ProcessingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(pushReceiver)
+        unregisterReceiver(debugReceiver)
         disposables.clear()
     }
 
@@ -201,8 +215,56 @@ class ProcessingService : Service() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == PushListenerService.ACTION_ON_NOTIFICATION_POSTED) {
-                intent.getParcelableExtra<PushMessage>(PushListenerService.PUSH_MESSAGE)?.let { push ->
+                val pushMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE, PushMessage::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE)
+                }
+                pushMessage?.let { push ->
                     handlePush(push)
+                }
+            }
+        }
+    }
+
+    inner class DebugBroadcastReceiver : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == PushListenerService.ACTION_DEBUG_NOTIFICATION_POSTED) {
+                val pushMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE, PushMessage::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE)
+                }
+
+                pushMessage?.let { push ->
+                    val formattedTimestamp = java.text.SimpleDateFormat(
+                        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                        java.util.Locale.US
+                    ).apply {
+                        timeZone = java.util.TimeZone.getTimeZone("UTC")
+                    }.format(java.util.Date(push.timestamp))
+
+                    val debugData = mapOf(
+                        "type" to "push_notification",
+                        "timestamp" to formattedTimestamp,
+                        "packageName" to push.packageName,
+                        "text" to push.text,
+                        "postTime" to push.timestamp
+                    )
+
+                    val debugJson = gson.toJson(debugData)
+
+                    disposables.add(
+                        repository.sendLog(debugJson)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(
+                                { Timber.d("Debug log sent successfully") },
+                                { e -> Timber.e(e, "Failed to send debug log") }
+                            )
+                    )
                 }
             }
         }

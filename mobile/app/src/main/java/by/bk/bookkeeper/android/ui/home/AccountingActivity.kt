@@ -18,6 +18,7 @@ import by.bk.bookkeeper.android.ui.BaseActivity
 import by.bk.bookkeeper.android.ui.BookkeeperNavigation
 import by.bk.bookkeeper.android.ui.BookkeeperNavigator
 import by.bk.bookkeeper.android.ui.LogoutConfirmationDialog
+import by.bk.bookkeeper.android.ui.settings.SettingsFragment
 import by.bk.bookkeeper.processor.ProcessingService
 import com.google.android.material.navigation.NavigationView
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -98,6 +99,12 @@ class AccountingActivity : BaseActivity<AccountingActivityViewModel>(),
             }
             R.id.nav_status_messages -> {
                 navigator.showMessagesStatusFragment()
+            }
+            R.id.nav_settings -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, SettingsFragment())
+                    .commit()
+                supportActionBar?.title = getString(R.string.toolbar_title_settings)
             }
             R.id.nav_logout -> {
                 LogoutConfirmationDialog.show(this)

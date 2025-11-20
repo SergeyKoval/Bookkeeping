@@ -17,6 +17,24 @@ class PendingPushWorker(
     workerParams: WorkerParameters
 ) : PendingMessagesProcessingWorker(appContext, workerParams) {
 
+    override fun doWork(): Result {
+        // Add configured delay before processing push notifications
+        // This ensures SMS messages are processed first during retry
+        val delayMs = SharedPreferencesProvider.getPushProcessingDelaySeconds() * 1000L
+
+        if (delayMs > 0) {
+            try {
+                Thread.sleep(delayMs)
+            } catch (e: InterruptedException) {
+                // If interrupted, proceed with processing anyway
+                Thread.currentThread().interrupt()
+            }
+        }
+
+        // Call parent's doWork implementation
+        return super.doWork()
+    }
+
     override fun getPendingMessages(): List<ProcessedMessage> = SharedPreferencesProvider.getPendingMessagesFromStorage().filter {
         it.deviceMessage.source == SourceType.PUSH
     }

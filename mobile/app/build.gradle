@@ -13,7 +13,7 @@ android {
         applicationId "by.bk.bookkeeper.android"
         minSdkVersion 28
         targetSdkVersion 35
-        versionCode 19
+        versionCode 20
         versionName "2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -98,7 +98,8 @@ dependencies {
     //Firebase Crashlytics
     implementation 'com.google.firebase:firebase-crashlytics-ktx:17.2.2'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

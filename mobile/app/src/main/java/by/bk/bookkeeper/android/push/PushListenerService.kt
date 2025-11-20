@@ -2,11 +2,14 @@ package by.bk.bookkeeper.android.push
 
 import android.app.Notification
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 
 class PushListenerService : NotificationListenerService() {
 
+    private val handler = Handler(Looper.getMainLooper())
     private val recentNotifications = mutableSetOf<String>()
     private val cleanupThreshold = 100 // Clean up after this many notifications
 
@@ -50,11 +53,20 @@ class PushListenerService : NotificationListenerService() {
             })
         }
 
-        // Send normal broadcast (always)
-        sendBroadcast(Intent(ACTION_ON_NOTIFICATION_POSTED).apply {
-            setPackage(packageName)
-            putExtra(PUSH_MESSAGE, pushMessage)
-        })
+        // Send normal broadcast (delayed)
+        val delayMs = by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
+            .getPushProcessingDelaySeconds() * 1000L
+        handler.postDelayed({
+            sendBroadcast(Intent(ACTION_ON_NOTIFICATION_POSTED).apply {
+                setPackage(packageName)
+                putExtra(PUSH_MESSAGE, pushMessage)
+            })
+        }, delayMs)
+    }
+
+    override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null) // Clean up pending callbacks
+        super.onDestroy()
     }
 
     companion object {

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/text_debug_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_header_debug"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        android:paddingBottom="16dp" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_debug_push"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_debug_push_label"
+        android:paddingVertical="12dp" />
+
+    <TextView
+        android:id="@+id/text_debug_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_debug_push_help"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingTop="8dp" />
+
+    <!-- Push Delay Settings -->
+    <TextView
+        android:id="@+id/text_push_delay_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_push_delay_header"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        android:paddingTop="24dp"
+        android:paddingBottom="16dp" />
+
+    <TextView
+        android:id="@+id/text_push_delay_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_push_delay_label"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/seekbar_push_delay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="60"
+        android:progress="5" />
+
+    <TextView
+        android:id="@+id/text_push_delay_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_push_delay_help"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorSecondary"
+        android:paddingTop="8dp" />
+
+</LinearLayout>

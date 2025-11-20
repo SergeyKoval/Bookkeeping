@@ -80,5 +80,8 @@
     <string name="settings_header_debug">Debug Settings</string>
     <string name="settings_debug_push_label">Send push notifications for debug</string>
     <string name="settings_debug_push_help">When enabled, all incoming push notifications will be sent to the backend for debugging</string>
+    <string name="settings_push_delay_header">Push Notification Processing</string>
+    <string name="settings_push_delay_label">Delay: %d seconds</string>
+    <string name="settings_push_delay_help">Delay push notifications to prioritize SMS processing (applies to both new and queued messages). Set to 0 for no delay.</string>
 
 </resources>

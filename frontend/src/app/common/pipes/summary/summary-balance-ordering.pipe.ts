@@ -4,7 +4,8 @@ import { ProfileService } from '../../service/profile.service';
 import { BalanceItem } from '../../model/balance-item';
 
 @Pipe({
-  name: 'summaryBalanceOrdering'
+    name: 'summaryBalanceOrdering',
+    standalone: false
 })
 export class SummaryBalanceOrderingPipe implements PipeTransform {
   public constructor(private _profileService: ProfileService) {}

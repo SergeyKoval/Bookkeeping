@@ -8,45 +8,76 @@
   </div>
 </div>
 
-<div class="table" *ngIf="!loading; else loadingIndicator">
-  <div *ngFor="let category of profile.categories; let lastCategory = last; let firstCategory = first;">
-    <hr class="category-separator" *ngIf="firstCategory" />
-    <div class="row">
-      <div class="col-sm-8">
-        <span *ngIf="hasSubcategories(category) && !category.opened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="category.opened = !category.opened"></span>
-        <span *ngIf="hasSubcategories(category) && category.opened" class="tree-icon glyphicon glyphicon-chevron-down" (click)="category.opened = !category.opened"></span>
-        <img class="icon" [src]="category.icon | assetImage:'category'">
-        <span (click)="category.opened = !category.opened">{{category.title}}</span>
-      </div>
-      <div class="col-sm-4 text-right">
-        <bk-popover glyphiconClass="plus" text="Добавить подкатегорию" placement="left" (click)="addSubCategory(category)"></bk-popover>
-        <bk-popover glyphiconClass="pencil" text="Редактировать категорию" placement="left" (click)="editCategory(category)"></bk-popover>
-        <bk-popover glyphiconClass="remove" text="Удалить категорию" placement="left" (click)="deleteCategory(category)"></bk-popover>
-        <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveCategoryDown(category)" *ngIf="!lastCategory"></bk-popover>
-        <span *ngIf="lastCategory" class="empty-action">&nbsp;</span>
-        <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveCategoryUp(category)" *ngIf="!firstCategory"></bk-popover>
-        <span *ngIf="firstCategory" class="empty-action">&nbsp;</span>
-      </div>
-    </div>
-    <div *ngIf="category.opened">
-      <div class="row subcategory"  *ngFor="let subCategory of category.subCategories; let lastSubCategory = last; let firstSubCategory = first;">
-        <hr/>
-        <div [ngClass]="{'col-sm-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
-        <div class="col-sm-4 text-right">
-          <bk-popover glyphiconClass="log-in" text="Переместить подкатегорию" class="move-sub-category" placement="left" (click)="moveSubCategory(category, subCategory)"></bk-popover>
-          <bk-popover glyphiconClass="pencil" text="Редактировать подкатегорию" placement="left" (click)="editSubCategory(category, subCategory)"></bk-popover>
-          <bk-popover glyphiconClass="remove" text="Удалить подкатегорию" placement="left" (click)="deleteSubCategory(category, subCategory)"></bk-popover>
-          <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubCategoryDown(category, subCategory)" *ngIf="!lastSubCategory"></bk-popover>
-          <span *ngIf="lastSubCategory" class="empty-action">&nbsp;</span>
-          <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubCategoryUp(category, subCategory)" *ngIf="!firstSubCategory"></bk-popover>
-          <span *ngIf="firstSubCategory" class="empty-action">&nbsp;</span>
+@if (!loading) {
+  <div class="table">
+    @for (category of profile.categories; track category; let lastCategory = $last; let firstCategory = $first) {
+      <div>
+        @if (firstCategory) {
+          <hr class="category-separator" />
+        }
+        <div class="row">
+          <div class="col-sm-8">
+            @if (hasSubcategories(category) && !category.opened) {
+              <span class="tree-icon glyphicon glyphicon-chevron-right" (click)="category.opened = !category.opened"></span>
+            }
+            @if (hasSubcategories(category) && category.opened) {
+              <span class="tree-icon glyphicon glyphicon-chevron-down" (click)="category.opened = !category.opened"></span>
+            }
+            <img class="icon" [src]="category.icon | assetImage:'category'">
+            <span (click)="category.opened = !category.opened">{{category.title}}</span>
+          </div>
+          <div class="col-sm-4 text-right">
+            <bk-popover glyphiconClass="plus" text="Добавить подкатегорию" placement="left" (click)="addSubCategory(category)"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать категорию" placement="left" (click)="editCategory(category)"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить категорию" placement="left" (click)="deleteCategory(category)"></bk-popover>
+            @if (!lastCategory) {
+              <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveCategoryDown(category)"></bk-popover>
+            }
+            @if (lastCategory) {
+              <span class="empty-action">&nbsp;</span>
+            }
+            @if (!firstCategory) {
+              <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveCategoryUp(category)"></bk-popover>
+            }
+            @if (firstCategory) {
+              <span class="empty-action">&nbsp;</span>
+            }
+          </div>
         </div>
+        @if (category.opened) {
+          <div>
+            @for (subCategory of category.subCategories; track subCategory; let lastSubCategory = $last; let firstSubCategory = $first) {
+              <div class="row subcategory" >
+                <hr/>
+                <div [ngClass]="{'col-sm-8':true, 'income-category':subCategory.type==='income', 'expense-category':subCategory.type==='expense'}">{{subCategory.title}}</div>
+                <div class="col-sm-4 text-right">
+                  <bk-popover glyphiconClass="log-in" text="Переместить подкатегорию" class="move-sub-category" placement="left" (click)="moveSubCategory(category, subCategory)"></bk-popover>
+                  <bk-popover glyphiconClass="pencil" text="Редактировать подкатегорию" placement="left" (click)="editSubCategory(category, subCategory)"></bk-popover>
+                  <bk-popover glyphiconClass="remove" text="Удалить подкатегорию" placement="left" (click)="deleteSubCategory(category, subCategory)"></bk-popover>
+                  @if (!lastSubCategory) {
+                    <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubCategoryDown(category, subCategory)"></bk-popover>
+                  }
+                  @if (lastSubCategory) {
+                    <span class="empty-action">&nbsp;</span>
+                  }
+                  @if (!firstSubCategory) {
+                    <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubCategoryUp(category, subCategory)"></bk-popover>
+                  }
+                  @if (firstSubCategory) {
+                    <span class="empty-action">&nbsp;</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @if (!lastCategory) {
+          <hr class="category-separator"/>
+        }
       </div>
-    </div>
-    <hr class="category-separator" *ngIf="!lastCategory"/>
+    }
   </div>
-</div>
-
-<ng-template #loadingIndicator>
+} @else {
   <bk-spinner [size]="80"></bk-spinner>
-</ng-template>
+}
+

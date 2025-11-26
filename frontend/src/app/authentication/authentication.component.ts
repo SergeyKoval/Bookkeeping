@@ -12,9 +12,10 @@ import { AuthenticationService } from '../common/service/authentication.service'
 import { BrowserUtils } from '../common/utils/browser-utils';
 
 @Component({
-  selector: 'bk-authentication',
-  templateUrl: './authentication.component.html',
-  styleUrls: ['./authentication.component.css']
+    selector: 'bk-authentication',
+    templateUrl: './authentication.component.html',
+    styleUrls: ['./authentication.component.css'],
+    standalone: false
 })
 export class AuthenticationComponent implements OnInit, OnDestroy {
   public authenticationForm: FormGroup;

@@ -7,9 +7,10 @@ import { HistoryEditDialogComponent } from '../history-edit-dialog/history-edit-
 import { HistoryComponent } from '../history.component';
 
 @Component({
-  selector: 'bk-history-page-actions',
-  templateUrl: './history-page-actions.component.html',
-  styleUrls: ['./history-page-actions.component.css']
+    selector: 'bk-history-page-actions',
+    templateUrl: './history-page-actions.component.html',
+    styleUrls: ['./history-page-actions.component.css'],
+    standalone: false
 })
 export class HistoryPageActionsComponent {
   @Input()

@@ -7,9 +7,10 @@ import { CurrencyDetail } from '../../../common/model/currency-detail';
 import { HistoryType } from '../../../common/model/history/history-type';
 
 @Component({
-  selector: 'bk-input-group',
-  templateUrl: './input-group.component.html',
-  styleUrls: ['./input-group.component.css']
+    selector: 'bk-input-group',
+    templateUrl: './input-group.component.html',
+    styleUrls: ['./input-group.component.css'],
+    standalone: false
 })
 export class InputGroupComponent implements OnInit {
   @Input()

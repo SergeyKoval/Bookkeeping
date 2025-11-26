@@ -5,17 +5,20 @@
       <bk-currency-conversion (currencyConversion)="setSummaryConversion($event)"></bk-currency-conversion>
     </div>
     <div class="panel-body">
-      <bk-summary-body *ngIf="!loading; else loadingIndicator"
-                       [accounts]="accounts"
-                       [conversionCurrency]="conversionCurrency">
-      </bk-summary-body>
+      @if (!loading) {
+        <bk-summary-body
+          [accounts]="accounts"
+          [conversionCurrency]="conversionCurrency">
+        </bk-summary-body>
+      } @else {
+        <bk-spinner></bk-spinner>
+      }
     </div>
-    <div *ngIf="!loading" class="panel-footer summary-footer">
-      <bk-summary-footer [accounts]="accounts" [conversionCurrency]="conversionCurrency"></bk-summary-footer>
-    </div>
+    @if (!loading) {
+      <div class="panel-footer summary-footer">
+        <bk-summary-footer [accounts]="accounts" [conversionCurrency]="conversionCurrency"></bk-summary-footer>
+      </div>
+    }
   </div>
 </div>
 
-<ng-template #loadingIndicator>
-  <bk-spinner></bk-spinner>
-</ng-template>

@@ -5,7 +5,8 @@ import { CurrencyDetail } from '../../model/currency-detail';
 import { BalanceItem } from '../../model/balance-item';
 
 @Pipe({
-  name: 'summaryBodySubAccount'
+    name: 'summaryBodySubAccount',
+    standalone: false
 })
 export class SummaryBodySubAccountPipe implements PipeTransform {
   public constructor(private _currencyService: CurrencyService) {}

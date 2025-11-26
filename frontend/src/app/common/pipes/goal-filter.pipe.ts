@@ -5,7 +5,8 @@ import { BudgetService } from '../service/budget.service';
 import { BudgetGoal } from '../model/budget/budget-goal';
 
 @Pipe({
-  name: 'goalFilter'
+    name: 'goalFilter',
+    standalone: false
 })
 export class GoalFilterPipe implements PipeTransform {
   public transform(goals: BudgetGoal[], filter: GoalFilterType): BudgetGoal[] {

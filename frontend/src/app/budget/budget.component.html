@@ -1,20 +1,21 @@
 <div class="panel panel-default">
   <div class="panel-body">
     <div class="btn-group" role="group">
-        <span class="btn btn-default left-button" [ngClass]="{'disabled': loading}" type="button" (click)="openPlanDialog()">Запланировать</span>
-        <span class="btn btn-default left-button" [ngClass]="{'disabled': loading || isFuturePeriod()}" type="button" (click)="openCloseMonthDialog()">Закрыть месяц</span>
+      <span class="btn btn-default left-button" [ngClass]="{'disabled': loading}" type="button" (click)="openPlanDialog()">Запланировать</span>
+      <span class="btn btn-default left-button" [ngClass]="{'disabled': loading || isFuturePeriod()}" type="button" (click)="openCloseMonthDialog()">Закрыть месяц</span>
     </div>
 
     <bk-month-and-year class="right-button-group" [disabled]="loading" [selectedYear]="budget?.year" [selectedMonth]="budget?.month"
-                       (changeMonth)="chooseMonth($event)" (changeYear)="chooseYear($event)"></bk-month-and-year>
+    (changeMonth)="chooseMonth($event)" (changeYear)="chooseYear($event)"></bk-month-and-year>
 
-    <div *ngIf="!loading; else loadingIndicator">
-      <bk-budget-details [budget]="budget" [type]="'income'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>
-      <bk-budget-details [budget]="budget" [type]="'expense'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>
-    </div>
+    @if (!loading) {
+      <div>
+        <bk-budget-details [budget]="budget" [type]="'income'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>
+        <bk-budget-details [budget]="budget" [type]="'expense'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>
+      </div>
+    } @else {
+      <bk-spinner [size]="100"></bk-spinner>
+    }
   </div>
 </div>
 
-<ng-template #loadingIndicator>
-  <bk-spinner [size]="100"></bk-spinner>
-</ng-template>

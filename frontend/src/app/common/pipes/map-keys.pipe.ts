@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'mapKeys'
+    name: 'mapKeys',
+    standalone: false
 })
 export class MapKeysPipe implements PipeTransform {
   public transform(value: {[key: string]: any}): string[] {

@@ -3,7 +3,7 @@
     <div class="col-lg-3 application-column">
       <div class="media">
         <div class="media-left">
-            <img class="media-object android" src="assets/image/android-app.jpg">
+          <img class="media-object android" src="assets/image/android-app.jpg">
         </div>
         <div class="media-body media-middle">
           <div>
@@ -27,17 +27,21 @@
           <div class="col-md-2 col-sm-2 text-center sm-padding">Действия</div>
         </div>
 
-        <div class="row" *ngFor="let device of devices | keyvalue; let lastDevice = last;">
-          <div class="col-md-3 col-sm-4 no-left-padding">{{device.key}}</div>
-          <div class="col-md-7 col-sm-6">{{device.value.name}}</div>
-          <div class="col-md-2 col-sm-2 sm-padding">
-            <bk-popover glyphiconClass="pencil" text="Изменить имя" placement="left" (click)="openChangeNameDialog(device.value, device.key)"></bk-popover>
-            <bk-popover glyphiconClass="list" text="Сообщение" placement="left" (click)="openProcessedDeviceMessageDialog(device.value, device.key)"></bk-popover>
-            <bk-popover glyphiconClass="alert" text="Разлогинить девайс" placement="left" (click)="confirmDeviceLogout(device.key)"></bk-popover>
-            <bk-popover glyphiconClass="remove" text="Удалить девайс" placement="left" (click)="confirmDeviceRemove(device.key)"></bk-popover>
+        @for (device of devices | keyvalue; track device; let lastDevice = $last) {
+          <div class="row">
+            <div class="col-md-3 col-sm-4 no-left-padding">{{device.key}}</div>
+            <div class="col-md-7 col-sm-6">{{device.value.name}}</div>
+            <div class="col-md-2 col-sm-2 sm-padding">
+              <bk-popover glyphiconClass="pencil" text="Изменить имя" placement="left" (click)="openChangeNameDialog(device.value, device.key)"></bk-popover>
+              <bk-popover glyphiconClass="list" text="Сообщение" placement="left" (click)="openProcessedDeviceMessageDialog(device.value, device.key)"></bk-popover>
+              <bk-popover glyphiconClass="alert" text="Разлогинить девайс" placement="left" (click)="confirmDeviceLogout(device.key)"></bk-popover>
+              <bk-popover glyphiconClass="remove" text="Удалить девайс" placement="left" (click)="confirmDeviceRemove(device.key)"></bk-popover>
+            </div>
+            @if (!lastDevice) {
+              <hr/>
+            }
           </div>
-          <hr *ngIf="!lastDevice"/>
-        </div>
+        }
       </div>
     </div>
   </div>

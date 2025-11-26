@@ -9,9 +9,10 @@ import { CurrencyDetail } from '../../model/currency-detail';
 import { Profile } from '../../model/profile';
 
 @Component({
-  selector: 'bk-currency-conversion',
-  templateUrl: './currency-conversion.component.html',
-  styleUrls: ['./currency-conversion.component.css']
+    selector: 'bk-currency-conversion',
+    templateUrl: './currency-conversion.component.html',
+    styleUrls: ['./currency-conversion.component.css'],
+    standalone: false
 })
 export class CurrencyConversionComponent implements OnInit {
   @Input()

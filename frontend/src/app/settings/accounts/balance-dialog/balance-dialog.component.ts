@@ -6,9 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CurrencyDetail } from '../../../common/model/currency-detail';
 
 @Component({
-  selector: 'bk-balance-dialog',
-  templateUrl: './balance-dialog.component.html',
-  styleUrls: ['./balance-dialog.component.css']
+    selector: 'bk-balance-dialog',
+    templateUrl: './balance-dialog.component.html',
+    styleUrls: ['./balance-dialog.component.css'],
+    standalone: false
 })
 export class BalanceDialogComponent implements OnInit {
   public currencies: CurrencyDetail[];

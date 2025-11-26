@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'bk-device-mail-dialog',
-  templateUrl: './device-mail-dialog.component.html',
-  styleUrls: ['./device-mail-dialog.component.css']
+    selector: 'bk-device-mail-dialog',
+    templateUrl: './device-mail-dialog.component.html',
+    styleUrls: ['./device-mail-dialog.component.css'],
+    standalone: false
 })
 export class DeviceMailDialogComponent implements OnInit {
   public emailForm: FormGroup;

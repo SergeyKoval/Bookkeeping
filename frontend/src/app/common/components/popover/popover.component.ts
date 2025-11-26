@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { BrowserUtils } from '../../utils/browser-utils';
 
 @Component({
-  selector: 'bk-popover',
-  template: `<span [class]="getFinalClass()" [matTooltipPosition]="placement" [matTooltip]="text"></span>`,
-  styleUrls: ['./popover.component.css']
+    selector: 'bk-popover',
+    template: `<span [class]="getFinalClass()" [matTooltipPosition]="placement" [matTooltip]="text"></span>`,
+    styleUrls: ['./popover.component.css'],
+    standalone: false
 })
 export class PopoverComponent {
   @Input()

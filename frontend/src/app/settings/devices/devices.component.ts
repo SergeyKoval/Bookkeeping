@@ -16,9 +16,10 @@ import { ConfirmDialogService } from '../../common/components/confirm-dialog/con
 import { Device } from '../../common/model/device';
 
 @Component({
-  selector: 'bk-devices',
-  templateUrl: './devices.component.html',
-  styleUrls: ['./devices.component.css']
+    selector: 'bk-devices',
+    templateUrl: './devices.component.html',
+    styleUrls: ['./devices.component.css'],
+    standalone: false
 })
 export class DevicesComponent implements OnInit {
   public devices: {[deviceId: string]: Device};

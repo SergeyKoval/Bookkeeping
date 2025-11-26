@@ -1,4 +1,8 @@
 <div class="month-progress-container">
-  <span class="not-current-month" [style.height.px]="height" *ngIf="!progress.currentMonth"></span>
-  <span class="day-percent" [style.height.px]="height" [style.width.%]="progress.monthPercent" *ngIf="progress.currentMonth"></span>
+  @if (!progress.currentMonth) {
+    <span class="not-current-month" [style.height.px]="height"></span>
+  }
+  @if (progress.currentMonth) {
+    <span class="day-percent" [style.height.px]="height" [style.width.%]="progress.monthPercent"></span>
+  }
 </div>

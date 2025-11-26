@@ -3,7 +3,8 @@ import { ProfileService } from '../service/profile.service';
 import { CurrencyDetail } from '../model/currency-detail';
 
 @Pipe({
-  name: 'currencySort'
+    name: 'currencySort',
+    standalone: false
 })
 export class CurrencySortPipe implements PipeTransform {
 

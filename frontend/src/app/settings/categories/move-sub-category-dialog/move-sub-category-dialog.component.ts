@@ -11,9 +11,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Category } from '../../../common/model/category';
 
 @Component({
-  selector: 'bk-move-sub-category-dialog',
-  templateUrl: './move-sub-category-dialog.component.html',
-  styleUrls: ['./move-sub-category-dialog.component.css']
+    selector: 'bk-move-sub-category-dialog',
+    templateUrl: './move-sub-category-dialog.component.html',
+    styleUrls: ['./move-sub-category-dialog.component.css'],
+    standalone: false
 })
 export class MoveSubCategoryDialogComponent implements OnInit {
   public categoryTitle: string;

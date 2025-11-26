@@ -25,9 +25,10 @@ import { SimpleResponse } from '../../common/model/simple-response';
 import { BudgetDetails } from '../../common/model/budget/budget-details';
 
 @Component({
-  selector: 'bk-close-month-dialog',
-  templateUrl: './close-month-dialog.component.html',
-  styleUrls: ['./close-month-dialog.component.css']
+    selector: 'bk-close-month-dialog',
+    templateUrl: './close-month-dialog.component.html',
+    styleUrls: ['./close-month-dialog.component.css'],
+    standalone: false
 })
 export class CloseMonthDialogComponent implements OnInit {
   public FILTER: typeof CloseMonthFilter = CloseMonthFilter;

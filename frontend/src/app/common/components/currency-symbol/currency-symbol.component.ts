@@ -4,8 +4,9 @@ import { ProfileService } from '../../service/profile.service';
 import { CurrencyDetail } from '../../model/currency-detail';
 
 @Component({
-  selector: 'bk-currency-symbol',
-  template: `<span [innerHTML]="currencyCode"></span>`
+    selector: 'bk-currency-symbol',
+    template: `<span [innerHTML]="currencyCode"></span>`,
+    standalone: false
 })
 export class CurrencySymbolComponent {
   @Input()

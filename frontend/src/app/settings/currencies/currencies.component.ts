@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs/index';
+import { Observable, Subject } from 'rxjs';
 
 import { CurrencyService } from '../../common/service/currency.service';
 import { ProfileService } from '../../common/service/profile.service';
@@ -14,9 +14,10 @@ import { CurrencyDetail } from '../../common/model/currency-detail';
 import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
-  selector: 'bk-currencies',
-  templateUrl: './currencies.component.html',
-  styleUrls: ['./currencies.component.css']
+    selector: 'bk-currencies',
+    templateUrl: './currencies.component.html',
+    styleUrls: ['./currencies.component.css'],
+    standalone: false
 })
 export class CurrenciesComponent implements OnInit {
   public loading: boolean = true;

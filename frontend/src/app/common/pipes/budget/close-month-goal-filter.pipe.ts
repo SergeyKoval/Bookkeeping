@@ -4,7 +4,8 @@ import { GoalWrapper } from '../../model/budget/GoalWrapper';
 import { CloseMonthFilter } from '../../model/budget/CloseMonthFilter';
 
 @Pipe({
-  name: 'closeMonthGoalFilter'
+    name: 'closeMonthGoalFilter',
+    standalone: false
 })
 export class CloseMonthGoalFilterPipe implements PipeTransform {
   public transform(goals: GoalWrapper[], filters: CloseMonthFilter[]): GoalWrapper[] {

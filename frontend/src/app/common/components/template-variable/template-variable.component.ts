@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'bk-template-variable',
-  templateUrl: './template-variable.component.html',
-  styleUrls: ['./template-variable.component.css']
+    selector: 'bk-template-variable',
+    templateUrl: './template-variable.component.html',
+    styleUrls: ['./template-variable.component.css'],
+    standalone: false
 })
 export class TemplateVariableComponent {
   @Input()

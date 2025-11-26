@@ -1,8 +1,10 @@
 <h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Отправка приложения на мэил</h2>
 <mat-dialog-content  id="device-mail-dialog">
-  <div *ngIf="showErrorMessage" class="alert alert-dismissable fade in alert-danger error">
-    <strong>Невалидный мэил</strong>
-  </div>
+  @if (showErrorMessage) {
+    <div class="alert alert-dismissable fade in alert-danger error">
+      <strong>Невалидный мэил</strong>
+    </div>
+  }
   <form [formGroup]="emailForm">
     <div class="table">
       <div class="row title">

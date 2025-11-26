@@ -21,9 +21,10 @@ import { Device } from '../common/model/device';
 import { SimpleResponse } from '../common/model/simple-response';
 
 @Component({
-  selector: 'bk-history',
-  templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css']
+    selector: 'bk-history',
+    templateUrl: './history.component.html',
+    styleUrls: ['./history.component.css'],
+    standalone: false
 })
 export class HistoryComponent implements OnInit, AfterViewChecked {
   public static readonly PAGE_LIMIT: number = 20;

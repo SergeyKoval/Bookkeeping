@@ -7,9 +7,10 @@ import { AlertType } from '../../../common/model/alert/AlertType';
 import { DeviceMessage } from '../../../common/model/history/deviceMessage';
 
 @Component({
-  selector: 'bk-device-message-dialog',
-  templateUrl: './device-message-dialog.component.html',
-  styleUrls: ['./device-message-dialog.component.css']
+    selector: 'bk-device-message-dialog',
+    templateUrl: './device-message-dialog.component.html',
+    styleUrls: ['./device-message-dialog.component.css'],
+    standalone: false
 })
 export class DeviceMessageDialogComponent implements OnInit {
   public loading: boolean = true;

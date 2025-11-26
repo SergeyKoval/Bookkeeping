@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 
 @Component({
-  selector: 'bk-authentication-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.css']
+    selector: 'bk-authentication-input',
+    templateUrl: './input.component.html',
+    styleUrls: ['./input.component.css'],
+    standalone: false
 })
 export class InputComponent {
   @Input()

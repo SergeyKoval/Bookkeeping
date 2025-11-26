@@ -7,7 +7,8 @@ import { ProfileService } from '../service/profile.service';
 import { HistoryType } from '../model/history/history-type';
 
 @Pipe({
-  name: 'historyGroup'
+    name: 'historyGroup',
+    standalone: false
 })
 export class HistoryGroupPipe implements PipeTransform {
 

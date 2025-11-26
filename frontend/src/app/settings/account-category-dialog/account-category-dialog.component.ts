@@ -10,9 +10,10 @@ import { SimpleResponse } from '../../common/model/simple-response';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'bk-account-category-dialog',
-  templateUrl: './account-category-dialog.component.html',
-  styleUrls: ['./account-category-dialog.component.css']
+    selector: 'bk-account-category-dialog',
+    templateUrl: './account-category-dialog.component.html',
+    styleUrls: ['./account-category-dialog.component.css'],
+    standalone: false
 })
 export class AccountCategoryDialogComponent implements OnInit {
   public accountIcons: string[] = ['payok.gif', 'avtokarta.gif', 'alfa.gif', 'belagro.gif', 'belarusbank.gif', 'belgazprom1.gif'

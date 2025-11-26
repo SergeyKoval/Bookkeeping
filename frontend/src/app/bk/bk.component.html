@@ -1,43 +1,48 @@
-<div class="container" *ngIf="isInitialDataLoaded(); else authenticationContainer">
-  <bk-header></bk-header>
-  <div class="row">
-    <bk-summary></bk-summary>
-
-    <div id="details" class="col-sm-8">
-      <router-outlet></router-outlet>
+@if (isInitialDataLoaded()) {
+  <div class="container">
+    <bk-header></bk-header>
+    <div class="row">
+      <bk-summary></bk-summary>
+      <div id="details" class="col-sm-8">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
-</div>
-
-<ng-template #authenticationContainer>
+} @else {
   <div class="form">
-    <div class="table authentication-check" *ngIf="authenticationCheckIndicator && !versionCheckIndicator">
-      <div class="row">
-        <div class="col-md-2 authentication-check-spinner">
-          <bk-spinner [size]="35"></bk-spinner>
+    @if (authenticationCheckIndicator && !versionCheckIndicator) {
+      <div class="table authentication-check">
+        <div class="row">
+          <div class="col-md-2 authentication-check-spinner">
+            <bk-spinner [size]="35"></bk-spinner>
+          </div>
+          <div class="col-md-10 authentication-check-text">Проверка аутентификации...</div>
         </div>
-        <div class="col-md-10 authentication-check-text">Проверка аутентификации...</div>
       </div>
-    </div>
-
-    <div class="table authentication-check" *ngIf="versionCheckIndicator">
-      <div class="row">
-        <div class="col-sm-2 authentication-check-spinner">
-          <bk-spinner [size]="35"></bk-spinner>
+    }
+    @if (versionCheckIndicator) {
+      <div class="table authentication-check">
+        <div class="row">
+          <div class="col-sm-2 authentication-check-spinner">
+            <bk-spinner [size]="35"></bk-spinner>
+          </div>
+          <div class="col-sm-10 authentication-check-text">Проверка версии...</div>
         </div>
-        <div class="col-sm-10 authentication-check-text">Проверка версии...</div>
       </div>
-    </div>
-
-    <div class="table authentication-check" *ngIf="versionError">
-      <div class="row"><div class="col-sm-12 authentication-check-text">Версия сервера отличается.</div></div>
-      <div class="row"><div class="col-sm-12 authentication-check-text">Сервер: {{serverVersion}}</div></div>
-      <div class="row"><div class="col-sm-12 authentication-check-text">Клиент: {{uiVersion}}</div></div>
-    </div>
-
-    <router-outlet *ngIf="!authenticationCheckIndicator && !versionCheckIndicator && !versionError"></router-outlet>
+    }
+    @if (versionError) {
+      <div class="table authentication-check">
+        <div class="row"><div class="col-sm-12 authentication-check-text">Версия сервера отличается.</div></div>
+        <div class="row"><div class="col-sm-12 authentication-check-text">Сервер: {{serverVersion}}</div></div>
+        <div class="row"><div class="col-sm-12 authentication-check-text">Клиент: {{uiVersion}}</div></div>
+      </div>
+    }
+    @if (!authenticationCheckIndicator && !versionCheckIndicator && !versionError) {
+      <router-outlet></router-outlet>
+    }
   </div>
-</ng-template>
+}
+
 
 <footer class="footer text-center">
   <div class="container">

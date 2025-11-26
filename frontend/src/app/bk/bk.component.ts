@@ -12,9 +12,10 @@ import { environment } from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'bk-root',
-  templateUrl: './bk.component.html',
-  styleUrls: ['./bk.component.css']
+    selector: 'bk-root',
+    templateUrl: './bk.component.html',
+    styleUrls: ['./bk.component.css'],
+    standalone: false
 })
 export class BookkeepingRootComponent implements OnInit, OnDestroy {
   public authenticationCheckIndicator: boolean = false;

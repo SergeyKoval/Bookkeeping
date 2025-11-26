@@ -21,9 +21,10 @@ import { BudgetBalance } from '../../../common/model/budget/budget-balance';
 import { HistoryBalanceType } from '../../../common/model/history/history-balance-type';
 
 @Component({
-  selector: 'bk-goals-container',
-  templateUrl: './goals-container.component.html',
-  styleUrls: ['./goals-container.component.css']
+    selector: 'bk-goals-container',
+    templateUrl: './goals-container.component.html',
+    styleUrls: ['./goals-container.component.css'],
+    standalone: false
 })
 export class GoalsContainerComponent implements OnInit {
   public FILTER_TYPES: GoalFilterType[] = [GoalFilterType.NOT_DONE, GoalFilterType.DONE, GoalFilterType.ALL];

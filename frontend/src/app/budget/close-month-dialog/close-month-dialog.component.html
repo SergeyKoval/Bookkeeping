@@ -7,140 +7,209 @@
   </ul>
 
   <div class="table table-content">
-    <div *ngIf="type === 'period'">
-      <div *ngIf="errorMessage" class="alert alert-dismissable fade in alert-danger error text-center">
-        <strong>{{errorMessage}}</strong>
-      </div>
-
-      <div class="row period-row">
-        <div class="col-sm-4 period-title">Планируемый период:</div>
-        <div class="col-sm-8">
-          <bk-month-and-year class="right-button-group" [selectedYear]="nextMonthPeriod.year" [selectedMonth]="nextMonthPeriod.month"
-                             (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
+    @if (type === 'period') {
+      <div>
+        @if (errorMessage) {
+          <div class="alert alert-dismissable fade in alert-danger error text-center">
+            <strong>{{errorMessage}}</strong>
+          </div>
+        }
+        <div class="row period-row">
+          <div class="col-sm-4 period-title">Планируемый период:</div>
+          <div class="col-sm-8">
+            <bk-month-and-year class="right-button-group" [selectedYear]="nextMonthPeriod.year" [selectedMonth]="nextMonthPeriod.month"
+            (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
+          </div>
         </div>
       </div>
+    }
+
+    @if (type === 'goals') {
+      <div>
+        @for (goalWrapper of goals | closeMonthGoalFilter:goalFilters; track goalWrapper) {
+          <div class="row">
+            <div class="col-sm-2 no-right-padding first-column">
+              <div class="type-label">
+                @if (goalWrapper.type === 'expense') {
+                  <span class="label label-danger">Расход</span>
+                }
+                @if (goalWrapper.type === 'income') {
+                  <span class="label label-success">Доход</span>
+                }
+              </div>
+              @if (!goalWrapper.actionPlan) {
+                <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" (click)="repeatGoal(goalWrapper)"></bk-popover>
+              }
+              @if (!goalWrapper.goal.done && !goalWrapper.actionPlan) {
+                <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение"
+                (click)="moveGoal(goalWrapper)"></bk-popover>
+              }
+              @if (goalWrapper.actionPlan) {
+                <bk-popover class="edit-icon" glyphiconClass="pencil" placement="right" text="Редактировать" (click)="editGoal(goalWrapper)"></bk-popover>
+              }
+              @if (goalWrapper.actionPlan && goalWrapper.removable) {
+                <bk-popover class="remove-icon" glyphiconClass="remove" placement="right" text="Исключить"
+                (click)="excludeGoal(goalWrapper)"></bk-popover>
+              }
+            </div>
+            <div class="col-sm-7 progress-column">
+              <div class="progress">
+                <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goalWrapper.goal)"></bk-template-variable>
+                <div class="progress-bar progress-bar-info" [style.width.%]="goalPercent.value"></div>
+                <span class="goal-title">{{goalWrapper.goal.title}} @if (!goalWrapper.missedInClosedMonth) {
+                  <span>(<span class="percent">{{goalPercent.value}}%</span>)</span>
+                }</span>
+                <span class="goal-value">
+                  @if (!goalWrapper.missedInClosedMonth) {
+                    <span>{{goalWrapper.goal.balance.value | currencyValue:2:true}} из</span>
+                    } {{goalWrapper.goal.balance.completeValue | currencyValue:2:true}}
+                    <strong><bk-currency-symbol [currencyName]="goalWrapper.goal.balance.currency"></bk-currency-symbol></strong>
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-3 actions-column">
+                @if (!goalWrapper.actionPlan) {
+                  <div><span class="badge badge-category">{{goalWrapper.category}}</span></div>
+                }
+                @if (goalWrapper.actionPlan) {
+                  <span class="action-label">
+                    <span class="label label-info">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span>
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (type === 'categories') {
+        <div>
+          @for (categoryWrapper of categories | closeMonthCategoryFilter:categoryFilters; track categoryWrapper) {
+            <div class="row category-row">
+              <bk-template-variable #linesNumber [value]="getNumberOfLinesInCategory(categoryWrapper)"></bk-template-variable>
+              <div class="col-sm-3 left-column">
+                <div class="type-label">
+                  @if (categoryWrapper.type === 'expense') {
+                    <span class="label label-danger">Расход</span>
+                  }
+                  @if (categoryWrapper.type === 'income') {
+                    <span class="label label-success">Доход</span>
+                  }
+                </div>
+                @if (!categoryWrapper.actionPlan) {
+                  <bk-popover class="statistic-icon" glyphiconClass="signal" placement="right" text="Статистика" (click)="showStatistics(categoryWrapper)"></bk-popover>
+                }
+                @if (!categoryWrapper.actionPlan) {
+                  <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" (click)="repeatCategory(categoryWrapper)"></bk-popover>
+                }
+                @if (categoryWrapper.actionPlan) {
+                  <bk-popover class="edit-icon" glyphiconClass="pencil" placement="right" text="Редактировать" (click)="editCategory(categoryWrapper)"></bk-popover>
+                }
+                @if (categoryWrapper.actionPlan && categoryWrapper.removable) {
+                  <bk-popover class="remove-icon" glyphiconClass="remove" placement="right" text="Исключить"
+                  (click)="excludeCategory(categoryWrapper)"></bk-popover>
+                }
+                @if (categoryWrapper.goalWrappers.length > 0) {
+                  <span [popover]="'Целей в категории'" [popoverPlacement]="'right'" [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true"
+                    class="badge badge-goal">
+                    {{categoryWrapper.goalWrappers.length}}
+                  </span>
+                }
+                <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(categoryWrapper.category.title) | assetImage:'category'"></span>
+              </div>
+              <div class="col-sm-7 category-progress-column">
+                <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(categoryWrapper)"></bk-template-variable>
+                <div class="progress" [style.height.px]="20 * linesNumber.value">
+                  <div class="progress-bar progress-bar-info" [style.width.%]="categoryPercent.value"></div>
+                  <span class="category-title-wrapper">
+                    <span class="category-title">{{categoryWrapper.category.title}} @if (!categoryWrapper.missedInClosedMonth) {
+                      <span>(<span class="percent">{{categoryPercent.value}}%</span>)</span>
+                    }</span>
+                  </span>
+                  @if (!categoryWrapper.missedInClosedMonth) {
+                    <span>
+                      @for (currency of categoryWrapper.category.balance | mapKeys | currencySort; track currency; let currencyIndex = $index) {
+                        <span class="category-value" [style.top.px]="currencyIndex * 20">
+                          <span>{{categoryWrapper.category.balance[currency].value | currencyValue:2:true}}</span> из {{categoryWrapper.category.balance[currency].completeValue | currencyValue:2:true}}
+                          <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+                        </span>
+                      }
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="col-sm-2 right-column">
+                @if (categoryWrapper.actionPlan) {
+                  <span class="action-plan">
+                    @for (currency of categoryWrapper.actionPlan | mapKeys | currencySort; track currency; let currencyIndex = $index) {
+                      <span class="category-value" [style.top.px]="currencyIndex * 20">
+                        {{categoryWrapper.actionPlan[currency].completeValue | currencyValue:2:true}} <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+                      </span>
+                    }
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
-
-    <div *ngIf="type === 'goals'">
-      <div class="row" *ngFor="let goalWrapper of goals | closeMonthGoalFilter:goalFilters">
-        <div class="col-sm-2 no-right-padding first-column">
-          <div class="type-label">
-            <span class="label label-danger" *ngIf="goalWrapper.type === 'expense'">Расход</span>
-            <span class="label label-success" *ngIf="goalWrapper.type === 'income'">Доход</span>
-          </div>
-          <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" *ngIf="!goalWrapper.actionPlan" (click)="repeatGoal(goalWrapper)"></bk-popover>
-          <bk-popover class="move-icon" glyphiconClass="log-in" placement="right" text="Отложить выполнение"
-                      *ngIf="!goalWrapper.goal.done && !goalWrapper.actionPlan" (click)="moveGoal(goalWrapper)"></bk-popover>
-          <bk-popover class="edit-icon" glyphiconClass="pencil" placement="right" text="Редактировать" *ngIf="goalWrapper.actionPlan" (click)="editGoal(goalWrapper)"></bk-popover>
-          <bk-popover class="remove-icon" glyphiconClass="remove" placement="right" text="Исключить"
-                      *ngIf="goalWrapper.actionPlan && goalWrapper.removable" (click)="excludeGoal(goalWrapper)"></bk-popover>
-        </div>
-
-        <div class="col-sm-7 progress-column">
-          <div class="progress">
-            <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goalWrapper.goal)"></bk-template-variable>
-            <div class="progress-bar progress-bar-info" [style.width.%]="goalPercent.value"></div>
-            <span class="goal-title">{{goalWrapper.goal.title}} <span *ngIf="!goalWrapper.missedInClosedMonth">(<span class="percent">{{goalPercent.value}}%</span>)</span></span>
-            <span class="goal-value">
-            <span *ngIf="!goalWrapper.missedInClosedMonth">{{goalWrapper.goal.balance.value | currencyValue:2:true}} из</span> {{goalWrapper.goal.balance.completeValue | currencyValue:2:true}}
-            <strong><bk-currency-symbol [currencyName]="goalWrapper.goal.balance.currency"></bk-currency-symbol></strong>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <span class="full-width">
+      @if (type !== 'period') {
+        <span class="summary-to-currency pull-left">
+          <div class="dropdown">
+            <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <strong>Фильтр:</strong> @for (filter of getFilters(); track filter; let last = $last) {
+              <span> {{filter}}@if (!last) {
+                <span>,</span>
+              }</span>
+            }
           </span>
-          </div>
+          <ul class="dropdown-menu filter" aria-labelledby="dropdownMenu1" bkStopPropagation>
+            <li (click)="clickFilter(FILTER.USED, FILTER.UNUSED)">
+              <a><input type="checkbox" [checked]="isChecked(FILTER.USED)"> {{FILTER.USED}}</a>
+            </li>
+            <li (click)="clickFilter(FILTER.UNUSED, FILTER.USED)">
+              <a><input type="checkbox" [checked]="isChecked(FILTER.UNUSED)"> {{FILTER.UNUSED}}</a>
+            </li>
+            <li role="separator" class="divider"></li>
+            @if (type === 'goals') {
+              <li (click)="clickFilter(FILTER.DONE, FILTER.UNDONE)">
+                <a><input type="checkbox" [checked]="isChecked(FILTER.DONE)"> {{FILTER.DONE}}</a>
+              </li>
+            }
+            @if (type === 'goals') {
+              <li (click)="clickFilter(FILTER.UNDONE, FILTER.DONE)">
+                <a><input type="checkbox" [checked]="isChecked(FILTER.UNDONE)"> {{FILTER.UNDONE}}</a>
+              </li>
+            }
+            @if (type === 'goals') {
+              <li role="separator" class="divider"></li>
+            }
+            <li (click)="clickFilter(FILTER.INCOME, FILTER.EXPENSE)">
+              <a><input type="checkbox" [checked]="isChecked(FILTER.INCOME)"> {{FILTER.INCOME}}</a>
+            </li>
+            <li (click)="clickFilter(FILTER.EXPENSE, FILTER.INCOME)">
+              <a><input type="checkbox" [checked]="isChecked(FILTER.EXPENSE)"> {{FILTER.EXPENSE}}</a>
+            </li>
+          </ul>
         </div>
-
-        <div class="col-sm-3 actions-column">
-          <div *ngIf="!goalWrapper.actionPlan"><span class="badge badge-category">{{goalWrapper.category}}</span></div>
-          <span *ngIf="goalWrapper.actionPlan" class="action-label">
-            <span class="label label-info">{{getMonthTitle(goalWrapper.actionPlan.month)}} {{goalWrapper.actionPlan.year}}</span>
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="type === 'categories'">
-      <div class="row category-row" *ngFor="let categoryWrapper of categories | closeMonthCategoryFilter:categoryFilters">
-        <bk-template-variable #linesNumber [value]="getNumberOfLinesInCategory(categoryWrapper)"></bk-template-variable>
-        <div class="col-sm-3 left-column">
-          <div class="type-label">
-            <span class="label label-danger" *ngIf="categoryWrapper.type === 'expense'">Расход</span>
-            <span class="label label-success" *ngIf="categoryWrapper.type === 'income'">Доход</span>
-          </div>
-          <bk-popover class="statistic-icon" glyphiconClass="signal" placement="right" text="Статистика" *ngIf="!categoryWrapper.actionPlan" (click)="showStatistics(categoryWrapper)"></bk-popover>
-          <bk-popover class="repeat-icon" glyphiconClass="paste" placement="right" text="Повторить" *ngIf="!categoryWrapper.actionPlan" (click)="repeatCategory(categoryWrapper)"></bk-popover>
-          <bk-popover class="edit-icon" glyphiconClass="pencil" placement="right" text="Редактировать" *ngIf="categoryWrapper.actionPlan" (click)="editCategory(categoryWrapper)"></bk-popover>
-          <bk-popover class="remove-icon" glyphiconClass="remove" placement="right" text="Исключить"
-                      *ngIf="categoryWrapper.actionPlan && categoryWrapper.removable" (click)="excludeCategory(categoryWrapper)"></bk-popover>
-          <span [popover]="'Целей в категории'" [popoverPlacement]="'right'" [popoverOnHover]="true" [popoverCloseOnMouseOutside]="true"
-                class="badge badge-goal" *ngIf="categoryWrapper.goalWrappers.length > 0">
-            {{categoryWrapper.goalWrappers.length}}
-          </span>
-          <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(categoryWrapper.category.title) | assetImage:'category'"></span>
-        </div>
-
-        <div class="col-sm-7 category-progress-column">
-          <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(categoryWrapper)"></bk-template-variable>
-          <div class="progress" [style.height.px]="20 * linesNumber.value">
-            <div class="progress-bar progress-bar-info" [style.width.%]="categoryPercent.value"></div>
-            <span class="category-title-wrapper">
-              <span class="category-title">{{categoryWrapper.category.title}} <span *ngIf="!categoryWrapper.missedInClosedMonth">(<span class="percent">{{categoryPercent.value}}%</span>)</span></span>
-            </span>
-            <span *ngIf="!categoryWrapper.missedInClosedMonth">
-              <span class="category-value" *ngFor="let currency of categoryWrapper.category.balance | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
-                <span>{{categoryWrapper.category.balance[currency].value | currencyValue:2:true}}</span> из {{categoryWrapper.category.balance[currency].completeValue | currencyValue:2:true}}
-                  <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
-              </span>
-            </span>
-          </div>
-        </div>
-
-        <div class="col-sm-2 right-column">
-          <span class="action-plan" *ngIf="categoryWrapper.actionPlan">
-            <span class="category-value" *ngFor="let currency of categoryWrapper.actionPlan | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
-              {{categoryWrapper.actionPlan[currency].completeValue | currencyValue:2:true}} <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
-            </span>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <span class="full-width">
-    <span class="summary-to-currency pull-left" *ngIf="type !== 'period'">
-      <div class="dropdown">
-        <span class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          <strong>Фильтр:</strong> <span *ngFor="let filter of getFilters(); let last = last;"> {{filter}}<span *ngIf="!last">,</span></span>
-        </span>
-        <ul class="dropdown-menu filter" aria-labelledby="dropdownMenu1" bkStopPropagation>
-          <li (click)="clickFilter(FILTER.USED, FILTER.UNUSED)">
-            <a><input type="checkbox" [checked]="isChecked(FILTER.USED)"> {{FILTER.USED}}</a>
-          </li>
-          <li (click)="clickFilter(FILTER.UNUSED, FILTER.USED)">
-            <a><input type="checkbox" [checked]="isChecked(FILTER.UNUSED)"> {{FILTER.UNUSED}}</a>
-          </li>
-          <li role="separator" class="divider"></li>
-          <li (click)="clickFilter(FILTER.DONE, FILTER.UNDONE)" *ngIf="type === 'goals'">
-            <a><input type="checkbox" [checked]="isChecked(FILTER.DONE)"> {{FILTER.DONE}}</a>
-          </li>
-          <li (click)="clickFilter(FILTER.UNDONE, FILTER.DONE)" *ngIf="type === 'goals'">
-            <a><input type="checkbox" [checked]="isChecked(FILTER.UNDONE)"> {{FILTER.UNDONE}}</a>
-          </li>
-          <li role="separator" class="divider" *ngIf="type === 'goals'"></li>
-          <li (click)="clickFilter(FILTER.INCOME, FILTER.EXPENSE)">
-            <a><input type="checkbox" [checked]="isChecked(FILTER.INCOME)"> {{FILTER.INCOME}}</a>
-          </li>
-          <li (click)="clickFilter(FILTER.EXPENSE, FILTER.INCOME)">
-            <a><input type="checkbox" [checked]="isChecked(FILTER.EXPENSE)"> {{FILTER.EXPENSE}}</a>
-          </li>
-        </ul>
-      </div>
-    </span>
+      </span>
+    }
 
     <a class="btn btn-default pull-right" (click)="close()">Закрыть</a>
     <span class="pull-right">&nbsp;</span>
-    <a class="btn btn-default pull-right" *ngIf="type !== 'categories'" (click)="next()">Далее</a>
-    <a class="btn btn-default pull-right" *ngIf="type === 'categories'" (click)="save()">Сохранить</a>
+    @if (type !== 'categories') {
+      <a class="btn btn-default pull-right" (click)="next()">Далее</a>
+    }
+    @if (type === 'categories') {
+      <a class="btn btn-default pull-right" (click)="save()">Сохранить</a>
+    }
     <span class="pull-right">&nbsp;</span>
-    <a class="btn btn-default pull-right" *ngIf="type !== 'period'" (click)="back()">Назад</a>
+    @if (type !== 'period') {
+      <a class="btn btn-default pull-right" (click)="back()">Назад</a>
+    }
   </span>
 </mat-dialog-actions>

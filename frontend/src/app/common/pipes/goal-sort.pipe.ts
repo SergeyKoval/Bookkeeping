@@ -4,7 +4,8 @@ import { BudgetService } from '../service/budget.service';
 import { BudgetGoal } from '../model/budget/budget-goal';
 
 @Pipe({
-  name: 'goalSort'
+    name: 'goalSort',
+    standalone: false
 })
 export class GoalSortPipe implements PipeTransform {
   public transform(goals: BudgetGoal[], selectedGoal?: BudgetGoal): BudgetGoal[] {

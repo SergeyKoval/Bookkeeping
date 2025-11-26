@@ -26,9 +26,10 @@ import { SimpleResponse } from '../../common/model/simple-response';
 import { Category } from '../../common/model/category';
 
 @Component({
-  selector: 'bk-report-actions',
-  templateUrl: './report-actions.component.html',
-  styleUrls: ['./report-actions.component.css']
+    selector: 'bk-report-actions',
+    templateUrl: './report-actions.component.html',
+    styleUrls: ['./report-actions.component.css'],
+    standalone: false
 })
 export class ReportActionsComponent extends BaseReport implements OnInit {
   public loading: boolean;

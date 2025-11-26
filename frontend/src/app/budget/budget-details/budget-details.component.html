@@ -4,85 +4,129 @@
       <div class="progress-bar budget-details" [style.width.%]="getBudgetPercentDone()"></div>
       <span class="category-title full-height">
         <span class="vertical-middle">
-          <span class="type income" *ngIf="type === 'income'">Доход (<span class="percent">{{getBudgetFullPercentDone() | currencyValue:0}}%</span>)</span>
-          <span class="type expense" *ngIf="type === 'expense'">Расход (<span class="percent">{{getBudgetFullPercentDone() | currencyValue:0}}%</span>)</span>
+          @if (type === 'income') {
+            <span class="type income">Доход (<span class="percent">{{getBudgetFullPercentDone() | currencyValue:0}}%</span>)</span>
+          }
+          @if (type === 'expense') {
+            <span class="type expense">Расход (<span class="percent">{{getBudgetFullPercentDone() | currencyValue:0}}%</span>)</span>
+          }
           <span class="badge" [ngClass]="{'badge-income': type === 'income', 'badge-expense': type === 'expense'}">
             <span class="black">Цели:</span> {{goalsDone}} <span class="black">из</span> {{goalsCount}}
           </span>
         </span>
       </span>
       <div class="vertical-middle">
-        <div class="category-value" *ngFor="let currency of budgetDetails.balance | mapKeys | currencySort; let currencyIndex = index; " [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': isSingleCurrency()}">
-          <span class="header-expected" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
-          <span class="header-from">из</span>
-          <span class="text-right header-current" [ngClass]="{'not-planed': (type === 'expense' && budgetDetails.balance[currency].value > budgetDetails.balance[currency].completeValue)}">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
-          <span class="header-currency" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
-        </div>
+        @for (currency of budgetDetails.balance | mapKeys | currencySort; track currency; let currencyIndex = $index) {
+          <div class="category-value" [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': isSingleCurrency()}">
+            <span class="header-expected" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
+            <span class="header-from">из</span>
+            <span class="text-right header-current" [ngClass]="{'not-planed': (type === 'expense' && budgetDetails.balance[currency].value > budgetDetails.balance[currency].completeValue)}">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
+            <span class="header-currency" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
+          </div>
+        }
       </div>
     </div>
   </div>
 
-  <div *ngIf="budgetDetails.opened">
-    <div class="text-center" *ngIf="budgetDetails.categories.length === 0">Нет запланированных категорий</div>
-    <div *ngIf="budgetDetails.categories.length > 0">
-      <div *ngFor="let category of budgetDetails.categories | categorySort; let firstCategory = first; let lastCategory = last;">
-        <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(category)"></bk-template-variable>
-        <bk-month-progress [height]="10" *ngIf="firstCategory" [progress]="monthProgress"></bk-month-progress>
-        <div class="row body-row">
-          <span class="no-goals" *ngIf="category.goals.length === 0"></span>
-          <span class="glyphicon glyphicon-chevron-down expand-icon vertical-middle" [ngClass]="{'done': isAllGoalsDone(category)}" *ngIf="category.goals.length > 0 && category.opened" (click)="category.opened = !category.opened"></span>
-          <span class="glyphicon glyphicon-chevron-right expand-icon vertical-middle" [ngClass]="{'done': isAllGoalsDone(category)}" *ngIf="category.goals.length > 0 && !category.opened" (click)="category.opened = !category.opened"></span>
-          <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'"></span>
-
-          <div class="progress category-progress" [style.height.px]="getNumberOfCurrencies(category.balance) * 20">
-            <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
-            <span class="category-title full-height">
-              <span class="vertical-middle">{{category.title}}
-                <span *ngIf="showCategoryPercent(category)">
-                  &nbsp;(<span class="percent" [ngClass]="{'excess': type === 'expense' && calculateCategoryFullPercentDone(category) > 100}">{{calculateCategoryFullPercentDone(category) | currencyValue:0}}%</span>)
-                </span>
-              </span>
-            </span>
-            <span class="category-value" *ngFor="let currency of category.balance | mapKeys | currencySort; let currencyIndex = index" [style.top.px]="currencyIndex * 20">
-              <span [ngClass]="{'not-planed': (type === 'expense' && category.balance[currency].value > category.balance[currency].completeValue)}">{{category.balance[currency].value | currencyValue:2:true}}</span> из
-              <span [ngClass]="{'not-planed': category.balance[currency].completeValue === 0}">
-                {{category.balance[currency].completeValue | currencyValue:2:true}}
-                <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
-              </span>
-            </span>
-          </div>
-          <bk-popover class="edit-button vertical-middle float-left" glyphiconClass="pencil" placement="left" text="Редактировать категорию" (click)="openCategoryEditDialog(category)"></bk-popover>
-          <span class="no-remove-button" *ngIf="!showRemoveButton(category.balance)"></span>
-          <bk-popover class="delete-button vertical-middle" glyphiconClass="remove" placement="left" text="Удалить категорию" *ngIf="showRemoveButton(category.balance)" (click)="removeCategory(category)"></bk-popover>
-        </div>
-
-        <div *ngIf="category.opened">
-          <div *ngFor="let goal of category.goals | goalSort; let firstGoal = first; let lastGoal = last;">
-            <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goal)"></bk-template-variable>
-            <bk-month-progress [height]="5" *ngIf="firstGoal" [progress]="monthProgress"></bk-month-progress>
-            <div class="row body-row">
-              <bk-popover class="done-icon" glyphiconClass="ok" [conditionalClass]="{'done': goal.done}" placement="left"
-                          [text]="goal.done ? 'Пометить невыполненным' : 'Пометить выполненным'" (click)="clickGoalDone(category, goal)"></bk-popover>
-              <bk-popover class="move-icon" glyphiconClass="log-in" placement="left" text="Отложить выполнение" (click)="moveGoal(category, goal)"></bk-popover>
-              <div class="progress goal-progress">
-                <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
-                <span class="goal-title">{{goal.title}} (<span class="percent">{{(goal.balance.value / goal.balance.completeValue * 100) | currencyValue:0}}%</span>)</span>
-                <span class="category-value">
-                  <span [ngClass]="{'not-planed': (type === 'expense' && goal.balance.value > goal.balance.completeValue)}">{{goal.balance.value | currencyValue:2:true}}</span>
-                  из {{goal.balance.completeValue | currencyValue:2:true}}
-                  <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
-                </span>
+  @if (budgetDetails.opened) {
+    <div>
+      @if (budgetDetails.categories.length === 0) {
+        <div class="text-center">Нет запланированных категорий</div>
+      }
+      @if (budgetDetails.categories.length > 0) {
+        <div>
+          @for (category of budgetDetails.categories | categorySort; track category; let firstCategory = $first; let lastCategory = $last) {
+            <div>
+              <bk-template-variable #categoryPercent [value]="calculateCategoryPercentDone(category)"></bk-template-variable>
+              @if (firstCategory) {
+                <bk-month-progress [height]="10" [progress]="monthProgress"></bk-month-progress>
+              }
+              <div class="row body-row">
+                @if (category.goals.length === 0) {
+                  <span class="no-goals"></span>
+                }
+                @if (category.goals.length > 0 && category.opened) {
+                  <span class="glyphicon glyphicon-chevron-down expand-icon vertical-middle" [ngClass]="{'done': isAllGoalsDone(category)}" (click)="category.opened = !category.opened"></span>
+                }
+                @if (category.goals.length > 0 && !category.opened) {
+                  <span class="glyphicon glyphicon-chevron-right expand-icon vertical-middle" [ngClass]="{'done': isAllGoalsDone(category)}" (click)="category.opened = !category.opened"></span>
+                }
+                <span class="vertical-middle category-icon-wrapper"><img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'"></span>
+                <div class="progress category-progress" [style.height.px]="getNumberOfCurrencies(category.balance) * 20">
+                  <div class="progress-bar" [ngClass]="calculateStyle(categoryPercent.value)" [style.width.%]="categoryPercent.value"></div>
+                  <span class="category-title full-height">
+                    <span class="vertical-middle">{{category.title}}
+                      @if (showCategoryPercent(category)) {
+                        <span>
+                          &nbsp;(<span class="percent" [ngClass]="{'excess': type === 'expense' && calculateCategoryFullPercentDone(category) > 100}">{{calculateCategoryFullPercentDone(category) | currencyValue:0}}%</span>)
+                        </span>
+                      }
+                    </span>
+                  </span>
+                  @for (currency of category.balance | mapKeys | currencySort; track currency; let currencyIndex = $index) {
+                    <span class="category-value" [style.top.px]="currencyIndex * 20">
+                      <span [ngClass]="{'not-planed': (type === 'expense' && category.balance[currency].value > category.balance[currency].completeValue)}">{{category.balance[currency].value | currencyValue:2:true}}</span> из
+                      <span [ngClass]="{'not-planed': category.balance[currency].completeValue === 0}">
+                        {{category.balance[currency].completeValue | currencyValue:2:true}}
+                        <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+                      </span>
+                    </span>
+                  }
+                </div>
+                <bk-popover class="edit-button vertical-middle float-left" glyphiconClass="pencil" placement="left" text="Редактировать категорию" (click)="openCategoryEditDialog(category)"></bk-popover>
+                @if (!showRemoveButton(category.balance)) {
+                  <span class="no-remove-button"></span>
+                }
+                @if (showRemoveButton(category.balance)) {
+                  <bk-popover class="delete-button vertical-middle" glyphiconClass="remove" placement="left" text="Удалить категорию" (click)="removeCategory(category)"></bk-popover>
+                }
               </div>
-              <bk-popover class="edit-button float-left" glyphiconClass="pencil" placement="left" text="Редактировать цель" (click)="openGoalEditDialog(category, goal)"></bk-popover>
-              <span class="no-remove-button" *ngIf="goal.balance.value !== 0"></span>
-              <bk-popover class="delete-button" glyphiconClass="remove" placement="left" text="Удалить цель" *ngIf="goal.balance.value === 0" (click)="removeGoal(category, goal)"></bk-popover>
+              @if (category.opened) {
+                <div>
+                  @for (goal of category.goals | goalSort; track goal; let firstGoal = $first; let lastGoal = $last) {
+                    <div>
+                      <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goal)"></bk-template-variable>
+                      @if (firstGoal) {
+                        <bk-month-progress [height]="5" [progress]="monthProgress"></bk-month-progress>
+                      }
+                      <div class="row body-row">
+                        <bk-popover class="done-icon" glyphiconClass="ok" [conditionalClass]="{'done': goal.done}" placement="left"
+                        [text]="goal.done ? 'Пометить невыполненным' : 'Пометить выполненным'" (click)="clickGoalDone(category, goal)"></bk-popover>
+                        <bk-popover class="move-icon" glyphiconClass="log-in" placement="left" text="Отложить выполнение" (click)="moveGoal(category, goal)"></bk-popover>
+                        <div class="progress goal-progress">
+                          <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
+                          <span class="goal-title">{{goal.title}} (<span class="percent">{{(goal.balance.value / goal.balance.completeValue * 100) | currencyValue:0}}%</span>)</span>
+                          <span class="category-value">
+                            <span [ngClass]="{'not-planed': (type === 'expense' && goal.balance.value > goal.balance.completeValue)}">{{goal.balance.value | currencyValue:2:true}}</span>
+                            из {{goal.balance.completeValue | currencyValue:2:true}}
+                            <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
+                          </span>
+                        </div>
+                        <bk-popover class="edit-button float-left" glyphiconClass="pencil" placement="left" text="Редактировать цель" (click)="openGoalEditDialog(category, goal)"></bk-popover>
+                        @if (goal.balance.value !== 0) {
+                          <span class="no-remove-button"></span>
+                        }
+                        @if (goal.balance.value === 0) {
+                          <bk-popover class="delete-button" glyphiconClass="remove" placement="left" text="Удалить цель" (click)="removeGoal(category, goal)"></bk-popover>
+                        }
+                      </div>
+                      @if (!lastGoal) {
+                        <bk-month-progress [height]="5" [progress]="monthProgress"></bk-month-progress>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @if (!lastCategory) {
+                <bk-month-progress [height]="category.opened ? 5 : 10" [progress]="monthProgress"></bk-month-progress>
+              }
+              @if (lastCategory) {
+                <bk-month-progress [height]="10" [progress]="monthProgress"></bk-month-progress>
+              }
             </div>
-            <bk-month-progress [height]="5" *ngIf="!lastGoal" [progress]="monthProgress"></bk-month-progress>
-          </div>
+          }
         </div>
-        <bk-month-progress [height]="category.opened ? 5 : 10" *ngIf="!lastCategory" [progress]="monthProgress"></bk-month-progress>
-        <bk-month-progress [height]="10" *ngIf="lastCategory" [progress]="monthProgress"></bk-month-progress>
-      </div>
+      }
     </div>
-  </div>
+  }
 </div>

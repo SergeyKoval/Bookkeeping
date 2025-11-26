@@ -6,9 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HistoryBalanceType } from '../../../../common/model/history/history-balance-type';
 
 @Component({
-  selector: 'bk-alternative-currencies-dialog',
-  templateUrl: './alternative-currencies-dialog.component.html',
-  styleUrls: ['./alternative-currencies-dialog.component.css']
+    selector: 'bk-alternative-currencies-dialog',
+    templateUrl: './alternative-currencies-dialog.component.html',
+    styleUrls: ['./alternative-currencies-dialog.component.css'],
+    standalone: false
 })
 export class AlternativeCurrenciesDialogComponent {
   private readonly _ORIGINAL_ALTERNATIVE_CURRENCIES: {[key: string]: number};

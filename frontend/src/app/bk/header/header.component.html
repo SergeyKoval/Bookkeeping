@@ -19,7 +19,9 @@
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li routerLinkActive="active" *ngIf="isAdmin() | async"><a [routerLink]="['users']">Пользователи</a></li>
+          @if (isAdmin() | async) {
+            <li routerLinkActive="active"><a [routerLink]="['users']">Пользователи</a></li>
+          }
           <li routerLinkActive="active"><a [routerLink]="['settings']">Настройки</a></li>
           <li><a (click)="exit()">Выход</a></li>
         </ul>

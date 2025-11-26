@@ -1,7 +1,11 @@
 <h2 align="center" mat-dialog-title bkDraggable dragTarget="#confirm-dialog">{{data.title}}</h2>
 <mat-dialog-content>
-  <div *ngIf="data.body">{{data.body}}</div>
-  <div *ngIf="data.htmlBody" [innerHTML]="data.htmlBody" align="center"></div>
+  @if (data.body) {
+    <div>{{data.body}}</div>
+  }
+  @if (data.htmlBody) {
+    <div [innerHTML]="data.htmlBody" align="center"></div>
+  }
 </mat-dialog-content>
 <mat-dialog-actions align="center">
   <div class="btn-group" role="group">

@@ -19,7 +19,9 @@
 
   <span class="error-message pull-left">{{profileForm.controls.newPasswordAgain.errors?.message}}</span>
   <button type="button" class="btn btn-default pull-right profile-apply" [disabled]="profileForm.invalid || submitIndicator" (click)="submitProfile()">
-    <span *ngIf="!submitIndicator">Изменить пароль</span>
+    @if (!submitIndicator) {
+      <span>Изменить пароль</span>
+    }
     <bk-spinner [display]="submitIndicator" [size]="20"></bk-spinner>
   </button>
 </form>

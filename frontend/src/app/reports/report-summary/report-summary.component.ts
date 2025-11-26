@@ -18,9 +18,10 @@ import { SummaryReport } from '../../common/model/report/summary-report';
 import { Profile } from '../../common/model/profile';
 
 @Component({
-  selector: 'bk-report-summary',
-  templateUrl: './report-summary.component.html',
-  styleUrls: ['./report-summary.component.css']
+    selector: 'bk-report-summary',
+    templateUrl: './report-summary.component.html',
+    styleUrls: ['./report-summary.component.css'],
+    standalone: false
 })
 export class ReportSummaryComponent extends BaseReport implements OnInit {
   public loading: boolean;

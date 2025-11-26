@@ -5,17 +5,16 @@ import moment, { Moment } from 'moment/moment';
 import { PeriodFilter } from '../../common/model/report/period-filter';
 
 @Component({
-  selector: 'bk-period-filter',
-  standalone: true,
-  imports: [
-    MatDateRangeInput,
-    MatDateRangePicker,
-    MatEndDate,
-    MatStartDate,
-    ReactiveFormsModule
-  ],
-  templateUrl: './period-filter.component.html',
-  styleUrl: './period-filter.component.css'
+    selector: 'bk-period-filter',
+    imports: [
+        MatDateRangeInput,
+        MatDateRangePicker,
+        MatEndDate,
+        MatStartDate,
+        ReactiveFormsModule
+    ],
+    templateUrl: './period-filter.component.html',
+    styleUrl: './period-filter.component.css'
 })
 export class PeriodFilterComponent implements OnInit {
   @Output()

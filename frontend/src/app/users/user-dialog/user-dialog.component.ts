@@ -1,15 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/index';
+import { Observable } from 'rxjs';
 
 import { UsersService } from '../../common/service/users.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
-  selector: 'bk-user-dialog',
-  templateUrl: './user-dialog.component.html',
-  styleUrls: ['./user-dialog.component.css']
+    selector: 'bk-user-dialog',
+    templateUrl: './user-dialog.component.html',
+    styleUrls: ['./user-dialog.component.css'],
+    standalone: false
 })
 export class UserDialogComponent implements OnInit {
   public loading: boolean = false;

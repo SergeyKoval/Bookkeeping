@@ -17,9 +17,10 @@ import { DynamicReport } from '../../common/model/report/dynamic-report';
 import { Calendar } from '../../common/model/report/calendar';
 
 @Component({
-  selector: 'bk-report-dynamic',
-  templateUrl: './report-dynamic.component.html',
-  styleUrls: ['./report-dynamic.component.css']
+    selector: 'bk-report-dynamic',
+    templateUrl: './report-dynamic.component.html',
+    styleUrls: ['./report-dynamic.component.css'],
+    standalone: false
 })
 export class ReportDynamicComponent extends BaseReport implements OnInit {
   public loading: boolean;

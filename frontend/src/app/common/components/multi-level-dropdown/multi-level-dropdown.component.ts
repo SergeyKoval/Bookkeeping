@@ -3,9 +3,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MultiLevelDropdownItem } from './MultiLevelDropdownItem';
 
 @Component({
-  selector: 'bk-multi-level-dropdown',
-  templateUrl: './multi-level-dropdown.component.html',
-  styleUrls: ['./multi-level-dropdown.component.css']
+    selector: 'bk-multi-level-dropdown',
+    templateUrl: './multi-level-dropdown.component.html',
+    styleUrls: ['./multi-level-dropdown.component.css'],
+    standalone: false
 })
 export class MultiLevelDropdownComponent {
   @Input()

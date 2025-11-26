@@ -5,9 +5,10 @@ import { FinAccount } from '../../common/model/fin-account';
 import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
-  selector: 'bk-summary-body',
-  templateUrl: './summary-body.component.html',
-  styleUrls: ['./summary-body.component.css']
+    selector: 'bk-summary-body',
+    templateUrl: './summary-body.component.html',
+    styleUrls: ['./summary-body.component.css'],
+    standalone: false
 })
 export class SummaryBodyComponent {
   @Input()

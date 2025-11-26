@@ -12,9 +12,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { User } from '../common/model/user';
 
 @Component({
-  selector: 'bk-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+    selector: 'bk-users',
+    templateUrl: './users.component.html',
+    styleUrls: ['./users.component.css'],
+    standalone: false
 })
 export class UsersComponent implements OnInit {
   public loading: boolean = true;

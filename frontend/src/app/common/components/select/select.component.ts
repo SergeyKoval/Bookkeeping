@@ -4,9 +4,10 @@ import { FocusDirective } from '../../directives/focus.directive';
 import { SelectItem } from './select-item';
 
 @Component({
-  selector: 'bk-select',
-  templateUrl: './select.component.html',
-  styleUrls: ['./select.component.css']
+    selector: 'bk-select',
+    templateUrl: './select.component.html',
+    styleUrls: ['./select.component.css'],
+    standalone: false
 })
 export class SelectComponent {
   @Input()

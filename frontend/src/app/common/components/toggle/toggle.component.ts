@@ -3,9 +3,10 @@ import { Component, ElementRef, Input, Output, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'bk-toggle',
-  templateUrl: './toggle.component.html',
-  styleUrls: ['./toggle.component.css']
+    selector: 'bk-toggle',
+    templateUrl: './toggle.component.html',
+    styleUrls: ['./toggle.component.css'],
+    standalone: false
 })
 export class ToggleComponent {
   @Input()

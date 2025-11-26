@@ -14,9 +14,10 @@ import { HistoryBalanceType } from '../../common/model/history/history-balance-t
 import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
-  selector: 'bk-device-message-assign-dialog',
-  templateUrl: './device-message-assign-dialog.component.html',
-  styleUrls: ['./device-message-assign-dialog.component.css']
+    selector: 'bk-device-message-assign-dialog',
+    templateUrl: './device-message-assign-dialog.component.html',
+    styleUrls: ['./device-message-assign-dialog.component.css'],
+    standalone: false
 })
 export class DeviceMessageAssignDialogComponent implements OnInit {
   public loading: boolean = true;

@@ -6,9 +6,10 @@ import { AuthenticationService } from '../../common/service/authentication.servi
 import { ProfileService } from '../../common/service/profile.service';
 
 @Component({
-  selector: 'bk-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+    selector: 'bk-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.css'],
+    standalone: false
 })
 export class HeaderComponent {
 

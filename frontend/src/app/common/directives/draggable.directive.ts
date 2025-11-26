@@ -3,7 +3,8 @@ import { fromEvent, Observable, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 
 @Directive({
-  selector: '[bkDraggable]'
+    selector: '[bkDraggable]',
+    standalone: false
 })
 export class DraggableDirective implements AfterViewInit, OnDestroy {
   @Input()

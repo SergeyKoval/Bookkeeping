@@ -16,9 +16,10 @@ import { SimpleResponse } from '../../common/model/simple-response';
 import { SubCategory } from '../../common/model/sub-category';
 
 @Component({
-  selector: 'bk-categories',
-  templateUrl: './categories.component.html',
-  styleUrls: ['./categories.component.css']
+    selector: 'bk-categories',
+    templateUrl: './categories.component.html',
+    styleUrls: ['./categories.component.css'],
+    standalone: false
 })
 export class CategoriesComponent implements OnInit {
   public loading: boolean = false;

@@ -5,7 +5,8 @@ import { CurrencyValuePipe } from '../pipes/currency-value.pipe';
 import { CurrencyUtils } from '../utils/currency-utils';
 
 @Directive({
-  selector: '[bkCurrencyValue]'
+    selector: '[bkCurrencyValue]',
+    standalone: false
 })
 export class CurrencyValueDirective implements DoCheck {
   @Input()
@@ -39,7 +40,7 @@ export class CurrencyValueDirective implements DoCheck {
   }
 
   @HostListener('blur', ['$event.target.value'])
-  private onBlur(value: string): void {
+  protected onBlur(value: string): void {
     this._INITIAL_LOAD_DONE = true;
     const numberValue: number = CurrencyUtils.convertValue(value);
     if (this._ngControl) {

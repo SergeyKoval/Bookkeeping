@@ -6,9 +6,10 @@ import { CurrencyDetail } from '../common/model/currency-detail';
 import { FinAccount } from '../common/model/fin-account';
 
 @Component({
-  selector: 'bk-summary',
-  templateUrl: './summary.component.html',
-  styleUrls: ['./summary.component.css']
+    selector: 'bk-summary',
+    templateUrl: './summary.component.html',
+    styleUrls: ['./summary.component.css'],
+    standalone: false
 })
 export class SummaryComponent implements OnInit {
   public loading: boolean = false;

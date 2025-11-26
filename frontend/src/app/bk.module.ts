@@ -100,7 +100,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SpinnerComponent } from './common/components/spinner/spinner.component';
-import { NgChartsModule } from 'ng2-charts';
+import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2-charts';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { PeriodFilterComponent } from './reports/period-filter/period-filter.component';
 
@@ -197,7 +197,7 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     MatDialogModule,
     MatSlideToggleModule,
     PopoverModule,
-    NgChartsModule,
+    BaseChartDirective,
     RouterModule.forRoot(BOOKKEEPING_ROUTES),
     MatDatepickerModule,
     MatMomentDateModule,
@@ -225,6 +225,7 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     },
     { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(withInterceptorsFromDi()),
+    provideCharts(withDefaultRegisterables())
   ] })
 export class BookkeepingModule { }

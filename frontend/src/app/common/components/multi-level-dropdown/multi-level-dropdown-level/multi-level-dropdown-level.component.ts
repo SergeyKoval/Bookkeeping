@@ -4,9 +4,10 @@ import { MultiLevelDropdownItem } from '../MultiLevelDropdownItem';
 import { CheckboxState } from '../../three-state-checkbox/CheckboxState';
 
 @Component({
-  selector: 'bk-multi-level-dropdown-level',
-  templateUrl: './multi-level-dropdown-level.component.html',
-  styleUrls: ['./multi-level-dropdown-level.component.css']
+    selector: 'bk-multi-level-dropdown-level',
+    templateUrl: './multi-level-dropdown-level.component.html',
+    styleUrls: ['./multi-level-dropdown-level.component.css'],
+    standalone: false
 })
 export class MultiLevelDropdownLevelComponent implements OnInit {
   @Input()

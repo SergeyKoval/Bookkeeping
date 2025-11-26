@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { CurrencyDetail } from '../model/currency-detail';
 
 @Pipe({
-  name: 'currencyDetailSort'
+    name: 'currencyDetailSort',
+    standalone: false
 })
 export class CurrencyDetailSortPipe implements PipeTransform {
   public transform(currencies: CurrencyDetail[]): CurrencyDetail[] {

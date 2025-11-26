@@ -10,9 +10,10 @@ import { MonthProgress } from '../../../../common/model/budget/month-progress';
 import { BudgetCategory } from '../../../../common/model/budget/budget-category';
 
 @Component({
-  selector: 'bk-goal-budget-category',
-  templateUrl: './goal-budget-category.component.html',
-  styleUrls: ['./goal-budget-category.component.css']
+    selector: 'bk-goal-budget-category',
+    templateUrl: './goal-budget-category.component.html',
+    styleUrls: ['./goal-budget-category.component.css'],
+    standalone: false
 })
 export class GoalBudgetCategoryComponent {
   @Input()

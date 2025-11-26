@@ -3,8 +3,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CheckboxState } from './CheckboxState';
 
 @Component({
-  selector: 'bk-three-state-checkbox',
-  template: `<input type="checkbox" [indeterminate]="getIndeterminateValue()" [checked]="getCheckedValue()" (click)="changeState()">`
+    selector: 'bk-three-state-checkbox',
+    template: `<input type="checkbox" [indeterminate]="getIndeterminateValue()" [checked]="getCheckedValue()" (click)="changeState()">`,
+    standalone: false
 })
 export class ThreeStateCheckboxComponent {
   @Input()

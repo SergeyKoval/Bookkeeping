@@ -26,9 +26,10 @@ import { SimpleResponse } from '../../common/model/simple-response';
 import { filter, tap } from 'rxjs/operators';
 
 @Component({
-  selector: 'bk-history-edit-dialog',
-  templateUrl: './history-edit-dialog.component.html',
-  styleUrls: ['./history-edit-dialog.component.css']
+    selector: 'bk-history-edit-dialog',
+    templateUrl: './history-edit-dialog.component.html',
+    styleUrls: ['./history-edit-dialog.component.css'],
+    standalone: false
 })
 export class HistoryEditDialogComponent implements OnInit {
   public errors: string;

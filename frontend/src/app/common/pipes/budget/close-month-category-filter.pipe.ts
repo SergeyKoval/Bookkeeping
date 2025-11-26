@@ -4,7 +4,8 @@ import { CategoryWrapper } from '../../model/budget/CategoryWrapper';
 import { CloseMonthFilter } from '../../model/budget/CloseMonthFilter';
 
 @Pipe({
-  name: 'closeMonthCategoryFilter'
+    name: 'closeMonthCategoryFilter',
+    standalone: false
 })
 export class CloseMonthCategoryFilterPipe implements PipeTransform {
 

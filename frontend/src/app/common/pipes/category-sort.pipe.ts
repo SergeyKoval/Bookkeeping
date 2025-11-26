@@ -3,7 +3,8 @@ import { ProfileService } from '../service/profile.service';
 import { BudgetCategory } from '../model/budget/budget-category';
 
 @Pipe({
-  name: 'categorySort'
+    name: 'categorySort',
+    standalone: false
 })
 export class CategorySortPipe implements PipeTransform {
 

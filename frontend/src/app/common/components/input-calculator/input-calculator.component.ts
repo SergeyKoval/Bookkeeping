@@ -5,9 +5,10 @@ import { CurrencyValuePipe } from '../../pipes/currency-value.pipe';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'bk-input-calculator',
-  templateUrl: './input-calculator.component.html',
-  styleUrls: ['./input-calculator.component.css']
+    selector: 'bk-input-calculator',
+    templateUrl: './input-calculator.component.html',
+    styleUrls: ['./input-calculator.component.css'],
+    standalone: false
 })
 export class InputCalculatorComponent implements OnInit {
   @Input()

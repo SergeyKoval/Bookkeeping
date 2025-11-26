@@ -10,9 +10,10 @@ import { BudgetBalance } from '../../common/model/budget/budget-balance';
 import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
-  selector: 'bk-category-statistics-dialog',
-  templateUrl: './category-statistics-dialog.component.html',
-  styleUrls: ['./category-statistics-dialog.component.css']
+    selector: 'bk-category-statistics-dialog',
+    templateUrl: './category-statistics-dialog.component.html',
+    styleUrls: ['./category-statistics-dialog.component.css'],
+    standalone: false
 })
 export class CategoryStatisticsDialogComponent implements OnInit {
   public months: string[] = DateUtils.MONTHS;

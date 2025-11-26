@@ -5,9 +5,10 @@ import { Subject } from 'rxjs';
 import { DateUtils } from '../../utils/date-utils';
 
 @Component({
-  selector: 'bk-month-and-year',
-  templateUrl: './month-and-year.component.html',
-  styleUrls: ['./month-and-year.component.css']
+    selector: 'bk-month-and-year',
+    templateUrl: './month-and-year.component.html',
+    styleUrls: ['./month-and-year.component.css'],
+    standalone: false
 })
 export class MonthAndYearComponent {
   public months: string[] = DateUtils.MONTHS;

@@ -14,9 +14,10 @@ import { Budget } from '../../common/model/budget/budget';
 import { BudgetGoal } from '../../common/model/budget/budget-goal';
 
 @Component({
-  selector: 'bk-move-goal-dialog',
-  templateUrl: './move-goal-dialog.component.html',
-  styleUrls: ['./move-goal-dialog.component.css']
+    selector: 'bk-move-goal-dialog',
+    templateUrl: './move-goal-dialog.component.html',
+    styleUrls: ['./move-goal-dialog.component.css'],
+    standalone: false
 })
 export class MoveGoalDialogComponent implements OnInit {
   public months: string[] = DateUtils.MONTHS;

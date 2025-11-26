@@ -1,7 +1,8 @@
 import { Directive, HostListener, Input } from '@angular/core';
 
 @Directive({
-  selector: '[bkStopPropagation]'
+    selector: '[bkStopPropagation]',
+    standalone: false
 })
 export class StopPropagationDirective {
   @Input()

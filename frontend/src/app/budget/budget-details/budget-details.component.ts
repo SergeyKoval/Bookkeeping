@@ -23,9 +23,10 @@ import { SimpleResponse } from '../../common/model/simple-response';
 import { filter, tap } from 'rxjs/operators';
 
 @Component({
-  selector: 'bk-budget-details',
-  templateUrl: './budget-details.component.html',
-  styleUrls: ['./budget-details.component.css']
+    selector: 'bk-budget-details',
+    templateUrl: './budget-details.component.html',
+    styleUrls: ['./budget-details.component.css'],
+    standalone: false
 })
 export class BudgetDetailsComponent implements OnInit {
   @Input()

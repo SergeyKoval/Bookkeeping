@@ -13,9 +13,10 @@ import { MonthProgress } from '../common/model/budget/month-progress';
 import { BudgetCategory } from '../common/model/budget/budget-category';
 
 @Component({
-  selector: 'bk-budget',
-  templateUrl: './budget.component.html',
-  styleUrls: ['./budget.component.css']
+    selector: 'bk-budget',
+    templateUrl: './budget.component.html',
+    styleUrls: ['./budget.component.css'],
+    standalone: false
 })
 export class BudgetComponent implements OnInit {
   public loading: boolean;

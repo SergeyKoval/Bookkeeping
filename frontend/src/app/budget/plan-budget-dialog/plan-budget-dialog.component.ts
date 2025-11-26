@@ -21,9 +21,10 @@ import { BudgetCategory } from '../../common/model/budget/budget-category';
 import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
-  selector: 'bk-plan-budget-dialog',
-  templateUrl: './plan-budget-dialog.component.html',
-  styleUrls: ['./plan-budget-dialog.component.css']
+    selector: 'bk-plan-budget-dialog',
+    templateUrl: './plan-budget-dialog.component.html',
+    styleUrls: ['./plan-budget-dialog.component.css'],
+    standalone: false
 })
 export class PlanBudgetDialogComponent implements OnInit {
   public currencies: CurrencyDetail[];

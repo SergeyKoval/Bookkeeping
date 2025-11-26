@@ -7,7 +7,8 @@ import { CurrencyDetail } from '../../model/currency-detail';
 import { BalanceItem } from '../../model/balance-item';
 
 @Pipe({
-  name: 'summaryFooter'
+    name: 'summaryFooter',
+    standalone: false
 })
 export class SummaryFooterPipe extends BaseSummaryPipe implements PipeTransform {
   public constructor(protected currencyService: CurrencyService) {

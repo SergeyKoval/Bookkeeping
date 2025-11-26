@@ -2,9 +2,10 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'bk-device-name-dialog',
-  templateUrl: './device-name-dialog.component.html',
-  styleUrls: ['./device-name-dialog.component.css']
+    selector: 'bk-device-name-dialog',
+    templateUrl: './device-name-dialog.component.html',
+    styleUrls: ['./device-name-dialog.component.css'],
+    standalone: false
 })
 export class DeviceNameDialogComponent {
 

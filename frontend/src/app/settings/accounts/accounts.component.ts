@@ -17,9 +17,10 @@ import { SubAccount } from '../../common/model/sub-account';
 import { SimpleResponse } from '../../common/model/simple-response';
 
 @Component({
-  selector: 'bk-accounts',
-  templateUrl: './accounts.component.html',
-  styleUrls: ['./accounts.component.css']
+    selector: 'bk-accounts',
+    templateUrl: './accounts.component.html',
+    styleUrls: ['./accounts.component.css'],
+    standalone: false
 })
 export class AccountsComponent implements OnInit {
   public loading: boolean = false;

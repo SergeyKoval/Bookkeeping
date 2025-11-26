@@ -12,7 +12,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
 import by.bk.bookkeeper.android.network.request.ProcessedMessage
@@ -27,6 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  *  Created by Evgenia Grinkevich on 05, February, 2020
@@ -42,6 +45,17 @@ class ProcessingService : Service() {
     private val disposables = CompositeDisposable()
     private val notificationBuilder by lazy { createNotificationBuilder() }
     private val gson = com.google.gson.Gson()
+
+    // Track active work to stop service when idle (Android 14+ dataSync timeout fix)
+    private val activeWorkCount = AtomicInteger(0)
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val stopWhenIdleRunnable = Runnable {
+        if (activeWorkCount.get() == 0) {
+            Timber.d("No active work, stopping service to conserve dataSync quota")
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -74,20 +88,32 @@ class ProcessingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("On start command invoked with action ${intent?.action}")
+
+        // Cancel any pending stop - new work is arriving
+        mainHandler.removeCallbacks(stopWhenIdleRunnable)
+
         if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
                 || intent?.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
-            stopForeground(true)
+            stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
+            return START_NOT_STICKY
         }
+
+        startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
+
         if (intent?.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
             handleSms(
                 wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
                 pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
                 format = intent.extras?.getString(INTENT_PDU_FORMAT)
             )
+        } else {
+            // No specific work to do, schedule stop after delay
+            scheduleStopWhenIdle()
         }
-        startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
-        return START_STICKY
+
+        // Don't auto-restart - receivers will start us when needed
+        return START_NOT_STICKY
     }
 
     private fun observePendingMessages() {
@@ -152,31 +178,57 @@ class ProcessingService : Service() {
         }, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
     )
 
+    private fun scheduleStopWhenIdle() {
+        mainHandler.removeCallbacks(stopWhenIdleRunnable)
+        mainHandler.postDelayed(stopWhenIdleRunnable, IDLE_STOP_DELAY_MS)
+    }
+
+    private fun onWorkStarted() {
+        activeWorkCount.incrementAndGet()
+        mainHandler.removeCallbacks(stopWhenIdleRunnable)
+    }
+
+    private fun onWorkCompleted() {
+        val remaining = activeWorkCount.decrementAndGet()
+        Timber.d("Work completed, $remaining tasks remaining")
+        if (remaining <= 0) {
+            scheduleStopWhenIdle()
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun handleSms(wakelockId: Int, pdus: Array<*>?, format: String?) {
         val matchedSms = smsProcessor.process(pdus?.toList() as? List<Any>?, format)
         if (matchedSms.isNotEmpty()) {
+            onWorkStarted()
             disposables.add(repository.sendProcessedSms(matchedSms)
                 .subscribeOn(Schedulers.io())
-                .doFinally { SMSReceiver.completeWakefulIntent(wakelockId) }
+                .doFinally {
+                    SMSReceiver.completeWakefulIntent(wakelockId)
+                    onWorkCompleted()
+                }
                 .subscribeWith(processedMessagesRequestObserver(matchedSms))
             )
         } else {
             Timber.d("No sms matches found")
             SMSReceiver.completeWakefulIntent(wakelockId)
+            scheduleStopWhenIdle()
         }
     }
 
     private fun handlePush(pushMessage: PushMessage) {
         val matchedPush = pushProcessor.process(listOf(pushMessage))
         if (matchedPush.isNotEmpty()) {
+            onWorkStarted()
             disposables.add(
                 repository.sendProcessedPushes(matchedPush)
                     .subscribeOn(Schedulers.io())
+                    .doFinally { onWorkCompleted() }
                     .subscribeWith(processedMessagesRequestObserver(matchedPush))
             )
         } else {
             Timber.d("No push matches found")
+            scheduleStopWhenIdle()
         }
     }
 
@@ -204,6 +256,7 @@ class ProcessingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        mainHandler.removeCallbacks(stopWhenIdleRunnable)
         unregisterReceiver(pushReceiver)
         unregisterReceiver(debugReceiver)
         disposables.clear()
@@ -277,5 +330,8 @@ class ProcessingService : Service() {
         const val SERVICE_REQUEST_CODE = 1689
         const val INTENT_PDU_EXTRA = "pdu_extra"
         const val INTENT_PDU_FORMAT = "pdu_format"
+
+        // Delay before stopping service when idle (allows handling rapid successive messages)
+        private const val IDLE_STOP_DELAY_MS = 5000L
     }
 }

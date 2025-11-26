@@ -1,8 +1,10 @@
 <h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Перенос категории</h2>
 <mat-dialog-content id="move-sub-category-dialog">
-  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
-    <strong>{{errors}}</strong>
-  </div>
+  @if (errors) {
+    <div class="alert alert-dismissable fade in alert-danger error">
+      <strong>{{errors}}</strong>
+    </div>
+  }
 
   <div class="text-center description"><span class="attention">ВНИМАНИЕ!!!</span> Перемещение подкатегории автоматически отразится на бюджете</div>
 
@@ -32,16 +34,20 @@
       <div class="input-group">
         <span class="input-group-addon dropdown-addon">Новая категория</span>
         <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <img *ngIf="categoryTitle" class="icon-selected float-left" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
+          @if (categoryTitle) {
+            <img class="icon-selected float-left" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
+          }
           <span [ngClass]="{'float-left': categoryTitle}">{{categoryTitle ? categoryTitle : (categories.length === 0 ? 'Нет доступных категорий' : 'Категория')}}</span>
           <span class="caret"></span>
         </span>
         <ul class="dropdown-menu">
-          <li *ngFor="let category of categories">
-            <a (click)="changeCategory(category)">
-              <img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'">{{category.title}}
-            </a>
-          </li>
+          @for (category of categories; track category) {
+            <li>
+              <a (click)="changeCategory(category)">
+                <img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'">{{category.title}}
+              </a>
+            </li>
+          }
         </ul>
       </div>
     </div>

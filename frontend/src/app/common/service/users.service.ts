@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/index';
+import { Observable } from 'rxjs';
 import { User } from '../model/user';
 import { SimpleResponse } from '../model/simple-response';
 

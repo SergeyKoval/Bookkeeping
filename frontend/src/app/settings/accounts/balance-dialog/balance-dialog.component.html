@@ -2,18 +2,22 @@
   <span>Редактирование остатков субсчета</span>
 </h2>
 <mat-dialog-content>
-  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
-    <strong>{{errors}}</strong>
-  </div>
+  @if (errors) {
+    <div class="alert alert-dismissable fade in alert-danger error">
+      <strong>{{errors}}</strong>
+    </div>
+  }
 
   <div class="table">
-    <div class="row" *ngFor="let currency of currencies | currencyDetailSort">
-      <div class="input-group">
-        <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></span>
-        <bk-input-calculator [value]="this.data.subAccountBalance[currency.name]" (changeInputValue)="this.data.subAccountBalance[currency.name] = $event"
-                             position="right" placeholder="Остаток в валюте"></bk-input-calculator>
+    @for (currency of currencies | currencyDetailSort; track currency) {
+      <div class="row">
+        <div class="input-group">
+          <span class="input-group-addon"><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></span>
+          <bk-input-calculator [value]="this.data.subAccountBalance[currency.name]" (changeInputValue)="this.data.subAccountBalance[currency.name] = $event"
+          position="right" placeholder="Остаток в валюте"></bk-input-calculator>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

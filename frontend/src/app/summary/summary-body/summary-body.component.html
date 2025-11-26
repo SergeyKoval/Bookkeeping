@@ -1,43 +1,59 @@
 <div class="panel-group">
-  <div class="panel panel-default" *ngFor="let account of accounts">
-    <div class="panel-heading" (click)="changeOpenState(account)">
-      <h4 class="panel-title">
+  @for (account of accounts; track account) {
+    <div class="panel panel-default">
+      <div class="panel-heading" (click)="changeOpenState(account)">
+        <h4 class="panel-title">
           <div class="clearfix">
             <div class="col-lg-7 col-md-6"><strong>{{account.title}}</strong></div>
             <div class="col-lg-5 col-md-6">
-              <div class="row" *ngFor="let balanceItem of account | summaryBodyAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'negative-value': balanceItem.value < 0}">
-                <div class="col-lg-3 col-sm-7 col-md-5">
-                  <strong>
-                    <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
-                  </strong>
+              @for (balanceItem of account | summaryBodyAccount:conversionCurrency | summaryBalanceOrdering; track balanceItem) {
+                <div class="row" [ngClass]="{'negative-value': balanceItem.value < 0}">
+                  <div class="col-lg-3 col-sm-7 col-md-5">
+                    <strong>
+                      <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
+                    </strong>
+                  </div>
+                  <div class="col-lg-9 col-sm-5 col-md-7 text-right">{{balanceItem.value | currencyValue:2}}</div>
                 </div>
-                <div class="col-lg-9 col-sm-5 col-md-7 text-right">{{balanceItem.value | currencyValue:2}}</div>
-              </div>
+              }
             </div>
           </div>
-      </h4>
-    </div>
-    <div class="panel-body" *ngIf="account.opened">
-      <div *ngFor="let subAccount of account.subAccounts; last as last">
-        <div class="row summary-balance-item" >
-          <div class="col-lg-7 col-md-6 summary-balance-title">
-            <img class="icon" *ngIf="subAccount.icon" [src]="subAccount.icon | assetImage:'account'">
-            <strong>{{subAccount.title}}</strong>
-            <bk-popover *ngIf="subAccount.excludeFromTotals" glyphiconClass="exclamation-sign" text="Исключен из итогов" placement="left" spanClass="exclude-icon"></bk-popover>
-          </div>
-          <div class="col-lg-5 col-md-6">
-            <div *ngFor="let balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering" [ngClass]="{'row': true, 'negative-value': balanceItem.value < 0}">
-              <div class="col-lg-3 col-sm-7 col-md-5">
-                <strong>
-                  <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
-                </strong>
-              </div>
-              <div class="col-lg-9 col-sm-5 col-md-7 text-right">{{balanceItem.value | currencyValue:2}}</div>
-            </div>
-          </div>
-        </div>
-        <hr *ngIf="!last">
+        </h4>
       </div>
-    </div>
+      @if (account.opened) {
+        <div class="panel-body">
+          @for (subAccount of account.subAccounts; track subAccount; let last = $last) {
+            <div>
+              <div class="row summary-balance-item" >
+                <div class="col-lg-7 col-md-6 summary-balance-title">
+                  @if (subAccount.icon) {
+                    <img class="icon" [src]="subAccount.icon | assetImage:'account'">
+                  }
+                  <strong>{{subAccount.title}}</strong>
+                  @if (subAccount.excludeFromTotals) {
+                    <bk-popover glyphiconClass="exclamation-sign" text="Исключен из итогов" placement="left" spanClass="exclude-icon"></bk-popover>
+                  }
+                </div>
+                <div class="col-lg-5 col-md-6">
+                  @for (balanceItem of subAccount.balance | summaryBodySubAccount:conversionCurrency | summaryBalanceOrdering; track balanceItem) {
+                    <div [ngClass]="{'row': true, 'negative-value': balanceItem.value < 0}">
+                      <div class="col-lg-3 col-sm-7 col-md-5">
+                        <strong>
+                          <bk-currency-symbol [currencyName]="balanceItem.currency"></bk-currency-symbol>
+                        </strong>
+                      </div>
+                      <div class="col-lg-9 col-sm-5 col-md-7 text-right">{{balanceItem.value | currencyValue:2}}</div>
+                    </div>
+                  }
+                </div>
+              </div>
+              @if (!last) {
+                <hr>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
   </div>
-</div>

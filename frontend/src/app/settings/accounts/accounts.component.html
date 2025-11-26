@@ -3,48 +3,81 @@
   <span class="page-title-text">Конфигурация счетов и субсчетов</span>
 </div>
 
-<div class="table" *ngIf="!loading; else loadingIndicator">
-  <div *ngFor="let account of profile.accounts; let lastAccount = last; let firstAccount = first;">
-    <hr class="category-separator" *ngIf="firstAccount" />
-    <div class="row">
-      <div class="col-sm-8">
-        <span *ngIf="hasSubAccounts(account) && !account.settingsOpened" class="tree-icon glyphicon glyphicon-chevron-right" (click)="account.settingsOpened = !account.settingsOpened"></span>
-        <span *ngIf="hasSubAccounts(account) && account.settingsOpened" class="tree-icon glyphicon glyphicon-chevron-down" (click)="account.settingsOpened = !account.settingsOpened"></span>
-        <span class="account-title" (click)="account.settingsOpened = !account.settingsOpened">{{account.title}}</span>
-      </div>
-      <div class="col-sm-4 text-right">
-        <bk-popover glyphiconClass="plus" text="Добавить субсчет" placement="left" (click)="addSubAccount(account)"></bk-popover>
-        <bk-popover glyphiconClass="pencil" text="Редактировать счет" placement="left" (click)="editAccount(account)"></bk-popover>
-        <bk-popover glyphiconClass="remove" text="Удалить cчет" placement="left" (click)="deleteAccount(account)"></bk-popover>
-        <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveAccountDown(account)" *ngIf="!lastAccount"></bk-popover>
-        <span *ngIf="lastAccount" class="empty-action">&nbsp;</span>
-        <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveAccountUp(account)" *ngIf="!firstAccount"></bk-popover>
-        <span *ngIf="firstAccount" class="empty-action">&nbsp;</span>
-      </div>
-    </div>
-    <div *ngIf="account.settingsOpened">
-      <div class="row sub-account" *ngFor="let subAccount of account.subAccounts; let lastSubAccount = last; let firstSubAccount = first;">
-        <hr/>
-        <div class="col-sm-8">
-          <img class="icon" [src]="subAccount.icon | assetImage:'account'">
-          <span>{{subAccount.title}}</span>
-          <span class="label label-primary right" *ngIf="subAccount.excludeFromTotals === true">Исключена из итогов</span>
+@if (!loading) {
+  <div class="table">
+    @for (account of profile.accounts; track account; let lastAccount = $last; let firstAccount = $first) {
+      <div>
+        @if (firstAccount) {
+          <hr class="category-separator" />
+        }
+        <div class="row">
+          <div class="col-sm-8">
+            @if (hasSubAccounts(account) && !account.settingsOpened) {
+              <span class="tree-icon glyphicon glyphicon-chevron-right" (click)="account.settingsOpened = !account.settingsOpened"></span>
+            }
+            @if (hasSubAccounts(account) && account.settingsOpened) {
+              <span class="tree-icon glyphicon glyphicon-chevron-down" (click)="account.settingsOpened = !account.settingsOpened"></span>
+            }
+            <span class="account-title" (click)="account.settingsOpened = !account.settingsOpened">{{account.title}}</span>
+          </div>
+          <div class="col-sm-4 text-right">
+            <bk-popover glyphiconClass="plus" text="Добавить субсчет" placement="left" (click)="addSubAccount(account)"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать счет" placement="left" (click)="editAccount(account)"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить cчет" placement="left" (click)="deleteAccount(account)"></bk-popover>
+            @if (!lastAccount) {
+              <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveAccountDown(account)"></bk-popover>
+            }
+            @if (lastAccount) {
+              <span class="empty-action">&nbsp;</span>
+            }
+            @if (!firstAccount) {
+              <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveAccountUp(account)"></bk-popover>
+            }
+            @if (firstAccount) {
+              <span class="empty-action">&nbsp;</span>
+            }
+          </div>
         </div>
-        <div class="col-sm-4 text-right">
-          <bk-popover glyphiconClass="piggy-bank" text="Редактировать остатки" placement="left" (click)="editSubAccountBalance(account, subAccount)"></bk-popover>
-          <bk-popover glyphiconClass="pencil" text="Редактировать субсчет" placement="left" (click)="editSubAccount(account, subAccount)"></bk-popover>
-          <bk-popover glyphiconClass="remove" text="Удалить субсчет" placement="left" (click)="deleteSubAccount(account, subAccount)"></bk-popover>
-          <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubAccountDown(account, subAccount)" *ngIf="!lastSubAccount"></bk-popover>
-          <span *ngIf="lastSubAccount" class="empty-action">&nbsp;</span>
-          <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubAccountUp(account, subAccount)" *ngIf="!firstSubAccount"></bk-popover>
-          <span *ngIf="firstSubAccount" class="empty-action">&nbsp;</span>
-        </div>
+        @if (account.settingsOpened) {
+          <div>
+            @for (subAccount of account.subAccounts; track subAccount; let lastSubAccount = $last; let firstSubAccount = $first) {
+              <div class="row sub-account">
+                <hr/>
+                <div class="col-sm-8">
+                  <img class="icon" [src]="subAccount.icon | assetImage:'account'">
+                  <span>{{subAccount.title}}</span>
+                  @if (subAccount.excludeFromTotals === true) {
+                    <span class="label label-primary right">Исключена из итогов</span>
+                  }
+                </div>
+                <div class="col-sm-4 text-right">
+                  <bk-popover glyphiconClass="piggy-bank" text="Редактировать остатки" placement="left" (click)="editSubAccountBalance(account, subAccount)"></bk-popover>
+                  <bk-popover glyphiconClass="pencil" text="Редактировать субсчет" placement="left" (click)="editSubAccount(account, subAccount)"></bk-popover>
+                  <bk-popover glyphiconClass="remove" text="Удалить субсчет" placement="left" (click)="deleteSubAccount(account, subAccount)"></bk-popover>
+                  @if (!lastSubAccount) {
+                    <bk-popover glyphiconClass="arrow-down" text="Переместить ниже" placement="left" (click)="moveSubAccountDown(account, subAccount)"></bk-popover>
+                  }
+                  @if (lastSubAccount) {
+                    <span class="empty-action">&nbsp;</span>
+                  }
+                  @if (!firstSubAccount) {
+                    <bk-popover glyphiconClass="arrow-up" text="Переместить выше" placement="left" (click)="moveSubAccountUp(account, subAccount)"></bk-popover>
+                  }
+                  @if (firstSubAccount) {
+                    <span class="empty-action">&nbsp;</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @if (!lastAccount) {
+          <hr class="category-separator"/>
+        }
       </div>
-    </div>
-    <hr class="category-separator" *ngIf="!lastAccount"/>
+    }
   </div>
-</div>
-
-<ng-template #loadingIndicator>
+} @else {
   <bk-spinner [size]="80"></bk-spinner>
-</ng-template>
+}
+

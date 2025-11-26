@@ -1,41 +1,50 @@
 <h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">Обработанные смс</h2>
 <mat-dialog-content  id="device-message-dialog">
-  <ng-container *ngIf="!loading; else loadingIndicator">
-    <div *ngIf="!deviceMessage">У девайса нет сообщений</div>
-    <div class="table" *ngIf="deviceMessage">
-      <div class="row">
-        <div class="col-sm-3 left-column">ID:</div>
-        <div class="col-sm-9">{{deviceMessage.deviceId}}</div>
+  @if (!loading) {
+    @if (!deviceMessage) {
+      <div>У девайса нет сообщений</div>
+    }
+    @if (deviceMessage) {
+      <div class="table">
+        <div class="row">
+          <div class="col-sm-3 left-column">ID:</div>
+          <div class="col-sm-9">{{deviceMessage.deviceId}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 left-column">Имя:</div>
+          <div class="col-sm-9">{{data.name}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 left-column">Отправитель:</div>
+          <div class="col-sm-9">{{deviceMessage.sender}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 left-column">Время:</div>
+          <div class="col-sm-9">{{getDeviceMessageTimestamp()}}</div>
+        </div>
+        <div class="row device-message-margin">
+          <div class="col-sm-3 left-column">Сообщение:</div>
+          <div class="col-sm-9" [innerHTML]="getSubstitutedFullDeviceMessageText()"></div>
+        </div>
       </div>
-      <div class="row">
-        <div class="col-sm-3 left-column">Имя:</div>
-        <div class="col-sm-9">{{data.name}}</div>
-      </div>
-      <div class="row">
-        <div class="col-sm-3 left-column">Отправитель:</div>
-        <div class="col-sm-9">{{deviceMessage.sender}}</div>
-      </div>
-      <div class="row">
-        <div class="col-sm-3 left-column">Время:</div>
-        <div class="col-sm-9">{{getDeviceMessageTimestamp()}}</div>
-      </div>
-      <div class="row device-message-margin">
-        <div class="col-sm-3 left-column">Сообщение:</div>
-        <div class="col-sm-9" [innerHTML]="getSubstitutedFullDeviceMessageText()"></div>
-      </div>
-    </div>
-  </ng-container>
+    }
+  } @else {
+    <bk-spinner [size]="80"></bk-spinner>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
-  <span class="actions" *ngIf="!loading">
-    <button class="btn btn-default action-item" (click)="close()">Закрыть</button>
-    <span class="action-item">&nbsp;</span>
-    <button class="btn btn-default action-item" *ngIf="deviceMessageIndex != maxDeviceMessageIndex" (click)="loadDeviceMessages(1)">Следующее сообщение</button>
-    <span class="action-item">&nbsp;</span>
-    <button class="btn btn-default action-item" *ngIf="deviceMessageIndex > 0" (click)="loadDeviceMessages(-1)">Предыдущее сообщение</button>
-  </span>
+  @if (!loading) {
+    <span class="actions">
+      <button class="btn btn-default action-item" (click)="close()">Закрыть</button>
+      <span class="action-item">&nbsp;</span>
+      @if (deviceMessageIndex != maxDeviceMessageIndex) {
+        <button class="btn btn-default action-item" (click)="loadDeviceMessages(1)">Следующее сообщение</button>
+      }
+      <span class="action-item">&nbsp;</span>
+      @if (deviceMessageIndex > 0) {
+        <button class="btn btn-default action-item" (click)="loadDeviceMessages(-1)">Предыдущее сообщение</button>
+      }
+    </span>
+  }
 </mat-dialog-actions>
 
-<ng-template #loadingIndicator>
-  <bk-spinner [size]="80"></bk-spinner>
-</ng-template>

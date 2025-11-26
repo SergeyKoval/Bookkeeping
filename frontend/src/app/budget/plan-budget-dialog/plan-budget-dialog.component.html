@@ -1,6 +1,10 @@
 <h2 mat-dialog-title align="center" #title bkDraggable dragTarget=".mat-dialog-container">
-  <span *ngIf="data.editMode">Редактировать запланированное</span>
-  <span *ngIf="!data.editMode">Запланировать</span>
+  @if (data.editMode) {
+    <span>Редактировать запланированное</span>
+  }
+  @if (!data.editMode) {
+    <span>Запланировать</span>
+  }
 </h2>
 <mat-dialog-content id="budget-plan-dialog">
   <ul class="nav nav-tabs nav-justified">
@@ -9,18 +13,22 @@
     <li role="presentation" [ngClass]="{'active': data.type === 'limit', 'disabled': data.editMode}" (click)="onChangeSelectedType('limit')"><a>Лимит</a></li>
   </ul>
 
-  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
-    <strong>{{errors}}</strong>
-  </div>
+  @if (errors) {
+    <div class="alert alert-dismissable fade in alert-danger error">
+      <strong>{{errors}}</strong>
+    </div>
+  }
 
   <div class="table">
     <!--Goal month and year-->
-    <div class="row" *ngIf="data.type === 'goal'">
-      <div class="col-sm-12">
-        <bk-month-and-year class="right-button-group" [disabled]="!changeGoalMonthAvailable" [selectedYear]="selectedYear" [selectedMonth]="selectedMonth"
-                         (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
+    @if (data.type === 'goal') {
+      <div class="row">
+        <div class="col-sm-12">
+          <bk-month-and-year class="right-button-group" [disabled]="!changeGoalMonthAvailable" [selectedYear]="selectedYear" [selectedMonth]="selectedMonth"
+          (changeMonth)="changeMonth($event)" (changeYear)="changeYear($event)"></bk-month-and-year>
+        </div>
       </div>
-    </div>
+    }
 
     <!--All type-->
     <div class="row">
@@ -39,66 +47,90 @@
     </div>
 
     <!--Category or goal category-->
-    <div class="row" *ngIf="data.type !== 'limit'">
-      <div class="col-sm-12">
-        <div class="input-group">
-          <span class="input-group-addon dropdown-addon">Категория:</span>
-          <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                [ngClass]="{'disabled': data.editMode || !budgetType || typeCategories.length === 0, 'text-left': categoryTitle, 'with-statistics': data.type === 'category'}">
-            <img *ngIf="categoryTitle" class="icon" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
-            <span [ngClass]="categoryTitle ? budgetType : ''">{{categoryTitle ? categoryTitle : (typeCategories.length === 0 ? 'Нет доступных категорий' : 'Категория')}}</span>
-            <span class="caret"></span>
-          </span>
-          <ul class="dropdown-menu full-width-dropdown">
-            <li *ngFor="let category of typeCategories">
-              <a class="text-center" (click)="changeCategory(category)" [ngClass]="budgetType">
-                <img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'">{{category.title}}
-              </a>
-            </li>
-          </ul>
-          <span [ngClass]="{'disabled': !categoryTitle}" class="btn btn-default glyphicon glyphicon-signal category-statistics" type="button" (click)="showStatistics()" *ngIf="data.type === 'category'"></span>
+    @if (data.type !== 'limit') {
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="input-group">
+            <span class="input-group-addon dropdown-addon">Категория:</span>
+            <span type="button" class="btn btn-default dropdown-toggle dropdown-with-addon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+              [ngClass]="{'disabled': data.editMode || !budgetType || typeCategories.length === 0, 'text-left': categoryTitle, 'with-statistics': data.type === 'category'}">
+              @if (categoryTitle) {
+                <img class="icon" [src]="getCategoryIcon(categoryTitle) | assetImage:'category'">
+              }
+              <span [ngClass]="categoryTitle ? budgetType : ''">{{categoryTitle ? categoryTitle : (typeCategories.length === 0 ? 'Нет доступных категорий' : 'Категория')}}</span>
+              <span class="caret"></span>
+            </span>
+            <ul class="dropdown-menu full-width-dropdown">
+              @for (category of typeCategories; track category) {
+                <li>
+                  <a class="text-center" (click)="changeCategory(category)" [ngClass]="budgetType">
+                    <img class="icon" [src]="getCategoryIcon(category.title) | assetImage:'category'">{{category.title}}
+                  </a>
+                </li>
+              }
+            </ul>
+            @if (data.type === 'category') {
+              <span [ngClass]="{'disabled': !categoryTitle}" class="btn btn-default glyphicon glyphicon-signal category-statistics" type="button" (click)="showStatistics()"></span>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     <!--Goal title-->
-    <div class="row" *ngIf="data.type === 'goal'">
-      <div class="col-sm-12">
-        <div class="input-group full-width">
-          <span class="input-group-addon dropdown-addon" id="basic-addon1">Название:</span>
-          <input type="text" class="form-control" placeholder="Название цели" [disabled]="data.disableChangeGoalMonth" aria-describedby="basic-addon1" [(ngModel)]="goalTitle">
+    @if (data.type === 'goal') {
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="input-group full-width">
+            <span class="input-group-addon dropdown-addon" id="basic-addon1">Название:</span>
+            <input type="text" class="form-control" placeholder="Название цели" [disabled]="data.disableChangeGoalMonth" aria-describedby="basic-addon1" [(ngModel)]="goalTitle">
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     <!--All balance-->
-    <div class="row" *ngFor="let balance of currencyBalance">
-      <div  class="col-sm-12">
-        <div class="input-group">
-          <div class="input-group-btn">
-            <span class="btn btn-default glyphicon glyphicon-plus" type="button" (click)="addCurrency()"  *ngIf="data.type !== 'goal'"></span>
-            <span class="btn btn-default glyphicon glyphicon-minus" type="button" (click)="removeCurrency(balance)"  *ngIf="data.type !== 'goal'"></span>
-            <span type="button" [ngClass]="{'single-currency': data.type === 'goal', 'multiple-currencies': data.type !== 'goal', 'disabled': !changeGoalMonthAvailable}" class="btn btn-default dropdown-toggle currency-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="float-left">
-                <bk-currency-symbol [ngClass]="{'currency-selected-value': data.type !== 'goal'}" *ngIf="balance.currency" [currencyName]="balance.currency"></bk-currency-symbol>
-                <span *ngIf="!balance.currency">Валюта</span>
+    @for (balance of currencyBalance; track balance) {
+      <div class="row">
+        <div  class="col-sm-12">
+          <div class="input-group">
+            <div class="input-group-btn">
+              @if (data.type !== 'goal') {
+                <span class="btn btn-default glyphicon glyphicon-plus" type="button" (click)="addCurrency()" ></span>
+              }
+              @if (data.type !== 'goal') {
+                <span class="btn btn-default glyphicon glyphicon-minus" type="button" (click)="removeCurrency(balance)" ></span>
+              }
+              <span type="button" [ngClass]="{'single-currency': data.type === 'goal', 'multiple-currencies': data.type !== 'goal', 'disabled': !changeGoalMonthAvailable}" class="btn btn-default dropdown-toggle currency-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="float-left">
+                  @if (balance.currency) {
+                    <bk-currency-symbol [ngClass]="{'currency-selected-value': data.type !== 'goal'}" [currencyName]="balance.currency"></bk-currency-symbol>
+                  }
+                  @if (!balance.currency) {
+                    <span>Валюта</span>
+                  }
+                </span>
+                <span class="caret">
+                </span>
               </span>
-              <span class="caret">
-            </span>
-            </span>
-            <ul [ngClass]="{'single-currency': data.type === 'goal', 'multiple-currencies': data.type !== 'goal'}" class="dropdown-menu currency-dropdown-menu">
-              <li *ngFor="let currency of currencies" (click)="balance.currency = currency.name"><a><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></a></li>
-            </ul>
+              <ul [ngClass]="{'single-currency': data.type === 'goal', 'multiple-currencies': data.type !== 'goal'}" class="dropdown-menu currency-dropdown-menu">
+                @for (currency of currencies; track currency) {
+                  <li (click)="balance.currency = currency.name"><a><bk-currency-symbol [currencyName]="currency.name"></bk-currency-symbol></a></li>
+                }
+              </ul>
+            </div>
+            <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" [showConfirm]="balance.showConfirm" [confirmValue]="balance.confirmValue"
+            (changeInputValue)="balance.completeValue = $event" (changeConfirmValue)="balance.confirmValue = $event"></bk-input-calculator>
           </div>
-          <bk-input-calculator position="right" placeholder="Лимит" [value]="balance.completeValue" [showConfirm]="balance.showConfirm" [confirmValue]="balance.confirmValue"
-                               (changeInputValue)="balance.completeValue = $event" (changeConfirmValue)="balance.confirmValue = $event"></bk-input-calculator>
         </div>
       </div>
-    </div>
+    }
 
-    <div class="row" *ngIf="showDetails">
-      <div  class="col-sm-12 text-center"><span class="details">*</span> Игнорировать минимальное значение для валюты</div>
-    </div>
+    @if (showDetails) {
+      <div class="row">
+        <div  class="col-sm-12 text-center"><span class="details">*</span> Игнорировать минимальное значение для валюты</div>
+      </div>
+    }
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

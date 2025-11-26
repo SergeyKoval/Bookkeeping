@@ -6,7 +6,9 @@
       <span class="caret month-dropdown-caret"></span>
     </span>
     <ul class="dropdown-menu month-dropdown-menu">
-      <li *ngFor="let month of months; let monthIndex = index" [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
+      @for (month of months; track month; let monthIndex = $index) {
+        <li [ngClass]="{'selected': monthIndex === selectedMonth}"><a (click)="chooseMonth(monthIndex)">{{month}}</a></li>
+      }
     </ul>
   </span>
   <span class="input-group-btn float-left">

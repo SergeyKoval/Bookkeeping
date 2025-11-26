@@ -1,36 +1,44 @@
-<div class="panel panel-default" *ngIf="!loading; else loadingIndicator">
-  <div class="panel-body">
-    <div class="page-title text-center">
-      <button type="button" class="btn btn-default pull-left" (click)="addUser()">Добавить пользователя</button>
-      <span class="page-title-text">Пользователи и их права</span>
-    </div>
-
-    <div class="table">
-      <div class="row header">
-        <div class="col-md-4 col-sm-5">Мэил</div>
-        <div class="col-md-4 col-sm-3">Роли</div>
-        <div class="col-md-4 col-sm-4 text-center">Действия</div>
+@if (!loading) {
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="page-title text-center">
+        <button type="button" class="btn btn-default pull-left" (click)="addUser()">Добавить пользователя</button>
+        <span class="page-title-text">Пользователи и их права</span>
       </div>
-
-      <div *ngFor="let user of users; let lastUser = last">
-        <div class="row">
-          <div class="col-md-4 col-sm-5">{{user.email}}</div>
-          <div class="col-md-4 col-sm-3">
-            <span class="label label-primary" *ngIf="isUser(user)">Пользователь</span>
-            <span class="label label-primary admin-label" *ngIf="isAdmin(user)">Администратор</span>
-          </div>
-          <div class="col-md-4 col-sm-4 text-center" *ngIf="!isCurrentUser(user)">
-            <bk-popover glyphiconClass="pencil" text="Редактировать пользователя" placement="left" (click)="editUser(user)"></bk-popover>
-            <bk-popover glyphiconClass="remove" text="Удалить пользователя" placement="left" (click)="deleteUser(user)"></bk-popover>
-          </div>
+      <div class="table">
+        <div class="row header">
+          <div class="col-md-4 col-sm-5">Мэил</div>
+          <div class="col-md-4 col-sm-3">Роли</div>
+          <div class="col-md-4 col-sm-4 text-center">Действия</div>
         </div>
-
-        <hr *ngIf="!lastUser">
+        @for (user of users; track user; let lastUser = $last) {
+          <div>
+            <div class="row">
+              <div class="col-md-4 col-sm-5">{{user.email}}</div>
+              <div class="col-md-4 col-sm-3">
+                @if (isUser(user)) {
+                  <span class="label label-primary">Пользователь</span>
+                }
+                @if (isAdmin(user)) {
+                  <span class="label label-primary admin-label">Администратор</span>
+                }
+              </div>
+              @if (!isCurrentUser(user)) {
+                <div class="col-md-4 col-sm-4 text-center">
+                  <bk-popover glyphiconClass="pencil" text="Редактировать пользователя" placement="left" (click)="editUser(user)"></bk-popover>
+                  <bk-popover glyphiconClass="remove" text="Удалить пользователя" placement="left" (click)="deleteUser(user)"></bk-popover>
+                </div>
+              }
+            </div>
+            @if (!lastUser) {
+              <hr>
+              }
+            </div>
+          }
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  } @else {
+    <bk-spinner [size]="100"></bk-spinner>
+  }
 
-<ng-template #loadingIndicator>
-  <bk-spinner [size]="100"></bk-spinner>
-</ng-template>

@@ -1,11 +1,17 @@
 <h2 mat-dialog-title align="center" #title bkDraggable dragTarget=".mat-dialog-container">
-  <span *ngIf="data.editMode">Редактирование операции</span>
-  <span *ngIf="!data.editMode">Новая операция</span>
+  @if (data.editMode) {
+    <span>Редактирование операции</span>
+  }
+  @if (!data.editMode) {
+    <span>Новая операция</span>
+  }
 </h2>
 <mat-dialog-content id="history-add-edit-dialog">
-  <div *ngIf="errors" class="alert alert-dismissable fade in alert-danger error">
-    <strong>{{errors}}</strong>
-  </div>
+  @if (errors) {
+    <div class="alert alert-dismissable fade in alert-danger error">
+      <strong>{{errors}}</strong>
+    </div>
+  }
   <div class="row">
     <div class="col-sm-4 left-column">
       <mat-card class="demo-inline-calendar-card">
@@ -22,39 +28,51 @@
 
       <div class="form-row">
         <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" [placeholder]="!isTypeSelected('exchange') ? 'Сумма' : 'Было'"
-                        [currencies]="currencies" [selectedCurrency]="historyItem.balance.currency" (chooseCurrency)="changeCurrency($event)"
-                        [inputValue]="historyItem.balance.value" (changeInputValue)="changeBalanceValue($event)">
+          [currencies]="currencies" [selectedCurrency]="historyItem.balance.currency" (chooseCurrency)="changeCurrency($event)"
+          [inputValue]="historyItem.balance.value" (changeInputValue)="changeBalanceValue($event)">
         </bk-input-group>
       </div>
 
-      <div class="form-row" *ngIf="!isTypeSelected('exchange')">
-        <bk-select [placeholder]="this.isTypeSelected('transfer') ? 'Со счета' : 'Счет'" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
-      </div>
-      <div class="form-row" *ngIf="isTypeSelected('exchange')">
-        <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" placeholder="Стало"
-                        [currencies]="currencies" [selectedCurrency]="historyItem.balance.newCurrency" (chooseCurrency)="changeNewCurrency($event)"
-                        [inputValue]="historyItem.balance.newValue" (changeInputValue)="historyItem.balance.newValue = $event">
-        </bk-input-group>
-      </div>
+      @if (!isTypeSelected('exchange')) {
+        <div class="form-row">
+          <bk-select [placeholder]="this.isTypeSelected('transfer') ? 'Со счета' : 'Счет'" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
+        </div>
+      }
+      @if (isTypeSelected('exchange')) {
+        <div class="form-row">
+          <bk-input-group [historyItem]="historyItem" [alternativeCurrencyLoading]="alternativeCurrencyLoading" placeholder="Стало"
+            [currencies]="currencies" [selectedCurrency]="historyItem.balance.newCurrency" (chooseCurrency)="changeNewCurrency($event)"
+            [inputValue]="historyItem.balance.newValue" (changeInputValue)="historyItem.balance.newValue = $event">
+          </bk-input-group>
+        </div>
+      }
 
-      <div class="form-row" *ngIf="isTypeSelected('expense') || isTypeSelected('income')">
-        <bk-select placeholder="Категория" [items]="categories" [(selectedItems)]="selectedCategory"></bk-select>
-      </div>
-      <div class="form-row" *ngIf="isTypeSelected('transfer')">
-        <bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>
-      </div>
-      <div class="form-row" *ngIf="isTypeSelected('exchange')">
-        <bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
-      </div>
+      @if (isTypeSelected('expense') || isTypeSelected('income')) {
+        <div class="form-row">
+          <bk-select placeholder="Категория" [items]="categories" [(selectedItems)]="selectedCategory"></bk-select>
+        </div>
+      }
+      @if (isTypeSelected('transfer')) {
+        <div class="form-row">
+          <bk-select placeholder="На счет" [items]="accounts" [(selectedItems)]="selectedToAccount"></bk-select>
+        </div>
+      }
+      @if (isTypeSelected('exchange')) {
+        <div class="form-row">
+          <bk-select placeholder="Счет" [items]="accounts" [(selectedItems)]="selectedAccount"></bk-select>
+        </div>
+      }
 
       <div class="form-row">
         <input type="text" [(ngModel)]="historyItem.description" class="form-control" placeholder="Комментарий">
       </div>
     </div>
   </div>
-  <bk-goals-container [selectedCategory]="getSelectedCategoryTitle()" [selectedDate]="selectedDate" [editMode]="data.editMode" [fromDeviceMessage]="data.fromDeviceMessage"
-                      [alternativeCurrencyLoading]="alternativeCurrencyLoading" [historyItem]="historyItem" [goalCouldBeCalculated]="goalCouldBeCalculated()"
-                      (goalDetailsChange)="onGoalDetailsChange($event)" (originalGoalDetailsChange)="onOriginalGoalDetailsChange($event)" *ngIf="showGoalContainer()"></bk-goals-container>
+  @if (showGoalContainer()) {
+    <bk-goals-container [selectedCategory]="getSelectedCategoryTitle()" [selectedDate]="selectedDate" [editMode]="data.editMode" [fromDeviceMessage]="data.fromDeviceMessage"
+      [alternativeCurrencyLoading]="alternativeCurrencyLoading" [historyItem]="historyItem" [goalCouldBeCalculated]="goalCouldBeCalculated()"
+    (goalDetailsChange)="onGoalDetailsChange($event)" (originalGoalDetailsChange)="onOriginalGoalDetailsChange($event)"></bk-goals-container>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="history-actions">

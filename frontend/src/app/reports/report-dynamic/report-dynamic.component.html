@@ -4,7 +4,7 @@
     <div class="row filter-row">
       <div class="col-sm-11 filters">
         <bk-multi-level-dropdown class="filter" alternativeSelection="true" alternativeSelectionIndex="1" buttonTitle="Операции"
-                                 [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <bk-currency-conversion label="К валюте:" denyNoChoice="true" [selectedCurrency]="defaultCurrency" class="filter" (currencyConversion)="changeCurrency($event)"></bk-currency-conversion>
         <bk-period-filter (updatePeriod)="updatePeriod($event)"></bk-period-filter>
       </div>
@@ -12,16 +12,19 @@
         <span class="btn btn-default search-button pull-right" type="button" (click)="search()">Поиск</span>
       </div>
     </div>
-    <div *ngIf="!loading; else loadingIndicator">
-      <div class="row">
-        <div class="col-sm-12">
-          <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" chartType="line" *ngIf="lineChartData"></canvas>
+    @if (!loading) {
+      <div>
+        <div class="row">
+          <div class="col-sm-12">
+            @if (lineChartData) {
+              <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" chartType="line"></canvas>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    } @else {
+      <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
+    }
   </div>
 </div>
 
-<ng-template #loadingIndicator>
-  <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
-</ng-template>

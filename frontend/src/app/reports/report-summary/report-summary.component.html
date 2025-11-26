@@ -5,7 +5,7 @@
       <div class="col-sm-10">
         <span class="filter-row">
           <bk-multi-level-dropdown class="filter" alternativeSelection="true" alternativeSelectionIndex="1" buttonTitle="Операции"
-                                   [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+          [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
           <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Счета" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
           <bk-multi-level-dropdown class="filter" buttonTitle="В валюте" [dataModel]="currenciesFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
           <bk-period-filter (updatePeriod)="updatePeriod($event)"></bk-period-filter>
@@ -16,63 +16,88 @@
       </div>
     </div>
 
-    <div *ngIf="!loading; else loadingIndicator">
-      <div *ngIf="items && items.length > 0">
-      <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2 chart-row" *ngIf="pieChartData.labels && pieChartData.datasets">
-        <canvas baseChart [data]="pieChartData" type="pie"></canvas>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-12 table-wrapper">
-          <div class="panel panel-default table-panel">
-            <div class="panel-heading text-center">Сумма <span *ngIf="type === 'expense'">расходных</span><span *ngIf="type === 'income'">доходных</span> операции за период</div>
-            <div class="table">
-              <div class="row header">
-                <div class="col-sm-3 no-right-padding category-column">Категория</div>
-                <div class="col-sm-9 no-padding">
-                  <div class="row table-row">
-                    <div class="col-sm-5 small-left-padding"><span *ngIf="!onlyCategories">Подкатегория</span></div>
-                    <div class="col-sm-2 no-padding text-center">Процент</div>
-                    <div class="col-sm-5 total">Итог</div>
-                  </div>
-                </div>
+    @if (!loading) {
+      <div>
+        @if (items && items.length > 0) {
+          <div>
+            @if (pieChartData.labels && pieChartData.datasets) {
+              <div class="col-sm-12 col-md-12 col-lg-8 col-lg-offset-2 chart-row">
+                <canvas baseChart [data]="pieChartData" type="pie"></canvas>
               </div>
-              <hr/>
-
-              <div *ngFor="let categoryGroup of items; let lastGroup = last">
-                <div class="row table-row">
-                  <div class="col-sm-3 vertical-middle no-right-padding category-column" [ngClass]="{'text-nowrap': categoryGroup.length === 1}">{{categoryGroup[0].category}}</div>
-                  <div class="col-sm-9 no-padding">
-                    <div *ngFor="let item of categoryGroup; let lastItem = last">
-                      <div class="row table-row">
-                        <div class="col-sm-5 small-left-padding">{{item.subCategory}}</div>
-                        <div class="col-sm-2 no-padding text-center">{{item.percent}}%</div>
-                        <div class="col-sm-5 no-right-padding">
-                          <div *ngFor="let currency of item.values | keyvalue; let lastValue = last">
-                            <div class="row table-row small-left-padding">
-                              <span>
-                                <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency.key"></bk-currency-symbol></span> {{currency.value | currencyValue:2}}
-                              </span>
-                            </div>
-                            <hr *ngIf="!lastValue"/>
-                          </div>
+            }
+            <div class="row">
+              <div class="col-sm-12 table-wrapper">
+                <div class="panel panel-default table-panel">
+                  <div class="panel-heading text-center">Сумма @if (type === 'expense') {
+                    <span>расходных</span>
+                    }@if (type === 'income') {
+                    <span>доходных</span>
+                  } операции за период</div>
+                  <div class="table">
+                    <div class="row header">
+                      <div class="col-sm-3 no-right-padding category-column">Категория</div>
+                      <div class="col-sm-9 no-padding">
+                        <div class="row table-row">
+                          <div class="col-sm-5 small-left-padding">@if (!onlyCategories) {
+                            <span>Подкатегория</span>
+                          }</div>
+                          <div class="col-sm-2 no-padding text-center">Процент</div>
+                          <div class="col-sm-5 total">Итог</div>
                         </div>
                       </div>
-                      <hr *ngIf="!lastItem"/>
                     </div>
+                    <hr/>
+                    @for (categoryGroup of items; track categoryGroup; let lastGroup = $last) {
+                      <div>
+                        <div class="row table-row">
+                          <div class="col-sm-3 vertical-middle no-right-padding category-column" [ngClass]="{'text-nowrap': categoryGroup.length === 1}">{{categoryGroup[0].category}}</div>
+                          <div class="col-sm-9 no-padding">
+                            @for (item of categoryGroup; track item; let lastItem = $last) {
+                              <div>
+                                <div class="row table-row">
+                                  <div class="col-sm-5 small-left-padding">{{item.subCategory}}</div>
+                                  <div class="col-sm-2 no-padding text-center">{{item.percent}}%</div>
+                                  <div class="col-sm-5 no-right-padding">
+                                    @for (currency of item.values | keyvalue; track currency; let lastValue = $last) {
+                                      <div>
+                                        <div class="row table-row small-left-padding">
+                                          <span>
+                                            <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency.key"></bk-currency-symbol></span> {{currency.value | currencyValue:2}}
+                                          </span>
+                                        </div>
+                                        @if (!lastValue) {
+                                          <hr/>
+                                        }
+                                      </div>
+                                    }
+                                  </div>
+                                </div>
+                                @if (!lastItem) {
+                                  <hr/>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </div>
+                        @if (!lastGroup) {
+                          <hr/>
+                        }
+                      </div>
+                    }
                   </div>
-                </div>
-                <hr *ngIf="!lastGroup"/>
-              </div>
-            </div>
-            <div class="panel-footer">
-              <div class="row vertical-middle-wrapper">
-                <div class="col-sm-3 vertical-middle"><strong>Итог</strong></div>
-                <div class="col-sm-9">
-                  <div class="row" *ngFor="let currency of totals | mapKeys | currencySort">
-                    <div class="col-sm-5 col-sm-offset-7">
-                      <div class="small-left-padding">
-                        <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span> {{totals[currency] | currencyValue:2}}
+                  <div class="panel-footer">
+                    <div class="row vertical-middle-wrapper">
+                      <div class="col-sm-3 vertical-middle"><strong>Итог</strong></div>
+                      <div class="col-sm-9">
+                        @for (currency of totals | mapKeys | currencySort; track currency) {
+                          <div class="row">
+                            <div class="col-sm-5 col-sm-offset-7">
+                              <div class="small-left-padding">
+                                <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span> {{totals[currency] | currencyValue:2}}
+                              </div>
+                            </div>
+                          </div>
+                        }
                       </div>
                     </div>
                   </div>
@@ -80,14 +105,12 @@
               </div>
             </div>
           </div>
-        </div>
+        }
       </div>
-    </div>
-    </div>
+    } @else {
+      <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
+    }
   </div>
 </div>
 
 
-<ng-template #loadingIndicator>
-  <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
-</ng-template>

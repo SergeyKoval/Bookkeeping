@@ -1,58 +1,77 @@
 <hr>
-<bk-goal-budget-category [monthProgress]="monthProgress" [historyItem]="historyItem" [selectedDate]="selectedDate" *ngIf="goalCouldBeCalculated"
-                         [alternativeCurrencyLoading]="alternativeCurrencyLoading" [budgetLoading]="budgetLoading" [budgetCategory]="budgetCategory"></bk-goal-budget-category>
+  @if (goalCouldBeCalculated) {
+    <bk-goal-budget-category [monthProgress]="monthProgress" [historyItem]="historyItem" [selectedDate]="selectedDate"
+    [alternativeCurrencyLoading]="alternativeCurrencyLoading" [budgetLoading]="budgetLoading" [budgetCategory]="budgetCategory"></bk-goal-budget-category>
+  }
 
-<div class="row" [ngClass]="{'second-row': !goalCouldBeCalculated}">
-  <div class="col-sm-4 left-column">
-    <ul class="list-group goal-groups">
-      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': deviceMessageTabSelected}" (click)="deviceMessageTabSelected = true" *ngIf="historyItem.deviceMessages">Сообщения</li>
-      <ng-container *ngIf="deviceMessageTabSelected">
-        <a class="list-group-item device-message-item" *ngFor="let deviceMessage of historyItem.deviceMessages; let deviceMessageIndex = index" (click)="selectedDeviceMessageIndex = deviceMessageIndex"
-           [ngClass]="{'goal-group-active': deviceMessageIndex === selectedDeviceMessageIndex}">
-          {{deviceMessage.sender}} ({{getDeviceMessageTimestamp(deviceMessage)}})
-        </a>
-      </ng-container>
+  <div class="row" [ngClass]="{'second-row': !goalCouldBeCalculated}">
+    <div class="col-sm-4 left-column">
+      <ul class="list-group goal-groups">
+        @if (historyItem.deviceMessages) {
+          <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': deviceMessageTabSelected}" (click)="deviceMessageTabSelected = true">Сообщения</li>
+        }
+        @if (deviceMessageTabSelected) {
+          @for (deviceMessage of historyItem.deviceMessages; track deviceMessage; let deviceMessageIndex = $index) {
+            <a class="list-group-item device-message-item" (click)="selectedDeviceMessageIndex = deviceMessageIndex"
+              [ngClass]="{'goal-group-active': deviceMessageIndex === selectedDeviceMessageIndex}">
+              {{deviceMessage.sender}} ({{getDeviceMessageTimestamp(deviceMessage)}})
+            </a>
+          }
+        }
 
-      <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': !deviceMessageTabSelected}" (click)="deviceMessageTabSelected = false" *ngIf="goalCouldBeCalculated">Цели</li>
-      <ng-container *ngIf="!deviceMessageTabSelected">
-        <a *ngFor="let filterType of FILTER_TYPES" (click)="goalFilterType = filterType"
-           [ngClass]="{'list-group-item': true, 'goal-group-active': goalFilterType === filterType}">
-          <span *ngIf="!budgetLoading; else numberOfItemsLoadingIndicator" class="badge">{{getGoalCount(filterType)}}</span>{{filterType}}
-        </a>
-      </ng-container>
-    </ul>
-  </div>
-
-  <div class="col-sm-8 right-column">
-    <ng-container *ngIf="!deviceMessageTabSelected">
-      <bk-spinner [display]="budgetLoading || alternativeCurrencyLoading"></bk-spinner>
-      <div *ngIf="!alternativeCurrencyLoading && budgetCategory">
-        <div class="row" *ngFor="let goalItem of budgetCategory.goals | goalFilter: goalFilterType" >
-          <div [ngClass]="{'goal-popover-container': true, 'col-sm-11 no-right-padding': isSelectedGoal(goalItem), 'col-sm-12 selectable-goal': !isSelectedGoal(goalItem)}">
-            <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
-                        [text]="getGoalDonePopoverTitle(goalItem)" placement="above" (click)="changeGoalStatus(goalItem)"></bk-popover>
-            <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
-              <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
-                   [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
-              <div *ngIf="isSelectedGoal(goalItem)" class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>
-              <div class="goal-name">{{goalItem.title}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>
-              <div class="progress-value">
-                <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem) | currencyValue:2:true}} / {{goalItem.balance.completeValue}}
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-1 goal-popover-container" *ngIf="isSelectedGoal(goalItem)">
-            <bk-popover glyphiconClass="remove" text="Не учитывать" placement="left" (click)="uncheckGoal()"></bk-popover>
-          </div>
-        </div>
+        @if (goalCouldBeCalculated) {
+          <li class="list-group-item text-center goals-header" [ngClass]="{'goals-header-selected': !deviceMessageTabSelected}" (click)="deviceMessageTabSelected = false">Цели</li>
+        }
+        @if (!deviceMessageTabSelected) {
+          @for (filterType of FILTER_TYPES; track filterType) {
+            <a (click)="goalFilterType = filterType"
+              [ngClass]="{'list-group-item': true, 'goal-group-active': goalFilterType === filterType}">
+              @if (!budgetLoading) {
+                <span class="badge">{{getGoalCount(filterType)}}</span>
+              } @else {
+                <bk-spinner class="goals-count-indicator" [size]="20"></bk-spinner>
+                }{{filterType}}
+              </a>
+            }
+          }
+        </ul>
       </div>
-    </ng-container>
-    <ng-container *ngIf="deviceMessageTabSelected">
-      <div class="device-message-content" [innerHTML]="getFormattedDeviceMessage()"></div>
-    </ng-container>
-  </div>
-</div>
 
-<ng-template #numberOfItemsLoadingIndicator>
-  <bk-spinner class="goals-count-indicator" [size]="20"></bk-spinner>
-</ng-template>
+      <div class="col-sm-8 right-column">
+        @if (!deviceMessageTabSelected) {
+          <bk-spinner [display]="budgetLoading || alternativeCurrencyLoading"></bk-spinner>
+          @if (!alternativeCurrencyLoading && budgetCategory) {
+            <div>
+              @for (goalItem of budgetCategory.goals | goalFilter: goalFilterType; track goalItem) {
+                <div class="row" >
+                  <div [ngClass]="{'goal-popover-container': true, 'col-sm-11 no-right-padding': isSelectedGoal(goalItem), 'col-sm-12 selectable-goal': !isSelectedGoal(goalItem)}">
+                    <bk-popover glyphiconClass="ok" [spanClass]="goalItem.done ? 'status-icon goal-done' : 'status-icon'"
+                    [text]="getGoalDonePopoverTitle(goalItem)" placement="above" (click)="changeGoalStatus(goalItem)"></bk-popover>
+                    <div class="progress" [ngClass]="{'selected-goal': isSelectedGoal(goalItem)}" (click)="chooseGoal(goalItem)">
+                      <div [ngClass]="{'progress-bar': true, 'progress-bar-warning': !goalItem.done, 'progress-bar-success': goalItem.done}"
+                      [ngStyle]="{'width.%': getPercentBeforeSelection(goalItem)}" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+                      @if (isSelectedGoal(goalItem)) {
+                        <div class="progress-bar progress-bar-info progress-bar-striped active" [ngStyle]="{'width.%': getSelectedPercent(goalItem)}"></div>
+                      }
+                      <div class="goal-name">{{goalItem.title}} ({{getGoalPercent(goalItem) | currencyValue:0}}%)</div>
+                      <div class="progress-value">
+                        <bk-currency-symbol [currencyName]="goalItem.balance.currency"></bk-currency-symbol> {{getGoalValue(goalItem) | currencyValue:2:true}} / {{goalItem.balance.completeValue}}
+                      </div>
+                    </div>
+                  </div>
+                  @if (isSelectedGoal(goalItem)) {
+                    <div class="col-sm-1 goal-popover-container">
+                      <bk-popover glyphiconClass="remove" text="Не учитывать" placement="left" (click)="uncheckGoal()"></bk-popover>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+        @if (deviceMessageTabSelected) {
+          <div class="device-message-content" [innerHTML]="getFormattedDeviceMessage()"></div>
+        }
+      </div>
+    </div>
+

@@ -1,28 +1,54 @@
 <div [ngClass]="{'dropdown': true, 'open': opened}" [style.width.px]="width" (click)="focusInput()">
-  <input type="text" class="form-control" [value]="searchValue" (input)="search($event.target.value)" [placeholder]="placeholder" *ngIf="opened" bkFocus>
+  @if (opened) {
+    <input type="text" class="form-control" [value]="searchValue" (input)="search($event.target.value)" [placeholder]="placeholder" bkFocus>
+  }
   <button class="btn btn-default dropdown-toggle" [style.display]="opened ? 'none' : 'block'" type="button" data-toggle="dropdown" (click)="openSelect()">
-    <span class="selected-title text-muted" *ngIf="!isItemSelected()">{{placeholder}}</span>
-    <span class="selected-title" *ngIf="isItemSelected()">
-      <img class="icon" *ngIf="selectedItemIcon()" [src]="selectedItemIcon()">
-      <span *ngFor="let selectedItem of selectedItems; let lastItem = last">{{selectedItem.title}} <span class="title-delimiter" *ngIf="!lastItem">>></span></span>
-    </span>
+    @if (!isItemSelected()) {
+      <span class="selected-title text-muted">{{placeholder}}</span>
+    }
+    @if (isItemSelected()) {
+      <span class="selected-title">
+        @if (selectedItemIcon()) {
+          <img class="icon" [src]="selectedItemIcon()">
+        }
+        @for (selectedItem of selectedItems; track selectedItem; let lastItem = $last) {
+          <span>{{selectedItem.title}} @if (!lastItem) {
+            <span class="title-delimiter">>></span>
+          }</span>
+        }
+      </span>
+    }
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" [style.display]="opened ? 'block' : 'none'">
-    <li class="crumbs" *ngIf="isItemSelected()">
-      <span class="crumb-item clickable" (click)="switchToRootLevel()">Все</span>
-      <span class="crumb-delimiter"> > </span>
-      <img class="icon" *ngIf="selectedItems[0].icon" [src]="selectedItems[0].icon">
-      <span class="crumb-item">{{selectedItems[0].title}}</span>
-    </li>
-    <li role="separator" class="divider" *ngIf="isItemSelected()"></li>
-    <li *ngFor="let displayItem of displayItems" (click)="chooseItem(displayItem, searchInput)">
-      <a class="clickable">
-        <img class="icon selected-title" *ngIf="displayItem.icon" [src]="displayItem.icon">
-        <span class="selected-title">{{displayItem.title}}</span>
-        <span class="selected-title" *ngIf="displayItem.parent">({{displayItem.parent.title}})</span>
-        <button *ngIf="displayItem.children" class="btn btn-default show-child-group">&gt;</button>
-      </a>
-    </li>
+    @if (isItemSelected()) {
+      <li class="crumbs">
+        <span class="crumb-item clickable" (click)="switchToRootLevel()">Все</span>
+        <span class="crumb-delimiter"> > </span>
+        @if (selectedItems[0].icon) {
+          <img class="icon" [src]="selectedItems[0].icon">
+        }
+        <span class="crumb-item">{{selectedItems[0].title}}</span>
+      </li>
+    }
+    @if (isItemSelected()) {
+      <li role="separator" class="divider"></li>
+    }
+    @for (displayItem of displayItems; track displayItem) {
+      <li (click)="chooseItem(displayItem, searchInput)">
+        <a class="clickable">
+          @if (displayItem.icon) {
+            <img class="icon selected-title" [src]="displayItem.icon">
+          }
+          <span class="selected-title">{{displayItem.title}}</span>
+          @if (displayItem.parent) {
+            <span class="selected-title">({{displayItem.parent.title}})</span>
+          }
+          @if (displayItem.children) {
+            <button class="btn btn-default show-child-group">&gt;</button>
+          }
+        </a>
+      </li>
+    }
   </ul>
 </div>

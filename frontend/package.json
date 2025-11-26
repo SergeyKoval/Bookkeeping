@@ -37,6 +37,14 @@
     "tslib": "^2.8.1",
     "zone.js": "~0.15.1"
   },
+  "overrides": {
+    "ngx-bootstrap": {
+      "@angular/animations": "$@angular/animations",
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core",
+      "@angular/forms": "$@angular/forms"
+    }
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "^21.0.0",
     "@angular/cli": "^21.0.0",

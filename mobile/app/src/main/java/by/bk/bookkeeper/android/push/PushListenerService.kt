@@ -2,10 +2,12 @@ package by.bk.bookkeeper.android.push
 
 import android.app.Notification
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import by.bk.bookkeeper.processor.ProcessingService
 
 class PushListenerService : NotificationListenerService() {
 
@@ -53,14 +55,19 @@ class PushListenerService : NotificationListenerService() {
             })
         }
 
-        // Send normal broadcast (delayed)
+        // Start ProcessingService with push data (delayed to allow SMS priority)
         val delayMs = by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
             .getPushProcessingDelaySeconds() * 1000L
         handler.postDelayed({
-            sendBroadcast(Intent(ACTION_ON_NOTIFICATION_POSTED).apply {
-                setPackage(packageName)
+            val serviceIntent = Intent(this, ProcessingService::class.java).apply {
+                action = ACTION_PUSH_RECEIVED
                 putExtra(PUSH_MESSAGE, pushMessage)
-            })
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
         }, delayMs)
     }
 
@@ -71,6 +78,7 @@ class PushListenerService : NotificationListenerService() {
 
     companion object {
         const val PUSH_MESSAGE = "PUSH_MESSAGE"
+        const val ACTION_PUSH_RECEIVED = "push_received"
         const val ACTION_ON_NOTIFICATION_POSTED = "on_notification_posted"
         const val ACTION_DEBUG_NOTIFICATION_POSTED = "debug_notification_posted"
     }

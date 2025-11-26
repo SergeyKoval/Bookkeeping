@@ -101,15 +101,27 @@ class ProcessingService : Service() {
 
         startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
 
-        if (intent?.action == SMSReceiver.INTENT_ACTION_SMS_RECEIVED) {
-            handleSms(
-                wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
-                pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
-                format = intent.extras?.getString(INTENT_PDU_FORMAT)
-            )
-        } else {
-            // No specific work to do, schedule stop after delay
-            scheduleStopWhenIdle()
+        when (intent?.action) {
+            SMSReceiver.INTENT_ACTION_SMS_RECEIVED -> {
+                handleSms(
+                    wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
+                    pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
+                    format = intent.extras?.getString(INTENT_PDU_FORMAT)
+                )
+            }
+            PushListenerService.ACTION_PUSH_RECEIVED -> {
+                val pushMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE, PushMessage::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE)
+                }
+                pushMessage?.let { handlePush(it) } ?: scheduleStopWhenIdle()
+            }
+            else -> {
+                // No specific work to do, schedule stop after delay
+                scheduleStopWhenIdle()
+            }
         }
 
         // Don't auto-restart - receivers will start us when needed

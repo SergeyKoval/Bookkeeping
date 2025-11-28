@@ -1,6 +1,7 @@
 package by.bk.bookkeeper.processor
 
 import android.Manifest.permission
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -99,7 +100,15 @@ class ProcessingService : Service() {
             return START_NOT_STICKY
         }
 
-        startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
+        // Try to start as foreground service. On Android 14+, dataSync services have a daily
+        // time limit. If quota is exhausted, catch the exception and continue without foreground
+        // status - the service may be killed by the system, but it won't crash. Existing retry
+        // mechanisms (SharedPreferences + WorkManager) will handle any lost messages.
+        try {
+            startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
+        } catch (e: ForegroundServiceStartNotAllowedException) {
+            Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
+        }
 
         when (intent?.action) {
             SMSReceiver.INTENT_ACTION_SMS_RECEIVED -> {

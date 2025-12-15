@@ -44,8 +44,11 @@ class ProcessingService : Service() {
     private val smsProcessor = Injection.provideSmsProcessor()
     private val pushProcessor = Injection.providePushProcessor()
     private val disposables = CompositeDisposable()
-    private val notificationBuilder by lazy { createNotificationBuilder() }
     private val gson = com.google.gson.Gson()
+
+    // State for notification content (updated from any thread, read only from main thread)
+    @Volatile private var pendingSmsCount: Int = 0
+    @Volatile private var unprocessedCount: Int? = null
 
     // Track active work to stop service when idle (Android 14+ dataSync timeout fix)
     private val activeWorkCount = AtomicInteger(0)
@@ -105,9 +108,17 @@ class ProcessingService : Service() {
         // status - the service may be killed by the system, but it won't crash. Existing retry
         // mechanisms (SharedPreferences + WorkManager) will handle any lost messages.
         try {
-            startForeground(SERVICE_NOTIFICATION_ID, notificationBuilder.build())
+            startForeground(SERVICE_NOTIFICATION_ID, buildNotificationSafely())
         } catch (e: ForegroundServiceStartNotAllowedException) {
             Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
+        } catch (e: Exception) {
+            // If notification building fails for any reason, try with a minimal fallback notification
+            Timber.w(e, "Failed to build notification, trying fallback")
+            try {
+                startForeground(SERVICE_NOTIFICATION_ID, buildFallbackNotification())
+            } catch (e2: ForegroundServiceStartNotAllowedException) {
+                Timber.w(e2, "Foreground service quota exhausted, continuing without foreground status")
+            }
         }
 
         when (intent?.action) {
@@ -141,56 +152,89 @@ class ProcessingService : Service() {
         disposables.add(
             SharedPreferencesProvider.getPendingMessagesObservable()
                 .subscribeOn(Schedulers.io())
-                .subscribe { pendingSms ->
-                    updateNotification(
-                        notificationBuilder
-                            .setContentText(
-                                if (pendingSms.isNotEmpty()) applicationContext.getString(R.string.msg_service_pending_sms, pendingSms.size)
-                                else applicationContext.getString(R.string.msg_service_notification_waiting_for_messages)
-                            )
-                            .setContentIntent(
-                                createPendingIntent(
-                                    if (pendingSms.isNotEmpty()) AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
-                                    else AccountingActivity.ACTION_EXTERNAL_HOME
-                                )
-                            )
-                            .build()
-                    )
-                }
+                .subscribe(
+                    { pendingSms ->
+                        pendingSmsCount = pendingSms.size
+                        updateNotificationOnMainThread()
+                    },
+                    { e -> Timber.e(e, "Error observing pending messages") }
+                )
         )
     }
 
     private fun observeUnprocessedSms() {
         disposables.add(SharedPreferencesProvider.getUnprocessedResponseObservable()
             .subscribeOn(Schedulers.io())
-            .subscribe { response ->
-                val count = response.count
-                updateNotification(
-                    notificationBuilder
-                        .setContentTitle(
-                            if (count != null && count > 0)
-                                applicationContext.getString(R.string.msg_sms_status_server_unprocessed_count, response.count) else null
-                        )
-                        .setContentIntent(
-                            createPendingIntent(
-                                if (count != null && count > 0) AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
-                                else AccountingActivity.ACTION_EXTERNAL_HOME
-                            )
-                        )
-                        .build()
-                    )
-                }
+            .subscribe(
+                { response ->
+                    unprocessedCount = response.count
+                    updateNotificationOnMainThread()
+                },
+                { e -> Timber.e(e, "Error observing unprocessed SMS") }
+            )
         )
     }
 
-    private fun createNotificationBuilder(): Notification.Builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-        .setContentIntent(createPendingIntent(AccountingActivity.ACTION_EXTERNAL_HOME))
-        .setSmallIcon(R.drawable.ic_running_service)
-        .setContentTitle(getString(R.string.app_name))
-        .setContentText(getString(R.string.notification_service_running))
+    /**
+     * Builds a notification with current state. Creates a fresh builder each time
+     * to avoid thread-safety issues with shared Notification.Builder instances.
+     * Must be called from main thread only.
+     */
+    private fun buildNotificationSafely(): Notification {
+        val hasPending = pendingSmsCount > 0
+        val hasUnprocessed = (unprocessedCount ?: 0) > 0
 
-    private fun updateNotification(notification: Notification) =
-        getSystemService(NotificationManager::class.java)?.notify(SERVICE_NOTIFICATION_ID, notification)
+        val contentText = if (hasPending) {
+            applicationContext.getString(R.string.msg_service_pending_sms, pendingSmsCount)
+        } else {
+            applicationContext.getString(R.string.msg_service_notification_waiting_for_messages)
+        }
+
+        val contentTitle = if (hasUnprocessed) {
+            applicationContext.getString(R.string.msg_sms_status_server_unprocessed_count, unprocessedCount)
+        } else {
+            getString(R.string.app_name)
+        }
+
+        val targetAction = if (hasPending || hasUnprocessed) {
+            AccountingActivity.ACTION_EXTERNAL_SHOW_SMS_STATUS
+        } else {
+            AccountingActivity.ACTION_EXTERNAL_HOME
+        }
+
+        return Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentIntent(createPendingIntent(targetAction))
+            .setSmallIcon(R.drawable.ic_running_service)
+            .setContentTitle(contentTitle)
+            .setContentText(contentText)
+            .build()
+    }
+
+    /**
+     * Builds a minimal fallback notification when the regular notification building fails.
+     */
+    private fun buildFallbackNotification(): Notification {
+        return Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_running_service)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(getString(R.string.notification_service_running))
+            .build()
+    }
+
+    /**
+     * Updates the notification on the main thread to avoid concurrent modification issues.
+     */
+    private fun updateNotificationOnMainThread() {
+        mainHandler.post {
+            try {
+                val notification = buildNotificationSafely()
+                getSystemService(NotificationManager::class.java)?.notify(SERVICE_NOTIFICATION_ID, notification)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update notification")
+            }
+        }
+    }
+
 
     private fun createPendingIntent(targetAction: String): PendingIntent = PendingIntent.getActivity(
         this, SERVICE_REQUEST_CODE,

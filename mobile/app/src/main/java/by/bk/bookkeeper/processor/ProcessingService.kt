@@ -93,23 +93,15 @@ class ProcessingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("On start command invoked with action ${intent?.action}")
 
-        // Cancel any pending stop - new work is arriving
-        mainHandler.removeCallbacks(stopWhenIdleRunnable)
-
-        if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
-                || intent?.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
-            return START_NOT_STICKY
-        }
-
-        // Try to start as foreground service. On Android 14+, dataSync services have a daily
-        // time limit. If quota is exhausted, catch the exception and continue without foreground
-        // status - the service may be killed by the system, but it won't crash. Existing retry
-        // mechanisms (SharedPreferences + WorkManager) will handle any lost messages.
+        // CRITICAL: Must call startForeground() immediately when started via startForegroundService().
+        // Android requires this within 5 seconds or throws ForegroundServiceDidNotStartInTimeException.
+        // This must happen BEFORE any permission checks or early returns.
         try {
             startForeground(SERVICE_NOTIFICATION_ID, buildNotificationSafely())
         } catch (e: ForegroundServiceStartNotAllowedException) {
+            // On Android 14+, dataSync services have a daily time limit (~6 hours).
+            // If quota is exhausted, continue without foreground status - the service may be
+            // killed by the system, but it won't crash. Retry mechanisms will handle lost messages.
             Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
         } catch (e: Exception) {
             // If notification building fails for any reason, try with a minimal fallback notification
@@ -119,6 +111,17 @@ class ProcessingService : Service() {
             } catch (e2: ForegroundServiceStartNotAllowedException) {
                 Timber.w(e2, "Foreground service quota exhausted, continuing without foreground status")
             }
+        }
+
+        // Cancel any pending stop - new work is arriving
+        mainHandler.removeCallbacks(stopWhenIdleRunnable)
+
+        // Now that foreground contract is satisfied, check if we should stop immediately
+        if (checkSelfPermission(permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED
+                || intent?.action == AccountingActivity.INTENT_ACTION_USER_LOGGED_OUT) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return START_NOT_STICKY
         }
 
         when (intent?.action) {

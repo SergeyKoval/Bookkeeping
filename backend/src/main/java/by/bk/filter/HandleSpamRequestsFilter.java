@@ -27,13 +27,16 @@ public class HandleSpamRequestsFilter extends OncePerRequestFilter {
     private static final String ACCEPT = "Accept";
     private static final String INVALID_MIME_TYPE = "Invalid mime type";
     private static final String MULTIPART_NOT_SUPPORTED = "Multipart requests are not supported";
+    private static final String MULTIPART_PREFIX = "multipart/";
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        // Reject multipart requests - this API only accepts JSON
-        // Multipart requests are typically spam/bot traffic attempting to upload files
+        // Reject ALL multipart requests - this API only accepts JSON
+        // Spring's StandardServletMultipartResolver processes any "multipart/*" content type,
+        // not just "multipart/form-data", so we must block all multipart/* variants
+        // (multipart/form-data, multipart/mixed, multipart/alternative, etc.)
         var contentType = httpServletRequest.getContentType();
-        if (contentType != null && contentType.toLowerCase().startsWith(MediaType.MULTIPART_FORM_DATA_VALUE)) {
+        if (contentType != null && contentType.toLowerCase().startsWith(MULTIPART_PREFIX)) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, MULTIPART_NOT_SUPPORTED);
             return;
         }

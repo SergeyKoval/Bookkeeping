@@ -31,12 +31,30 @@ class HandleSpamRequestsFilterTest {
     private MockMvc mockMvc;
 
     @Test
-    void shouldRejectMultipartRequests() throws Exception {
-        // Multipart requests should be rejected with 415 Unsupported Media Type
-        // since this API only accepts JSON
+    void shouldRejectMultipartFormDataRequests() throws Exception {
+        // Multipart form-data requests should be rejected with 415 Unsupported Media Type
         mockMvc.perform(post("/test/endpoint")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .content("--boundary\r\nContent-Disposition: form-data; name=\"file\"\r\n\r\ntest\r\n--boundary--"))
+            .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    void shouldRejectMultipartMixedRequests() throws Exception {
+        // multipart/mixed requests should also be rejected - Spring's multipart resolver
+        // processes ANY multipart/* content type, not just multipart/form-data
+        mockMvc.perform(post("/test/endpoint")
+                .contentType("multipart/mixed; boundary=boundary")
+                .content("--boundary\r\nContent-Type: text/plain\r\n\r\ntest\r\n--boundary--"))
+            .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    void shouldRejectMultipartAlternativeRequests() throws Exception {
+        // multipart/alternative should also be rejected
+        mockMvc.perform(post("/test/endpoint")
+                .contentType("multipart/alternative; boundary=boundary")
+                .content("--boundary\r\nContent-Type: text/plain\r\n\r\ntest\r\n--boundary--"))
             .andExpect(status().isUnsupportedMediaType());
     }
 

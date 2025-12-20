@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,6 +77,15 @@ class HandleSpamRequestsFilterTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldFilterErrorDispatches() {
+        // The filter must also run during ERROR dispatches to prevent multipart parsing
+        // exceptions when Tomcat forwards to error pages with the original multipart request
+        HandleSpamRequestsFilter filter = new HandleSpamRequestsFilter();
+        // shouldNotFilterErrorDispatch() must return false (i.e., DO filter error dispatches)
+        assertThat(filter.shouldNotFilterErrorDispatch()).isFalse();
     }
 
     @Configuration

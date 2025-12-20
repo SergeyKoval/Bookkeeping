@@ -18,12 +18,27 @@ import java.io.IOException;
  * Filter to reject spam and malformed requests early in the request pipeline.
  * This filter runs at highest precedence to block invalid requests before
  * they consume server resources.
+ * <p>
+ * This filter also runs during ERROR dispatches to prevent multipart parsing
+ * exceptions when Tomcat forwards to error pages.
  *
  * @author Sergey Koval
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class HandleSpamRequestsFilter extends OncePerRequestFilter {
+
+    /**
+     * Also filter ERROR dispatches to block multipart requests during error page forwarding.
+     * When an error occurs, Tomcat forwards to /error with the original request, which still
+     * has the multipart content-type. Without filtering ERROR dispatches, Spring's
+     * DispatcherServlet tries to parse the malformed multipart body and throws.
+     */
+    @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return false;
+    }
+
     private static final String ACCEPT = "Accept";
     private static final String INVALID_MIME_TYPE = "Invalid mime type";
     private static final String MULTIPART_NOT_SUPPORTED = "Multipart requests are not supported";

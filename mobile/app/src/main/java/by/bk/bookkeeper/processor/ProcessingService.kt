@@ -96,22 +96,7 @@ class ProcessingService : Service() {
         // CRITICAL: Must call startForeground() immediately when started via startForegroundService().
         // Android requires this within 5 seconds or throws ForegroundServiceDidNotStartInTimeException.
         // This must happen BEFORE any permission checks or early returns.
-        try {
-            startForeground(SERVICE_NOTIFICATION_ID, buildNotificationSafely())
-        } catch (e: ForegroundServiceStartNotAllowedException) {
-            // On Android 14+, dataSync services have a daily time limit (~6 hours).
-            // If quota is exhausted, continue without foreground status - the service may be
-            // killed by the system, but it won't crash. Retry mechanisms will handle lost messages.
-            Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
-        } catch (e: Exception) {
-            // If notification building fails for any reason, try with a minimal fallback notification
-            Timber.w(e, "Failed to build notification, trying fallback")
-            try {
-                startForeground(SERVICE_NOTIFICATION_ID, buildFallbackNotification())
-            } catch (e2: ForegroundServiceStartNotAllowedException) {
-                Timber.w(e2, "Foreground service quota exhausted, continuing without foreground status")
-            }
-        }
+        startForegroundSafely()
 
         // Cancel any pending stop - new work is arriving
         mainHandler.removeCallbacks(stopWhenIdleRunnable)
@@ -176,6 +161,52 @@ class ProcessingService : Service() {
                 { e -> Timber.e(e, "Error observing unprocessed SMS") }
             )
         )
+    }
+
+    /**
+     * Ensures startForeground() is called, catching all possible exceptions.
+     * Uses progressively simpler notifications if building fails.
+     * This method GUARANTEES that either startForeground() is called or quota is exhausted.
+     */
+    private fun startForegroundSafely() {
+        // Try with full-featured notification
+        try {
+            startForeground(SERVICE_NOTIFICATION_ID, buildNotificationSafely())
+            return
+        } catch (e: ForegroundServiceStartNotAllowedException) {
+            // On Android 14+, dataSync services have a daily time limit (~6 hours).
+            // If quota is exhausted, continue without foreground status.
+            Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
+            return
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to build notification, trying fallback")
+        }
+
+        // Try with minimal fallback notification
+        try {
+            startForeground(SERVICE_NOTIFICATION_ID, buildFallbackNotification())
+            return
+        } catch (e: ForegroundServiceStartNotAllowedException) {
+            Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
+            return
+        } catch (e: Exception) {
+            Timber.w(e, "Fallback notification also failed, trying minimal inline notification")
+        }
+
+        // Last resort: inline minimal notification with no external dependencies
+        try {
+            val minimalNotification = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)  // System icon, always available
+                .setContentTitle("Bookkeeper")
+                .setContentText("Processing")
+                .build()
+            startForeground(SERVICE_NOTIFICATION_ID, minimalNotification)
+        } catch (e: ForegroundServiceStartNotAllowedException) {
+            Timber.w(e, "Foreground service quota exhausted, continuing without foreground status")
+        } catch (e: Exception) {
+            // If even this fails, there's nothing more we can do
+            Timber.e(e, "All attempts to start foreground service failed")
+        }
     }
 
     /**

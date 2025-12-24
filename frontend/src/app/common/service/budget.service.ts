@@ -158,17 +158,19 @@ export class BudgetService {
       const baseCurrency: string = balance.hasOwnProperty(defaultCurrency.name) ? defaultCurrency.name : currencies[0];
       currencies.forEach(currency => {
         const currencyBalance: BudgetBalance = balance[currency];
+        const balanceValue: number = currencyBalance.value || 0;
+        const balanceCompleteValue: number = currencyBalance.completeValue || 0;
         if (currency === baseCurrency) {
-          value = value + currencyBalance.value;
-          completeValue = completeValue + currencyBalance.completeValue;
+          value = value + balanceValue;
+          completeValue = completeValue + balanceCompleteValue;
         } else {
-          value = value + this._currencyService.convertToCurrency(currencyBalance.value, currency, baseCurrency);
-          completeValue = completeValue + this._currencyService.convertToCurrency(currencyBalance.completeValue, currency, baseCurrency);
+          value = value + this._currencyService.convertToCurrency(balanceValue, currency, baseCurrency);
+          completeValue = completeValue + this._currencyService.convertToCurrency(balanceCompleteValue, currency, baseCurrency);
         }
       });
     } else {
-      value = value + balance[currencies[0]].value;
-      completeValue = balance[currencies[0]].completeValue;
+      value = value + (balance[currencies[0]].value || 0);
+      completeValue = balance[currencies[0]].completeValue || 0;
     }
 
     if (completeValue === 0) {

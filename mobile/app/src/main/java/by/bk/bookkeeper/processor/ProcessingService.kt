@@ -65,6 +65,13 @@ class ProcessingService : Service() {
         super.onCreate()
         Timber.d("Service on create invoked")
         createNotificationChannel()
+        // CRITICAL: Call startForeground() immediately after channel creation.
+        // The 5-second window starts when startForegroundService() is called by the caller,
+        // NOT when onStartCommand() runs. If onCreate() takes too long (WorkManager init,
+        // process cold-start, memory pressure), onStartCommand() may never be reached in time.
+        // This ensures the foreground contract is satisfied ASAP. onStartCommand() will
+        // call startForegroundSafely() again to update the notification with correct content.
+        startForegroundSafely()
         PeriodicMessagesScheduler.schedule(context = this)
         observePendingMessages()
         observeUnprocessedSms()

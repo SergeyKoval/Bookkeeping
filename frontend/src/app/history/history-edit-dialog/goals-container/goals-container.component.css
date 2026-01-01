@@ -103,6 +103,14 @@ hr {
 .list-group-item {
   padding-top: 5px;
   padding-bottom: 5px;
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .device-message-item {

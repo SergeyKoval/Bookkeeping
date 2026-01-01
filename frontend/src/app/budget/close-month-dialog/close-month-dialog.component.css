@@ -46,11 +46,15 @@
   font-weight: bold;
   position: absolute;
   left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .goal-value {
   position: absolute;
   right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .actions-column {
@@ -163,6 +167,8 @@
 .category-value {
   position: absolute;
   right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .action-plan {

@@ -71,10 +71,24 @@ body {
 
 /*:host ::ng-deep bk-popover .action*/
 
+/* Override M2 dialog typography: 14px instead of default 16px (body-large) */
+html {
+  /* Override dialog typography globally */
+  --mat-dialog-supporting-text-size: 14px;
+  --mat-dialog-supporting-text-line-height: 1.25rem;
+}
+
 .mat-mdc-dialog-container {
-  --mdc-dialog-subhead-font: Roboto,"Helvetica Neue", sans-serif;
-  --mdc-dialog-supporting-text-font: Roboto,"Helvetica Neue", sans-serif;
-  --mdc-dialog-supporting-text-size: 14px;
+  /* Ensure override applies to dialog container */
+  --mat-dialog-supporting-text-size: 14px;
+  --mat-dialog-supporting-text-line-height: 1.25rem;
+  --mat-dialog-supporting-text-font: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Force 14px font on dialog content for elements that don't inherit the variable */
+.mat-mdc-dialog-container .mat-mdc-dialog-content {
+  font-size: 14px;
+  line-height: 1.25rem;
 }
 
 .mat-mdc-dialog-container .mdc-dialog__surface {

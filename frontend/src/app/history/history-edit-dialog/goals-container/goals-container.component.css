@@ -48,6 +48,8 @@
 .progress-value {
   position: absolute;
   right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .goal-popover-container {
@@ -85,6 +87,8 @@
 .goal-name {
   position: absolute;
   padding-left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .selectable-goal {

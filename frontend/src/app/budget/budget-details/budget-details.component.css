@@ -140,11 +140,15 @@
   font-weight: bold;
   position: absolute;
   left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .category-value {
   position: absolute;
   right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .vertical-middle {
@@ -187,6 +191,8 @@
 .goal-title {
   position: absolute;
   left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .progress {

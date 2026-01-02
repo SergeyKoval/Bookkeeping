@@ -40,11 +40,15 @@ class ProcessingService : Service() {
 
     private lateinit var pushReceiver: PushBroadcastReceiver
     private lateinit var debugReceiver: DebugBroadcastReceiver
-    private val repository = Injection.provideMessagesRepository()
-    private val smsProcessor = Injection.provideSmsProcessor()
-    private val pushProcessor = Injection.providePushProcessor()
+    // CRITICAL: Use lazy initialization to avoid blocking onCreate().
+    // The 5-second foreground service deadline starts when startForegroundService() is called.
+    // If property initializers (especially network stack creation) take too long,
+    // onCreate() won't be reached in time to call startForeground().
+    private val repository by lazy { Injection.provideMessagesRepository() }
+    private val smsProcessor by lazy { Injection.provideSmsProcessor() }
+    private val pushProcessor by lazy { Injection.providePushProcessor() }
     private val disposables = CompositeDisposable()
-    private val gson = com.google.gson.Gson()
+    private val gson by lazy { com.google.gson.Gson() }
 
     // State for notification content (updated from any thread, read only from main thread)
     @Volatile private var pendingSmsCount: Int = 0

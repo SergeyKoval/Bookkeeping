@@ -167,6 +167,7 @@
 .category-value {
   position: absolute;
   right: 5px;
+  line-height: 20px;
 }
 
 .action-plan {

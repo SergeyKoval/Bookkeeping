@@ -95,6 +95,8 @@ import { DeviceMailDialogComponent } from './settings/devices/device-mail-dialog
 import { DeviceNameDialogComponent } from './settings/devices/device-name-dialog/device-name-dialog.component';
 import { DeviceMessageDialogComponent } from './settings/devices/device-message-dialog/device-message-dialog.component';
 import { DeviceMessageAssignDialogComponent } from './history/device-message-assign-dialog/device-message-assign-dialog.component';
+import { TagsComponent } from './settings/tags/tags.component';
+import { TagDialogComponent } from './settings/tags/tag-dialog/tag-dialog.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -176,6 +178,8 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     DeviceNameDialogComponent,
     DeviceMessageDialogComponent,
     DeviceMessageAssignDialogComponent,
+    TagsComponent,
+    TagDialogComponent,
     ToggleComponent,
     InputComponent,
     SpinnerComponent

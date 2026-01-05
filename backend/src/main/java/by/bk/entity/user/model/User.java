@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ public class User {
     private List<Category> categories;
     private List<Account> accounts;
     private Map<String, Device> devices = new HashMap<>();
+    private List<Tag> tags = new ArrayList<>();
 
     public User() {
     }

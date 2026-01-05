@@ -200,4 +200,19 @@ public class ProfileController extends BaseAPIController {
     public SimpleResponse removeDevice(Principal principal, @PathVariable("deviceId") String deviceId) {
         return userAPI.removeDevice(principal.getName(), deviceId);
     }
+
+    @PostMapping("/tags")
+    public SimpleResponse addTag(@RequestBody TagRequest request, Principal principal) {
+        return userAPI.addTag(principal.getName(), request.getTitle(), request.getColor(), request.getTextColor());
+    }
+
+    @PutMapping("/tags")
+    public SimpleResponse editTag(@RequestBody TagRequest request, Principal principal) {
+        return userAPI.editTag(principal.getName(), request.getOldTitle(), request.getTitle(), request.getColor(), request.getTextColor(), request.getActive());
+    }
+
+    @DeleteMapping("/tags/{title}")
+    public SimpleResponse deleteTag(Principal principal, @PathVariable("title") String title) {
+        return userAPI.deleteTag(principal.getName(), title);
+    }
 }

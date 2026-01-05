@@ -2,6 +2,7 @@ import { CurrencyDetail } from './currency-detail';
 import { Category } from './category';
 import { FinAccount } from './fin-account';
 import { Device } from './device';
+import { Tag } from './tag';
 
 export interface Profile {
   id: number;
@@ -11,4 +12,5 @@ export interface Profile {
   categories: Category[];
   accounts: FinAccount[];
   devices: {[deviceId: string]: Device};
+  tags: Tag[];
 }

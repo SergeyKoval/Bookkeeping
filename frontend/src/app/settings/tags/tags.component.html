@@ -1,0 +1,44 @@
+<div class="text-center page-title">
+  <button type="button" class="btn btn-default pull-left" (click)="openAddDialog()">Добавить тэг</button>
+  <span class="page-title-text">Тэги</span>
+</div>
+
+@if (tags.length === 0) {
+  <div class="empty-state">
+    <p>Нет созданных тэгов</p>
+  </div>
+}
+
+@if (tags.length > 0) {
+  <div class="table">
+    @for (tag of tags; track tag.title; let last = $last; let first = $first) {
+      <div>
+        @if (first) {
+          <hr class="tag-separator" />
+        }
+        <div class="row" [class.inactive]="!tag.active">
+          <div class="col-sm-8">
+            <span class="label tag-label" [style.background-color]="tag.active ? tag.color : '#999'" [style.color]="tag.active ? tag.textColor : '#fff'">{{tag.title}}</span>
+            @if (!tag.active) {
+              <span class="inactive-badge">(неактивен)</span>
+            }
+          </div>
+          <div class="col-sm-4 text-right">
+            <bk-popover glyphiconClass="stats" text="Отчет" placement="left" (click)="openReport(tag)"></bk-popover>
+            <bk-popover glyphiconClass="pencil" text="Редактировать" placement="left" (click)="openEditDialog(tag)"></bk-popover>
+            <bk-popover glyphiconClass="remove" text="Удалить" placement="left" (click)="confirmDelete(tag)"></bk-popover>
+            <mat-slide-toggle
+              color="primary"
+              [checked]="tag.active"
+              (change)="toggleActive(tag)"
+              matTooltip="{{tag.active ? 'Деактивировать' : 'Активировать'}}">
+            </mat-slide-toggle>
+          </div>
+        </div>
+        @if (!last) {
+          <hr class="tag-separator"/>
+        }
+      </div>
+    }
+  </div>
+}

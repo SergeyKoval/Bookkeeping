@@ -10,7 +10,7 @@
 
     <groupId>by.bk</groupId>
     <artifactId>bookkeeper-backend</artifactId>
-    <version>3.3.6</version>
+    <version>3.4.0</version>
     <packaging>jar</packaging>
 
     <properties>

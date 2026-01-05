@@ -66,4 +66,8 @@ public interface UserAPI extends AuthenticationAPI {
     SimpleResponse changeDeviceName(String login, ChangeDeviceNameRequest deviceDetails);
     SimpleResponse logoutDevice(String login, String deviceId);
     SimpleResponse removeDevice(String login, String deviceId);
+
+    SimpleResponse addTag(String login, String title, String color, String textColor);
+    SimpleResponse editTag(String login, String oldTitle, String newTitle, String color, String textColor, Boolean active);
+    SimpleResponse deleteTag(String login, String title);
 }

@@ -15,6 +15,7 @@ import { ReportActionsComponent } from './reports/report-actions/report-actions.
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.component';
 import { DevicesComponent } from './settings/devices/devices.component';
+import { TagsComponent } from './settings/tags/tags.component';
 
 export const BOOKKEEPING_ROUTES: Route[] = [
   {
@@ -104,7 +105,12 @@ export const BOOKKEEPING_ROUTES: Route[] = [
       {
         path: 'devices',
         component: DevicesComponent,
-        data: {title: 'Бухгалтерия - настройки - Девайсы'}
+        data: {title: 'Бухгалтерия - настройки - девайсы'}
+      },
+      {
+        path: 'tags',
+        component: TagsComponent,
+        data: {title: 'Бухгалтерия - настройки - тэги'}
       }
     ]
   }

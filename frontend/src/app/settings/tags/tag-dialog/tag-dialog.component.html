@@ -1,0 +1,80 @@
+<h2 mat-dialog-title align="center" bkDraggable dragTarget=".mat-dialog-container">
+  @if (data.editMode) {
+    <span>Редактирование тэга</span>
+  } @else {
+    <span>Новый тэг</span>
+  }
+</h2>
+<mat-dialog-content id="tag-dialog">
+  @if (errorMessage) {
+    <div class="alert alert-dismissable fade in alert-danger error">
+      <strong>{{errorMessage}}</strong>
+    </div>
+  }
+  <div class="table">
+    <div class="row title">
+      <div class="col-sm-3 left-column">Название:</div>
+      <div class="col-sm-9 right-column">
+        <input type="text" [(ngModel)]="title" class="form-control" placeholder="Введите название">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 left-column">Фон:</div>
+      <div class="col-sm-9 color-picker">
+        <div class="preset-colors">
+          @for (presetColor of presetColors; track presetColor) {
+            <span
+              class="color-swatch"
+              [style.background-color]="presetColor"
+              [class.selected]="presetColor === color"
+              (click)="selectColor(presetColor)">
+            </span>
+          }
+        </div>
+        <div class="custom-color">
+          <label>Свой цвет:</label>
+          <input type="text" [(ngModel)]="color" class="form-control" placeholder="#RRGGBB">
+          <span class="color-preview" [style.background-color]="color"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 left-column">Текст:</div>
+      <div class="col-sm-9 text-color-picker">
+        <div class="preset-text-colors">
+          @for (txtColor of textColors; track txtColor) {
+            <span
+              class="text-color-swatch"
+              [style.background-color]="txtColor"
+              [class.selected]="txtColor === textColor"
+              (click)="selectTextColor(txtColor)">
+            </span>
+          }
+        </div>
+        <div class="custom-color">
+          <label>Свой цвет:</label>
+          <input type="text" [(ngModel)]="textColor" class="form-control" placeholder="#RRGGBB">
+          <span class="color-preview" [style.background-color]="textColor"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 left-column">Результат:</div>
+      <div class="col-sm-9 preview-container">
+        <span class="label tag-preview" [style.background-color]="color" [style.color]="textColor">{{title || 'Название тэга'}}</span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="dialog-actions">
+    <button class="btn btn-default action-item" (click)="close()">Закрыть</button>
+    <span class="action-item">&nbsp;</span>
+    <button class="btn btn-default action-item" [disabled]="loading" (click)="save()">
+      @if (!loading) {
+        <span>Сохранить</span>
+      }
+      <bk-spinner [display]="loading" [size]="20"></bk-spinner>
+    </button>
+  </span>
+</mat-dialog-actions>

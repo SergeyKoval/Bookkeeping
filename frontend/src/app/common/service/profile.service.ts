@@ -140,6 +140,12 @@ export class ProfileService  {
     return this.getUserProfile().pipe(tap(profile => this.authenticatedProfile.devices = profile.devices));
   }
 
+  public reloadTagsInProfile(): Observable<Profile> {
+    return this.getUserProfile().pipe(tap(profile => {
+      this.authenticatedProfile.tags = profile.tags || [];
+    }));
+  }
+
   public clearProfile(): void {
     this._authenticatedProfile = null;
     this._userCurrencies.clear();
@@ -423,6 +429,18 @@ export class ProfileService  {
 
   public removeDevice(deviceId: string): Observable<SimpleResponse> {
     return this._http.delete<SimpleResponse>(`/api/profile/devices/${deviceId}`);
+  }
+
+  public addTag(title: string, color: string, textColor: string): Observable<SimpleResponse> {
+    return this._http.post<SimpleResponse>('/api/profile/tags', {title, color, textColor});
+  }
+
+  public editTag(oldTitle: string, title: string, color: string, textColor: string, active: boolean): Observable<SimpleResponse> {
+    return this._http.put<SimpleResponse>('/api/profile/tags', {oldTitle, title, color, textColor, active});
+  }
+
+  public deleteTag(title: string): Observable<SimpleResponse> {
+    return this._http.delete<SimpleResponse>(`/api/profile/tags/${encodeURIComponent(title)}`);
   }
 
   public static chooseSelectedItem(items: SelectItem[], firstLevel: string, secondLevel: string): SelectItem[] {

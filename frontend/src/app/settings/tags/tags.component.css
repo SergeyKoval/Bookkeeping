@@ -1,0 +1,60 @@
+.table {
+  margin-bottom: 0;
+}
+
+.page-title {
+  padding-bottom: 5px;
+  font-size: 16px;
+}
+
+.page-title-text {
+  line-height: 34px;
+}
+
+.tag-separator {
+  border-width: initial;
+}
+
+hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.glyphicon {
+  cursor: pointer;
+  color: #999;
+}
+
+.glyphicon:hover {
+  color: #5e5e5e;
+}
+
+:host ::ng-deep bk-popover .action {
+  padding-right: 5px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.tag-label {
+  font-size: 12px;
+  font-weight: normal;
+  padding: 2px 4px;
+}
+
+.inactive-badge {
+  color: #999;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.row.inactive {
+  opacity: 0.6;
+}
+
+mat-slide-toggle {
+  margin-left: 10px;
+}

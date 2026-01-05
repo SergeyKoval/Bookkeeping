@@ -806,6 +806,81 @@ public class UserService implements UserAPI {
         return SimpleResponse.success();
     }
 
+    @Override
+    public SimpleResponse addTag(String login, String title, String color, String textColor) {
+        var user = userRepository.findById(login).orElse(null);
+        if (user == null) {
+            return SimpleResponse.fail();
+        }
+
+        var tags = user.getTags();
+        if (tags == null) {
+            tags = new ArrayList<>();
+        }
+
+        if (tags.stream().anyMatch(tag -> StringUtils.equalsIgnoreCase(tag.getTitle(), title))) {
+            return SimpleResponse.alreadyExistsFail();
+        }
+
+        var newTag = Tag.builder()
+                .title(title)
+                .color(color)
+                .textColor(textColor)
+                .build();
+        var query = Query.query(Criteria.where("email").is(login));
+        var update = new Update().addToSet("tags", newTag);
+        return updateUser(query, update);
+    }
+
+    @Override
+    public SimpleResponse editTag(String login, String oldTitle, String newTitle, String color, String textColor, Boolean active) {
+        var user = userRepository.findById(login).orElse(null);
+        if (user == null) {
+            return SimpleResponse.fail();
+        }
+
+        var tags = user.getTags();
+        if (tags == null) {
+            return SimpleResponse.fail();
+        }
+
+        var tagIndex = -1;
+        for (var i = 0; i < tags.size(); i++) {
+            if (StringUtils.equalsIgnoreCase(tags.get(i).getTitle(), oldTitle)) {
+                tagIndex = i;
+                break;
+            }
+        }
+
+        if (tagIndex == -1) {
+            return SimpleResponse.fail();
+        }
+
+        // Check if the new title conflicts with another tag (case-insensitive)
+        if (!StringUtils.equalsIgnoreCase(oldTitle, newTitle)) {
+            for (var i = 0; i < tags.size(); i++) {
+                if (i != tagIndex && StringUtils.equalsIgnoreCase(tags.get(i).getTitle(), newTitle)) {
+                    return SimpleResponse.alreadyExistsFail();
+                }
+            }
+        }
+
+        var query = Query.query(Criteria.where("email").is(login));
+        var update = new Update()
+                .set("tags.%s.title".formatted(tagIndex), newTitle)
+                .set("tags.%s.color".formatted(tagIndex), color)
+                .set("tags.%s.textColor".formatted(tagIndex), textColor)
+                .set("tags.%s.active".formatted(tagIndex), active);
+        return updateUser(query, update);
+    }
+
+    @Override
+    public SimpleResponse deleteTag(String login, String title) {
+        var query = Query.query(Criteria.where("email").is(login));
+        var update = new Update().pull("tags", Collections.singletonMap("title", title));
+        return updateUser(query, update);
+    }
+
     private <T extends Orderable> Optional<T> getSecondItem(List<T> items, Direction direction, int itemOrder) {
         Optional<T> secondItem;
         switch (direction) {

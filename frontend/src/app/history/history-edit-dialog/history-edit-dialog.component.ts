@@ -70,6 +70,9 @@ export class HistoryEditDialogComponent implements OnInit {
       this._originalHistoryItem.balance = Object.assign({}, this.data.historyItem.balance);
     }
     this.historyItem = this.data.historyItem || this.initNewHistoryItem('expense', today.getFullYear(), today.getMonth() + 1, today.getDate());
+    if (!this.historyItem.tags) {
+      this.historyItem.tags = [];
+    }
     this.selectedDate = this.toMoment(this.historyItem);
     if (this.data.fromDeviceMessage) {
       this.historyItem.balance.currency = this._profileService.defaultCurrency.name;
@@ -256,7 +259,7 @@ export class HistoryEditDialogComponent implements OnInit {
 
   private initNewHistoryItem(historyType: string, year: number, month: number, day: number, balanceValue?: number, balanceCurrency?: string, balanceNewCurrency?: string,
                              balanceAlternativeCurrency?: {[key: string]: number}, balanceAccount?: string, balanceSubAccount?: string, historyDescription?: string,
-                             archived?: boolean, id?: string, deviceMessages?: DeviceMessage[]): HistoryType {
+                             archived?: boolean, id?: string, deviceMessages?: DeviceMessage[], historyTags?: string[]): HistoryType {
 
     const currencyName: string = balanceCurrency || this._authenticationService.defaultCurrency.name;
     const result: HistoryType = {
@@ -268,6 +271,7 @@ export class HistoryEditDialogComponent implements OnInit {
       'day': day,
       'description': historyDescription,
       'archived': archived,
+      'tags': historyTags || [],
       'balance': {
         'value': balanceValue,
         'account': balanceAccount,
@@ -338,7 +342,8 @@ export class HistoryEditDialogComponent implements OnInit {
   private initNewHistoryItemFromExisting(historyType: string, originalItem: HistoryType): HistoryType {
     const balance: HistoryBalanceType = originalItem.balance;
     return this.initNewHistoryItem(historyType, originalItem.year, originalItem.month, originalItem.day, balance.value, balance.currency, balance.newCurrency,
-      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description, originalItem.archived, originalItem.id, originalItem.deviceMessages);
+      balance.alternativeCurrency, balance.account, balance.subAccount, originalItem.description, originalItem.archived, originalItem.id, originalItem.deviceMessages,
+      originalItem.tags);
   }
 
   private validateTransfer(): boolean {

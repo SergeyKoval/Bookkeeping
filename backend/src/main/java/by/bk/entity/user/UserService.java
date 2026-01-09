@@ -871,7 +871,16 @@ public class UserService implements UserAPI {
                 .set("tags.%s.color".formatted(tagIndex), color)
                 .set("tags.%s.textColor".formatted(tagIndex), textColor)
                 .set("tags.%s.active".formatted(tagIndex), active);
-        return updateUser(query, update);
+        var response = updateUser(query, update);
+
+        // Update tag title in all history items if title changed
+        if (!StringUtils.equals(oldTitle, newTitle)) {
+            Query historyQuery = Query.query(Criteria.where("user").is(login).and("tags").is(oldTitle));
+            Update historyUpdate = new Update().set("tags.$", newTitle);
+            mongoTemplate.updateMulti(historyQuery, historyUpdate, HistoryItem.class);
+        }
+
+        return response;
     }
 
     @Override

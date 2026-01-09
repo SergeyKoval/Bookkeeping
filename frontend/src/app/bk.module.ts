@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { JwtModule } from '@auth0/angular-jwt';
 import 'moment/locale/ru';
@@ -97,6 +98,8 @@ import { DeviceMessageDialogComponent } from './settings/devices/device-message-
 import { DeviceMessageAssignDialogComponent } from './history/device-message-assign-dialog/device-message-assign-dialog.component';
 import { TagsComponent } from './settings/tags/tags.component';
 import { TagDialogComponent } from './settings/tags/tag-dialog/tag-dialog.component';
+import { TagChipsComponent } from './common/components/tag/tag-chips/tag-chips.component';
+import { TagSelectorComponent } from './common/components/tag/tag-selector/tag-selector.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -180,8 +183,9 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     DeviceMessageAssignDialogComponent,
     TagsComponent,
     TagDialogComponent,
+    TagChipsComponent,
+    TagSelectorComponent,
     ToggleComponent,
-    InputComponent,
     SpinnerComponent
   ],
   bootstrap: [BookkeepingRootComponent],
@@ -207,6 +211,7 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     MatMomentDateModule,
     MatCardModule,
     MatTooltipModule,
+    MatAutocompleteModule,
     PeriodFilterComponent
   ],
   providers: [

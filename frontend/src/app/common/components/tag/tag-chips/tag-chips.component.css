@@ -1,0 +1,11 @@
+.tag-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag-chip {
+  font-size: 12px;
+  font-weight: normal;
+  padding: 2px 4px;
+}

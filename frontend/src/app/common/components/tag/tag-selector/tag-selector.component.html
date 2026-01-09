@@ -1,0 +1,27 @@
+<div class="tag-selector">
+  <input
+    type="text"
+    class="form-control tag-input"
+    [formControl]="searchControl"
+    placeholder="Тэг"
+    [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" class="tag-autocomplete" (optionSelected)="selectTag($event.option.value)">
+    @for (tag of filteredTags; track tag.title) {
+      <mat-option [value]="tag">
+        <span class="label" [style.background-color]="tag.color" [style.color]="tag.textColor">{{tag.title}}</span>
+      </mat-option>
+    }
+  </mat-autocomplete>
+  @if (selectedTags.length > 0) {
+    <div class="selected-tags">
+      @for (title of selectedTags; track title) {
+        @if (getTag(title); as tag) {
+          <span class="label tag-chip" [style.background-color]="tag.color" [style.color]="tag.textColor">
+            {{tag.title}}
+            <span class="remove-tag" (click)="removeTag(title)">&times;</span>
+          </span>
+        }
+      }
+    </div>
+  }
+</div>

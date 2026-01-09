@@ -42,6 +42,7 @@ public class HistoryItem {
     private String goal;
     private List<DeviceMessage> deviceMessages;
     private List<DeviceMessage> duplicateMessages;
+    private List<String> tags;
 
     @JsonIgnore
     Balance cloneBalance() {

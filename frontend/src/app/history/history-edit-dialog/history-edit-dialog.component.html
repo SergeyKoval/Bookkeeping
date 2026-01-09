@@ -66,6 +66,11 @@
       <div class="form-row">
         <input type="text" [(ngModel)]="historyItem.description" class="form-control" placeholder="Комментарий">
       </div>
+      @if (isTypeSelected('expense') || isTypeSelected('income')) {
+        <div class="form-row">
+          <bk-tag-selector [(selectedTags)]="historyItem.tags"></bk-tag-selector>
+        </div>
+      }
     </div>
   </div>
   @if (showGoalContainer()) {

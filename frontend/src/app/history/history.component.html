@@ -148,7 +148,14 @@
                 <!--expense or income forth column-->
                 @if (historyItem.type === 'expense' || historyItem.type === 'income') {
                   <div class="col-sm-3 description">
-                    <div>{{historyItem.description}}</div>
+                    @if (historyItem.originalItem.tags && historyItem.originalItem.tags.length > 0) {
+                      <div class="history-tags">
+                        <bk-tag-chips [tagTitles]="historyItem.originalItem.tags"></bk-tag-chips>
+                      </div>
+                    }
+                    @if (historyItem.description) {
+                      <div>{{historyItem.description}}</div>
+                    }
                     @if (historyItem.showDeviceMessageIndex != null) {
                       <div class="footnote" [innerHTML]="getFormattedDeviceMessage(historyItem.deviceMessages[historyItem.showDeviceMessageIndex].fullText)"></div>
                     }

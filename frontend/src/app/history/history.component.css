@@ -167,3 +167,7 @@ bk-history-page-actions {
     min-width: 95px;
   }
 }
+
+.history-tags {
+  margin-bottom: 2px;
+}

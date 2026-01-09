@@ -1,0 +1,9 @@
+@if (tagTitles && tagTitles.length > 0) {
+  <span class="tag-chips">
+    @for (title of tagTitles; track title) {
+      @if (getTag(title); as tag) {
+        <span class="label tag-chip" [style.background-color]="tag.color" [style.color]="tag.textColor">{{tag.title}}</span>
+      }
+    }
+  </span>
+}

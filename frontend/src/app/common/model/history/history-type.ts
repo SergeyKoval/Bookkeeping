@@ -16,4 +16,5 @@ export interface HistoryType {
   archived: boolean;
   notProcessed?: boolean;
   deviceMessages?: DeviceMessage[];
+  tags?: string[];
 }

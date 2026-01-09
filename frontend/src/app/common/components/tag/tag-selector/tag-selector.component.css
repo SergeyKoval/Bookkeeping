@@ -1,0 +1,38 @@
+.tag-selector {
+  position: relative;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.tag-chip {
+  font-size: 12px;
+  font-weight: normal;
+  padding: 2px 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.remove-tag {
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.remove-tag:hover {
+  opacity: 1;
+}
+
+.tag-input {
+  width: 100%;
+}
+
+:host ::ng-deep .mat-mdc-option {
+  min-height: 30px;
+}

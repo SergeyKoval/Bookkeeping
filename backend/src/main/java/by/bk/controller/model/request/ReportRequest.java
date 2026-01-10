@@ -13,4 +13,5 @@ public class ReportRequest {
     private List<List<String>> operations;
     private List<List<String>> accounts;
     private List<String> currencies;
+    private List<String> tags;
 }

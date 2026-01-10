@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { of } from 'rxjs';
@@ -24,6 +25,7 @@ import { HistoryType } from '../../common/model/history/history-type';
 import { Profile } from '../../common/model/profile';
 import { SimpleResponse } from '../../common/model/simple-response';
 import { Category } from '../../common/model/category';
+import { Tag } from '../../common/model/tag';
 
 @Component({
     selector: 'bk-report-actions',
@@ -36,6 +38,8 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
   public historyItems: HistoryType[];
+  public tagsFilter: string[] = [];
+  public availableTags: Tag[] = [];
 
   public constructor(
     protected _profileService: ProfileService,
@@ -47,7 +51,8 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     private _budgetService: BudgetService,
     private _historyService: HistoryService,
     private _authenticationService: ProfileService,
-    private _reportService: ReportService
+    private _reportService: ReportService,
+    private _route: ActivatedRoute
   ) {
     super(_profileService, _imagePipe);
   }
@@ -56,6 +61,12 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     const profile: Profile = this._profileService.authenticatedProfile;
     this.operationsFilter = this.populateCategoriesFilter(profile.categories);
     this.accountsFilter = this.populateAccountsFilter(profile.accounts);
+    this.availableTags = (profile.tags || []).filter(tag => tag.active);
+
+    const tagParam = this._route.snapshot.queryParamMap.get('tag');
+    if (tagParam) {
+      this.tagsFilter = [tagParam];
+    }
   }
 
   public search(): void {
@@ -75,7 +86,7 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     }
 
     this.loading = true;
-    this._reportService.getHistoryItemsForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter).subscribe((items: HistoryType[]) => {
+    this._reportService.getHistoryItemsForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.tagsFilter).subscribe((items: HistoryType[]) => {
       this.historyItems = items;
       this.loading = false;
     });

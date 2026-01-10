@@ -1,0 +1,44 @@
+<div class="dropdown">
+  <a role="button" data-toggle="dropdown" class="btn btn-default" data-target="#">
+    {{getButtonTitle()}} <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu tag-filter-menu" role="menu" (click)="$event.stopPropagation()">
+    <li class="search-container">
+      <input
+        type="text"
+        class="form-control search-input"
+        [(ngModel)]="searchText"
+        placeholder="Поиск..."
+        (click)="$event.stopPropagation()">
+    </li>
+
+    @if (getFilteredSelectedTags().length > 0) {
+      @for (tag of getFilteredSelectedTags(); track tag.title) {
+        <li>
+          <a (click)="toggleTag(tag)">
+            <span class="checkbox-icon glyphicon glyphicon-check"></span>
+            <span class="tag-color" [style.background-color]="tag.color"></span>
+            <span class="tag-title">{{tag.title}}</span>
+          </a>
+        </li>
+      }
+      <li role="separator" class="divider"></li>
+    }
+
+    @for (tag of getFilteredUnselectedTags(); track tag.title) {
+      <li>
+        <a (click)="toggleTag(tag)">
+          <span class="checkbox-icon glyphicon glyphicon-unchecked"></span>
+          <span class="tag-color" [style.background-color]="tag.color"></span>
+          <span class="tag-title">{{tag.title}}</span>
+        </a>
+      </li>
+    }
+
+    @if (getFilteredSelectedTags().length === 0 && getFilteredUnselectedTags().length === 0) {
+      <li class="no-tags">
+        <span>Тэги не найдены</span>
+      </li>
+    }
+  </ul>
+</div>

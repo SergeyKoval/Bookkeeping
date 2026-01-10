@@ -100,6 +100,7 @@ import { TagsComponent } from './settings/tags/tags.component';
 import { TagDialogComponent } from './settings/tags/tag-dialog/tag-dialog.component';
 import { TagChipsComponent } from './common/components/tag/tag-chips/tag-chips.component';
 import { TagSelectorComponent } from './common/components/tag/tag-selector/tag-selector.component';
+import { TagFilterDropdownComponent } from './common/components/tag/tag-filter-dropdown/tag-filter-dropdown.component';
 import { ToggleComponent } from './common/components/toggle/toggle.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -185,6 +186,7 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     TagDialogComponent,
     TagChipsComponent,
     TagSelectorComponent,
+    TagFilterDropdownComponent,
     ToggleComponent,
     SpinnerComponent
   ],

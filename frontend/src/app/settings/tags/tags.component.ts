@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 import { filter } from 'rxjs/operators';
 
@@ -26,7 +27,8 @@ export class TagsComponent implements OnInit {
     private _dialog: MatDialog,
     private _loadingService: LoadingService,
     private _alertService: AlertService,
-    private _confirmDialogService: ConfirmDialogService
+    private _confirmDialogService: ConfirmDialogService,
+    private _router: Router
   ) { }
 
   public ngOnInit(): void {
@@ -110,6 +112,8 @@ export class TagsComponent implements OnInit {
   }
 
   public openReport(tag: Tag): void {
-    this._alertService.addAlert(AlertType.INFO, 'Функция будет доступна позже');
+    this._router.navigate(['/reports/actions'], {
+      queryParams: { tag: tag.title }
+    });
   }
 }

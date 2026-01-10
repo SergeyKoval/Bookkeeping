@@ -5,6 +5,7 @@
       <div class="col-sm-10 filters">
         <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Операции" [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <bk-multi-level-dropdown class="filter" checkAllButton="true" buttonTitle="Счета" [dataModel]="accountsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
+        <bk-tag-filter-dropdown class="filter" [tags]="availableTags" [selectedTitles]="tagsFilter" (selectionChange)="tagsFilter = $event"></bk-tag-filter-dropdown>
         <bk-period-filter (updatePeriod)="updatePeriod($event)"></bk-period-filter>
       </div>
       <div class="col-sm-2">
@@ -61,11 +62,16 @@
                             }
                           </div>
                         </div>
-                        @if (historyItem.goal || historyItem.description) {
+                        @if (historyItem.goal || historyItem.description || (historyItem.originalItem.tags && historyItem.originalItem.tags.length > 0)) {
                           <div class="row footnote-row">
-                            <div class="col-sm-4">@if (historyItem.goal) {
-                              <span><strong>Цель:</strong> {{historyItem.goal}}</span>
-                            }</div>
+                            <div class="col-sm-4">
+                              @if (historyItem.originalItem.tags && historyItem.originalItem.tags.length > 0) {
+                                <bk-tag-chips [tagTitles]="historyItem.originalItem.tags"></bk-tag-chips>
+                              }
+                              @if (historyItem.goal) {
+                                <span><strong>Цель:</strong> {{historyItem.goal}}</span>
+                              }
+                            </div>
                             <div class="col-sm-8">@if (historyItem.description) {
                               <span><strong>Комментарий:</strong> {{historyItem.description}}</span>
                             }</div>

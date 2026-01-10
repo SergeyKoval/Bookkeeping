@@ -29,8 +29,8 @@ public interface HistoryAPI {
     SimpleResponse getDayProcessedHistoryItems(String login, DayProcessedHistoryItemsRequest request);
 
     List<HistoryItem> getFiltered(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> tags);
-    Collection<SummaryReportResponse> getPeriodSummary(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> currencies);
-    Collection<DynamicReportResponse> getPeriodDynamic(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, Currency currency);
+    Collection<SummaryReportResponse> getPeriodSummary(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> currencies, List<String> tags);
+    Collection<DynamicReportResponse> getPeriodDynamic(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, Currency currency, List<String> tags);
 
     SimpleResponse getUnprocessedHistoryItemsCount(String login);
     SimpleResponse getDeviceMessage(String login, String deviceId, Integer deviceMessageIndex);

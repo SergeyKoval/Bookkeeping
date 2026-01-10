@@ -242,7 +242,7 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public Collection<SummaryReportResponse> getPeriodSummary(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> currencies) {
+    public Collection<SummaryReportResponse> getPeriodSummary(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> currencies, List<String> tags) {
         List<AggregationOperation> pipes = new ArrayList<>();
 
         Criteria initialFilter = preparePeriodsCriteria(login, startPeriod, endPeriod);
@@ -257,6 +257,9 @@ public class HistoryService implements HistoryAPI {
         }
         if (!accounts.isEmpty()) {
             pipes.add(Aggregation.match(prepareAccountsCriteria(accounts, false)));
+        }
+        if (tags != null && !tags.isEmpty()) {
+            pipes.add(Aggregation.match(Criteria.where("tags").in(tags)));
         }
 
         pipes.add(Aggregation.group("category", "subCategory", "balance.currency").sum("balance.value").as("balanceValue"));
@@ -291,7 +294,7 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public Collection<DynamicReportResponse> getPeriodDynamic(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, Currency currency) {
+    public Collection<DynamicReportResponse> getPeriodDynamic(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, Currency currency, List<String> tags) {
         List<AggregationOperation> pipes = new ArrayList<>();
         int month = startPeriod.getMonth();
         int year = startPeriod.getYear();
@@ -311,6 +314,9 @@ public class HistoryService implements HistoryAPI {
                 .orOperator(orPeriods.toArray(new Criteria[0]));
         pipes.add(Aggregation.match(initialFilter));
         pipes.add(Aggregation.match(prepareOperationsCriteria(operations)));
+        if (tags != null && !tags.isEmpty()) {
+            pipes.add(Aggregation.match(Criteria.where("tags").in(tags)));
+        }
         pipes.add(Aggregation.group("year", "month", "category", "subCategory", "balance.currency").sum("balance.value").as("balanceValue"));
         pipes.add(Aggregation.replaceRoot().withDocument(new Document("$mergeObjects", List.of("$_id", new Document("balanceValue", "$balanceValue")))));
 

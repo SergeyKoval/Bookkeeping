@@ -15,6 +15,7 @@ import { CurrencyDetail } from '../../common/model/currency-detail';
 import { Profile } from '../../common/model/profile';
 import { DynamicReport } from '../../common/model/report/dynamic-report';
 import { Calendar } from '../../common/model/report/calendar';
+import { Tag } from '../../common/model/tag';
 
 @Component({
     selector: 'bk-report-dynamic',
@@ -28,6 +29,8 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
   public defaultCurrency: CurrencyDetail;
   public lineChartData: ChartDataset[];
   public lineChartLabels: string[];
+  public tagsFilter: string[] = [];
+  public availableTags: Tag[] = [];
 
   public constructor(
     protected _profileService: ProfileService,
@@ -44,6 +47,7 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
     const profile: Profile = this._profileService.authenticatedProfile;
     this.defaultCurrency = this._profileService.defaultCurrency;
     this.operationsFilter = this.populateCategoriesFilter(profile.categories);
+    this.availableTags = (profile.tags || []).filter(tag => tag.active);
   }
 
   public changeCurrency(currency: CurrencyDetail): void {
@@ -70,7 +74,7 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
     this.loading = true;
     this.lineChartLabels = [];
     this.lineChartData = [];
-    this._reportService.getDynamicForPeriodReport(this.defaultCurrency.name, this.periodFilter, this.operationsFilter)
+    this._reportService.getDynamicForPeriodReport(this.defaultCurrency.name, this.periodFilter, this.operationsFilter, this.tagsFilter)
       .subscribe(items => {
         const periods: Map<number, Set<number>> = new Map();
         const labels: Set<string> = new Set<string>();

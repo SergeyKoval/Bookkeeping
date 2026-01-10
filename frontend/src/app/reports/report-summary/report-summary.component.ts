@@ -16,6 +16,7 @@ import { ReportService } from '../../common/service/report.service';
 import { CurrencyService } from '../../common/service/currency.service';
 import { SummaryReport } from '../../common/model/report/summary-report';
 import { Profile } from '../../common/model/profile';
+import { Tag } from '../../common/model/tag';
 
 @Component({
     selector: 'bk-report-summary',
@@ -28,6 +29,8 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
   public currenciesFilter: MultiLevelDropdownItem[] = [];
+  public tagsFilter: string[] = [];
+  public availableTags: Tag[] = [];
 
   public items: SummaryReport[][] = [];
   public pieChartData: ChartData<ChartType, number[], string>;
@@ -55,6 +58,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     profile.currencies.forEach(currency => {
       this.currenciesFilter.push(new MultiLevelDropdownItem(CurrencyUtils.convertCodeToSymbol(currency.symbol), CheckboxState.CHECKED, null, null, currency.name));
     });
+    this.availableTags = (profile.tags || []).filter(tag => tag.active);
   }
 
   public search(): void {
@@ -92,7 +96,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     }
     this.reportCurrency = defaultCurrency;
 
-    this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter)
+    this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter, this.tagsFilter)
       .pipe(tap(items => {
         items.map(item => item.values).forEach((valueMap: {[currency: string]: number}) => {
           Object.keys(valueMap).forEach(currency => {

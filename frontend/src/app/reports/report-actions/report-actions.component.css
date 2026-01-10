@@ -95,6 +95,10 @@ hr {
   padding-left: 10px;
 }
 
+.report-tags {
+  margin-top: 2px;
+}
+
 @media (min-width: 768px) and (max-width: 992px) {
   .filter-row {
     margin-left: -20px;

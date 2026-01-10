@@ -215,7 +215,7 @@ public class HistoryService implements HistoryAPI {
     }
 
     @Override
-    public List<HistoryItem> getFiltered(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts) {
+    public List<HistoryItem> getFiltered(String login, DateRequest startPeriod, DateRequest endPeriod, List<List<String>> operations, List<List<String>> accounts, List<String> tags) {
         List<AggregationOperation> pipes = new ArrayList<>();
         Criteria periodCriteria = preparePeriodsCriteria(login, startPeriod, endPeriod);
         if (!operations.isEmpty()) {
@@ -229,6 +229,10 @@ public class HistoryService implements HistoryAPI {
 
         if (!accounts.isEmpty()) {
             pipes.add(Aggregation.match(prepareAccountsCriteria(accounts, true)));
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            pipes.add(Aggregation.match(Criteria.where("tags").in(tags)));
         }
 
         pipes.add(Aggregation.sort(Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"))));

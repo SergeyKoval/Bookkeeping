@@ -20,14 +20,15 @@ export class ReportService {
     @Inject(HOST) private _host: string
   ) { }
 
-  public getHistoryItemsForPeriodReport(periodFilter: PeriodFilter, operationsFilter: MultiLevelDropdownItem[], accountsFilter: MultiLevelDropdownItem[]): Observable<HistoryType[]> {
+  public getHistoryItemsForPeriodReport(periodFilter: PeriodFilter, operationsFilter: MultiLevelDropdownItem[], accountsFilter: MultiLevelDropdownItem[], tags: string[] = []): Observable<HistoryType[]> {
     const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
     const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
     return this._http.post<HistoryType[]>('/api/report/history-actions', {
       'startPeriod': periodFilter.startDate,
       'endPeriod': periodFilter.endDate,
       'operations': selectedOperations,
-      'accounts': selectedAccounts
+      'accounts': selectedAccounts,
+      'tags': tags
     });
   }
 

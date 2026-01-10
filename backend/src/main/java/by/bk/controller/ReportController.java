@@ -23,7 +23,7 @@ public class ReportController {
 
     @PostMapping("/history-actions")
     public List<HistoryItem> getHistoryActionsReport(@RequestBody ReportRequest request, Principal principal) {
-        return historyAPI.getFiltered(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getAccounts());
+        return historyAPI.getFiltered(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getAccounts(), request.getTags());
     }
 
     @PostMapping("/period-summary")

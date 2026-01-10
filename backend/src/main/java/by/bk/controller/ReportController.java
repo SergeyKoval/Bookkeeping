@@ -28,11 +28,11 @@ public class ReportController {
 
     @PostMapping("/period-summary")
     public Collection<SummaryReportResponse> getPeriodSummaryReport(@RequestBody ReportRequest request, Principal principal) {
-        return historyAPI.getPeriodSummary(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getAccounts(), request.getCurrencies());
+        return historyAPI.getPeriodSummary(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getAccounts(), request.getCurrencies(), request.getTags());
     }
 
     @PostMapping("/period-dynamic")
     public Collection<DynamicReportResponse> getPeriodDynamicReport(@RequestBody ReportRequest request, Principal principal) {
-        return historyAPI.getPeriodDynamic(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getCurrency());
+        return historyAPI.getPeriodDynamic(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getCurrency(), request.getTags());
     }
 }

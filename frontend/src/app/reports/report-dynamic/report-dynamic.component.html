@@ -6,6 +6,7 @@
         <bk-multi-level-dropdown class="filter" alternativeSelection="true" alternativeSelectionIndex="1" buttonTitle="Операции"
         [dataModel]="operationsFilter" [stopPropagation]="true"></bk-multi-level-dropdown>
         <bk-currency-conversion label="К валюте:" denyNoChoice="true" [selectedCurrency]="defaultCurrency" class="filter" (currencyConversion)="changeCurrency($event)"></bk-currency-conversion>
+        <bk-tag-filter-dropdown class="filter" [tags]="availableTags" [selectedTitles]="tagsFilter" (selectionChange)="tagsFilter = $event"></bk-tag-filter-dropdown>
         <bk-period-filter (updatePeriod)="updatePeriod($event)"></bk-period-filter>
       </div>
       <div class="col-sm-1">

@@ -33,7 +33,7 @@ export class ReportService {
   }
 
   public getSummaryForPeriodReport(periodFilter: PeriodFilter, operationsFilter: MultiLevelDropdownItem[],
-                                   accountsFilter: MultiLevelDropdownItem[], currenciesFilter: MultiLevelDropdownItem[]): Observable<SummaryReport[]> {
+                                   accountsFilter: MultiLevelDropdownItem[], currenciesFilter: MultiLevelDropdownItem[], tags: string[] = []): Observable<SummaryReport[]> {
     const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
     const selectedAccounts: string[][] = this.prepareFilteredItems(accountsFilter);
     const selectedCurrencies: string[] = currenciesFilter
@@ -44,17 +44,19 @@ export class ReportService {
       'endPeriod': periodFilter.endDate,
       'operations': selectedOperations,
       'accounts': selectedAccounts,
-      'currencies': selectedCurrencies
+      'currencies': selectedCurrencies,
+      'tags': tags
     });
   }
 
-  public getDynamicForPeriodReport (currency: string, periodFilter: PeriodFilter, operationsFilter: MultiLevelDropdownItem[]): Observable<DynamicReport[]> {
+  public getDynamicForPeriodReport (currency: string, periodFilter: PeriodFilter, operationsFilter: MultiLevelDropdownItem[], tags: string[] = []): Observable<DynamicReport[]> {
     const selectedOperations: string[][] = this.prepareFilteredItems(operationsFilter);
     return this._http.post<DynamicReport[]>('/api/report/period-dynamic', {
       'startPeriod': periodFilter.startDate,
       'endPeriod': periodFilter.endDate,
       'operations': selectedOperations,
-      'currency': currency
+      'currency': currency,
+      'tags': tags
     });
   }
 

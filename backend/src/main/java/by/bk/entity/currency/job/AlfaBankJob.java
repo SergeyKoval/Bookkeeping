@@ -65,6 +65,8 @@ public class AlfaBankJob {
           Currency.EUR, (conversions.get(Currency.RUB) / conversions.get(Currency.EUR))
       );
       addCurrencyDetail(today, Currency.RUB, rubConversions);
+
+      currencyAPI.recalculateMonthlyAverage(today.getYear(), today.getMonthValue());
     }
   }
 

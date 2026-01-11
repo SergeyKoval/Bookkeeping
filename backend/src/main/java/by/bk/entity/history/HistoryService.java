@@ -299,7 +299,7 @@ public class HistoryService implements HistoryAPI {
         int month = startPeriod.getMonth();
         int year = startPeriod.getYear();
         List<Criteria> orPeriods = new ArrayList<>();
-        while (year < endPeriod.getYear() || month <= endPeriod.getMonth()) {
+        while (year < endPeriod.getYear() || (year == endPeriod.getYear() && month <= endPeriod.getMonth())) {
             orPeriods.add(Criteria.where("year").is(year).and("month").is(month));
             if (month == 12) {
                 year++;

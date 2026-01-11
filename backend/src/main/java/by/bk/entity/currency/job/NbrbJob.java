@@ -92,6 +92,8 @@ public class NbrbJob {
                         CONVERSION_ENTRY.apply(Currency.EUR, (rubCurrency.getOfficialRate() / 100 / eurCurrency.getOfficialRate()))
                 ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
                 addCurrencyDetail(today, Currency.RUB, conversions);
+
+                currencyAPI.recalculateMonthlyAverage(today.getYear(), today.getMonthValue());
             }
         }
     }

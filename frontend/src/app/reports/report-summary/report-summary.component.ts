@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { from } from 'rxjs';
-import { groupBy, mergeMap, tap, toArray } from 'rxjs/operators';
+import { from, of, Subscription } from 'rxjs';
+import { groupBy, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ChartData, ChartType } from 'chart.js';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
@@ -17,6 +17,7 @@ import { CurrencyService } from '../../common/service/currency.service';
 import { SummaryReport } from '../../common/model/report/summary-report';
 import { Profile } from '../../common/model/profile';
 import { Tag } from '../../common/model/tag';
+import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
     selector: 'bk-report-summary',
@@ -24,13 +25,16 @@ import { Tag } from '../../common/model/tag';
     styleUrls: ['./report-summary.component.css'],
     standalone: false
 })
-export class ReportSummaryComponent extends BaseReport implements OnInit {
+export class ReportSummaryComponent extends BaseReport implements OnInit, OnDestroy {
   public loading: boolean;
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
   public currenciesFilter: MultiLevelDropdownItem[] = [];
   public tagsFilter: string[] = [];
   public availableTags: Tag[] = [];
+  public conversionCurrency: CurrencyDetail;
+  public averageYear: number;
+  public averageMonth: number;
 
   public items: SummaryReport[][] = [];
   public pieChartData: ChartData<ChartType, number[], string>;
@@ -40,6 +44,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
 
   private reportSum: number = 0;
   private reportCurrency: string;
+  private _currencySubscription: Subscription;
 
   public constructor(
     protected _profileService: ProfileService,
@@ -59,6 +64,24 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
       this.currenciesFilter.push(new MultiLevelDropdownItem(CurrencyUtils.convertCodeToSymbol(currency.symbol), CheckboxState.CHECKED, null, null, currency.name));
     });
     this.availableTags = (profile.tags || []).filter(tag => tag.active);
+
+    this._currencySubscription = this._currencyService.conversionCurrency$.subscribe(currency => {
+      this.conversionCurrency = currency;
+      // Load average currencies if we have period data and conversion is active
+      if (currency && this.averageYear && this.averageMonth) {
+        this._currencyService.loadAverageCurrenciesForMonth({
+          year: this.averageYear,
+          month: this.averageMonth,
+          currencies: this._profileService.authenticatedProfile.currencies.map(c => c.name)
+        }).subscribe();
+      }
+    });
+  }
+
+  public ngOnDestroy(): void {
+    if (this._currencySubscription) {
+      this._currencySubscription.unsubscribe();
+    }
   }
 
   public search(): void {
@@ -96,11 +119,26 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
     }
     this.reportCurrency = defaultCurrency;
 
-    this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter, this.tagsFilter)
-      .pipe(tap(items => {
+    // Store average currency period for conversion
+    this.averageYear = this.periodFilter.endDate.year;
+    this.averageMonth = this.periodFilter.endDate.month;
+
+    // Load average currencies if conversion is active
+    const conversionCurrency = this._currencyService.conversionCurrency;
+    const loadAverageCurrencies$ = conversionCurrency
+      ? this._currencyService.loadAverageCurrenciesForMonth({
+          year: this.averageYear,
+          month: this.averageMonth,
+          currencies: this._profileService.authenticatedProfile.currencies.map(c => c.name)
+        })
+      : of([]);
+
+    loadAverageCurrencies$.pipe(
+      switchMap(() => this._reportService.getSummaryForPeriodReport(this.periodFilter, this.operationsFilter, this.accountsFilter, this.currenciesFilter, this.tagsFilter)),
+      tap(items => {
         items.map(item => item.values).forEach((valueMap: {[currency: string]: number}) => {
           Object.keys(valueMap).forEach(currency => {
-            this.reportSum = this.reportSum + this._currencyService.convertToCurrency(valueMap[currency], currency, this.reportCurrency);
+            this.reportSum = this.reportSum + this.convertValue(valueMap[currency], currency, this.reportCurrency);
             this.totals[currency] = valueMap[currency] + (this.totals[currency] | 0);
           });
         });
@@ -113,17 +151,25 @@ export class ReportSummaryComponent extends BaseReport implements OnInit {
           this.pieChartData.labels.push(item.subCategory ? `${item.category} >> ${item.subCategory}` : item.category);
           let itemValue: number = 0;
           Object.keys(item.values)
-            .forEach(currency => itemValue = itemValue + this._currencyService.convertToCurrency(item.values[currency], currency, this.reportCurrency));
+            .forEach(currency => itemValue = itemValue + this.convertValue(item.values[currency], currency, this.reportCurrency));
           const percent: number = 100 * itemValue / this.reportSum;
           item.percent = Number(percent.toFixed(2));
           this.pieChartData.datasets[0].data.push(item.percent);
         });
-      })).subscribe((items: SummaryReport[]) => {
-        from(items).pipe(
-          groupBy(item => item.category),
-          mergeMap(group => group.pipe(toArray()))
-        ).subscribe(categoryGroup => this.items.push(categoryGroup));
-        this.loading = false;
+      })
+    ).subscribe((items: SummaryReport[]) => {
+      from(items).pipe(
+        groupBy(item => item.category),
+        mergeMap(group => group.pipe(toArray()))
+      ).subscribe(categoryGroup => this.items.push(categoryGroup));
+      this.loading = false;
     });
+  }
+
+  private convertValue(value: number, fromCurrency: string, toCurrency: string): number {
+    if (this._currencyService.conversionCurrency) {
+      return this._currencyService.convertToAverageCurrency(value, fromCurrency, toCurrency, this.averageYear, this.averageMonth);
+    }
+    return this._currencyService.convertToCurrency(value, fromCurrency, toCurrency);
   }
 }

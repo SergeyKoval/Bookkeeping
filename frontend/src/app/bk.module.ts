@@ -84,6 +84,10 @@ import { CategoryStatisticsDialogComponent } from './budget/category-statistics-
 import { CloseMonthDialogComponent } from './budget/close-month-dialog/close-month-dialog.component';
 import { CloseMonthGoalFilterPipe } from './common/pipes/budget/close-month-goal-filter.pipe';
 import { CloseMonthCategoryFilterPipe } from './common/pipes/budget/close-month-category-filter.pipe';
+import { BudgetBalanceConversionPipe } from './common/pipes/budget/budget-balance-conversion.pipe';
+import { BudgetGoalBalanceConversionPipe } from './common/pipes/budget/budget-goal-balance-conversion.pipe';
+import { HistoryValueConversionPipe } from './common/pipes/history/history-value-conversion.pipe';
+import { SummaryValuesConversionPipe } from './common/pipes/report/summary-values-conversion.pipe';
 import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 import { ThreeStateCheckboxComponent } from './common/components/three-state-checkbox/three-state-checkbox.component';
@@ -170,6 +174,10 @@ import { PeriodFilterComponent } from './reports/period-filter/period-filter.com
     CloseMonthDialogComponent,
     CloseMonthGoalFilterPipe,
     CloseMonthCategoryFilterPipe,
+    BudgetBalanceConversionPipe,
+    BudgetGoalBalanceConversionPipe,
+    HistoryValueConversionPipe,
+    SummaryValuesConversionPipe,
     ReportActionsComponent,
     ReportSummaryComponent,
     ThreeStateCheckboxComponent,

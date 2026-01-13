@@ -35,11 +35,46 @@ public class CurrencyService implements CurrencyAPI {
 
     @Override
     public List<CurrencyDetail> getCurrenciesForMonth(Integer year, Integer month, List<Currency> currencies) {
-        Query query = new Query();
+        var query = new Query();
         query.addCriteria(Criteria.where("year").is(year).and("month").is(month).and("name").in(currencies));
         query.fields().exclude("id");
 
-        Collection<Currency> projectCurrencies = CollectionUtils.disjunction(Arrays.asList(Currency.values()), currencies);
+        var projectCurrencies = CollectionUtils.disjunction(Arrays.asList(Currency.values()), currencies);
+        projectCurrencies.forEach(currency -> query.fields().exclude(StringUtils.join("conversions.", currency.name())));
+        return mongoTemplate.find(query, CurrencyDetail.class);
+    }
+
+    @Override
+    public List<CurrencyDetail> getAverageCurrenciesForMonth(Integer year, Integer month, List<Currency> currencies) {
+        // Try requested month first
+        var result = fetchMonthlyAverages(year, month, currencies);
+        if (!result.isEmpty()) {
+            return result;
+        }
+
+        // Fallback to current month
+        var now = LocalDate.now();
+        if (year != now.getYear() || month != now.getMonthValue()) {
+            result = fetchMonthlyAverages(now.getYear(), now.getMonthValue(), currencies);
+            if (!result.isEmpty()) {
+                return result;
+            }
+        }
+
+        // Fallback to previous month
+        var previousMonth = now.minusMonths(1);
+        return fetchMonthlyAverages(previousMonth.getYear(), previousMonth.getMonthValue(), currencies);
+    }
+
+    private List<CurrencyDetail> fetchMonthlyAverages(Integer year, Integer month, List<Currency> currencies) {
+        var query = new Query();
+        query.addCriteria(Criteria.where("year").is(year)
+                .and("month").is(month)
+                .and("day").is(null)
+                .and("name").in(currencies));
+        query.fields().exclude("id");
+
+        var projectCurrencies = CollectionUtils.disjunction(Arrays.asList(Currency.values()), currencies);
         projectCurrencies.forEach(currency -> query.fields().exclude(StringUtils.join("conversions.", currency.name())));
         return mongoTemplate.find(query, CurrencyDetail.class);
     }

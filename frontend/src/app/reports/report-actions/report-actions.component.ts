@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 
 import { MultiLevelDropdownItem } from '../../common/components/multi-level-dropdown/MultiLevelDropdownItem';
@@ -26,6 +26,8 @@ import { Profile } from '../../common/model/profile';
 import { SimpleResponse } from '../../common/model/simple-response';
 import { Category } from '../../common/model/category';
 import { Tag } from '../../common/model/tag';
+import { CurrencyService } from '../../common/service/currency.service';
+import { CurrencyDetail } from '../../common/model/currency-detail';
 
 @Component({
     selector: 'bk-report-actions',
@@ -33,13 +35,16 @@ import { Tag } from '../../common/model/tag';
     styleUrls: ['./report-actions.component.css'],
     standalone: false
 })
-export class ReportActionsComponent extends BaseReport implements OnInit {
+export class ReportActionsComponent extends BaseReport implements OnInit, OnDestroy {
   public loading: boolean;
   public operationsFilter: MultiLevelDropdownItem[];
   public accountsFilter: MultiLevelDropdownItem[];
   public historyItems: HistoryType[];
   public tagsFilter: string[] = [];
   public availableTags: Tag[] = [];
+  public conversionCurrency: CurrencyDetail;
+
+  private _currencySubscription: Subscription;
 
   public constructor(
     protected _profileService: ProfileService,
@@ -52,6 +57,7 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     private _historyService: HistoryService,
     private _authenticationService: ProfileService,
     private _reportService: ReportService,
+    private _currencyService: CurrencyService,
     private _route: ActivatedRoute
   ) {
     super(_profileService, _imagePipe);
@@ -66,6 +72,16 @@ export class ReportActionsComponent extends BaseReport implements OnInit {
     const tagParam = this._route.snapshot.queryParamMap.get('tag');
     if (tagParam) {
       this.tagsFilter = [tagParam];
+    }
+
+    this._currencySubscription = this._currencyService.conversionCurrency$.subscribe(currency => {
+      this.conversionCurrency = currency;
+    });
+  }
+
+  public ngOnDestroy(): void {
+    if (this._currencySubscription) {
+      this._currencySubscription.unsubscribe();
     }
   }
 

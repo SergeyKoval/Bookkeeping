@@ -16,12 +16,12 @@
         </span>
       </span>
       <div class="vertical-middle">
-        @for (currency of budgetDetails.balance | mapKeys | currencySort; track currency; let currencyIndex = $index) {
-          <div class="category-value" [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': isSingleCurrency()}">
-            <span class="header-expected" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}">{{budgetDetails.balance[currency].completeValue | currencyValue:2:true}}</span>
+        @for (convertedBalance of budgetDetails.balance | budgetBalanceConversion:conversionCurrency:budget.year:budget.month; track convertedBalance.currency; let currencyIndex = $index) {
+          <div class="category-value" [style.top.px]="currencyIndex * 20" [ngClass]="{'single-currency': conversionCurrency || isSingleCurrency()}">
+            <span class="header-expected" [ngClass]="{'not-planed': convertedBalance.completeValue === 0}">{{convertedBalance.completeValue | currencyValue:2:true}}</span>
             <span class="header-from">из</span>
-            <span class="text-right header-current" [ngClass]="{'not-planed': (type === 'expense' && budgetDetails.balance[currency].value > budgetDetails.balance[currency].completeValue)}">{{budgetDetails.balance[currency].value | currencyValue:2:true}}</span>
-            <span class="header-currency" [ngClass]="{'not-planed': budgetDetails.balance[currency].completeValue === 0}"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span>
+            <span class="text-right header-current" [ngClass]="{'not-planed': (type === 'expense' && convertedBalance.value > convertedBalance.completeValue)}">{{convertedBalance.value | currencyValue:2:true}}</span>
+            <span class="header-currency" [ngClass]="{'not-planed': convertedBalance.completeValue === 0}"><bk-currency-symbol [currencyName]="convertedBalance.currency"></bk-currency-symbol></span>
           </div>
         }
       </div>
@@ -63,12 +63,12 @@
                       }
                     </span>
                   </span>
-                  @for (currency of category.balance | mapKeys | currencySort; track currency; let currencyIndex = $index) {
+                  @for (convertedBalance of category.balance | budgetBalanceConversion:conversionCurrency:budget.year:budget.month; track convertedBalance.currency; let currencyIndex = $index) {
                     <span class="category-value" [style.top.px]="currencyIndex * 20">
-                      <span [ngClass]="{'not-planed': (type === 'expense' && category.balance[currency].value > category.balance[currency].completeValue)}">{{category.balance[currency].value | currencyValue:2:true}}</span> из
-                      <span [ngClass]="{'not-planed': category.balance[currency].completeValue === 0}">
-                        {{category.balance[currency].completeValue | currencyValue:2:true}}
-                        <strong><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></strong>
+                      <span [ngClass]="{'not-planed': (type === 'expense' && convertedBalance.value > convertedBalance.completeValue)}">{{convertedBalance.value | currencyValue:2:true}}</span> из
+                      <span [ngClass]="{'not-planed': convertedBalance.completeValue === 0}">
+                        {{convertedBalance.completeValue | currencyValue:2:true}}
+                        <strong><bk-currency-symbol [currencyName]="convertedBalance.currency"></bk-currency-symbol></strong>
                       </span>
                     </span>
                   }
@@ -86,6 +86,7 @@
                   @for (goal of category.goals | goalSort; track goal; let firstGoal = $first; let lastGoal = $last) {
                     <div>
                       <bk-template-variable #goalPercent [value]="calculateGoalPercentDone(goal)"></bk-template-variable>
+                      <bk-template-variable #convertedGoalBalance [value]="goal.balance | budgetGoalBalanceConversion:conversionCurrency:budget.year:budget.month"></bk-template-variable>
                       @if (firstGoal) {
                         <bk-month-progress [height]="5" [progress]="monthProgress"></bk-month-progress>
                       }
@@ -97,9 +98,9 @@
                           <div class="progress-bar" [ngClass]="calculateGoalStyle(goal, goalPercent.value)" [style.width.%]="goalPercent.value"></div>
                           <span class="goal-title">{{goal.title}} (<span class="percent">{{(goal.balance.value / goal.balance.completeValue * 100) | currencyValue:0}}%</span>)</span>
                           <span class="category-value">
-                            <span [ngClass]="{'not-planed': (type === 'expense' && goal.balance.value > goal.balance.completeValue)}">{{goal.balance.value | currencyValue:2:true}}</span>
-                            из {{goal.balance.completeValue | currencyValue:2:true}}
-                            <strong><bk-currency-symbol [currencyName]="goal.balance.currency"></bk-currency-symbol></strong>
+                            <span [ngClass]="{'not-planed': (type === 'expense' && convertedGoalBalance.value.value > convertedGoalBalance.value.completeValue)}">{{convertedGoalBalance.value.value | currencyValue:2:true}}</span>
+                            из {{convertedGoalBalance.value.completeValue | currencyValue:2:true}}
+                            <strong><bk-currency-symbol [currencyName]="convertedGoalBalance.value.currency"></bk-currency-symbol></strong>
                           </span>
                         </div>
                         <bk-popover class="edit-button float-left" glyphiconClass="pencil" placement="left" text="Редактировать цель" (click)="openGoalEditDialog(category, goal)"></bk-popover>

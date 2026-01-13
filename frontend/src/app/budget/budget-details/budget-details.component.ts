@@ -20,6 +20,7 @@ import { BudgetBalance } from '../../common/model/budget/budget-balance';
 import { BudgetGoal } from '../../common/model/budget/budget-goal';
 import { BudgetCategory } from '../../common/model/budget/budget-category';
 import { SimpleResponse } from '../../common/model/simple-response';
+import { CurrencyDetail } from '../../common/model/currency-detail';
 import { filter, tap } from 'rxjs/operators';
 
 @Component({
@@ -35,6 +36,8 @@ export class BudgetDetailsComponent implements OnInit {
   public type: string;
   @Input()
   public monthProgress: MonthProgress;
+  @Input()
+  public conversionCurrency: CurrencyDetail;
 
   @Output()
   public updateBudget: Subject<boolean> = new Subject();
@@ -68,6 +71,9 @@ export class BudgetDetailsComponent implements OnInit {
   }
 
   public getNumberOfCurrencies(balance: {[currency: string]: BudgetBalance}): number {
+    if (this.conversionCurrency) {
+      return 1;
+    }
     const numberOfCurrencies: number = Object.keys(balance).length;
     return numberOfCurrencies > 0 ? numberOfCurrencies : 1;
   }

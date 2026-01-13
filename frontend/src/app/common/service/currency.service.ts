@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { HOST } from '../config/config';
 import { DateUtils } from '../utils/date-utils';
@@ -17,6 +17,10 @@ export class CurrencyService {
   private _todayConversions: Map<String, CurrencyHistory> = new Map();
   private _currencies: Map<string, Map<number, Map<number, CurrencyHistory[]>>> = new Map();
   private _currenciesIndicatorMap: Map<string, Map<number, Map<number, boolean>>> = new Map();
+  private _averageCurrencies: Map<string, Map<number, Map<number, CurrencyHistory>>> = new Map();
+
+  private _conversionCurrency$: BehaviorSubject<CurrencyDetail> = new BehaviorSubject<CurrencyDetail>(null);
+  public conversionCurrency$: Observable<CurrencyDetail> = this._conversionCurrency$.asObservable();
 
   public constructor(
     private _http: HttpClient,
@@ -95,6 +99,15 @@ export class CurrencyService {
     this._todayConversions.clear();
     this._currencies.clear();
     this._currenciesIndicatorMap.clear();
+    this._averageCurrencies.clear();
+  }
+
+  public setConversionCurrency(currency: CurrencyDetail): void {
+    this._conversionCurrency$.next(currency);
+  }
+
+  public get conversionCurrency(): CurrencyDetail {
+    return this._conversionCurrency$.getValue();
   }
 
   public isCurrencyHistoryLoaded(currency: string, date: Moment = DateUtils.getDateFromUTC()): boolean {
@@ -139,5 +152,56 @@ export class CurrencyService {
     }
 
     return this._todayConversions.get(currency);
+  }
+
+  public loadAverageCurrenciesForMonth(request: {month: number, year: number, currencies: string[]}): Observable<CurrencyHistory[]> {
+    return this._http.post<CurrencyHistory[]>('/api/currency/average-month-currencies', request)
+      .pipe(
+        tap((currencyHistories: CurrencyHistory[]) => {
+          currencyHistories.forEach(currencyHistory => {
+            const currency: string = currencyHistory.name;
+            let currencyYears: Map<number, Map<number, CurrencyHistory>>;
+            if (this._averageCurrencies.has(currency)) {
+              currencyYears = this._averageCurrencies.get(currency);
+            } else {
+              currencyYears = new Map();
+              this._averageCurrencies.set(currency, currencyYears);
+            }
+
+            let currencyMonths: Map<number, CurrencyHistory>;
+            const year: number = currencyHistory.year;
+            if (currencyYears.has(year)) {
+              currencyMonths = currencyYears.get(year);
+            } else {
+              currencyMonths = new Map();
+              currencyYears.set(year, currencyMonths);
+            }
+
+            currencyMonths.set(currencyHistory.month, currencyHistory);
+          });
+        })
+      );
+  }
+
+  public getAverageCurrencyHistory(currency: string, year: number, month: number): CurrencyHistory | undefined {
+    if (this._averageCurrencies.has(currency)) {
+      const currencyYears = this._averageCurrencies.get(currency);
+      if (currencyYears.has(year)) {
+        const currencyMonths = currencyYears.get(year);
+        if (currencyMonths.has(month)) {
+          return currencyMonths.get(month);
+        }
+      }
+    }
+    return undefined;
+  }
+
+  public convertToAverageCurrency(value: number, currentCurrency: string, convertedCurrency: string, year: number, month: number): number {
+    if (convertedCurrency === currentCurrency) {
+      return value;
+    }
+
+    const currencyHistory: CurrencyHistory = this.getAverageCurrencyHistory(currentCurrency, year, month);
+    return currencyHistory ? (currencyHistory.conversions[convertedCurrency] * value) : 0;
   }
 }

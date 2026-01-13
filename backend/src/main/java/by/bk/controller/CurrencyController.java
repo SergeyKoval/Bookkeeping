@@ -26,6 +26,11 @@ public class CurrencyController extends BaseAPIController {
         return currencyAPI.getCurrenciesForMonth(currenciesRequest.getYear(), currenciesRequest.getMonth(), currenciesRequest.getCurrencies());
     }
 
+    @PostMapping("/average-month-currencies")
+    public List<CurrencyDetail> getAverageMonthCurrencies(@RequestBody MonthCurrenciesRequest currenciesRequest) {
+        return currencyAPI.getAverageCurrenciesForMonth(currenciesRequest.getYear(), currenciesRequest.getMonth(), currenciesRequest.getCurrencies());
+    }
+
     @GetMapping("/default-currencies")
     public List<CurrencyResponse> getDefaultCurrencies() {
         return Stream.of(Currency.values()).map(CurrencyResponse::new).collect(Collectors.toList());

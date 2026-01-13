@@ -59,11 +59,11 @@
                                   <div class="col-sm-5 small-left-padding">{{item.subCategory}}</div>
                                   <div class="col-sm-2 no-padding text-center">{{item.percent}}%</div>
                                   <div class="col-sm-5 no-right-padding">
-                                    @for (currency of item.values | keyvalue; track currency; let lastValue = $last) {
+                                    @for (convertedValue of item.values | summaryValuesConversion:conversionCurrency:averageYear:averageMonth; track convertedValue.currency; let lastValue = $last) {
                                       <div>
                                         <div class="row table-row small-left-padding">
                                           <span>
-                                            <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency.key"></bk-currency-symbol></span> {{currency.value | currencyValue:2}}
+                                            <span class="currency-wrapper"><bk-currency-symbol [currencyName]="convertedValue.currency"></bk-currency-symbol></span> {{convertedValue.value | currencyValue:2}}
                                           </span>
                                         </div>
                                         @if (!lastValue) {
@@ -90,11 +90,11 @@
                     <div class="row vertical-middle-wrapper">
                       <div class="col-sm-3 vertical-middle"><strong>Итог</strong></div>
                       <div class="col-sm-9">
-                        @for (currency of totals | mapKeys | currencySort; track currency) {
+                        @for (convertedTotal of totals | summaryValuesConversion:conversionCurrency:averageYear:averageMonth; track convertedTotal.currency) {
                           <div class="row">
                             <div class="col-sm-5 col-sm-offset-7">
                               <div class="small-left-padding">
-                                <span class="currency-wrapper"><bk-currency-symbol [currencyName]="currency"></bk-currency-symbol></span> {{totals[currency] | currencyValue:2}}
+                                <span class="currency-wrapper"><bk-currency-symbol [currencyName]="convertedTotal.currency"></bk-currency-symbol></span> {{convertedTotal.value | currencyValue:2}}
                               </div>
                             </div>
                           </div>

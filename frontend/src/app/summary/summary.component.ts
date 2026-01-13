@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { LoadingService } from '../common/service/loading.service';
 import { ProfileService } from '../common/service/profile.service';
+import { CurrencyService } from '../common/service/currency.service';
 import { CurrencyDetail } from '../common/model/currency-detail';
 import { FinAccount } from '../common/model/fin-account';
 
@@ -18,7 +19,8 @@ export class SummaryComponent implements OnInit {
 
   public constructor(
     private _authenticationService: ProfileService,
-    private _loadingService: LoadingService
+    private _loadingService: LoadingService,
+    private _currencyService: CurrencyService
   ) {}
 
   public ngOnInit(): void {
@@ -28,5 +30,6 @@ export class SummaryComponent implements OnInit {
 
   public setSummaryConversion(currency: CurrencyDetail): void {
     this.conversionCurrency = currency;
+    this._currencyService.setConversionCurrency(currency);
   }
 }

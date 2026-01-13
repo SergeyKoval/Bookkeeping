@@ -30,12 +30,13 @@
                     <!--Expense / Income-->
                     @if (historyItem.type === 'expense' || historyItem.type === 'income') {
                       <div class="row-wrapper">
+                        <bk-template-variable #convertedValue [value]="historyItem.balance | historyValueConversion:conversionCurrency"></bk-template-variable>
                         <div class="row">
                           <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
                           <div class="col-sm-2 sm-small-left-padding" >
                             <div class="no-left-padding no-right-padding">
                               <div [ngClass]="historyItem.type">
-                                {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                                {{convertedValue.value.value | currencyValue}} <bk-currency-symbol [currencyName]="convertedValue.value.currency"></bk-currency-symbol>
                               </div>
                             </div>
                           </div>
@@ -82,12 +83,13 @@
                     <!--Balance-->
                     @if (historyItem.type === 'balance') {
                       <div class="row-wrapper">
+                        <bk-template-variable #convertedBalanceValue [value]="historyItem.balance | historyValueConversion:conversionCurrency"></bk-template-variable>
                         <div class="row">
                           <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
                           <div class="col-sm-2 sm-small-left-padding" >
                             <div class="no-left-padding no-right-padding">
                               <div [ngClass]="historyItem.type">
-                                {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                                {{convertedBalanceValue.value.value | currencyValue}} <bk-currency-symbol [currencyName]="convertedBalanceValue.value.currency"></bk-currency-symbol>
                               </div>
                             </div>
                           </div>
@@ -110,12 +112,13 @@
                     <!-- Transfer -->
                     @if (historyItem.type === 'transfer') {
                       <div class="row-wrapper">
+                        <bk-template-variable #convertedTransferValue [value]="historyItem.balance | historyValueConversion:conversionCurrency"></bk-template-variable>
                         <div class="row">
                           <div class="col-sm-2"><div><span>{{historyGroup.dateString}}</span></div></div>
                           <div class="col-sm-2 sm-small-left-padding" >
                             <div class="no-left-padding no-right-padding">
                               <div [ngClass]="historyItem.type">
-                                {{historyItem.balance.value | currencyValue}} <bk-currency-symbol [currencyName]="historyItem.balance.currency"></bk-currency-symbol>
+                                {{convertedTransferValue.value.value | currencyValue}} <bk-currency-symbol [currencyName]="convertedTransferValue.value.currency"></bk-currency-symbol>
                               </div>
                             </div>
                           </div>

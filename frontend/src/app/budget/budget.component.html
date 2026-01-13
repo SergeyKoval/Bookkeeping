@@ -10,8 +10,8 @@
 
     @if (!loading) {
       <div>
-        <bk-budget-details [budget]="budget" [type]="'income'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>
-        <bk-budget-details [budget]="budget" [type]="'expense'" [monthProgress]="monthProgress" (updateBudget)="loadBudget($event)"></bk-budget-details>
+        <bk-budget-details [budget]="budget" [type]="'income'" [monthProgress]="monthProgress" [conversionCurrency]="conversionCurrency" (updateBudget)="loadBudget($event)"></bk-budget-details>
+        <bk-budget-details [budget]="budget" [type]="'expense'" [monthProgress]="monthProgress" [conversionCurrency]="conversionCurrency" (updateBudget)="loadBudget($event)"></bk-budget-details>
       </div>
     } @else {
       <bk-spinner [size]="100"></bk-spinner>

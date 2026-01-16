@@ -18,35 +18,39 @@ import android.os.IBinder
 import android.os.Looper
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
-import by.bk.bookkeeper.android.network.request.ProcessedMessage
-import by.bk.bookkeeper.android.network.response.BaseResponse
 import by.bk.bookkeeper.android.push.PushListenerService
 import by.bk.bookkeeper.android.push.PushMessage
 import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
-import by.bk.bookkeeper.android.sms.receiver.SMSReceiver
 import by.bk.bookkeeper.android.sms.worker.PeriodicMessagesScheduler
 import by.bk.bookkeeper.android.ui.home.AccountingActivity
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  *  Created by Evgenia Grinkevich on 05, February, 2020
  **/
 
+/**
+ * Service for showing notification with pending message count and scheduling periodic workers.
+ *
+ * Note: SMS and push message processing have been moved to save-first architecture
+ * (SMSReceiver and PushListenerService handle messages directly via WorkManager)
+ * to avoid ForegroundServiceDidNotStartInTimeException on cold start.
+ *
+ * This service now only handles:
+ * - Scheduling PeriodicMessagesScheduler on boot/app open
+ * - Displaying notification with pending/unprocessed message count
+ * - Debug logging for push notifications
+ */
 class ProcessingService : Service() {
 
-    private lateinit var pushReceiver: PushBroadcastReceiver
     private lateinit var debugReceiver: DebugBroadcastReceiver
     // CRITICAL: Use lazy initialization to avoid blocking onCreate().
     // The 5-second foreground service deadline starts when startForegroundService() is called.
     // If property initializers (especially network stack creation) take too long,
     // onCreate() won't be reached in time to call startForeground().
     private val repository by lazy { Injection.provideMessagesRepository() }
-    private val smsProcessor by lazy { Injection.provideSmsProcessor() }
-    private val pushProcessor by lazy { Injection.providePushProcessor() }
     private val disposables = CompositeDisposable()
     private val gson by lazy { com.google.gson.Gson() }
 
@@ -54,15 +58,12 @@ class ProcessingService : Service() {
     @Volatile private var pendingSmsCount: Int = 0
     @Volatile private var unprocessedCount: Int? = null
 
-    // Track active work to stop service when idle (Android 14+ dataSync timeout fix)
-    private val activeWorkCount = AtomicInteger(0)
     private val mainHandler = Handler(Looper.getMainLooper())
+    // Stop service when idle to conserve Android 14+ dataSync quota
     private val stopWhenIdleRunnable = Runnable {
-        if (activeWorkCount.get() == 0) {
-            Timber.d("No active work, stopping service to conserve dataSync quota")
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
-        }
+        Timber.d("Stopping service to conserve dataSync quota")
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     override fun onCreate() {
@@ -79,17 +80,8 @@ class ProcessingService : Service() {
         PeriodicMessagesScheduler.schedule(context = this)
         observePendingMessages()
         observeUnprocessedSms()
-        pushReceiver = PushBroadcastReceiver()
-        val filter = IntentFilter().apply {
-            addAction(PushListenerService.ACTION_ON_NOTIFICATION_POSTED)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(pushReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(pushReceiver, filter)
-        }
 
-        // Register debug broadcast receiver
+        // Register debug broadcast receiver for push notification logging
         debugReceiver = DebugBroadcastReceiver()
         val debugFilter = IntentFilter().apply {
             addAction(PushListenerService.ACTION_DEBUG_NOTIFICATION_POSTED)
@@ -120,28 +112,11 @@ class ProcessingService : Service() {
             return START_NOT_STICKY
         }
 
-        when (intent?.action) {
-            SMSReceiver.INTENT_ACTION_SMS_RECEIVED -> {
-                handleSms(
-                    wakelockId = intent.extras?.getInt(SMSReceiver.EXTRA_WAKE_LOCK_ID) ?: 0,
-                    pdus = intent.extras?.get(INTENT_PDU_EXTRA) as? Array<*>,
-                    format = intent.extras?.getString(INTENT_PDU_FORMAT)
-                )
-            }
-            PushListenerService.ACTION_PUSH_RECEIVED -> {
-                val pushMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE, PushMessage::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE)
-                }
-                pushMessage?.let { handlePush(it) } ?: scheduleStopWhenIdle()
-            }
-            else -> {
-                // No specific work to do, schedule stop after delay
-                scheduleStopWhenIdle()
-            }
-        }
+        // Note: SMS and push messages are now handled directly by SMSReceiver and
+        // PushListenerService using save-first approach to avoid
+        // ForegroundServiceDidNotStartInTimeException on cold start.
+        // This service now only shows notifications and schedules periodic workers.
+        scheduleStopWhenIdle()
 
         // Don't auto-restart - receivers will start us when needed
         return START_NOT_STICKY
@@ -293,68 +268,6 @@ class ProcessingService : Service() {
         mainHandler.postDelayed(stopWhenIdleRunnable, IDLE_STOP_DELAY_MS)
     }
 
-    private fun onWorkStarted() {
-        activeWorkCount.incrementAndGet()
-        mainHandler.removeCallbacks(stopWhenIdleRunnable)
-    }
-
-    private fun onWorkCompleted() {
-        val remaining = activeWorkCount.decrementAndGet()
-        Timber.d("Work completed, $remaining tasks remaining")
-        if (remaining <= 0) {
-            scheduleStopWhenIdle()
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun handleSms(wakelockId: Int, pdus: Array<*>?, format: String?) {
-        val matchedSms = smsProcessor.process(pdus?.toList() as? List<Any>?, format)
-        if (matchedSms.isNotEmpty()) {
-            onWorkStarted()
-            disposables.add(repository.sendProcessedSms(matchedSms)
-                .subscribeOn(Schedulers.io())
-                .doFinally {
-                    SMSReceiver.completeWakefulIntent(wakelockId)
-                    onWorkCompleted()
-                }
-                .subscribeWith(processedMessagesRequestObserver(matchedSms))
-            )
-        } else {
-            Timber.d("No sms matches found")
-            SMSReceiver.completeWakefulIntent(wakelockId)
-            scheduleStopWhenIdle()
-        }
-    }
-
-    private fun handlePush(pushMessage: PushMessage) {
-        val matchedPush = pushProcessor.process(listOf(pushMessage))
-        if (matchedPush.isNotEmpty()) {
-            onWorkStarted()
-            disposables.add(
-                repository.sendProcessedPushes(matchedPush)
-                    .subscribeOn(Schedulers.io())
-                    .doFinally { onWorkCompleted() }
-                    .subscribeWith(processedMessagesRequestObserver(matchedPush))
-            )
-        } else {
-            Timber.d("No push matches found")
-            scheduleStopWhenIdle()
-        }
-    }
-
-    private fun processedMessagesRequestObserver(messages: List<ProcessedMessage>): DisposableSingleObserver<BaseResponse> {
-        return object : DisposableSingleObserver<BaseResponse>() {
-            override fun onSuccess(t: BaseResponse) {
-                Timber.d("Messages successfully sent")
-            }
-
-            override fun onError(e: Throwable) {
-                SharedPreferencesProvider.saveMessagesToStorage(messages)
-                Timber.d("Messages sending failed with $e. Writing messages to storage")
-            }
-        }
-    }
-
     private fun createNotificationChannel() {
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(
             NotificationChannel(
@@ -367,29 +280,11 @@ class ProcessingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         mainHandler.removeCallbacks(stopWhenIdleRunnable)
-        unregisterReceiver(pushReceiver)
         unregisterReceiver(debugReceiver)
         disposables.clear()
     }
 
     override fun onBind(intent: Intent): IBinder? = null
-
-    inner class PushBroadcastReceiver : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == PushListenerService.ACTION_ON_NOTIFICATION_POSTED) {
-                val pushMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE, PushMessage::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE)
-                }
-                pushMessage?.let { push ->
-                    handlePush(push)
-                }
-            }
-        }
-    }
 
     inner class DebugBroadcastReceiver : BroadcastReceiver() {
 
@@ -436,10 +331,8 @@ class ProcessingService : Service() {
     companion object {
         private const val SERVICE_NOTIFICATION_ID = 1209
         private val NOTIFICATION_CHANNEL_ID = ProcessingService::class.java.canonicalName
-        private const val NOTIFICATION_CHANNEL_NAME = "Bookkeeper sms processing service"
+        private const val NOTIFICATION_CHANNEL_NAME = "Bookkeeper processing service"
         const val SERVICE_REQUEST_CODE = 1689
-        const val INTENT_PDU_EXTRA = "pdu_extra"
-        const val INTENT_PDU_FORMAT = "pdu_format"
 
         // Delay before stopping service when idle (allows handling rapid successive messages)
         private const val IDLE_STOP_DELAY_MS = 5000L

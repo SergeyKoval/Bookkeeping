@@ -58,7 +58,7 @@ class SMSReceiver : BroadcastReceiver() {
             // Step 2: Filter out duplicates (Android can deliver same SMS multiple times)
             val newMessages = matchedSms.filter { processedMessage ->
                 val deviceMessage = processedMessage.deviceMessage
-                val messageKey = "${deviceMessage.sender}|${deviceMessage.fullText}|${deviceMessage.messageTimestamp}"
+                val messageKey = "${deviceMessage.sender}|${deviceMessage.fullText}|${deviceMessage.timestamp}"
 
                 synchronized(recentSmsMessages) {
                     if (recentSmsMessages.contains(messageKey)) {

@@ -2,18 +2,40 @@ package by.bk.bookkeeper.android.push
 
 import android.app.Notification
 import android.content.Intent
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import by.bk.bookkeeper.processor.ProcessingService
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import by.bk.bookkeeper.android.Injection
+import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
+import by.bk.bookkeeper.android.sms.worker.PendingPushWorker
+import timber.log.Timber
 
+/**
+ * NotificationListenerService that captures push notifications from banking apps.
+ *
+ * Architecture: "Save-First" approach to avoid ForegroundServiceDidNotStartInTimeException.
+ *
+ * Previous approach used startForegroundService() which has a 5-10 second deadline.
+ * On cold start, the deadline could expire before ProcessingService.onCreate() runs.
+ *
+ * New approach:
+ * 1. Process push immediately using PushProcessor (fast, no network)
+ * 2. Save matched messages to SharedPreferences (fast)
+ * 3. Schedule immediate WorkManager job to send to server
+ *
+ * This eliminates the foreground service timing constraint entirely.
+ */
 class PushListenerService : NotificationListenerService() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val recentNotifications = mutableSetOf<String>()
     private val cleanupThreshold = 100 // Clean up after this many notifications
+    private val pushProcessor by lazy { Injection.providePushProcessor() }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
@@ -48,27 +70,54 @@ class PushListenerService : NotificationListenerService() {
         )
 
         // Send debug broadcast if enabled
-        if (by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider.getDebugPushNotifications()) {
+        if (SharedPreferencesProvider.getDebugPushNotifications()) {
             sendBroadcast(Intent(ACTION_DEBUG_NOTIFICATION_POSTED).apply {
                 setPackage(packageName)
                 putExtra(PUSH_MESSAGE, pushMessage)
             })
         }
 
-        // Start ProcessingService with push data (delayed to allow SMS priority)
-        val delayMs = by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
-            .getPushProcessingDelaySeconds() * 1000L
+        // Process push with configured delay to allow SMS priority
+        val delayMs = SharedPreferencesProvider.getPushProcessingDelaySeconds() * 1000L
         handler.postDelayed({
-            val serviceIntent = Intent(this, ProcessingService::class.java).apply {
-                action = ACTION_PUSH_RECEIVED
-                putExtra(PUSH_MESSAGE, pushMessage)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent)
-            } else {
-                startService(serviceIntent)
-            }
+            processPushWithSaveFirst(pushMessage)
         }, delayMs)
+    }
+
+    /**
+     * Processes push notification using save-first approach.
+     * This avoids foreground service timing issues on cold start.
+     */
+    private fun processPushWithSaveFirst(pushMessage: PushMessage) {
+        Timber.d("Push received - using save-first approach for ${pushMessage.packageName}")
+
+        // Step 1: Process push immediately (fast, CPU-only operation)
+        val matchedPush = pushProcessor.process(listOf(pushMessage), null)
+
+        if (matchedPush.isEmpty()) {
+            Timber.d("No push matches found for configured associations")
+            return
+        }
+
+        // Step 2: Save to storage FIRST - guarantees no message loss
+        SharedPreferencesProvider.saveMessagesToStorage(matchedPush)
+        Timber.d("Saved ${matchedPush.size} push notification(s) to storage for processing")
+
+        // Step 3: Schedule immediate WorkManager job to send to server
+        scheduleImmediateProcessing()
+    }
+
+    private fun scheduleImmediateProcessing() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<PendingPushWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this).enqueue(workRequest)
+        Timber.d("Scheduled immediate push processing via WorkManager")
     }
 
     override fun onDestroy() {
@@ -78,8 +127,6 @@ class PushListenerService : NotificationListenerService() {
 
     companion object {
         const val PUSH_MESSAGE = "PUSH_MESSAGE"
-        const val ACTION_PUSH_RECEIVED = "push_received"
-        const val ACTION_ON_NOTIFICATION_POSTED = "on_notification_posted"
         const val ACTION_DEBUG_NOTIFICATION_POSTED = "debug_notification_posted"
     }
 

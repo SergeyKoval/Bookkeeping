@@ -55,11 +55,37 @@ class SMSReceiver : BroadcastReceiver() {
                 return
             }
 
-            // Step 2: Save to storage FIRST - guarantees no message loss
-            SharedPreferencesProvider.saveMessagesToStorage(matchedSms)
-            Timber.d("Saved ${matchedSms.size} SMS to storage for processing")
+            // Step 2: Filter out duplicates (Android can deliver same SMS multiple times)
+            val newMessages = matchedSms.filter { processedMessage ->
+                val deviceMessage = processedMessage.deviceMessage
+                val messageKey = "${deviceMessage.sender}|${deviceMessage.fullText}|${deviceMessage.messageTimestamp}"
 
-            // Step 3: Schedule immediate WorkManager job to send to server
+                synchronized(recentSmsMessages) {
+                    if (recentSmsMessages.contains(messageKey)) {
+                        Timber.d("Skipping duplicate SMS: ${deviceMessage.sender}")
+                        false
+                    } else {
+                        recentSmsMessages.add(messageKey)
+                        // Clean up old entries if set gets too large
+                        if (recentSmsMessages.size > CLEANUP_THRESHOLD) {
+                            recentSmsMessages.clear()
+                            recentSmsMessages.add(messageKey)
+                        }
+                        true
+                    }
+                }
+            }
+
+            if (newMessages.isEmpty()) {
+                Timber.d("All SMS were duplicates, skipping")
+                return
+            }
+
+            // Step 3: Save to storage FIRST - guarantees no message loss
+            SharedPreferencesProvider.saveMessagesToStorage(newMessages)
+            Timber.d("Saved ${newMessages.size} SMS to storage for processing")
+
+            // Step 4: Schedule immediate WorkManager job to send to server
             // WorkManager handles network availability, retries, and battery optimization
             scheduleImmediateProcessing(context)
         }
@@ -80,5 +106,10 @@ class SMSReceiver : BroadcastReceiver() {
 
     companion object {
         const val INTENT_ACTION_SMS_RECEIVED = "sms_received"
+
+        // Deduplication: track recently processed SMS to prevent duplicate processing
+        // Android can deliver the same SMS multiple times via broadcast
+        private val recentSmsMessages = mutableSetOf<String>()
+        private const val CLEANUP_THRESHOLD = 100
     }
 }

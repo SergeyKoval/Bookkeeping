@@ -55,6 +55,7 @@ public class HistoryService implements HistoryAPI {
     private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat("##0.00", DecimalFormatSymbols.getInstance(Locale.US));
     private static final ZoneId MINSK_TIMEZONE = ZoneId.of("Europe/Minsk");
     private static final Pattern MESSAGE_PATTERN = Pattern.compile("\\d+\\.\\d+ [a-zA-Z]+");
+    private static final Pattern AMOUNT_CURRENCY_PATTERN = Pattern.compile("-?\\s*(\\d+[,.]?\\d*)\\s*(BYN|USD|EUR|RUB)", Pattern.CASE_INSENSITIVE);
 
     @Autowired
     private HistoryRepository historyRepository;
@@ -597,12 +598,14 @@ public class HistoryService implements HistoryAPI {
                 .peek(historyItem -> addMessageAsDuplicate(historyItem, deviceMessage))
                 .forEach(mongoTemplate::save);
         } else {
+            var balance = new Balance(deviceMessageRequest.getAccount(), deviceMessageRequest.getSubAccount());
+            extractAndSetAmountCurrency(balance, deviceMessage.getFullText());
             var historyItem = HistoryItem.builder()
                 .user(login)
                 .year(deviceMessageDate.getYear())
                 .month(deviceMessageDate.getMonthValue())
                 .day(deviceMessageDate.getDayOfMonth())
-                .balance(new Balance(deviceMessageRequest.getAccount(), deviceMessageRequest.getSubAccount()))
+                .balance(balance)
                 .deviceMessages(Collections.singletonList(deviceMessage))
                 .notProcessed(true)
                 .build();
@@ -618,5 +621,21 @@ public class HistoryService implements HistoryAPI {
         }
 
         return tokens;
+    }
+
+    private void extractAndSetAmountCurrency(Balance balance, String messageText) {
+        var matcher = AMOUNT_CURRENCY_PATTERN.matcher(messageText);
+        if (!matcher.find()) {
+            return;
+        }
+
+        var amountStr = matcher.group(1).replace(",", ".");
+        var currencyStr = matcher.group(2).toUpperCase();
+        try {
+            balance.setValue(Double.parseDouble(amountStr));
+            balance.setCurrency(Currency.valueOf(currencyStr));
+        } catch (IllegalArgumentException e) {
+            LOG.error("Failed to parse amount/currency from message: " + messageText, e);
+        }
     }
 }

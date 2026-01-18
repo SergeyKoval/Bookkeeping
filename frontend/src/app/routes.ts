@@ -14,6 +14,7 @@ import { ProfileService } from './common/service/profile.service';
 import { ReportActionsComponent } from './reports/report-actions/report-actions.component';
 import { ReportSummaryComponent } from './reports/report-summary/report-summary.component';
 import { ReportDynamicComponent } from './reports/report-dynamic/report-dynamic.component';
+import { ReportTendencyComponent } from './reports/report-tendency/report-tendency.component';
 import { DevicesComponent } from './settings/devices/devices.component';
 import { TagsComponent } from './settings/tags/tags.component';
 
@@ -63,6 +64,11 @@ export const BOOKKEEPING_ROUTES: Route[] = [
         path: 'dynamic',
         component: ReportDynamicComponent,
         data: {title: 'Бухгалтерия - отчеты - динамика за период'}
+      },
+      {
+        path: 'tendency',
+        component: ReportTendencyComponent,
+        data: {title: 'Бухгалтерия - отчеты - тенденция финансов'}
       }
     ]
   },

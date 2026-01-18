@@ -9,6 +9,7 @@ import { CheckboxState } from '../components/three-state-checkbox/CheckboxState'
 import { HistoryType } from '../model/history/history-type';
 import { SummaryReport } from '../model/report/summary-report';
 import { DynamicReport } from '../model/report/dynamic-report';
+import { TendencyReport } from '../model/report/tendency-report';
 import { PeriodFilter } from '../model/report/period-filter';
 
 @Injectable({
@@ -57,6 +58,14 @@ export class ReportService {
       'operations': selectedOperations,
       'currency': currency,
       'tags': tags
+    });
+  }
+
+  public getTendencyReport(currency: string, startYear: number, startMonth: number, endYear: number, endMonth: number): Observable<TendencyReport[]> {
+    return this._http.post<TendencyReport[]>('/api/report/period-tendency', {
+      'startPeriod': { year: startYear, month: startMonth },
+      'endPeriod': { year: endYear, month: endMonth },
+      'currency': currency
     });
   }
 

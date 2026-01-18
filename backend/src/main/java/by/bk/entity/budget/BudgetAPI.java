@@ -2,7 +2,10 @@ package by.bk.entity.budget;
 
 import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
 import by.bk.controller.model.request.BudgetCloseMonthRequest;
+import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.controller.model.response.TendencyReportResponse;
+import by.bk.entity.currency.Currency;
 import by.bk.entity.budget.model.Budget;
 import by.bk.entity.budget.model.BudgetStatistics;
 import by.bk.entity.budget.model.CurrencyBalanceValue;
@@ -39,4 +42,6 @@ public interface BudgetAPI {
 
     List<BudgetStatistics> categoryStatistics(String login, BudgetCategoryStatisticsRequest request);
     SimpleResponse closeMonth(String login, BudgetCloseMonthRequest request);
+
+    List<TendencyReportResponse> getTendencyReport(String login, DateRequest startPeriod, DateRequest endPeriod, Currency targetCurrency);
 }

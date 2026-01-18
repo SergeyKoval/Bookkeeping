@@ -3,10 +3,13 @@ package by.bk.entity.budget;
 import by.bk.controller.exception.ItemAlreadyExistsException;
 import by.bk.controller.model.request.BudgetCategoryStatisticsRequest;
 import by.bk.controller.model.request.BudgetCloseMonthRequest;
+import by.bk.controller.model.request.DateRequest;
 import by.bk.controller.model.response.SimpleResponse;
+import by.bk.controller.model.response.TendencyReportResponse;
 import by.bk.entity.budget.exception.*;
 import by.bk.entity.budget.model.*;
 import by.bk.entity.currency.Currency;
+import by.bk.entity.currency.CurrencyDetail;
 import by.bk.entity.history.Balance;
 import by.bk.entity.history.HistoryItem;
 import by.bk.entity.history.HistoryType;
@@ -705,5 +708,67 @@ public class BudgetService implements BudgetAPI {
 
     private BudgetGoal chooseBudgetGoal(BudgetCategory budgetCategory, String goalTitle, String login, String budgetId) {
         return chooseBudgetGoal(budgetCategory, goalTitle).orElseThrow(() -> new GoalMissedException(login, budgetId, budgetCategory.getTitle(), goalTitle));
+    }
+
+    @Override
+    public List<TendencyReportResponse> getTendencyReport(String login, DateRequest startPeriod, DateRequest endPeriod, Currency targetCurrency) {
+        var periodCriteria = buildPeriodCriteria(startPeriod, endPeriod);
+        var budgets = mongoTemplate.find(Query.query(Criteria.where("user").is(login).orOperator(periodCriteria)), Budget.class);
+
+        // Query currency rates (day = null means monthly average)
+        var currencyRates = mongoTemplate.find(Query.query(Criteria.where("day").is(null).orOperator(periodCriteria)), CurrencyDetail.class);
+        var allRates = currencyRates.stream()
+                .collect(Collectors.groupingBy(
+                        rate -> rate.getYear() * 100 + rate.getMonth(),
+                        Collectors.toMap(CurrencyDetail::getName, rate -> rate, (a, b) -> a)
+                ));
+
+        return budgets.stream()
+                .sorted(Comparator.comparingInt(Budget::getYear).thenComparingInt(Budget::getMonth))
+                .map(budget -> buildTendencyResponse(budget, targetCurrency, allRates))
+                .collect(Collectors.toList());
+    }
+
+    private TendencyReportResponse buildTendencyResponse(Budget budget, Currency targetCurrency, Map<Integer, Map<Currency, CurrencyDetail>> allRates) {
+        var monthKey = budget.getYear() * 100 + budget.getMonth();
+        var monthRates = allRates.getOrDefault(monthKey, Collections.emptyMap());
+        var income = convertBalance(budget.getIncome().getBalance(), targetCurrency, monthRates);
+        var expense = convertBalance(budget.getExpense().getBalance(), targetCurrency, monthRates);
+        return new TendencyReportResponse(budget.getYear(), budget.getMonth(), income, expense, income - expense);
+    }
+
+    private Criteria[] buildPeriodCriteria(DateRequest startPeriod, DateRequest endPeriod) {
+        var periodCriteria = new ArrayList<Criteria>();
+        var year = startPeriod.getYear();
+        var month = startPeriod.getMonth();
+        while (year < endPeriod.getYear() || (year.equals(endPeriod.getYear()) && month <= endPeriod.getMonth())) {
+            periodCriteria.add(Criteria.where("year").is(year).and("month").is(month));
+            month++;
+            if (month > 12) {
+                month = 1;
+                year++;
+            }
+        }
+        return periodCriteria.toArray(new Criteria[0]);
+    }
+
+    private double convertBalance(Map<Currency, BalanceValue> balance, Currency targetCurrency, Map<Currency, CurrencyDetail> ratesMap) {
+        if (balance == null || balance.isEmpty()) return 0.0;
+
+        return balance.entrySet().stream()
+                .mapToDouble(entry -> {
+                    var currency = entry.getKey();
+                    var value = entry.getValue().getValue() != null ? entry.getValue().getValue() : 0.0;
+
+                    if (currency == targetCurrency) {
+                        return value;
+                    }
+                    var rate = ratesMap.get(currency);
+                    if (rate != null && rate.getConversions() != null && rate.getConversions().containsKey(targetCurrency)) {
+                        return value * rate.getConversions().get(targetCurrency);
+                    }
+                    return 0.0;
+                })
+                .sum();
     }
 }

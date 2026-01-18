@@ -1,0 +1,70 @@
+.spinner-wrapper {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-body {
+  padding: 10px;
+}
+
+.panel-heading {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-weight: bold;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.period-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.period-selector {
+  display: flex;
+  align-items: center;
+}
+
+.period-label {
+  margin-right: 5px;
+  min-width: 25px;
+}
+
+.period-selector ::ng-deep .month-dropdown {
+  min-width: 120px;
+}
+
+.actions-column {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-row {
+  margin-top: 20px;
+}
+
+.text-success {
+  color: #5cb85c;
+}
+
+.text-danger {
+  color: #d9534f;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .actions-column {
+    gap: 5px;
+  }
+
+  .search-button {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}

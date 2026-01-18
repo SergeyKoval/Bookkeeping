@@ -87,7 +87,15 @@ export class ReportDynamicComponent extends BaseReport implements OnInit {
 
           labels.add(item.category + (item.subCategory ? ` >> ${item.subCategory}` : ''));
         });
-        labels.forEach(value => this.lineChartData.push({label: value, fill: false, data: []}));
+        labels.forEach(value => this.lineChartData.push({
+          type: 'line',
+          label: value,
+          fill: false,
+          data: [],
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 4
+        }));
 
         Array.from(periods.keys()).sort().forEach(year => {
           Array.from(periods.get(year)).sort().forEach(month => {

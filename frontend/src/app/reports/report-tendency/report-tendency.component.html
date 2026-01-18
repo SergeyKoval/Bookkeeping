@@ -1,0 +1,96 @@
+<div class="panel panel-default">
+  <div class="panel-heading text-center">Тенденция финансов</div>
+  <div class="panel-body">
+    <div class="filter-container">
+      <div class="period-column">
+        <div class="period-selector">
+          <span class="period-label">С:</span>
+          <bk-month-and-year
+            [selectedYear]="startYear"
+            [selectedMonth]="startMonth"
+            (changeYear)="onStartYearChange($event)"
+            (changeMonth)="startMonth = $event">
+          </bk-month-and-year>
+        </div>
+        <div class="period-selector">
+          <span class="period-label">По:</span>
+          <bk-month-and-year
+            [selectedYear]="endYear"
+            [selectedMonth]="endMonth"
+            (changeYear)="onEndYearChange($event)"
+            (changeMonth)="endMonth = $event">
+          </bk-month-and-year>
+        </div>
+      </div>
+      <div class="actions-column">
+        <bk-currency-conversion
+          label="К валюте:"
+          denyNoChoice="true"
+          [selectedCurrency]="defaultCurrency"
+          (currencyConversion)="changeCurrency($event)">
+        </bk-currency-conversion>
+        <span class="btn btn-default search-button" (click)="search()">Поиск</span>
+      </div>
+    </div>
+
+    @if (!loading) {
+      <div>
+        <!-- Chart -->
+        <div class="row">
+          <div class="col-sm-12">
+            @if (lineChartData.length > 0 && reportData.length > 0) {
+              <canvas baseChart
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [type]="'line'">
+              </canvas>
+            }
+          </div>
+        </div>
+
+        <!-- Summary Table -->
+        @if (reportData.length > 0) {
+          <div class="row table-row">
+            <div class="col-sm-12">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Период</th>
+                    <th class="text-right">Доход</th>
+                    <th class="text-right">Расход</th>
+                    <th class="text-right">Разница</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of reportData; track item) {
+                    <tr>
+                      <td>{{ formatPeriod(item.month, item.year) }}</td>
+                      <td class="text-right">{{ item.income | number:'1.2-2' }}</td>
+                      <td class="text-right">{{ item.expense | number:'1.2-2' }}</td>
+                      <td class="text-right" [class.text-success]="item.difference >= 0" [class.text-danger]="item.difference < 0">
+                        {{ item.difference | number:'1.2-2' }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+                <tfoot>
+                  <tr class="active">
+                    <th>Итого</th>
+                    <th class="text-right">{{ totals.income | number:'1.2-2' }}</th>
+                    <th class="text-right">{{ totals.expense | number:'1.2-2' }}</th>
+                    <th class="text-right" [class.text-success]="totals.difference >= 0" [class.text-danger]="totals.difference < 0">
+                      {{ totals.difference | number:'1.2-2' }}
+                    </th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="spinner-wrapper"><bk-spinner [size]="100"></bk-spinner></div>
+    }
+  </div>
+</div>

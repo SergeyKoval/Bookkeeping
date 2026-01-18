@@ -1,8 +1,11 @@
 package by.bk.controller;
 
 import by.bk.controller.model.request.ReportRequest;
+import by.bk.controller.model.request.TendencyReportRequest;
 import by.bk.controller.model.response.DynamicReportResponse;
 import by.bk.controller.model.response.SummaryReportResponse;
+import by.bk.controller.model.response.TendencyReportResponse;
+import by.bk.entity.budget.BudgetAPI;
 import by.bk.entity.history.HistoryAPI;
 import by.bk.entity.history.HistoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ import java.util.List;
 public class ReportController {
     @Autowired
     private HistoryAPI historyAPI;
+    @Autowired
+    private BudgetAPI budgetAPI;
 
     @PostMapping("/history-actions")
     public List<HistoryItem> getHistoryActionsReport(@RequestBody ReportRequest request, Principal principal) {
@@ -34,5 +39,10 @@ public class ReportController {
     @PostMapping("/period-dynamic")
     public Collection<DynamicReportResponse> getPeriodDynamicReport(@RequestBody ReportRequest request, Principal principal) {
         return historyAPI.getPeriodDynamic(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getOperations(), request.getCurrency(), request.getTags());
+    }
+
+    @PostMapping("/period-tendency")
+    public Collection<TendencyReportResponse> getPeriodTendencyReport(@RequestBody TendencyReportRequest request, Principal principal) {
+        return budgetAPI.getTendencyReport(principal.getName(), request.getStartPeriod(), request.getEndPeriod(), request.getCurrency());
     }
 }

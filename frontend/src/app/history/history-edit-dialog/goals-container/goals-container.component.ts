@@ -293,7 +293,7 @@ export class GoalsContainerComponent implements OnInit {
       return balance.value || 0;
     }
 
-    return balance.alternativeCurrency[resultCurrency];
+    return balance.alternativeCurrency?.[resultCurrency] ?? 0;
   }
 
   private chooseBudgetCategory(budget: Budget): void {

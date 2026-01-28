@@ -82,6 +82,8 @@ export class HistoryEditDialogComponent implements OnInit {
     this.alternativeCurrencyLoading = !this._currencyService.isCurrencyHistoryLoaded(this.historyItem.balance.currency, this.selectedDate);
     if (this.alternativeCurrencyLoading) {
       this.loadAlternativeCurrencies(this.selectedDate);
+    } else {
+      this.updateAlternativeCurrencies();
     }
 
     const profile: Profile = this._authenticationService.authenticatedProfile;

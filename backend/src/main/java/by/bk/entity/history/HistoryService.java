@@ -578,8 +578,35 @@ public class HistoryService implements HistoryAPI {
         historyItem.setDuplicateMessages(duplicateMessages);
     }
 
+    private boolean isExactDuplicateMessageExists(String login, DeviceMessage deviceMessage) {
+        var messageDate = LocalDate.ofInstant(Instant.ofEpochMilli(deviceMessage.getMessageTimestamp()), MINSK_TIMEZONE);
+        var query = Query.query(Criteria.where("user").is(login)
+            .and("year").is(messageDate.getYear())
+            .and("month").is(messageDate.getMonthValue())
+            .and("day").is(messageDate.getDayOfMonth())
+            .orOperator(
+                Criteria.where("deviceMessages").elemMatch(
+                    Criteria.where("deviceId").is(deviceMessage.getDeviceId())
+                        .and("fullText").is(deviceMessage.getFullText())
+                        .and("messageTimestamp").is(deviceMessage.getMessageTimestamp())
+                ),
+                Criteria.where("duplicateMessages").elemMatch(
+                    Criteria.where("deviceId").is(deviceMessage.getDeviceId())
+                        .and("fullText").is(deviceMessage.getFullText())
+                        .and("messageTimestamp").is(deviceMessage.getMessageTimestamp())
+                )
+            ));
+        return mongoTemplate.exists(query, HistoryItem.class);
+    }
+
     private void addHistoryItemFromDeviceMessage(String login, DeviceMessageRequest deviceMessageRequest) {
         var deviceMessage = deviceMessageRequest.getDeviceMessage();
+
+        // Check if an exact duplicate message already exists (same deviceId, fullText, and messageTimestamp)
+        if (isExactDuplicateMessageExists(login, deviceMessage)) {
+            return;
+        }
+
         var tokens = getDeviceMessageTokens(deviceMessage);
         var deviceMessageDate = LocalDate.ofInstant(Instant.ofEpochMilli(deviceMessage.getMessageTimestamp()), MINSK_TIMEZONE);
         var query = Query.query(Criteria.where("user").is(login)

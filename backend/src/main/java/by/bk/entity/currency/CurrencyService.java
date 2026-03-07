@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,17 @@ public class CurrencyService implements CurrencyAPI {
     @Override
     public List<CurrencyDetail> getCurrenciesForDay(LocalDate date) {
         return currencyRepository.getByYearAndMonthAndDay(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+    }
+
+    @Override
+    public List<CurrencyDetail> getCurrenciesForDayOrNearest(LocalDate date) {
+        for (int i = 0; i < 30; i++) {
+            var result = getCurrenciesForDay(date.minusDays(i));
+            if (!result.isEmpty()) {
+                return result;
+            }
+        }
+        return Collections.emptyList();
     }
 
     @Override

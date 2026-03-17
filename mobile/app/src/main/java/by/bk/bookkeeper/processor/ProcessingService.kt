@@ -7,19 +7,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.R
-import by.bk.bookkeeper.android.push.PushListenerService
-import by.bk.bookkeeper.android.push.PushMessage
 import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
 import by.bk.bookkeeper.android.sms.worker.PeriodicMessagesScheduler
 import by.bk.bookkeeper.android.ui.home.AccountingActivity
@@ -41,18 +35,14 @@ import timber.log.Timber
  * This service now only handles:
  * - Scheduling PeriodicMessagesScheduler on boot/app open
  * - Displaying notification with pending/unprocessed message count
- * - Debug logging for push notifications
  */
 class ProcessingService : Service() {
 
-    private lateinit var debugReceiver: DebugBroadcastReceiver
     // CRITICAL: Use lazy initialization to avoid blocking onCreate().
     // The 5-second foreground service deadline starts when startForegroundService() is called.
     // If property initializers (especially network stack creation) take too long,
     // onCreate() won't be reached in time to call startForeground().
-    private val repository by lazy { Injection.provideMessagesRepository() }
     private val disposables = CompositeDisposable()
-    private val gson by lazy { com.google.gson.Gson() }
 
     // State for notification content (updated from any thread, read only from main thread)
     @Volatile private var pendingSmsCount: Int = 0
@@ -80,17 +70,6 @@ class ProcessingService : Service() {
         PeriodicMessagesScheduler.schedule(context = this)
         observePendingMessages()
         observeUnprocessedSms()
-
-        // Register debug broadcast receiver for push notification logging
-        debugReceiver = DebugBroadcastReceiver()
-        val debugFilter = IntentFilter().apply {
-            addAction(PushListenerService.ACTION_DEBUG_NOTIFICATION_POSTED)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(debugReceiver, debugFilter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(debugReceiver, debugFilter)
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -280,53 +259,10 @@ class ProcessingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         mainHandler.removeCallbacks(stopWhenIdleRunnable)
-        unregisterReceiver(debugReceiver)
         disposables.clear()
     }
 
     override fun onBind(intent: Intent): IBinder? = null
-
-    inner class DebugBroadcastReceiver : BroadcastReceiver() {
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == PushListenerService.ACTION_DEBUG_NOTIFICATION_POSTED) {
-                val pushMessage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE, PushMessage::class.java)
-                } else {
-                    @Suppress("DEPRECATION")
-                    intent.getParcelableExtra(PushListenerService.PUSH_MESSAGE)
-                }
-
-                pushMessage?.let { push ->
-                    val formattedTimestamp = java.text.SimpleDateFormat(
-                        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-                        java.util.Locale.US
-                    ).apply {
-                        timeZone = java.util.TimeZone.getTimeZone("UTC")
-                    }.format(java.util.Date(push.timestamp))
-
-                    val debugData = mapOf(
-                        "type" to "push_notification",
-                        "timestamp" to formattedTimestamp,
-                        "packageName" to push.packageName,
-                        "text" to push.text,
-                        "postTime" to push.timestamp
-                    )
-
-                    val debugJson = gson.toJson(debugData)
-
-                    disposables.add(
-                        repository.sendLog(debugJson)
-                            .subscribeOn(Schedulers.io())
-                            .subscribe(
-                                { Timber.d("Debug log sent successfully") },
-                                { e -> Timber.e(e, "Failed to send debug log") }
-                            )
-                    )
-                }
-            }
-        }
-    }
 
     companion object {
         private const val SERVICE_NOTIFICATION_ID = 1209

@@ -1,7 +1,6 @@
 package by.bk.bookkeeper.android.push
 
 import android.app.Notification
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.service.notification.NotificationListenerService
@@ -13,6 +12,8 @@ import androidx.work.WorkManager
 import by.bk.bookkeeper.android.Injection
 import by.bk.bookkeeper.android.sms.preferences.SharedPreferencesProvider
 import by.bk.bookkeeper.android.sms.worker.PendingPushWorker
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
@@ -36,6 +37,9 @@ class PushListenerService : NotificationListenerService() {
     private val recentNotifications = mutableSetOf<String>()
     private val cleanupThreshold = 100 // Clean up after this many notifications
     private val pushProcessor by lazy { Injection.providePushProcessor() }
+    private val repository by lazy { Injection.provideMessagesRepository() }
+    private val gson by lazy { com.google.gson.Gson() }
+    private val disposables = CompositeDisposable()
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
@@ -69,12 +73,9 @@ class PushListenerService : NotificationListenerService() {
             sbn.postTime
         )
 
-        // Send debug broadcast if enabled
+        // Send debug log directly to server if enabled
         if (SharedPreferencesProvider.getDebugPushNotifications()) {
-            sendBroadcast(Intent(ACTION_DEBUG_NOTIFICATION_POSTED).apply {
-                setPackage(packageName)
-                putExtra(PUSH_MESSAGE, pushMessage)
-            })
+            sendDebugLog(pushMessage)
         }
 
         // Process push with configured delay to allow SMS priority
@@ -122,12 +123,36 @@ class PushListenerService : NotificationListenerService() {
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null) // Clean up pending callbacks
+        disposables.clear()
         super.onDestroy()
     }
 
-    companion object {
-        const val PUSH_MESSAGE = "PUSH_MESSAGE"
-        const val ACTION_DEBUG_NOTIFICATION_POSTED = "debug_notification_posted"
+    private fun sendDebugLog(pushMessage: PushMessage) {
+        val formattedTimestamp = java.text.SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            java.util.Locale.US
+        ).apply {
+            timeZone = java.util.TimeZone.getTimeZone("UTC")
+        }.format(java.util.Date(pushMessage.timestamp))
+
+        val debugData = mapOf(
+            "type" to "push_notification",
+            "timestamp" to formattedTimestamp,
+            "packageName" to pushMessage.packageName,
+            "text" to pushMessage.text,
+            "postTime" to pushMessage.timestamp
+        )
+
+        val debugJson = gson.toJson(debugData)
+
+        disposables.add(
+            repository.sendLog(debugJson)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    { Timber.d("Debug push log sent successfully") },
+                    { e -> Timber.e(e, "Failed to send debug push log") }
+                )
+        )
     }
 
 }

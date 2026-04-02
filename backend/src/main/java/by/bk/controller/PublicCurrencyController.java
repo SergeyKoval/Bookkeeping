@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * @author Sergey Koval
@@ -35,6 +35,30 @@ public class PublicCurrencyController {
                     .filter(c -> c.getName() == currencyCode)
                     .findFirst();
             return currency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/rate")
+    public ResponseEntity<?> getAllCurrenciesForDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            var result = currencyAPI.getCurrenciesForDayOrNearest(date);
+            if (result.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            var firstCurrency = result.get(0);
+            var response = new HashMap<>();
+            response.put("year", firstCurrency.getYear());
+            response.put("month", firstCurrency.getMonth());
+            response.put("day", firstCurrency.getDay());
+
+            var rates = new HashMap<>();
+            result.forEach(detail -> rates.put(detail.getName(), detail.getConversions()));
+            response.put("rates", rates);
+
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

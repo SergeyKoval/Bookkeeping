@@ -139,7 +139,7 @@ export class ReportSummaryComponent extends BaseReport implements OnInit, OnDest
         items.map(item => item.values).forEach((valueMap: {[currency: string]: number}) => {
           Object.keys(valueMap).forEach(currency => {
             this.reportSum = this.reportSum + this.convertValue(valueMap[currency], currency, this.reportCurrency);
-            this.totals[currency] = valueMap[currency] + (this.totals[currency] | 0);
+            this.totals[currency] = valueMap[currency] + (this.totals[currency] || 0);
           });
         });
 

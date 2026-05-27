@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ErrorHandler;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
@@ -41,7 +42,8 @@ public class GlobalExceptionResolver extends SimpleMappingExceptionResolver impl
       NoResourceFoundException.class,
       HttpMediaTypeNotAcceptableException.class,
       AsyncRequestNotUsableException.class,
-      ClientAbortException.class
+      ClientAbortException.class,
+      HttpRequestMethodNotSupportedException.class
   );
 
   @Value("${mail.admin.username}")

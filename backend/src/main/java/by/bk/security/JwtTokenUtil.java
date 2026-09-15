@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 @Component
 public class JwtTokenUtil {
     public static final String DEVICE_ID = "deviceId";
-    private static final String ISSUER = "https://deplake.tk";
+    private static final String ISSUER = "https://bookkeeper.deplake.by";
 
     @Value("${jwt.secret}")
     private String secret;

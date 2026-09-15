@@ -77,7 +77,7 @@ object ServiceGenerator {
                 hostnameVerifier(object : HostnameVerifier {
                     override fun verify(hostname: String?, p1: SSLSession?): Boolean {
                         hostname?.run {
-                            if (endsWith("deplake.tk")) {
+                            if (endsWith("bookkeeper.deplake.by")) {
                                 return true
                             }
                         }

@@ -6,7 +6,7 @@ package by.bk.bookkeeper.android.network
 enum class BookkeeperEnvironment {
 
     PROD {
-        override fun getBaseUrl(): String = "https://deplake.tk"
+        override fun getBaseUrl(): String = "https://bookkeeper.deplake.by"
     };
 
     abstract fun getBaseUrl(): String
